@@ -1,0 +1,6 @@
+*
+!public/
+!audio/
+!map-processing/
+!.gitignore
+!.gitkeep

@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"artisan.docker.enabled": true,
+		"artisan.docker.command": "./vendor/bin/sail",
+		"editor.rulers": [
+		    100
+        ],
+        "prettier.printWidth": 100,
+        "prettier.semi": false,
+        "prettier.singleQuote": true,
+        "prettier.useEditorConfig": false,
+        "thunder-client.saveToWorkspace": true,
+				"thunder-client.defaultUrl": "localhost/api",
+				"intelephense.environment.phpVersion": "8.2.1"
+	}
+}

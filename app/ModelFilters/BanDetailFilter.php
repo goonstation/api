@@ -1,0 +1,33 @@
+<?php
+
+namespace App\ModelFilters;
+
+use EloquentFilter\ModelFilter;
+
+class BanDetailFilter extends ModelFilter
+{
+    /**
+     * Related Models that have ModelFilters as well as the method on the ModelFilter
+     * As [relationMethod => [input_key1, input_key2]].
+     *
+     * @var array
+     */
+    public $relations = [];
+
+    public function ckey($val)
+    {
+        return $this->whereLike('ckey', $val);
+    }
+
+    public function comp($val)
+    {
+        return $this->whereLike('comp_id', $val);
+    }
+
+    public function ip($val)
+    {
+        return $this->whereLike('ip', $val);
+    }
+
+    // removed boolean (deleted_at timestamp existance)
+}

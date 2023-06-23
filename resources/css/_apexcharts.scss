@@ -1,0 +1,13 @@
+// Tooltip themes
+.apexcharts-tooltip {
+  &.apexcharts-theme-gh {
+    background: rgba(30, 30, 30, 0.8);
+    color: #fff;
+    box-shadow: none;
+    text-align: center;
+  }
+
+  &.apexcharts-theme-hidden {
+    display: none;
+  }
+}

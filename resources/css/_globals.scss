@@ -1,0 +1,66 @@
+a {
+  text-decoration: none;
+}
+
+@each $sizeName, $width in $sizes {
+  @each $spaceName, $space in $spaces {
+    @media (min-width: $width) {
+      .gap-#{$sizeName}-#{$spaceName} {
+        gap: map-get($space, 'x');
+      }
+    }
+  }
+}
+
+.text-xs { font-size: 0.75em; }
+.text-sm { font-size: 0.9em; }
+.text-md { font-size: 1em; }
+.text-lg { font-size: 1.5em; }
+.text-xl { font-size: 2em; }
+
+.opacity-20 { opacity: 0.2; }
+.opacity-40 { opacity: 0.4; }
+.opacity-60 { opacity: 0.6; }
+.opacity-80 { opacity: 0.8; }
+.opacity-100 { opacity: 1; }
+
+.flex-grow { flex-grow: 1; }
+.flex-grow-none { flex-grow: 0; }
+
+.q-menu {
+  &--dark {
+    box-shadow: none;
+    border: 1px solid $grey-8;
+  }
+}
+
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #F0C523 #8d8d8d;
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #8d8d8d;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #F0C523;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #F0C523;
+}

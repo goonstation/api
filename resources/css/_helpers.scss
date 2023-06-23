@@ -1,0 +1,185 @@
+.gh-input--denser.q-input {
+  .q-field__control {
+    height: 30px;
+    padding: 0 8px;
+
+    input {
+      font-size: 0.9em;
+    }
+
+    .q-field__marginal {
+      height: 30px;
+      font-size: 20px;
+    }
+  }
+}
+
+.gh-select--denser.q-select {
+  font-size: 0.9em;
+
+  .q-field__control, .q-field__native {
+    min-height: 30px;
+  }
+
+  .q-field__marginal {
+    height: 30px;
+    font-size: 20px;
+  }
+}
+
+.gh-btn--denser.q-btn {
+  height: 30px;
+  min-height: 30px;
+  font-size: 0.9em;
+}
+
+.gh-card {
+  $self: &;
+  &__header {
+    display: flex;
+    align-items: center;
+    padding-right: 1rem;
+
+    > .q-icon {
+      margin-right: 1rem;
+      padding: 1rem;
+      background: var(--q-primary);
+      color: var(--q-dark);
+      border-top-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    > span {
+      font-size: 1.1em;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+    }
+  }
+
+  &--small {
+    #{ $self }__header {
+      .q-icon {
+        padding: 0.6em;
+      }
+    }
+  }
+}
+
+.gh-sprite {
+  image-rendering: pixelated;
+}
+
+.gh-link-card {
+  $self: &;
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: map-get($space-md, 'x') map-get($space-md, 'y');
+  background: $dark;
+  color: white;
+  border-radius: $generic-border-radius;
+  transition: all 200ms ease-in-out;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: $primary;
+    border-bottom-left-radius: $generic-border-radius;
+    border-bottom-right-radius: $generic-border-radius;
+    transition: all 200ms ease-in-out;
+  }
+
+  &--bar-on {
+    &:before {
+      height: 5px;
+    }
+  }
+
+  &__title {
+    color: $primary;
+    transition: all 200ms ease-in-out;
+  }
+
+  &:hover,
+  &:focus {
+    outline: none;
+    transform: scale(1.02);
+
+    &:before {
+      height: 5px;
+    }
+  }
+
+  &--bar-left {
+    &:before {
+      height: 100%;
+      width: 0;
+      top: 0;
+      left: 0;
+      right: unset;
+      border-top-left-radius: $generic-border-radius;
+      border-bottom-right-radius: 0;
+    }
+
+    &:hover,
+    &:focus {
+      &:before {
+        height: 100%;
+        width: 5px;
+      }
+    }
+  }
+
+  &#{ $self }--bar-on#{ $self }--bar-left {
+    &:before {
+      height: 100%;
+      width: 5px;
+    }
+  }
+}
+
+.gh-details-list {
+  display: flex;
+  gap: 1rem;
+
+  > div {
+    &:not(:last-child) {
+      padding-right: 1rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    > div:first-child {
+      font-weight: 500;
+    }
+
+    > div:last-child {
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+  }
+
+  &--small {
+    > div {
+      font-size: 0.9em;
+    }
+  }
+}
+
+.bruteloss {
+  color: #f34d4d;
+}
+.fireloss {
+  color: #ffc457;
+}
+.toxloss {
+  color: #24c024;
+}
+.oxyloss {
+  color: #9292fa;
+}
