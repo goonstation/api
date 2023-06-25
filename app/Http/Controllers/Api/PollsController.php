@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexQueryRequest;
+use App\Http\Resources\PollAnswerResource;
 use App\Http\Resources\PollOptionResource;
 use App\Http\Resources\PollResource;
 use App\Models\GameAdmin;
@@ -26,15 +27,46 @@ class PollsController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
-        $pollsPaged = $this->indexQuery(Poll::with(['gameAdmin', 'options']));
-        $polls = $pollsPaged->getCollection();
+        $pollsPaged = $this->indexQuery(
+            Poll::with([
+                'gameAdmin',
+                'options' => function($query) {
+                    $query->withCount('answers')
+                        ->with(['answers' => function($q) {
+                            $q->select('poll_option_id', 'player_id');
+                        }]);
+                }
+            ])
+        );
 
+        $polls = PollResource::collection($pollsPaged);
         foreach ($polls as $poll) {
+            // The ordering of options is important ok
             $poll->options = $poll->options->sortBy('position');
+
+            $totalAnswers = 0;
+            $winningOption = null;
+            foreach ($poll->options as $option) {
+                $totalAnswers += $option->answers_count;
+
+                // See what option is winning
+                if (!$winningOption || $winningOption->answers_count < $option->answers_count) {
+                    $winningOption = $option;
+                }
+
+                // Flatten answers array into just player IDs
+                $answers = [];
+                foreach ($option->answers as $answer) {
+                    $answers[] = $answer->player_id;
+                }
+                $option->answers = $answers;
+            }
+
+            $poll->total_answers = $totalAnswers;
+            $poll->winning_option_id = $winningOption->id;
         }
 
-        $pollsPaged->setCollection($polls);
-        return PollResource::collection($pollsPaged);
+        return $polls;
     }
 
     /**
@@ -45,6 +77,7 @@ class PollsController extends Controller
         $data = $request->validate([
             'game_admin_ckey' => 'nullable|string|exists:game_admins,ckey',
             'question' => 'required',
+            'multiple_choice' => 'nullable|boolean',
             'expires_at' => 'nullable|date',
             'options' => 'required|array',
             'options.*' => 'sometimes|required'
@@ -58,6 +91,7 @@ class PollsController extends Controller
         $poll = new Poll();
         $poll->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
         $poll->question = $data['question'];
+        $poll->multiple_choice = isset($data['multiple_choice']) ? $data['multiple_choice'] : false;
         $poll->expires_at = isset($data['expires_at']) ? $data['expires_at'] : null;
         $poll->save();
 
@@ -77,12 +111,16 @@ class PollsController extends Controller
     public function update(Request $request, Poll $poll)
     {
         $data = $request->validate([
-            'question' => 'required',
+            'question' => 'nullable|string',
             'expires_at' => 'nullable|date'
         ]);
 
-        $poll->question = $data['question'];
-        $poll->expires_at = isset($data['expires_at']) ? $data['expires_at'] : null;
+        if (array_key_exists('question', $data)) {
+            $poll->question = $data['question'];
+        }
+        if (array_key_exists('expires_at', $data)) {
+            $poll->expires_at = $data['expires_at'];
+        }
         $poll->save();
 
         return new PollResource($poll);
@@ -152,18 +190,25 @@ class PollsController extends Controller
             'player_id' => 'required|exists:players,id'
         ]);
 
-        $existingAnswer = PollAnswer::where('player_id', $data['player_id'])
-            ->whereRelation('option', 'poll_id', '=', $pollOption->poll->id)
-            ->first();
-
-        // Can't pick the same thing
-        if ($existingAnswer->option->id === $pollOption->id) {
-            return response()->json(['error' => 'You have already voted for that option.'], 400);
+        // Check if poll is expired
+        if ($pollOption->poll->expires_at && $pollOption->poll->expires_at->isPast()) {
+            return response()->json(['error' => 'That poll is no longer active.'], 400);
         }
 
-        // Clear their previous pick
-        if ($existingAnswer) {
-            $existingAnswer->delete();
+        $existingAnswers = PollAnswer::where('player_id', $data['player_id'])
+            ->whereRelation('option', 'poll_id', '=', $pollOption->poll->id)
+            ->get();
+
+        // Can't pick the same thing
+        foreach ($existingAnswers as $answer) {
+            if ($answer->poll_option_id === $pollOption->id) {
+                return response()->json(['error' => 'You have already voted for that option.'], 400);
+            }
+        }
+
+        // Clear their previous pick if not multiple
+        if (!$pollOption->poll->multiple_choice) {
+            $existingAnswers->first()->delete();
         }
 
         $answer = new PollAnswer();
@@ -171,6 +216,35 @@ class PollsController extends Controller
         $answer->player_id = $data['player_id'];
         $answer->save();
 
-        return ['message' => $existingAnswer];
+        return new PollAnswerResource($answer);
+    }
+
+    /**
+     * Unpick option
+     */
+    public function unpickOption(Request $request, PollOption $pollOption)
+    {
+        $data = $request->validate([
+            'player_id' => 'required|exists:players,id'
+        ]);
+
+        $existingAnswers = PollAnswer::where('player_id', $data['player_id'])
+            ->whereRelation('option', 'poll_id', '=', $pollOption->poll->id)
+            ->get();
+
+        $deleted = false;
+        foreach ($existingAnswers as $answer) {
+            if ($answer->poll_option_id === $pollOption->id) {
+                $answer->delete();
+                $deleted = true;
+                break;
+            }
+        }
+
+        if ($deleted) {
+            return ['message' => 'Poll pick removed.'];
+        } else {
+            return ['message' => 'You haven\'t picked this option yet.'];
+        }
     }
 }

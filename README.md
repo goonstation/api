@@ -15,10 +15,12 @@ Automatically generated docs will be available at `http://localhost/docs/api`, a
 From the repo root directory:
 
 ```bash
-sail artisan key:generate
-sail artisan migrate
-sail artisan create-user
-sail artisan create-api-token <user-id>
+cp .env.example .env
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan create-user
+./vendor/bin/sail artisan create-api-token <user-id>
 ```
 
 The above will initialize the database, guide you through creating a user, and then guide you through creating an API token.

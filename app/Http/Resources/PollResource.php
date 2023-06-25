@@ -20,6 +20,11 @@ class PollResource extends JsonResource
             'game_admin' => $this->gameAdmin,
             'question' => $this->question,
             'options' => PollOptionResource::collection($this->options),
+            /** @var int */
+            'total_answers' => $this->total_answers,
+            /** @var int|null */
+            'winning_option_id' => $this->winning_option_id,
+            'multiple_choice' => $this->multiple_choice,
             'expires_at' => $this->expires_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->smallInteger('position')->default(1);
             $table->timestamps();
 
-            $table->foreign('poll_id')->references('id')->on('polls');
+            $table->foreign('poll_id')->references('id')->on('polls')->onDelete('cascade');
         });
     }
 

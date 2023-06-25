@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('player_id');
             $table->timestamps();
 
-            $table->foreign('poll_option_id')->references('id')->on('poll_options');
+            $table->foreign('poll_option_id')->references('id')->on('poll_options')->onDelete('cascade');
             $table->foreign('player_id')->references('id')->on('players');
         });
     }

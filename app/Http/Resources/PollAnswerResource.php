@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PollOptionResource extends JsonResource
+class PollAnswerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,14 +16,10 @@ class PollOptionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'poll_id' => $this->poll_id,
-            'option' => $this->option,
-            /** @var int */
-            'position' => $this->position,
-            /** @var int */
-            'answers_count' => $this->answers_count,
-            /** @var array<int> */
-            'answers_player_ids' => $this->answers,
+            'poll_option_id' => $this->poll_option_id,
+            'poll_id' => $this->option->poll->id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
