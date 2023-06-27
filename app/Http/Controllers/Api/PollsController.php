@@ -20,6 +20,34 @@ class PollsController extends Controller
 {
     use IndexableQuery;
 
+    private function populatePollResults($poll)
+    {
+        // The ordering of options is important ok
+        $poll->options = $poll->options->sortBy('position');
+
+        $totalAnswers = 0;
+        $winningOption = null;
+        foreach ($poll->options as $option) {
+            $totalAnswers += $option->answers_count;
+
+            // See what option is winning
+            if (!$winningOption || $winningOption->answers_count < $option->answers_count) {
+                $winningOption = $option;
+            }
+
+            // Flatten answers array into just player IDs
+            $answers = [];
+            foreach ($option->answers as $answer) {
+                $answers[] = $answer->player_id;
+            }
+            $option->answers = $answers;
+        }
+
+        $poll->total_answers = $totalAnswers;
+        $poll->winning_option_id = $winningOption->id;
+        return $poll;
+    }
+
     /**
      * List
      *
@@ -30,9 +58,9 @@ class PollsController extends Controller
         $pollsPaged = $this->indexQuery(
             Poll::with([
                 'gameAdmin',
-                'options' => function($query) {
+                'options' => function ($query) {
                     $query->withCount('answers')
-                        ->with(['answers' => function($q) {
+                        ->with(['answers' => function ($q) {
                             $q->select('poll_option_id', 'player_id');
                         }]);
                 }
@@ -41,29 +69,7 @@ class PollsController extends Controller
 
         $polls = PollResource::collection($pollsPaged);
         foreach ($polls as $poll) {
-            // The ordering of options is important ok
-            $poll->options = $poll->options->sortBy('position');
-
-            $totalAnswers = 0;
-            $winningOption = null;
-            foreach ($poll->options as $option) {
-                $totalAnswers += $option->answers_count;
-
-                // See what option is winning
-                if (!$winningOption || $winningOption->answers_count < $option->answers_count) {
-                    $winningOption = $option;
-                }
-
-                // Flatten answers array into just player IDs
-                $answers = [];
-                foreach ($option->answers as $answer) {
-                    $answers[] = $answer->player_id;
-                }
-                $option->answers = $answers;
-            }
-
-            $poll->total_answers = $totalAnswers;
-            $poll->winning_option_id = $winningOption->id;
+            $poll = $this->populatePollResults($poll);
         }
 
         return $polls;
@@ -133,6 +139,26 @@ class PollsController extends Controller
     {
         $poll->delete();
         return ['message' => 'Poll removed'];
+    }
+
+    /**
+     * Results
+     */
+    public function results(int $poll)
+    {
+        $poll = Poll::with([
+            'options' => function ($query) {
+                $query->withCount('answers')
+                    ->with(['answers' => function ($q) {
+                        $q->select('poll_option_id', 'player_id');
+                    }]);
+            }
+            ])
+            ->where('id', $poll)
+            ->first();
+
+        $poll = $this->populatePollResults($poll);
+        return PollResource::make($poll);
     }
 
     /**

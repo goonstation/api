@@ -1145,5 +1145,24 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "d69dff3d-5f6b-4706-a6ed-612e8c9cc1d4",
+    "colId": "49f9f0be-6399-49fb-bb61-3e64665727bf",
+    "containerId": "a4844c98-7ac0-4509-b314-e8ac536e16c2",
+    "name": "Results",
+    "url": "/api/polls/results/1",
+    "method": "GET",
+    "sortNum": 337500,
+    "created": "2023-06-26T16:07:30.150Z",
+    "modified": "2023-06-26T16:08:33.143Z",
+    "headers": [
+      {
+        "name": "Accept",
+        "value": "application/json"
+      }
+    ],
+    "params": [],
+    "tests": []
   }
 ]

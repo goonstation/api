@@ -115,6 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', 'store');
         Route::put('/{poll}', 'update');
         Route::delete('/{poll}', 'destroy');
+        Route::get('/results/{poll}', 'results');
         Route::post('/option/{poll}', 'addOption');
         Route::put('/option/{pollOption}', 'updateOption');
         Route::delete('/option/{pollOption}', 'destroyOption');

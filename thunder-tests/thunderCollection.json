@@ -99,7 +99,7 @@
       ],
       "auth": {
         "type": "bearer",
-        "bearer": "3|umTE2BUhxK3kSggEQoXVCMefngmu8N3oZLWiyZkQ"
+        "bearer": "3|SPlB9UzAfCAksGPlOXuyeDCCyDXqh8jQq4WK3hfr"
       },
       "options": {
         "baseUrl": "localhost"
