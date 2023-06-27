@@ -39,7 +39,7 @@ export default {
     },
 
     parentPage() {
-      if (this.breadcrumbs.length < 2) return null
+      if (!this.breadcrumbs || this.breadcrumbs.length < 2) return null
       return this.breadcrumbs[this.breadcrumbs.length - 2].url + this.searchParams
     },
   },
