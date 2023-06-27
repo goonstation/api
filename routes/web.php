@@ -31,6 +31,10 @@ Route::get('/test', function () {
     return Inertia::render('Test');
 })->name('test');
 
+Route::get('/login', function () {
+    return Inertia::render('Jetstream/Auth/Login');
+})->name('login');
+
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
 });

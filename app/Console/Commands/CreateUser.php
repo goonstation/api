@@ -31,6 +31,7 @@ class CreateUser extends Command
     {
         $userName = $this->ask('Name?');
         $userEmail = $this->ask('Email?');
+        $userAdmin = $this->choice('Admin?', ['Yes', 'No'], 'No');
         $userPass = $this->ask('Password?');
 
         if (! $userName || ! $userEmail || ! $userPass) {
@@ -42,6 +43,7 @@ class CreateUser extends Command
             'name' => $userName,
             'email' => $userEmail,
             'password' => Hash::make($userPass),
+            'is_admin' => $userAdmin === 'Yes',
         ]);
 
         $this->info('User created!');
