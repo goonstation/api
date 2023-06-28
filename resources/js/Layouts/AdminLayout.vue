@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
+import { ionMenu } from '@quasar/extras/ionicons-v6'
 
 defineProps({
   title: String,
@@ -9,19 +10,16 @@ defineProps({
 const leftDrawerOpen = ref(true)
 const menuList = [
   {
-    icon: 'bug_report',
     label: 'Test',
     href: '/test',
     separator: false,
   },
   {
-    icon: 'groups',
     label: 'Players',
     href: '/players',
     separator: false,
   },
   {
-    icon: 'warning',
     label: 'Bans',
     href: '/bans',
     separator: false,
@@ -51,10 +49,10 @@ const logout = () => {
 
 <template>
   <Head :title="title" />
-  <q-layout view="lhh LpR lff">
+  <q-layout view="lhh LpR fff">
     <q-header class="bg-transparent">
-      <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+      <q-toolbar class="q-pt-md">
+        <q-btn dense flat round :icon="ionMenu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
           <slot v-if="$slots.header" name="header" />
           <template v-else>{{ title }}</template>
@@ -112,7 +110,6 @@ const logout = () => {
             </q-avatar>
             <q-menu>
               <q-list style="min-width: 150px">
-                <q-item-label header>Manage Account</q-item-label>
                 <q-item clickable @click="router.visit(route('profile.show'))" v-close-popup>
                   <q-item-section>Profile</q-item-section>
                 </q-item>
@@ -141,17 +138,14 @@ const logout = () => {
       show-if-above
       v-model="leftDrawerOpen"
       side="left"
-      :width="250"
+      :width="200"
       :breakpoint="600"
     >
       <q-scroll-area class="fit">
         <q-list>
-          <q-item class="q-mb-md">
-            <q-avatar class="q-mr-md">
-              <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-            </q-avatar>
-            <q-item-section class="text-h6"> Goonhub </q-item-section>
-          </q-item>
+          <a class="block q-mt-lg q-mb-md logo" @click.prevent="router.visit('/')" href="/">
+            <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
+          </a>
           <template v-for="(menuItem, index) in menuList" :key="index">
             <q-item
               clickable
@@ -159,9 +153,6 @@ const logout = () => {
               :active="$page.url.startsWith(menuItem.href)"
               v-ripple
             >
-              <q-item-section avatar>
-                <q-icon :name="menuItem.icon" />
-              </q-item-section>
               <q-item-section>
                 {{ menuItem.label }}
               </q-item-section>
@@ -173,18 +164,11 @@ const logout = () => {
     </q-drawer>
 
     <q-page-container>
-      <slot />
+      <q-page class="row column no-wrap q-pa-md page-wrapper">
+        <div>
+          <slot />
+        </div>
+      </q-page>
     </q-page-container>
-
-    <q-footer class="bg-transparent">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
-          Footer
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
   </q-layout>
 </template>

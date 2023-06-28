@@ -1,7 +1,5 @@
 <template>
-  <div class="q-pa-md">
-    <players-table :initial="players" />
-  </div>
+  <players-table :initial="players" />
 </template>
 
 <script>

@@ -1,7 +1,5 @@
 <template>
-  <div class="q-pa-md">
-    <bans-table :initial="bans" />
-  </div>
+  <bans-table :initial="bans" />
 </template>
 
 <script>

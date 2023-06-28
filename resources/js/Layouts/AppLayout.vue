@@ -351,7 +351,7 @@ export default {
       immediate: true,
       handler(val) {
         const activeItem = this.checkItems(this.menuList)
-        activeItem.active = true
+        if (activeItem) activeItem.active = true
 
         setTimeout(() => {
           this.onNavItemLeave()

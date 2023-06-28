@@ -31,10 +31,6 @@ Route::get('/test', function () {
     return Inertia::render('Test');
 })->name('test');
 
-Route::get('/login', function () {
-    return Inertia::render('Jetstream/Auth/Login');
-})->name('login');
-
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
 });
@@ -81,21 +77,21 @@ Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
 });
 
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return Inertia::render('Dashboard');
-//     })->name('dashboard');
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 
-//     Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
-//         Route::get('/', 'index')->name('players.index');
-//     });
+    Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
+        Route::get('/', 'index')->name('players.index');
+    });
 
-//     Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
-//         Route::get('/', 'index')->name('bans.index');
-//         Route::get('/details', 'getDetails');
-//     });
-// });
+    Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
+        Route::get('/', 'index')->name('bans.index');
+        Route::get('/details', 'getDetails');
+    });
+});
