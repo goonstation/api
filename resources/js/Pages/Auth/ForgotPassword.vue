@@ -1,60 +1,78 @@
-<script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/Jetstream/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/Jetstream/AuthenticationCardLogo.vue';
-import InputError from '@/Components/Jetstream/InputError.vue';
-import InputLabel from '@/Components/Jetstream/InputLabel.vue';
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
-import TextInput from '@/Components/Jetstream/TextInput.vue';
-
-defineProps({
-    status: String,
-});
-
-const form = useForm({
-    email: '',
-});
-
-const submit = () => {
-    form.post(route('password.email'));
-};
-</script>
-
 <template>
-    <Head title="Forgot Password" />
+  <q-card class="gh-card" flat style="width: 100%; max-width: 500px">
+    <div class="gh-card__header">
+      <q-icon :name="ionHelpCircle" size="22px" />
+      <span>Forgot Password</span>
+    </div>
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+    <q-card-section>
+      <div class="q-mb-md text-sm text-grey-5">
+        Forgot your password? No problem. Just let us know your email address and we will email you
+        a password reset link that will allow you to choose a new one.
+      </div>
 
-        <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+      <q-banner v-if="status" class="bg-positive text-dark q-mb-md" dense>
+        {{ status }}
+      </q-banner>
+
+      <q-form @submit="submit">
+        <q-input
+          v-model="form.email"
+          type="email"
+          label="Email"
+          filled
+          lazy-rules
+          required
+          autofocus
+          :error="!!form.errors.email"
+          :error-message="form.errors.email"
+        />
+
+        <div class="flex q-mt-sm">
+          <q-space />
+          <q-btn
+            label="Email Password Reset Link"
+            type="submit"
+            color="primary"
+            text-color="black"
+            :loading="form.processing"
+          />
         </div>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
+      </q-form>
+    </q-card-section>
+  </q-card>
 </template>
+
+<script>
+import { useForm } from '@inertiajs/vue3'
+import { ionHelpCircle } from '@quasar/extras/ionicons-v6'
+import AuthLayout from '@/Layouts/AuthLayout.vue'
+
+export default {
+  layout: (h, page) => h(AuthLayout, { title: 'Forgot Password' }, () => page),
+
+  setup() {
+    return {
+      ionHelpCircle,
+    }
+  },
+
+  props: {
+    status: String,
+  },
+
+  data() {
+    return {
+      form: useForm({
+        email: '',
+      }),
+    }
+  },
+
+  methods: {
+    submit() {
+      this.form.post(route('password.email'))
+    },
+  },
+}
+</script>

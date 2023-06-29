@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
-import { ionMenu } from '@quasar/extras/ionicons-v6'
+import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
 
 defineProps({
   title: String,
@@ -62,7 +62,7 @@ const logout = () => {
             v-if="$page.props.jetstream.hasTeamFeatures && $page.props.user.current_team"
             :label="$page.props.user.current_team.name"
             class="q-px-sm q-mr-md"
-            icon-right="unfold_more"
+            :icon-right="ionChevronDown"
             flat
             no-caps
           >
@@ -94,7 +94,7 @@ const logout = () => {
                     <q-item-section avatar style="padding-left: 0; min-width: 35px">
                       <q-icon
                         v-if="team.id == $page.props.user.current_team_id"
-                        name="check_circle"
+                        :name="ionCheckmarkCircleOutline"
                         color="accent"
                       />
                     </q-item-section>
@@ -134,16 +134,14 @@ const logout = () => {
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      show-if-above
-      v-model="leftDrawerOpen"
-      side="left"
-      :width="200"
-      :breakpoint="600"
-    >
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="200" :breakpoint="600">
       <q-scroll-area class="fit">
         <q-list>
-          <a class="block q-mt-lg q-mb-md logo" @click.prevent="router.visit('/')" href="/">
+          <a
+            class="block q-mt-lg q-mb-md logo"
+            @click.prevent="router.visit('/dashboard')"
+            href="/"
+          >
             <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
           </a>
           <template v-for="(menuItem, index) in menuList" :key="index">

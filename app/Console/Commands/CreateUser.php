@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -39,10 +40,13 @@ class CreateUser extends Command
 
             return Command::FAILURE;
         }
-        User::create([
+
+        $action = new CreateNewUser();
+        $action->create([
             'name' => $userName,
             'email' => $userEmail,
-            'password' => Hash::make($userPass),
+            'password' => $userPass,
+            'password_confirmation' => $userPass,
             'is_admin' => $userAdmin === 'Yes',
         ]);
 

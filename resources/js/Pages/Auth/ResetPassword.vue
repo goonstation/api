@@ -1,84 +1,99 @@
-<script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/Jetstream/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/Jetstream/AuthenticationCardLogo.vue';
-import InputError from '@/Components/Jetstream/InputError.vue';
-import InputLabel from '@/Components/Jetstream/InputLabel.vue';
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
-import TextInput from '@/Components/Jetstream/TextInput.vue';
+<template>
+  <q-card class="gh-card" flat style="width: 100%; max-width: 500px">
+    <div class="gh-card__header">
+      <q-icon :name="ionHelpCircle" size="22px" />
+      <span>Reset Password</span>
+    </div>
 
-const props = defineProps({
+    <q-card-section>
+      <q-form @submit="submit">
+        <q-input
+          v-model="form.email"
+          type="email"
+          label="Email"
+          filled
+          lazy-rules
+          required
+          autofocus
+          :error="!!form.errors.email"
+          :error-message="form.errors.email"
+        />
+
+        <q-input
+          v-model="form.password"
+          type="password"
+          label="Password"
+          filled
+          lazy-rules
+          required
+          autocomplete="new-password"
+          :error="!!form.errors.password"
+          :error-message="form.errors.password"
+        />
+
+        <q-input
+          v-model="form.password_confirmation"
+          type="password"
+          label="Confirm Password"
+          filled
+          lazy-rules
+          required
+          autocomplete="new-password"
+          :error="!!form.errors.password_confirmation"
+          :error-message="form.errors.password_confirmation"
+        />
+
+        <div class="flex">
+          <q-space />
+          <q-btn
+            label="Reset Password"
+            type="submit"
+            color="primary"
+            text-color="black"
+            :loading="form.processing"
+          />
+        </div>
+      </q-form>
+    </q-card-section>
+  </q-card>
+</template>
+
+<script>
+import { useForm } from '@inertiajs/vue3'
+import { ionHelpCircle } from '@quasar/extras/ionicons-v6'
+import AuthLayout from '@/Layouts/AuthLayout.vue'
+
+export default {
+  layout: (h, page) => h(AuthLayout, { title: 'Reset Password' }, () => page),
+
+  setup() {
+    return {
+      ionHelpCircle,
+    }
+  },
+
+  props: {
     email: String,
     token: String,
-});
+  },
 
-const form = useForm({
-    token: props.token,
-    email: props.email,
-    password: '',
-    password_confirmation: '',
-});
+  data() {
+    return {
+      form: useForm({
+        token: this.token,
+        email: this.email,
+        password: '',
+        password_confirmation: '',
+      }),
+    }
+  },
 
-const submit = () => {
-    form.post(route('password.update'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
+  methods: {
+    submit() {
+      this.form.post(route('password.update'), {
+        onFinish: () => this.form.reset('password', 'password_confirmation'),
+      })
+    },
+  },
+}
 </script>
-
-<template>
-    <Head title="Reset Password" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Reset Password
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
-</template>
