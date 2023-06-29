@@ -53,8 +53,8 @@ const closeModal = () => {
       </div>
 
       <!-- Other Browser Sessions -->
-      <div v-if="sessions.length > 0" class="q-mt-md space-y-6">
-        <div v-for="(session, i) in sessions" :key="i" class="flex items-center">
+      <div v-if="sessions.length > 0" class="q-mt-md">
+        <div v-for="(session, i) in sessions" :key="i" class="flex items-center q-my-sm">
           <div>
             <svg
               v-if="session.agent.is_desktop"
@@ -92,7 +92,7 @@ const closeModal = () => {
           </div>
 
           <div class="q-ml-md">
-            <div class="">
+            <div>
               {{ session.agent.platform ? session.agent.platform : 'Unknown' }} -
               {{ session.agent.browser ? session.agent.browser : 'Unknown' }}
             </div>
