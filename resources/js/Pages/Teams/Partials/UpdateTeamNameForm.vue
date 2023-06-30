@@ -1,80 +1,78 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
-import ActionMessage from '@/Components/Jetstream/ActionMessage.vue';
-import FormSection from '@/Components/Jetstream/FormSection.vue';
-import InputError from '@/Components/Jetstream/InputError.vue';
-import InputLabel from '@/Components/Jetstream/InputLabel.vue';
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
-import TextInput from '@/Components/Jetstream/TextInput.vue';
+import { useForm } from '@inertiajs/vue3'
+import ActionMessage from '@/Components/Jetstream/ActionMessage.vue'
 
 const props = defineProps({
-    team: Object,
-    permissions: Object,
-});
+  team: Object,
+  permissions: Object,
+})
 
 const form = useForm({
-    name: props.team.name,
-});
+  name: props.team.name,
+})
 
 const updateTeamName = () => {
-    form.put(route('teams.update', props.team), {
-        errorBag: 'updateTeamName',
-        preserveScroll: true,
-    });
-};
+  form.put(route('teams.update', props.team), {
+    errorBag: 'updateTeamName',
+    preserveScroll: true,
+  })
+}
 </script>
 
 <template>
-    <FormSection @submitted="updateTeamName">
-        <template #title>
-            Team Name
-        </template>
+  <div class="row q-col-gutter-sm">
+    <div class="col-12 col-md-4">
+      <h3 class="q-mb-sm text-h6">Team Name</h3>
+      <div class="q-mb-md">The team's name and owner information.</div>
+    </div>
+    <div class="col-12 col-md-8">
+      <q-card flat class="q-pa-sm">
+        <q-card-section>
+          <q-form @submit="updateTeamName">
+            <div class="q-mb-md text-weight-medium text-body1">Team Owner</div>
 
-        <template #description>
-            The team's name and owner information.
-        </template>
+            <div class="flex items-center q-mt-sm q-mb-md">
+              <img
+                style="width: 50px; border-radius: 50%"
+                :src="team.owner.profile_photo_url"
+                :alt="team.owner.name"
+              />
 
-        <template #form>
-            <!-- Team Owner Information -->
-            <div class="col-span-6">
-                <InputLabel value="Team Owner" />
-
-                <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
-
-                    <div class="ml-4 leading-tight">
-                        <div>{{ team.owner.name }}</div>
-                        <div class="text-gray-700 text-sm">
-                            {{ team.owner.email }}
-                        </div>
-                    </div>
+              <div class="q-ml-md">
+                <div>{{ team.owner.name }}</div>
+                <div class="text-grey-6 text-sm">
+                  {{ team.owner.email }}
                 </div>
+              </div>
             </div>
 
-            <!-- Team Name -->
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Team Name" />
+            <q-input
+              v-model="form.name"
+              class="q-mb-sm"
+              type="text"
+              label="Team Name"
+              filled
+              required
+              hide-bottom-space
+              :disabled="!permissions.canUpdateTeam"
+              :error="!!form.errors.name"
+              :error-message="form.errors.name"
+            />
 
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateTeam"
-                />
-
-                <InputError :message="form.errors.name" class="mt-2" />
+            <div v-if="permissions.canUpdateTeam" class="flex items-center q-mt-md">
+              <q-space />
+              <ActionMessage :on="form.recentlySuccessful" class="q-mr-sm"> Saved. </ActionMessage>
+              <q-btn
+                label="Save"
+                type="submit"
+                color="primary"
+                text-color="black"
+                :loading="form.processing"
+              />
             </div>
-        </template>
-
-        <template v-if="permissions.canUpdateTeam" #actions>
-            <ActionMessage :on="form.recentlySuccessful" class="mr-3">
-                Saved.
-            </ActionMessage>
-
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
-            </PrimaryButton>
-        </template>
-    </FormSection>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 </template>

@@ -2,18 +2,6 @@
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import ActionMessage from '@/Components/Jetstream/ActionMessage.vue'
-import ActionSection from '@/Components/Jetstream/ActionSection.vue'
-import Checkbox from '@/Components/Jetstream/Checkbox.vue'
-import ConfirmationModal from '@/Components/Jetstream/ConfirmationModal.vue'
-import DangerButton from '@/Components/Jetstream/DangerButton.vue'
-import DialogModal from '@/Components/Jetstream/DialogModal.vue'
-import FormSection from '@/Components/Jetstream/FormSection.vue'
-import InputError from '@/Components/Jetstream/InputError.vue'
-import InputLabel from '@/Components/Jetstream/InputLabel.vue'
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue'
-import SecondaryButton from '@/Components/Jetstream/SecondaryButton.vue'
-import SectionBorder from '@/Components/Jetstream/SectionBorder.vue'
-import TextInput from '@/Components/Jetstream/TextInput.vue'
 
 const props = defineProps({
   tokens: Array,
@@ -100,7 +88,7 @@ const deleteApiToken = () => {
               />
 
               <div v-if="availablePermissions.length > 0">
-                <div class="text-body1">Permissions</div>
+                <div class="text-body1 q-mb-md">Permissions</div>
 
                 <div v-for="permission in availablePermissions" :key="permission">
                   <label class="flex items-center">
@@ -131,8 +119,6 @@ const deleteApiToken = () => {
         </q-card>
       </div>
     </div>
-
-    <!-- not done below here -->
 
     <div v-if="tokens.length > 0" class="q-mt-lg">
       <!-- Manage API Tokens -->

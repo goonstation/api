@@ -1,75 +1,79 @@
 <script setup>
-import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
-import ActionSection from '@/Components/Jetstream/ActionSection.vue';
-import ConfirmationModal from '@/Components/Jetstream/ConfirmationModal.vue';
-import DangerButton from '@/Components/Jetstream/DangerButton.vue';
-import SecondaryButton from '@/Components/Jetstream/SecondaryButton.vue';
+import { ref } from 'vue'
+import { useForm } from '@inertiajs/vue3'
+import ActionSection from '@/Components/Jetstream/ActionSection.vue'
+import ConfirmationModal from '@/Components/Jetstream/ConfirmationModal.vue'
+import DangerButton from '@/Components/Jetstream/DangerButton.vue'
+import SecondaryButton from '@/Components/Jetstream/SecondaryButton.vue'
 
 const props = defineProps({
-    team: Object,
-});
+  team: Object,
+})
 
-const confirmingTeamDeletion = ref(false);
-const form = useForm({});
+const confirmingTeamDeletion = ref(false)
+const form = useForm({})
 
 const confirmTeamDeletion = () => {
-    confirmingTeamDeletion.value = true;
-};
+  confirmingTeamDeletion.value = true
+}
 
 const deleteTeam = () => {
-    form.delete(route('teams.destroy', props.team), {
-        errorBag: 'deleteTeam',
-    });
-};
+  form.delete(route('teams.destroy', props.team), {
+    errorBag: 'deleteTeam',
+  })
+}
 </script>
 
 <template>
-    <ActionSection>
-        <template #title>
-            Delete Team
-        </template>
+  <div class="row q-col-gutter-sm">
+    <div class="col-12 col-md-4">
+      <h3 class="q-mb-sm text-h6">Delete Team</h3>
+      <div class="q-mb-md">Permanently delete this team.</div>
+    </div>
+    <div class="col-12 col-md-8">
+      <q-card flat class="q-pa-sm">
+        <q-card-section>
+          <div>
+            Once a team is deleted, all of its resources and data will be permanently deleted.
+            Before deleting this team, please download any data or information regarding this team
+            that you wish to retain.
+          </div>
 
-        <template #description>
-            Permanently delete this team.
-        </template>
+          <q-btn
+            label="Delete Team"
+            type="button"
+            color="negative"
+            text-color="black"
+            class="q-mt-md"
+            @click="confirmTeamDeletion"
+          />
 
-        <template #content>
-            <div class="max-w-xl text-sm text-gray-600">
-                Once a team is deleted, all of its resources and data will be permanently deleted. Before deleting this team, please download any data or information regarding this team that you wish to retain.
-            </div>
+          <q-dialog v-model="confirmingTeamDeletion" @hide="confirmingTeamDeletion = false">
+            <q-card flat>
+              <q-card-section>
+                <div class="text-h6">Delete Team</div>
+                <div>
+                  Are you sure you want to delete this team? Once a team is deleted, all of its
+                  resources and data will be permanently deleted.
+                </div>
+              </q-card-section>
 
-            <div class="mt-5">
-                <DangerButton @click="confirmTeamDeletion">
-                    Delete Team
-                </DangerButton>
-            </div>
-
-            <!-- Delete Team Confirmation Modal -->
-            <ConfirmationModal :show="confirmingTeamDeletion" @close="confirmingTeamDeletion = false">
-                <template #title>
-                    Delete Team
-                </template>
-
-                <template #content>
-                    Are you sure you want to delete this team? Once a team is deleted, all of its resources and data will be permanently deleted.
-                </template>
-
-                <template #footer>
-                    <SecondaryButton @click="confirmingTeamDeletion = false">
-                        Cancel
-                    </SecondaryButton>
-
-                    <DangerButton
-                        class="ml-3"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        @click="deleteTeam"
-                    >
-                        Delete Team
-                    </DangerButton>
-                </template>
-            </ConfirmationModal>
-        </template>
-    </ActionSection>
+              <q-card-actions align="right">
+                <q-btn flat label="Cancel" @click="confirmingTeamDeletion = false" color="grey" />
+                <q-btn
+                  label="Delete Team"
+                  flat
+                  type="button"
+                  color="negative"
+                  class="q-ml-md"
+                  :loading="form.processing"
+                  @click="deleteTeam"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 </template>
