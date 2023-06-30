@@ -44,7 +44,7 @@ class PollsController extends Controller
         }
 
         $poll->total_answers = $totalAnswers;
-        $poll->winning_option_id = $winningOption->id;
+        $poll->winning_option_id = $winningOption ? $winningOption->id : $winningOption;
         return $poll;
     }
 
