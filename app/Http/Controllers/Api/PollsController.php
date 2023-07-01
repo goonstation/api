@@ -234,7 +234,8 @@ class PollsController extends Controller
 
         // Clear their previous pick if not multiple
         if (!$pollOption->poll->multiple_choice) {
-            $existingAnswers->first()->delete();
+            $existingAnswer = $existingAnswers->first();
+            if ($existingAnswer) $existingAnswer->delete();
         }
 
         $answer = new PollAnswer();
