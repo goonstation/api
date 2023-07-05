@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\BansController as AdminBansController;
 use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
+use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\EventsController;
@@ -86,12 +87,18 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
-        Route::get('/', 'index')->name('players.index');
-    });
+    Route::prefix('/admin')->group(function () {
+        Route::controller(AdminUsersController::class)->prefix('users')->group(function () {
+            Route::get('/', 'index')->name('admin.users.index');
+        });
 
-    Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
-        Route::get('/', 'index')->name('bans.index');
-        Route::get('/details', 'getDetails');
+        Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
+            Route::get('/', 'index')->name('admin.players.index');
+        });
+
+        Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
+            Route::get('/', 'index')->name('admin.bans.index');
+            Route::get('/details', 'getDetails');
+        });
     });
 });

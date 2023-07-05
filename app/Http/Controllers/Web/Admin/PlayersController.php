@@ -4,20 +4,17 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Player;
+use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PlayersController extends Controller
 {
+    use IndexableQuery;
+
     public function index(Request $request)
     {
-        $players = Player::filter($request->input('filters', []))
-            ->orderBy(
-                $request->input('sort_by', 'id'),
-                $request->input('descending', 'true') === 'true' ? 'desc' : 'asc'
-            )
-            ->withCount(['connections', 'participations'])
-            ->paginateFilter($request->input('per_page', 15));
+        $players = $this->indexQuery(Player::withCount(['connections', 'participations']), perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Players/Index', [

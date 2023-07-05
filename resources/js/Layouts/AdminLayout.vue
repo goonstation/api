@@ -16,12 +16,12 @@ const menuList = [
   },
   {
     label: 'Players',
-    href: '/players',
+    href: '/admin/players',
     separator: false,
   },
   {
     label: 'Bans',
-    href: '/bans',
+    href: '/admin/bans',
     separator: false,
   },
 ]
@@ -104,7 +104,7 @@ const logout = () => {
             </q-menu>
           </q-btn>
 
-          <q-btn round>
+          <q-btn round flat>
             <q-avatar>
               <img :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name" />
             </q-avatar>
@@ -123,6 +123,20 @@ const logout = () => {
                 </q-item>
 
                 <q-separator />
+
+                <template v-if="$page.props.user.is_admin">
+                  <q-item-label header>Admin Tools</q-item-label>
+
+                  <q-item
+                    clickable
+                    @click="router.visit(route('admin.users.index'))"
+                    v-close-popup
+                  >
+                    <q-item-section>Users</q-item-section>
+                  </q-item>
+
+                  <q-separator />
+                </template>
 
                 <q-item clickable @click="logout" v-close-popup>
                   <q-item-section>Log Out</q-item-section>

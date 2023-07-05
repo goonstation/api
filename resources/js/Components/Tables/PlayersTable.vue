@@ -1,7 +1,7 @@
 <template>
   <base-table
     v-bind="$attrs"
-    :fetch-route="fetchRoute"
+    :routes="routes"
     :columns="columns"
     loading-label=""
     hide-no-data
@@ -67,7 +67,7 @@ export default {
 
   data() {
     return {
-      fetchRoute: '/players/search',
+      routes: { fetch: '/players/search' },
       columns: [
         { name: 'ckey', label: 'Ckey', field: 'ckey', sortable: true },
         { name: 'key', label: 'Key', field: 'key', sortable: true },

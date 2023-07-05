@@ -1,7 +1,7 @@
 <template>
   <base-table
     v-bind="$attrs"
-    :fetch-route="fetchRoute"
+    :routes="routes"
     :columns="columns"
     :show-columns="['created_at']"
     :pagination="{ rowsPerPage: 30 }"
@@ -23,7 +23,7 @@ export default {
   components: { BaseTable, RoundsTableItem },
   data() {
     return {
-      fetchRoute: '/rounds',
+      routes: { fetch: '/rounds' },
       columns: [
         {
           name: 'id',

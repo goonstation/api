@@ -1,10 +1,12 @@
 <template>
   <base-table
     v-bind="$attrs"
-    :fetch-route="fetchRoute"
+    :routes="routes"
     :columns="columns"
     :hide-columns="['expires_at', 'deleted_at']"
+    :pagination="{ rowsPerPage: 30 }"
     dense
+    flat
   >
     <template v-slot:body="props">
       <q-tr
@@ -22,7 +24,7 @@
           >
             <span class="q-mr-xs">{{ col.value }}</span>
             <span>
-              <q-icon :name="props.expand ? 'keyboard_arrow_up' : 'keyboard_arrow_down'" />
+              <q-icon :name="props.expand ? ionCaretUp : ionCaretDown" />
             </span>
           </q-btn>
           <template v-else-if="col.name === 'status'">
@@ -48,8 +50,9 @@
 </template>
 
 <script>
+import { ionCaretDown, ionCaretUp } from '@quasar/extras/ionicons-v6'
 import BaseTable from '../BaseTable.vue'
-import BanDetailsTable from './Admin/BanDetailsTable.vue'
+import BanDetailsTable from './BanDetailsTable.vue'
 
 export default {
   components: {
@@ -57,9 +60,16 @@ export default {
     BanDetailsTable,
   },
 
+  setup() {
+    return {
+      ionCaretDown,
+      ionCaretUp,
+    }
+  },
+
   data() {
     return {
-      fetchRoute: '/admin/bans',
+      routes: { fetch: '/admin/bans' },
       columns: [
         {
           name: 'id',
@@ -75,9 +85,18 @@ export default {
           label: 'Server',
           field: 'server_id',
           sortable: true,
-          format: (val) => (val ? val : 'all'),
+          format: (val) => {
+            if (!val) return 'All'
+            return this.$formats.server(val)
+          },
+          filter: { type: 'selectservers' }
         },
-        { name: 'admin_ckey', label: 'Admin', field: (row) => row.game_admin.ckey, sortable: true },
+        {
+          name: 'admin_ckey',
+          label: 'Admin',
+          field: (row) => row.game_admin.name || row.game_admin.ckey,
+          sortable: true,
+        },
         {
           name: 'original_ban_ckey',
           label: 'Player',

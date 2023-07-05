@@ -10,9 +10,9 @@
   >
     <template v-slot:item="props">
       <div class="q-table__grid-item col-xs-12 col-sm-4 col-md-3 col-lg-2 relative-position">
-        <q-card class="bg-primary q-py-xs">
+        <q-card class="q-py-xs" flat bordered>
           <q-list>
-            <q-item v-for="col in props.cols" :key="col.name" class="text-black">
+            <q-item v-for="col in props.cols" :key="col.name">
               <q-item-section>
                 <q-item-label class="q-table__grid-item-title">{{ col.label }}</q-item-label>
                 <q-item-label class="q-table__grid-item-value">

@@ -220,7 +220,7 @@ class PlayersController extends Controller
                 '(SELECT COALESCE(SUM(seconds_played), 0) FROM player_playtime where players.id = player_playtime.player_id) AS time_played'
             )
             ->where('ckey', $data['ckey'])
-            ->first();
+            ->firstOrFail();
 
         return new PlayerStatsResource($stats);
     }

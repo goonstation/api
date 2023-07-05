@@ -2,12 +2,13 @@
 
 namespace App\ModelFilters;
 
+use App\ModelFilters\Common\HasRangeFilters;
 use App\ModelFilters\Common\HasTimestampFilters;
 use EloquentFilter\ModelFilter;
 
 class BanFilter extends ModelFilter
 {
-    use HasTimestampFilters;
+    use HasTimestampFilters, HasRangeFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter
@@ -22,31 +23,29 @@ class BanFilter extends ModelFilter
         return $this->where('server_id', $val);
     }
 
-    public function gameAdmin($val)
+    public function adminCkey($val)
     {
-        return $this->related('game_admins', function ($query) use ($val) {
-            return $query->whereLike('ckey', $val);
+        return $this->related('gameAdmin', function ($query) use ($val) {
+            return $query->where('name', 'ILIKE', '%'.$val.'%')
+                    ->orWhere('ckey', 'ILIKE', '%'.$val.'%');
         });
     }
 
     public function reason($val)
     {
-        return $this->whereLike('reason', $val);
+        return $this->where('reason', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function originalBanCkey($val)
+    {
+        return $this->related('originalBanDetail', function ($query) use ($val) {
+            return $query->where('ckey', 'ILIKE', '%'.$val.'%');
+        });
     }
 
     public function details($val)
     {
-        $val = explode(' ', $val);
-        $operator = count($val) === 1 ? 'between' : $val[0];
-        $amount = count($val) === 1 ? $val[0] : $val[1];
-
-        if ($operator === 'between') {
-            $amount = explode('-', $amount);
-
-            return $this->has('details', '>', $amount[0])->has('details', '<', $amount[1]);
-        }
-
-        return $this->has('details', $operator, $amount);
+        return $this->filterRangeRelationship('details', $val);
     }
 
     public function expiresAt($val)

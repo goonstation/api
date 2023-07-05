@@ -52,8 +52,8 @@ createInertiaApp({
         cssAddon: true
       })
       .use(route)
-      .use(formats)
       .use(helpers)
+      .use(formats)
       .use(globals)
       .use(VueApexCharts)
       .mount(el)

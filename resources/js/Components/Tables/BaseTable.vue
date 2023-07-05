@@ -104,6 +104,7 @@
 
     <template v-slot:header="props">
       <q-tr :props="props">
+        <q-th v-if="hasActions" />
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.label }}
         </q-th>
@@ -126,6 +127,39 @@
         :props="props"
         :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
       >
+        <q-td v-if="hasActions">
+          <q-btn-dropdown menu-self="top middle" flat dense>
+            <q-list dense>
+              <q-item
+                v-if="routes.view"
+                @click="router.visit(getRoute(routes.view))"
+                clickable
+                v-close-popup
+              >
+                <q-item-section avatar><q-icon :name="ionEye" /></q-item-section>
+                <q-item-section>View</q-item-section>
+              </q-item>
+              <q-item
+                v-if="routes.edit"
+                @click="router.visit(getRoute(routes.edit))"
+                clickable
+                v-close-popup
+              >
+                <q-item-section><q-icon :name="ionPencil" /></q-item-section>
+                <q-item-section>Edit</q-item-section>
+              </q-item>
+              <q-item
+                v-if="routes.delete"
+                @click="router.visit(getRoute(routes.delete))"
+                clickable
+                v-close-popup
+              >
+                <q-item-section><q-icon :name="ionTrash" /></q-item-section>
+                <q-item-section>Delete</q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </q-td>
         <q-td v-for="col in props.cols" :key="col.name" :props="props">
           <slot
             v-if="$slots[`cell-content-${col.name}`]"
@@ -164,6 +198,9 @@ import {
   ionClose,
   ionSwapVertical,
   ionAdd,
+  ionEye,
+  ionPencil,
+  ionTrash,
 } from '@quasar/extras/ionicons-v6'
 import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
 import GridHeaderFilter from './Partials/GridHeaderFilter.vue'
@@ -176,6 +213,9 @@ export default {
       ionClose,
       ionSwapVertical,
       ionAdd,
+      ionEye,
+      ionPencil,
+      ionTrash,
     }
   },
 
@@ -189,9 +229,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    fetchRoute: {
-      type: String,
-      default: '',
+    routes: {
+      type: Object,
+      default: () => ({}),
     },
     columns: {
       type: Array,
@@ -294,6 +334,18 @@ export default {
     gridTopHasContent() {
       return this.showGridFilters || (this.hasTimestamps && !this.noTimestampToggle)
     },
+
+    hasActions() {
+      let ret = false
+      const actionRoutes = ['view', 'edit', 'delete']
+      for (route in this.routes) {
+        if (actionRoutes.includes(route)) {
+          ret = true
+          break
+        }
+      }
+      return ret
+    },
   },
 
   created() {
@@ -318,7 +370,7 @@ export default {
 
   methods: {
     async fetchFromServer(page, fetchCount, sortBy, descending) {
-      return await axios.get(this.fetchRoute, {
+      return await axios.get(this.routes.fetch, {
         params: {
           page,
           per_page: fetchCount,
@@ -417,6 +469,10 @@ export default {
         this._pagination.descending = descending
       }
       this.$refs.tableRef.requestServerInteraction()
+    },
+
+    getRoute(route, row) {
+      return route.replace('_id', row.id)
     },
   },
 

@@ -1,7 +1,7 @@
 <template>
   <base-table
     v-bind="$attrs"
-    :fetch-route="fetchRoute"
+    :routes="routes"
     :columns="columns"
     :pagination="{ rowsPerPage: 10, sortBy: 'value' }"
     flat
@@ -93,7 +93,7 @@ export default {
   components: { BaseTable },
   data() {
     return {
-      fetchRoute: '/players/highscores',
+      routes: { fetch: '/players/highscores' },
       columns: [
         {
           name: 'position',

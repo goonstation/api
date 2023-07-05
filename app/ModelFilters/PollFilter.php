@@ -52,4 +52,17 @@ class PollFilter extends ModelFilter
                 ->where('expires_at', '<', Carbon::now()->toDateTimeString());
         }
     }
+
+    public function servers($val)
+    {
+        if (is_null($val)) {
+            return $this->whereNull('servers');
+        } else if (is_array($val)) {
+            $q = $this;
+            foreach ($val as $server) {
+                $q = $q->orWhereJsonContains('servers', $server);
+            }
+            return $q;
+        }
+    }
 }

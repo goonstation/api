@@ -5,22 +5,21 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ban;
 use App\Models\BanDetail;
+use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BansController extends Controller
 {
+    use IndexableQuery;
+
     public function index(Request $request)
     {
-        $bans = Ban::withTrashed()
-            ->with(['originalBanDetail', 'gameAdmin'])
-            ->filter($request->input('filters', []))
-            ->orderBy(
-                $request->input('sort_by', 'id'),
-                $request->input('descending', 'true') === 'true' ? 'desc' : 'asc'
-            )
-            ->withCount(['details'])
-            ->paginateFilter($request->input('per_page', 15));
+        $bans = $this->indexQuery(
+            Ban::withTrashed()
+                ->withCount(['details'])
+                ->with(['originalBanDetail', 'gameAdmin']
+        ), perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Bans/Index', [

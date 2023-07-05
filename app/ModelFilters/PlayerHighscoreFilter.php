@@ -21,8 +21,8 @@ class PlayerHighscoreFilter extends ModelFilter
     public function ckey($val)
     {
         return $this->related('player', function ($query) use ($val) {
-            return $query->where('ckey', 'LIKE', '%'.$val.'%')
-                ->orWhere('key', 'LIKE', '%'.$val.'%');
+            return $query->where('ckey', 'ILIKE', '%'.$val.'%')
+                ->orWhere('key', 'ILIKE', '%'.$val.'%');
         });
     }
 

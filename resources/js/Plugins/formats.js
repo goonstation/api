@@ -35,6 +35,9 @@ export default {
           style: 'currency',
           currency: 'USD'
         }).format(val)
+      },
+      server: (val) => {
+        return app.config.globalProperties.$helpers.serverIdToFriendlyName(val)
       }
     }
   },

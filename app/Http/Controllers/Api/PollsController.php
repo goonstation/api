@@ -76,6 +76,26 @@ class PollsController extends Controller
     }
 
     /**
+     * Show
+     */
+    public function show(int $poll)
+    {
+        $poll = Poll::with([
+            'options' => function ($query) {
+                $query->withCount('answers')
+                    ->with(['answers' => function ($q) {
+                        $q->select('poll_option_id', 'player_id');
+                    }]);
+            }
+            ])
+            ->where('id', $poll)
+            ->firstOrFail();
+
+        $poll = $this->populatePollResults($poll);
+        return PollResource::make($poll);
+    }
+
+    /**
      * Add
      */
     public function store(Request $request)
@@ -86,7 +106,9 @@ class PollsController extends Controller
             'multiple_choice' => 'nullable|boolean',
             'expires_at' => 'nullable|date',
             'options' => 'required|array',
-            'options.*' => 'sometimes|required'
+            'options.*' => 'sometimes|required',
+            'servers' => 'nullable|array',
+            'servers.*' => 'sometimes|required|string'
         ]);
 
         $gameAdmin = null;
@@ -99,6 +121,7 @@ class PollsController extends Controller
         $poll->question = $data['question'];
         $poll->multiple_choice = isset($data['multiple_choice']) ? $data['multiple_choice'] : false;
         $poll->expires_at = isset($data['expires_at']) ? $data['expires_at'] : null;
+        $poll->servers = isset($data['servers']) ? json_encode($data['servers']) : null;
         $poll->save();
 
         foreach ($data['options'] as $key => $option) {
@@ -118,7 +141,9 @@ class PollsController extends Controller
     {
         $data = $request->validate([
             'question' => 'nullable|string',
-            'expires_at' => 'nullable|date'
+            'expires_at' => 'nullable|date',
+            'servers' => 'nullable|array',
+            'servers.*' => 'sometimes|required|string'
         ]);
 
         if (array_key_exists('question', $data)) {
@@ -126,6 +151,9 @@ class PollsController extends Controller
         }
         if (array_key_exists('expires_at', $data)) {
             $poll->expires_at = $data['expires_at'];
+        }
+        if (array_key_exists('servers', $data)) {
+            $poll->servers = is_null($data['servers']) ? null : json_encode($data['servers']);
         }
         $poll->save();
 
@@ -139,26 +167,6 @@ class PollsController extends Controller
     {
         $poll->delete();
         return ['message' => 'Poll removed'];
-    }
-
-    /**
-     * Results
-     */
-    public function results(int $poll)
-    {
-        $poll = Poll::with([
-            'options' => function ($query) {
-                $query->withCount('answers')
-                    ->with(['answers' => function ($q) {
-                        $q->select('poll_option_id', 'player_id');
-                    }]);
-            }
-            ])
-            ->where('id', $poll)
-            ->first();
-
-        $poll = $this->populatePollResults($poll);
-        return PollResource::make($poll);
     }
 
     /**

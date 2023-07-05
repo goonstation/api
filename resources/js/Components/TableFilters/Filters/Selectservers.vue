@@ -8,7 +8,7 @@
     square
     filled
     dense
-    clearable
+    :clearable="!!model"
   />
 </template>
 
@@ -28,6 +28,7 @@ export default {
 
     options() {
       return [
+        { value: null, label: 'All' },
         { value: 'main1', label: this.$helpers.serverIdToFriendlyName('main1') },
         { value: 'main2', label: this.$helpers.serverIdToFriendlyName('main2') },
         { value: 'main3', label: this.$helpers.serverIdToFriendlyName('main3') },
