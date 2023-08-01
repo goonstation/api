@@ -125,7 +125,11 @@
     <template v-slot:body="props">
       <q-tr
         :props="props"
+        :class="{'row--clickable': hasView}"
         :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
+        :tabindex="hasView ? 0 : -1"
+        @click="onRowClick(props.row)"
+        @keyup.enter="onRowClick(props.row)"
       >
         <q-td v-if="hasActions">
           <q-btn-dropdown menu-self="top middle" flat dense>
@@ -187,9 +191,14 @@
 :deep(.q-table__top) {
   padding: 0 4px;
 }
+
+.row--clickable {
+  cursor: pointer;
+}
 </style>
 
 <script>
+import { router } from '@inertiajs/vue3'
 import { merge, isEmpty } from 'lodash'
 import axios from 'axios'
 import {
@@ -208,6 +217,7 @@ import GridHeaderFilter from './Partials/GridHeaderFilter.vue'
 export default {
   setup() {
     return {
+      router,
       ionCalendar,
       ionCheckmark,
       ionClose,
@@ -337,7 +347,7 @@ export default {
 
     hasActions() {
       let ret = false
-      const actionRoutes = ['view', 'edit', 'delete']
+      const actionRoutes = ['edit', 'delete']
       for (route in this.routes) {
         if (actionRoutes.includes(route)) {
           ret = true
@@ -346,6 +356,10 @@ export default {
       }
       return ret
     },
+
+    hasView() {
+      return !!this.routes.view
+    }
   },
 
   created() {
@@ -474,6 +488,11 @@ export default {
     getRoute(route, row) {
       return route.replace('_id', row.id)
     },
+
+    onRowClick(row) {
+      if (!this.hasView) return
+      router.visit(this.getRoute(this.routes.view, row))
+    }
   },
 
   watch: {

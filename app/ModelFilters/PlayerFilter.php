@@ -3,11 +3,12 @@
 namespace App\ModelFilters;
 
 use App\ModelFilters\Common\HasRangeFilters;
+use App\ModelFilters\Common\HasTimestampFilters;
 use EloquentFilter\ModelFilter;
 
 class PlayerFilter extends ModelFilter
 {
-    use HasRangeFilters;
+    use HasRangeFilters, HasTimestampFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter

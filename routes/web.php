@@ -3,6 +3,8 @@
 use App\Http\Controllers\Web\Admin\BansController as AdminBansController;
 use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
 use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
+use App\Http\Controllers\Web\Admin\GameAdminRanksController as AdminGameAdminRanksController;
+use App\Http\Controllers\Web\Admin\GameAdminsController as AdminGameAdminsController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\EventsController;
@@ -27,10 +29,6 @@ use Inertia\Inertia;
 */
 
 if (!env('INCLUDE_FRONTEND')) return;
-
-Route::get('/test', function () {
-    return Inertia::render('Test');
-})->name('test');
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
@@ -92,8 +90,20 @@ Route::middleware([
             Route::get('/', 'index')->name('admin.users.index');
         });
 
+        Route::controller(AdminGameAdminRanksController::class)->prefix('game-admin-ranks')->group(function () {
+            Route::get('/', 'index')->name('admin.game-admin-ranks.index')->breadcrumb('Admin Ranks');
+            Route::get('/create', 'create')->name('admin.game-admin-ranks.create')->breadcrumb('', 'admin.game-admin-ranks.index');
+            Route::post('/', 'store')->name('admin.game-admin-ranks.store');
+        });
+
+        Route::controller(AdminGameAdminsController::class)->prefix('game-admins')->group(function () {
+            Route::get('/', 'index')->name('admin.game-admins.index');
+            Route::get('/{gameAdmin}', 'show')->name('admin.game-admins.show');
+        });
+
         Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
             Route::get('/', 'index')->name('admin.players.index');
+            Route::get('/{player}', 'show')->name('admin.players.show');
         });
 
         Route::controller(AdminBansController::class)->prefix('bans')->group(function () {

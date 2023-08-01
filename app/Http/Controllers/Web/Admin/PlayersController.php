@@ -24,4 +24,9 @@ class PlayersController extends Controller
             return $players;
         }
     }
+
+    public function show(Request $request, Player $player)
+    {
+        //
+    }
 }

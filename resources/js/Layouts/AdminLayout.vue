@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
 import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
+import PageBack from '@/Components/PageBack.vue'
 
 defineProps({
   title: String,
@@ -13,6 +14,16 @@ const menuList = [
     label: 'Test',
     href: '/test',
     separator: false,
+  },
+  {
+    label: 'Admin Ranks',
+    href: '/admin/game-admin-ranks',
+    separator: false,
+  },
+  {
+    label: 'Admins',
+    href: '/admin/game-admins',
+    separator: true,
   },
   {
     label: 'Players',
@@ -54,6 +65,7 @@ const logout = () => {
       <q-toolbar class="q-pt-md">
         <q-btn dense flat round :icon="ionMenu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
+          <page-back class="q-mr-sm" />
           <slot v-if="$slots.header" name="header" />
           <template v-else>{{ title }}</template>
         </q-toolbar-title>

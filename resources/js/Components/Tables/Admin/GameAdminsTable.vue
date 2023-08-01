@@ -4,8 +4,8 @@
     :routes="routes"
     :columns="columns"
     :pagination="{ rowsPerPage: 30 }"
-    dense
     flat
+    dense
   />
 </template>
 
@@ -17,8 +17,8 @@ export default {
   data() {
     return {
       routes: {
-        fetch: '/admin/players',
-        view: '/admin/players/_id'
+        fetch: '/admin/game-admins',
+        view: '/admin/game-admins/_id',
       },
       columns: [
         {
@@ -30,35 +30,8 @@ export default {
           format: this.$formats.number,
         },
         { name: 'ckey', label: 'Ckey', field: 'ckey', sortable: true },
-        { name: 'key', label: 'Key', field: 'key', sortable: true },
-        {
-          name: 'connections_count',
-          label: 'Connections',
-          field: 'connections_count',
-          sortable: true,
-          format: this.$formats.number,
-          filter: {
-            type: 'range',
-          },
-        },
-        {
-          name: 'participations_count',
-          label: 'Participations',
-          field: 'participations_count',
-          sortable: true,
-          format: this.$formats.number,
-          filter: {
-            type: 'range',
-          },
-        },
-        {
-          name: 'byond_version',
-          label: 'Byond Version',
-          field: (row) => {
-            if (!row.byond_major || !row.byond_minor) return ''
-            return `${row.byond_major}.${row.byond_minor}`
-          },
-        },
+        { name: 'name', label: 'Name', field: 'name', sortable: true },
+        { name: 'rank', label: 'Rank', field: 'rank', sortable: true, format: (val) => val.rank },
         {
           name: 'created_at',
           label: 'Created',

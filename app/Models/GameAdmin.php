@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GameAdmin extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function rank()
     {
-        return $this->hasOne(GameAdminRank::class, 'rank_id');
+        return $this->hasOne(GameAdminRank::class, 'id', 'rank_id');
     }
 
     /**
