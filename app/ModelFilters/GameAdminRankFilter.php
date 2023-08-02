@@ -19,6 +19,6 @@ class GameAdminRankFilter extends ModelFilter
 
     public function rank($val)
     {
-        return $this->whereLike('rank', $val);
+        return $this->where('rank', 'ILIKE', '%'.$val.'%');
     }
 }

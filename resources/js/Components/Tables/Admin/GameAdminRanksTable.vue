@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       routes: {
-        fetch: '/admin/game-admins-ranks',
+        fetch: '/admin/game-admin-ranks',
       },
       columns: [
         {
