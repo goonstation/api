@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\BansController;
-use App\Http\Controllers\Api\GameAdminsController;
 use App\Http\Controllers\Api\GameAdminRanksController;
+use App\Http\Controllers\Api\GameAdminsController;
 use App\Http\Controllers\Api\GameRoundsController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;

@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController as AdminBansController;
-use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
-use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController as AdminGameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController as AdminGameAdminsController;
+use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
+use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\EventsController;
@@ -28,7 +28,9 @@ use Inertia\Inertia;
 |
 */
 
-if (!env('INCLUDE_FRONTEND')) return;
+if (! env('INCLUDE_FRONTEND')) {
+    return;
+}
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');

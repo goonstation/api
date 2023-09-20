@@ -44,14 +44,14 @@ class JetstreamServiceProvider extends ServiceProvider
     protected function configurePermissions(): void
     {
         Jetstream::permissions([
-            'general'
+            'general',
         ]);
 
         Jetstream::defaultApiTokenPermissions(['general']);
 
         Jetstream::role('game-developer', 'Game Developer', [
             'game:develop',
-            'game:admin'
+            'game:admin',
         ])->description('Administrator users can perform any action.');
 
         Jetstream::role('game-admin', 'Game Admin', [

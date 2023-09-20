@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\GameAdminResource;
 use App\Models\GameAdmin;
 use App\Traits\IndexableQuery;
-use App\Http\Requests\IndexQueryRequest;
 use Illuminate\Http\Request;
 
 class GameAdminsController extends Controller
@@ -38,7 +38,7 @@ class GameAdminsController extends Controller
             'ckey' => 'required|string|unique:game_admins,ckey',
             'name' => 'nullable|string',
             'discord_id' => 'nullable|string',
-            'rank' => 'required|exists:game_admin_ranks,id'
+            'rank' => 'required|exists:game_admin_ranks,id',
         ]);
 
         $gameAdmin = new GameAdmin();
@@ -62,13 +62,21 @@ class GameAdminsController extends Controller
             'ckey' => 'nullable|string|unique:game_admins,ckey',
             'name' => 'nullable|string',
             'discord_id' => 'nullable|string',
-            'rank' => 'nullable|exists:game_admin_ranks'
+            'rank' => 'nullable|exists:game_admin_ranks',
         ]);
 
-        if (!empty($data['ckey'])) $gameAdmin->ckey = $data['ckey'];
-        if (!empty($data['name'])) $gameAdmin->name = $data['name'];
-        if (!empty($data['discord_id'])) $gameAdmin->discord_id = $data['discord_id'];
-        if (!empty($data['rank']) )$gameAdmin->rank_id = $data['rank'];
+        if (! empty($data['ckey'])) {
+            $gameAdmin->ckey = $data['ckey'];
+        }
+        if (! empty($data['name'])) {
+            $gameAdmin->name = $data['name'];
+        }
+        if (! empty($data['discord_id'])) {
+            $gameAdmin->discord_id = $data['discord_id'];
+        }
+        if (! empty($data['rank'])) {
+            $gameAdmin->rank_id = $data['rank'];
+        }
         $gameAdmin->save();
 
         return new GameAdminResource($gameAdmin);

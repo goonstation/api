@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\GameAdminRankResource;
 use App\Models\GameAdminRank;
 use App\Traits\IndexableQuery;
-use App\Http\Requests\IndexQueryRequest;
 use Illuminate\Http\Request;
 
 class GameAdminRanksController extends Controller
@@ -35,7 +35,7 @@ class GameAdminRanksController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'rank' => 'required|string'
+            'rank' => 'required|string',
         ]);
 
         $gameAdminRank = new GameAdminRank();

@@ -33,7 +33,7 @@ class GameAdminRanksController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'rank' => 'required|string'
+            'rank' => 'required|string',
         ]);
 
         $gameAdminRank = new GameAdminRank();

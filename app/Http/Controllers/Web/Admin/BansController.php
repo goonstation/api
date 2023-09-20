@@ -19,7 +19,7 @@ class BansController extends Controller
             Ban::withTrashed()
                 ->withCount(['details'])
                 ->with(['originalBanDetail', 'gameAdmin']
-        ), perPage: 30);
+                ), perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Bans/Index', [

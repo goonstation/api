@@ -18,6 +18,7 @@ class RemoteMusicController extends Controller
         $data = $this->validate($request, [
             /**
              * A full youtube video URL, or youtube video ID
+             *
              * @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
              */
             'video' => 'required',

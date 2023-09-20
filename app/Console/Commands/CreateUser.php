@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 
 class CreateUser extends Command
 {

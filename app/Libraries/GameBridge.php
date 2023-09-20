@@ -27,7 +27,9 @@ class GameBridge
     public static function status(string $server = 'dev')
     {
         $config = GameBridge::getConfig();
-        if (!$config['url']) return;
+        if (! $config['url']) {
+            return;
+        }
         $url = $config['url'];
         $response = Http::get("$url/status", ['server' => $server]);
 
@@ -50,7 +52,9 @@ class GameBridge
         }
 
         $config = GameBridge::getConfig();
-        if (!$config['url']) return;
+        if (! $config['url']) {
+            return;
+        }
         $url = $config['url'];
         $response = Http::withBasicAuth($config['user'], $config['pass'])
             ->get("$url/wiz/relay/$server?data=$data");

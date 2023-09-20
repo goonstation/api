@@ -31,7 +31,7 @@ class PollsController extends Controller
             $totalAnswers += $option->answers_count;
 
             // See what option is winning
-            if (!$winningOption || $winningOption->answers_count < $option->answers_count) {
+            if (! $winningOption || $winningOption->answers_count < $option->answers_count) {
                 $winningOption = $option;
             }
 
@@ -45,6 +45,7 @@ class PollsController extends Controller
 
         $poll->total_answers = $totalAnswers;
         $poll->winning_option_id = $winningOption ? $winningOption->id : $winningOption;
+
         return $poll;
     }
 
@@ -65,7 +66,7 @@ class PollsController extends Controller
                         ->with(['answers' => function ($q) {
                             $q->select('poll_option_id', 'player_id');
                         }]);
-                }
+                },
             ])
         );
 
@@ -90,12 +91,13 @@ class PollsController extends Controller
                     ->with(['answers' => function ($q) {
                         $q->select('poll_option_id', 'player_id');
                     }]);
-            }
-            ])
+            },
+        ])
             ->where('id', $poll)
             ->firstOrFail();
 
         $poll = $this->populatePollResults($poll);
+
         return PollResource::make($poll);
     }
 
@@ -114,7 +116,7 @@ class PollsController extends Controller
             'options' => 'required|array',
             'options.*' => 'sometimes|required',
             'servers' => 'nullable|array',
-            'servers.*' => 'sometimes|required|string'
+            'servers.*' => 'sometimes|required|string',
         ]);
 
         $gameAdmin = null;
@@ -151,7 +153,7 @@ class PollsController extends Controller
             'question' => 'nullable|string',
             'expires_at' => 'nullable|date',
             'servers' => 'nullable|array',
-            'servers.*' => 'sometimes|required|string'
+            'servers.*' => 'sometimes|required|string',
         ]);
 
         if (array_key_exists('question', $data)) {
@@ -176,6 +178,7 @@ class PollsController extends Controller
     public function destroy(Poll $poll)
     {
         $poll->delete();
+
         return ['message' => 'Poll removed'];
     }
 
@@ -187,7 +190,7 @@ class PollsController extends Controller
     public function addOption(Request $request, Poll $poll)
     {
         $data = $request->validate([
-            'option' => 'required'
+            'option' => 'required',
         ]);
 
         $currentOptionCount = PollOption::where('poll_id', $poll->id)->count();
@@ -210,7 +213,7 @@ class PollsController extends Controller
     {
         $data = $request->validate([
             'option' => 'required',
-            'position' => 'nullable|numeric'
+            'position' => 'nullable|numeric',
         ]);
 
         $pollOption->option = $data['option'];
@@ -228,6 +231,7 @@ class PollsController extends Controller
     public function destroyOption(PollOption $pollOption)
     {
         $pollOption->delete();
+
         return ['message' => 'Poll option removed'];
     }
 
@@ -239,7 +243,7 @@ class PollsController extends Controller
     public function pickOption(Request $request, PollOption $pollOption)
     {
         $data = $request->validate([
-            'player_id' => 'required|exists:players,id'
+            'player_id' => 'required|exists:players,id',
         ]);
 
         // Check if poll is expired
@@ -259,9 +263,11 @@ class PollsController extends Controller
         }
 
         // Clear their previous pick if not multiple
-        if (!$pollOption->poll->multiple_choice) {
+        if (! $pollOption->poll->multiple_choice) {
             $existingAnswer = $existingAnswers->first();
-            if ($existingAnswer) $existingAnswer->delete();
+            if ($existingAnswer) {
+                $existingAnswer->delete();
+            }
         }
 
         $answer = new PollAnswer();
@@ -280,7 +286,7 @@ class PollsController extends Controller
     public function unpickOption(Request $request, PollOption $pollOption)
     {
         $data = $request->validate([
-            'player_id' => 'required|exists:players,id'
+            'player_id' => 'required|exists:players,id',
         ]);
 
         $existingAnswers = PollAnswer::where('player_id', $data['player_id'])
