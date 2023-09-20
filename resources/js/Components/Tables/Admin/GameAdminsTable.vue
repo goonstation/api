@@ -31,7 +31,14 @@ export default {
         },
         { name: 'ckey', label: 'Ckey', field: 'ckey', sortable: true },
         { name: 'name', label: 'Name', field: 'name', sortable: true },
-        { name: 'rank', label: 'Rank', field: 'rank', sortable: true, format: (val) => val.rank },
+        {
+          name: 'rank',
+          label: 'Rank',
+          field: 'rank',
+          sortable: true,
+          format: (val) => val.rank,
+          filter: { type: 'gameadminranks' },
+        },
         {
           name: 'created_at',
           label: 'Created',

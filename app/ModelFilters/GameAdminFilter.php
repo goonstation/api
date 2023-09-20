@@ -29,6 +29,6 @@ class GameAdminFilter extends ModelFilter
 
     public function rank($val)
     {
-        return $this->whereRelation('rank', 'rank', '=', $val);
+        return $this->where('rank_id', $val);
     }
 }

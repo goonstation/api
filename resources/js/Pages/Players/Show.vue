@@ -154,13 +154,13 @@ import { getHsla } from 'pastel-color'
 import dayjs from 'dayjs'
 import { ionStarHalfOutline } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import PlayerConnectionsOverTime from '@/Components/Charts/PlayerConnectionsOverTime.vue'
+// import PlayerConnectionsOverTime from '@/Components/Charts/PlayerConnectionsOverTime.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Player' }, () => page),
 
   components: {
-    PlayerConnectionsOverTime,
+    // PlayerConnectionsOverTime,
   },
 
   setup() {

@@ -1,5 +1,5 @@
 <template>
-  <component :is="filterComponent" v-bind="$attrs" />
+  <component :is="filterComponent" v-bind="$attrs" class="gh-select--denser" square filled dense />
 </template>
 
 <script>
@@ -28,7 +28,7 @@ export default {
   computed: {
     filterComponent() {
       return upperFirst(this.filterType.toLowerCase())
-    }
+    },
   },
 }
 </script>

@@ -110,6 +110,7 @@
         </q-th>
       </q-tr>
       <q-tr no-hover>
+        <q-th v-if="hasActions" />
         <q-th v-for="col in props.cols" :key="col.name">
           <table-filter
             v-if="col.filterable !== false"
@@ -128,15 +129,13 @@
         :class="{'row--clickable': hasView}"
         :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
         :tabindex="hasView ? 0 : -1"
-        @click="onRowClick(props.row)"
-        @keyup.enter="onRowClick(props.row)"
       >
         <q-td v-if="hasActions">
           <q-btn-dropdown menu-self="top middle" flat dense>
             <q-list dense>
               <q-item
                 v-if="routes.view"
-                @click="router.visit(getRoute(routes.view))"
+                @click="router.visit(getRoute(routes.view, props.row))"
                 clickable
                 v-close-popup
               >
@@ -145,7 +144,7 @@
               </q-item>
               <q-item
                 v-if="routes.edit"
-                @click="router.visit(getRoute(routes.edit))"
+                @click="router.visit(getRoute(routes.edit, props.row))"
                 clickable
                 v-close-popup
               >
@@ -154,7 +153,7 @@
               </q-item>
               <q-item
                 v-if="routes.delete"
-                @click="router.visit(getRoute(routes.delete))"
+                @click="router.visit(getRoute(routes.delete, props.row))"
                 clickable
                 v-close-popup
               >
@@ -347,7 +346,7 @@ export default {
 
     hasActions() {
       let ret = false
-      const actionRoutes = ['edit', 'delete']
+      const actionRoutes = ['fetch', 'edit', 'delete']
       for (route in this.routes) {
         if (actionRoutes.includes(route)) {
           ret = true
