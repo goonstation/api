@@ -18,6 +18,8 @@ class PlayerMetadataController extends Controller
     /**
      * List
      *
+     * List paginated and filtered player meta data
+     *
      * @return AnonymousResourceCollection<LengthAwarePaginator<PlayerMetadataResource>>
      */
     public function index(IndexQueryRequest $request)
@@ -29,6 +31,8 @@ class PlayerMetadataController extends Controller
 
     /**
      * Add
+     *
+     * Add player metadata
      */
     public function store(Request $request)
     {
@@ -47,6 +51,8 @@ class PlayerMetadataController extends Controller
 
     /**
      * Delete from player
+     *
+     * Delete all metadata associated with a specific player
      */
     public function destroyByPlayer(string $ckey)
     {
@@ -59,6 +65,8 @@ class PlayerMetadataController extends Controller
 
     /**
      * Delete
+     *
+     * Delete a specific item of metadata
      */
     public function destroyByData(string $data)
     {

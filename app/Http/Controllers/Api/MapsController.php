@@ -11,14 +11,15 @@ use ZipArchive;
 class MapsController extends Controller
 {
     /**
-     * Build
+     * Generate
      *
      * Dispatches a job to process map screenshots and upload them to the web map viewer
      */
-    public function build(Request $request)
+    public function generate(Request $request)
     {
         $data = $this->validate($request, [
             'map' => 'required',
+            /** A zip file containing map screenshot images */
             'images' => 'required|file|mimes:zip',
         ]);
 

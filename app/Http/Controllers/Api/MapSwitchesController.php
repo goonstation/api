@@ -12,6 +12,8 @@ class MapSwitchesController extends Controller
 {
     /**
      * Add
+     *
+     * Trigger a map switch for a given server
      */
     public function store(Request $request)
     {

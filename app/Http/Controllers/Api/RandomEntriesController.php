@@ -14,6 +14,8 @@ use Illuminate\Validation\Rule;
 class RandomEntriesController extends Controller
 {
     /**
+     * List
+     *
      * Get a list of random entries by type
      *
      * @return array{

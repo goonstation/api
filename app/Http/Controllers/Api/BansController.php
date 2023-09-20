@@ -27,6 +27,8 @@ class BansController extends Controller
     /**
      * List
      *
+     * List filtered and paginated bans
+     *
      * @return AnonymousResourceCollection<LengthAwarePaginator<BanResource>>
      */
     public function index(IndexQueryRequest $request)
@@ -39,6 +41,8 @@ class BansController extends Controller
 
     /**
      * Check
+     *
+     * Check if a ban exists for given player data
      */
     public function check(Request $request)
     {
@@ -85,6 +89,8 @@ class BansController extends Controller
 
     /**
      * Add
+     *
+     * Add a ban for given player data
      */
     public function store(BanRequest $request)
     {
@@ -138,6 +144,8 @@ class BansController extends Controller
 
     /**
      * Update
+     *
+     * Update an existing ban
      */
     public function update(BanRequest $request, Ban $ban)
     {
@@ -201,6 +209,8 @@ class BansController extends Controller
 
     /**
      * Delete
+     *
+     * Delete an existing ban
      */
     public function destroy(Ban $ban)
     {
@@ -211,6 +221,8 @@ class BansController extends Controller
 
     /**
      * Add ban details
+     *
+     * Add new player details to an existing ban. This should be used when an evasion attempt is detected.
      */
     public function addDetails(Request $request, Ban $ban)
     {
@@ -230,7 +242,9 @@ class BansController extends Controller
     }
 
     /**
-     * Remove ban detail
+     * Remove ban details
+     *
+     * Remove ban details associated with a ban
      */
     public function destroyDetail(BanDetail $banDetail)
     {

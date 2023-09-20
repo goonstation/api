@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f49f3cef11dcbfa46f7f69c33f2fa245",
+    "content-hash": "8801c6dee28f622b317f20da65ba758f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -307,22 +307,22 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.7.2",
+            "version": "v0.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "dc1971fde68105697f872b2fb9aacebd3b91cca4"
+                "reference": "aa05297338260de10cf03c314897b89371c9643d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/dc1971fde68105697f872b2fb9aacebd3b91cca4",
-                "reference": "dc1971fde68105697f872b2fb9aacebd3b91cca4",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/aa05297338260de10cf03c314897b89371c9643d",
+                "reference": "aa05297338260de10cf03c314897b89371c9643d",
                 "shasum": ""
             },
             "require": {
                 "illuminate/contracts": "^8.0.0|^9.0.0|^10.0.0",
                 "nikic/php-parser": "^4.0",
-                "php": "^7.4|^8.0|^8.1",
+                "php": "^8.1",
                 "phpstan/phpdoc-parser": "^1.0",
                 "spatie/laravel-package-tools": "^1.9.2"
             },
@@ -370,7 +370,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.7.2"
+                "source": "https://github.com/dedoc/scramble/tree/v0.8.3"
             },
             "funding": [
                 {
@@ -378,7 +378,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-20T08:34:36+00:00"
+            "time": "2023-08-16T20:36:37+00:00"
         },
         {
             "name": "dflydev/dot-access-data",

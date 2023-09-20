@@ -51,6 +51,8 @@ class PollsController extends Controller
     /**
      * List
      *
+     * List paginated and filtered polls
+     *
      * @return AnonymousResourceCollection<LengthAwarePaginator<PollResource>>
      */
     public function index(IndexQueryRequest $request)
@@ -77,6 +79,8 @@ class PollsController extends Controller
 
     /**
      * Show
+     *
+     * Get a specific poll
      */
     public function show(int $poll)
     {
@@ -97,6 +101,8 @@ class PollsController extends Controller
 
     /**
      * Add
+     *
+     * Add a new poll
      */
     public function store(Request $request)
     {
@@ -136,6 +142,8 @@ class PollsController extends Controller
 
     /**
      * Edit
+     *
+     * Edit an existing poll
      */
     public function update(Request $request, Poll $poll)
     {
@@ -162,6 +170,8 @@ class PollsController extends Controller
 
     /**
      * Delete
+     *
+     * Delete an existing poll
      */
     public function destroy(Poll $poll)
     {
@@ -171,6 +181,8 @@ class PollsController extends Controller
 
     /**
      * Add option
+     *
+     * Add a new option to an existing poll
      */
     public function addOption(Request $request, Poll $poll)
     {
@@ -191,6 +203,8 @@ class PollsController extends Controller
 
     /**
      * Update option
+     *
+     * Update an existing poll option
      */
     public function updateOption(Request $request, PollOption $pollOption)
     {
@@ -208,6 +222,8 @@ class PollsController extends Controller
 
     /**
      * Delete option
+     *
+     * Delete an existing poll option
      */
     public function destroyOption(PollOption $pollOption)
     {
@@ -217,6 +233,8 @@ class PollsController extends Controller
 
     /**
      * Pick option
+     *
+     * Register that a player picked a poll option
      */
     public function pickOption(Request $request, PollOption $pollOption)
     {
@@ -256,6 +274,8 @@ class PollsController extends Controller
 
     /**
      * Unpick option
+     *
+     * Register that a player removed their pick of a poll option
      */
     public function unpickOption(Request $request, PollOption $pollOption)
     {

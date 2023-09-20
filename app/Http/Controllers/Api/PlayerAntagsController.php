@@ -11,6 +11,8 @@ class PlayerAntagsController extends Controller
 {
     /**
      * Add
+     *
+     * Add a player antagonist for a given round
      */
     public function store(Request $request)
     {

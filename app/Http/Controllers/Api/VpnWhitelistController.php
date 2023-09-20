@@ -19,6 +19,8 @@ class VpnWhitelistController extends Controller
     /**
      * List
      *
+     * List paginated and filtered VPN whitelist rules
+     *
      * @return AnonymousResourceCollection<LengthAwarePaginator<VpnWhitelistResource>>
      */
     public function index(IndexQueryRequest $request)
@@ -30,6 +32,8 @@ class VpnWhitelistController extends Controller
 
     /**
      * Add
+     *
+     * Add a player into the whitelist. This will allow them to skip VPN checks.
      */
     public function store(Request $request)
     {
@@ -55,6 +59,8 @@ class VpnWhitelistController extends Controller
 
     /**
      * Delete
+     *
+     * Delete a whitelist entry
      */
     public function destroy(VpnWhitelist $vpnWhitelist)
     {

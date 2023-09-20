@@ -16,6 +16,7 @@ class PlayerStatsResource extends JsonResource
     public function toArray($request)
     {
         return [
+            /** @var int */
             'id' => $this->id,
             'ckey' => $this->ckey,
             'key' => $this->key,
@@ -24,10 +25,15 @@ class PlayerStatsResource extends JsonResource
             'byond_minor' => $this->byond_minor,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            /** @var int */
             'played' => $this->played,
+            /** @var int */
             'played_rp' => $this->played_rp,
+            /** @var int */
             'connected' => $this->connected,
+            /** @var int */
             'connected_rp' => $this->connected_rp,
+            /** @var int */
             'time_played' => $this->time_played,
             /** @var PlayerConnection */
             'latest_connection' => $this->latestConnection,

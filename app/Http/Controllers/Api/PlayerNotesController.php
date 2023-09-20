@@ -16,7 +16,9 @@ class PlayerNotesController extends Controller
     use IndexableQuery;
 
     /**
-     * Get list
+     * List
+     *
+     * List paginated and filtered player notes
      *
      * @return AnonymousResourceCollection<LengthAwarePaginator<PlayerNoteResource>>
      */
@@ -29,6 +31,8 @@ class PlayerNotesController extends Controller
 
     /**
      * Add
+     *
+     * Add a new player note
      */
     public function store(Request $request)
     {
@@ -64,6 +68,8 @@ class PlayerNotesController extends Controller
 
     /**
      * Update
+     *
+     * Update an existing player note
      */
     public function update(Request $request, PlayerNote $note)
     {
@@ -98,6 +104,8 @@ class PlayerNotesController extends Controller
 
     /**
      * Delete
+     *
+     * Delete an existing player note
      */
     public function destroy(PlayerNote $note)
     {

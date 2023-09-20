@@ -36,7 +36,9 @@ class PlayersController extends Controller
     }
 
     /**
-     * Add a login
+     * Login
+     *
+     * Register a login for a player with associated details
      */
     public function store(Request $request)
     {
@@ -78,7 +80,9 @@ class PlayersController extends Controller
     }
 
     /**
-     * Search for a player
+     * Search
+     *
+     * Search for a specific player
      *
      * One or multiple of either ckey, ip, or comp_id required
      */
@@ -88,6 +92,7 @@ class PlayersController extends Controller
             'ckey' => 'required_without_all:ip,comp_id|alpha_num',
             'ip' => 'required_without_all:ckey,comp_id|ipv4',
             'comp_id' => 'required_without_all:ckey,ip|integer',
+            /** When set, looks up player details by exact matches, rather than partial lookups */
             'exact' => 'nullable|boolean',
         ]);
 
@@ -172,7 +177,9 @@ class PlayersController extends Controller
     }
 
     /**
-     * Get player stats
+     * Stats
+     *
+     * Get various statistics associated with a player
      */
     public function stats(Request $request)
     {

@@ -12,6 +12,8 @@ class GameRoundsController extends Controller
 {
     /**
      * Add
+     *
+     * Start a new game round
      */
     public function store(Request $request)
     {
@@ -32,6 +34,8 @@ class GameRoundsController extends Controller
 
     /**
      * Update
+     *
+     * Update a game round. This should be used when game round data we care about is set after the start of the round.
      */
     public function update(Request $request, GameRound $gameRound)
     {
@@ -45,7 +49,9 @@ class GameRoundsController extends Controller
     }
 
     /**
-     * End a game round
+     * End
+     *
+     * End a game round.
      */
     public function endRound(Request $request, GameRound $gameRound)
     {

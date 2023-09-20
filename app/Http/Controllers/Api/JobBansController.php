@@ -20,6 +20,8 @@ class JobBansController extends Controller
     /**
      * List
      *
+     * List filtered and paginated job bans
+     *
      * @return AnonymousResourceCollection<LengthAwarePaginator<JobBanResource>>
      */
     public function index(IndexQueryRequest $request)
@@ -31,6 +33,8 @@ class JobBansController extends Controller
 
     /**
      * Check
+     *
+     * Check if a job ban exists for given player and server details
      */
     public function check(Request $request)
     {
@@ -48,6 +52,8 @@ class JobBansController extends Controller
 
     /**
      * Get for player
+     *
+     * Get all job bans for a given player and server
      */
     public function getForPlayer(Request $request)
     {
@@ -64,6 +70,8 @@ class JobBansController extends Controller
 
     /**
      * Add
+     *
+     * Add a new job ban
      */
     public function store(Request $request)
     {
@@ -107,6 +115,8 @@ class JobBansController extends Controller
 
     /**
      * Update
+     *
+     * Update an existing job ban
      */
     public function update(Request $request, JobBan $jobBan)
     {
@@ -158,6 +168,8 @@ class JobBansController extends Controller
 
     /**
      * Delete
+     *
+     * Delete an existing job ban
      */
     public function destroy(JobBan $jobBan)
     {

@@ -10,6 +10,8 @@ class PlayerPlaytimeController extends Controller
 {
     /**
      * Add playtime in bulk
+     *
+     * Record playtime for a list of players
      */
     public function storeBulk(Request $request)
     {

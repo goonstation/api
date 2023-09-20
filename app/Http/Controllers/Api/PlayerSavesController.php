@@ -14,6 +14,8 @@ class PlayerSavesController extends Controller
 {
     /**
      * List data and saves
+     *
+     * List all data and saves for a player
      */
     public function index(Request $request)
     {
@@ -34,6 +36,8 @@ class PlayerSavesController extends Controller
 
     /**
      * Add data
+     *
+     * Add player data
      */
     public function storeData(Request $request)
     {
@@ -59,6 +63,8 @@ class PlayerSavesController extends Controller
 
     /**
      * Add save
+     *
+     * Add player save
      */
     public function storeFile(Request $request)
     {
@@ -93,11 +99,15 @@ class PlayerSavesController extends Controller
 
     /**
      * Add data in bulk
+     *
+     * Add multiple entries of player data
+     *
+     * TODO: Describe json object
      */
     public function storeDataBulk(Request $request)
     {
         $data = $request->validate([
-            'data' => 'required|string',
+            'data' => 'required|json',
         ]);
 
         $bulkData = json_decode($data['data']);
@@ -132,6 +142,8 @@ class PlayerSavesController extends Controller
 
     /**
      * Delete data
+     *
+     * Delete data for a player
      */
     public function destroyData(PlayerData $playerData)
     {
@@ -142,6 +154,8 @@ class PlayerSavesController extends Controller
 
     /**
      * Delete save
+     *
+     * Delete a save for a player
      */
     public function destroyFile(PlayerSave $playerSave)
     {

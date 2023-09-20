@@ -11,6 +11,8 @@ class PlayerParticipationsController extends Controller
 {
     /**
      * Add
+     *
+     * Add a player participation for a given round
      */
     public function store(Request $request)
     {

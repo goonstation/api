@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "dedoc/scramble": "^0.7.2",
+        "dedoc/scramble": "^0.8.3",
         "doctrine/dbal": "^3.6",
         "geoip2/geoip2": "~2.0",
         "glhd/gretel": "^1.7",

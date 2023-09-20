@@ -15,6 +15,8 @@ class VpnChecksController extends Controller
 
     /**
      * Check
+     *
+     * Check if a player is using a VPN
      */
     public function check(Request $request, string $ip)
     {
