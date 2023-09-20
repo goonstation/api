@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\BansController;
+use App\Http\Controllers\Api\GameAdminsController;
+use App\Http\Controllers\Api\GameAdminRanksController;
 use App\Http\Controllers\Api\GameRoundsController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
@@ -91,7 +93,7 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::delete('/{jobBan}', 'destroy');
     });
     Route::controller(MapsController::class)->prefix('maps')->group(function () {
-        Route::post('/build', 'build');
+        Route::post('/generate', 'generate');
     });
     Route::controller(MapSwitchesController::class)->prefix('map-switch')->group(function () {
         Route::post('/', 'store');
@@ -121,5 +123,17 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::delete('/option/{pollOption}', 'destroyOption');
         Route::post('/option/pick/{pollOption}', 'pickOption');
         Route::post('/option/unpick/{pollOption}', 'unpickOption');
+    });
+    Route::controller(GameAdminRanksController::class)->prefix('game-admin-ranks')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{gameAdminRank}', 'update');
+        Route::delete('/{gameAdminRank}', 'destroy');
+    });
+    Route::controller(GameAdminsController::class)->prefix('game-admins')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{gameAdmin}', 'update');
+        Route::delete('/{gameAdmin}', 'destroy');
     });
 });
