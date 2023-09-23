@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
+    /**
+     * Test
+     */
     public function index(Request $request)
     {
         return response()->json([
