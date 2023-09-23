@@ -7,6 +7,7 @@ use App\Models\GameAdmin;
 use App\Models\MapSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Http\Resources\MapSwitchResource;
 
 class MapSwitchesController extends Controller
 {
@@ -54,6 +55,7 @@ class MapSwitchesController extends Controller
 
         return [
             'data' => [
+                /** @var MapSwitchResource */
                 'map_switch' => $mapSwitch,
                 'status' => $res->status(),
             ],

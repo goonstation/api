@@ -8,6 +8,8 @@ use App\Http\Resources\GameAdminResource;
 use App\Models\GameAdmin;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class GameAdminsController extends Controller
 {

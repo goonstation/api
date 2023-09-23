@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\PlayerConnection;
+use App\Http\Resources\PlayerConnectionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlayerStatsResource extends JsonResource
@@ -35,7 +35,7 @@ class PlayerStatsResource extends JsonResource
             'connected_rp' => $this->connected_rp,
             /** @var int */
             'time_played' => $this->time_played,
-            /** @var PlayerConnection */
+            /** @var PlayerConnectionResource */
             'latest_connection' => $this->latestConnection,
         ];
     }
