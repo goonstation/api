@@ -14,6 +14,22 @@ class MapsController extends Controller
      * Generate
      *
      * Dispatches a job to process map screenshots and upload them to the web map viewer
+     *
+     * The uploaded zip file should contain images taken with the ingame Map-World verb.
+     * For a regular 300x300 map, this should be 100 images.
+     * The names of the individual image files should remain as what the Map-World verb names them.
+     * This route is intended for out-of-game usage only.
+     *
+     * Example:
+     *
+     * ```sh
+     * curl --request POST \
+     *   --url {base_url}/api/maps/generate \
+     *   --header 'Authorization: Bearer {bearer_token}' \
+     *   --header 'Content-Type: multipart/form-data' \
+     *   --form map=oshan \
+     *   --form 'images=@{full_path_to_file}\Oshan Laboratory, Abzu 2023-06-15 172448.zip'
+     * ```
      */
     public function generate(Request $request)
     {

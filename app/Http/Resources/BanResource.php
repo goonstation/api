@@ -2,10 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\BanDetail;
-use App\Models\GameRound;
+use App\Models\Ban;
+use App\Http\Resources\GameRoundResource;
+use App\Http\Resources\BanDetailResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Ban
+ */
 class BanResource extends JsonResource
 {
     /**
@@ -30,13 +34,13 @@ class BanResource extends JsonResource
             'game_admin' => $this->whenLoaded('gameAdmin', function () {
                 return $this->gameAdmin()->select('id', 'ckey', 'name')->first();
             }),
-            /** @var GameRound */
+            /** @var GameRoundResource */
             'game_round' => $this->whenLoaded('gameRound'),
             /** @var array{id: int, ban_id: int, ckey: string, comp_id: string, ip: string} */
             'original_ban_detail' => $this->whenLoaded('originalBanDetail', function () {
                 return $this->originalBanDetail()->select('id', 'ban_id', 'ckey', 'comp_id', 'ip')->first();
             }),
-            /** @var array<BanDetail> */
+            /** @var array<BanDetailResource> */
             'details' => $this->whenLoaded('details'),
         ];
     }

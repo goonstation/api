@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\GameAdminResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PollResource extends JsonResource
@@ -17,6 +18,7 @@ class PollResource extends JsonResource
         return [
             'id' => $this->id,
             'game_admin_id' => $this->game_admin_id,
+            /** @var GameAdminResource */
             'game_admin' => $this->gameAdmin,
             'question' => $this->question,
             'options' => PollOptionResource::collection($this->options),

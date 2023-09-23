@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\GameAdminRankResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GameAdminResource extends JsonResource
@@ -19,6 +20,7 @@ class GameAdminResource extends JsonResource
             'ckey' => $this->ckey,
             'name' => $this->name,
             'discord_id' => $this->discord_id,
+            /** @var GameAdminRankResource */
             'rank' => $this->rank,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
