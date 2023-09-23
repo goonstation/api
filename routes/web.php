@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
 use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
+use App\Http\Controllers\Web\DonateController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\HomeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TicketsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Middleware\EnsureUserIsGameAdmin;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +80,10 @@ Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
 });
 
+Route::controller(DonateController::class)->prefix('/donate')->group(function () {
+    Route::get('/', 'index')->name('donate.index');
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -87,7 +93,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::prefix('/admin')->group(function () {
+    Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
         Route::controller(AdminUsersController::class)->prefix('users')->group(function () {
             Route::get('/', 'index')->name('admin.users.index');
         });
@@ -114,3 +120,5 @@ Route::middleware([
         });
     });
 });
+
+require_once __DIR__ . '/jetstream.php';

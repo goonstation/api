@@ -1,13 +1,13 @@
 <template>
-  <q-card class="gh-card" flat style="width: 100%; max-width: 500px">
+  <q-card class="gh-card gh-card--small" flat bordered>
     <div class="gh-card__header">
-      <q-icon :name="ionLogIn" size="22px" />
+      <q-icon :name="ionLogIn" size="18px" />
       <span>Login</span>
     </div>
 
     <q-card-section>
-      <q-banner v-if="status" class="bg-positive text-dark q-mb-md" dense>
-        {{ status }}
+      <q-banner v-if="rateLimited" class="bg-negative text-dark q-mb-md" dense>
+        Too many requests. Please try again later.
       </q-banner>
 
       <q-form @submit="submit">
@@ -19,6 +19,7 @@
           lazy-rules
           required
           autofocus
+          dense
           :error="!!form.errors.email"
           :error-message="form.errors.email"
         />
@@ -31,16 +32,17 @@
           lazy-rules
           required
           autocomplete="current-password"
+          dense
           :error="!!form.errors.password"
           :error-message="form.errors.password"
         />
 
-        <div class="flex items-center q-mb-md">
+        <div class="flex items-center q-mb-sm">
           <q-toggle v-model="form.remember" label="Remember me" />
           <q-space />
-          <Link v-if="canResetPassword" :href="route('password.request')">
+          <!-- <Link v-if="canResetPassword" :href="route('password.request')">
             Forgot your password?
-          </Link>
+          </Link> -->
         </div>
 
         <div class="flex">
@@ -61,16 +63,8 @@
 <script>
 import { useForm } from '@inertiajs/vue3'
 import { ionLogIn } from '@quasar/extras/ionicons-v6'
-import AuthLayout from '@/Layouts/AuthLayout.vue'
 
 export default {
-  layout: (h, page) => h(AuthLayout, { title: 'Login' }, () => page),
-
-  props: {
-    canResetPassword: Boolean,
-    status: String,
-  },
-
   setup() {
     return {
       ionLogIn,
@@ -79,7 +73,7 @@ export default {
 
   data() {
     return {
-      url: null,
+      rateLimited: false,
       form: useForm({
         email: '',
         password: '',
@@ -88,22 +82,37 @@ export default {
     }
   },
 
-  created() {
-    const urlParams = new URLSearchParams(window.location.search)
-    const prev = urlParams.get('prev')
-    if (prev) this.url = route('login', { prev })
-    else this.url = route('login')
-  },
-
   methods: {
+    getError(errors, field) {
+      if (!errors) return null
+      if (errors[field] && errors[field].length) {
+        return errors[field][0]
+      }
+      return null
+    },
+
     submit() {
-      this.form
-        .transform((data) => ({
-          ...data,
+      this.form.processing = true
+      this.rateLimited = false
+      axios
+        .post(route('login'), {
+          email: this.form.email,
+          password: this.form.password,
           remember: this.form.remember ? 'on' : '',
-        }))
-        .post(this.url, {
-          onFinish: () => this.form.reset('password'),
+        })
+        .then(() => {
+          this.$emit('success')
+        })
+        .catch((error) => {
+          const errors = error.response.data.errors
+          this.form.setError('email', this.getError(errors, 'email'))
+          this.form.setError('password', this.getError(errors, 'password'))
+          if (error.response.status === 429) {
+            this.rateLimited = true
+          }
+        })
+        .finally(() => {
+          this.form.processing = false
         })
     },
   },

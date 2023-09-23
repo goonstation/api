@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from 'vue'
-import { Head, router } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
 import PageBack from '@/Components/PageBack.vue'
+
+const page = usePage()
+const user = computed(() => page.props.user)
 
 defineProps({
   title: String,
@@ -19,23 +22,34 @@ const menuList = [
     label: 'Admin Ranks',
     href: '/admin/game-admin-ranks',
     separator: false,
+    isGameAdmin: true,
   },
   {
     label: 'Admins',
     href: '/admin/game-admins',
     separator: true,
+    isGameAdmin: true,
   },
   {
     label: 'Players',
     href: '/admin/players',
     separator: false,
+    isGameAdmin: true,
   },
   {
     label: 'Bans',
     href: '/admin/bans',
     separator: false,
+    isGameAdmin: true,
   },
 ]
+
+const showMenuItem = (menuItem) => {
+  if (menuItem.isGameAdmin) {
+    return user.is_game_admin
+  }
+  return true
+}
 
 const switchToTeam = (team) => {
   router.put(
@@ -126,7 +140,7 @@ const logout = () => {
                   <q-item-section>Profile</q-item-section>
                 </q-item>
                 <q-item
-                  v-if="$page.props.jetstream.hasApiFeatures"
+                  v-if="$page.props.jetstream.hasApiFeatures && user.is_admin"
                   clickable
                   @click="router.visit(route('api-tokens.index'))"
                   v-close-popup
@@ -136,7 +150,7 @@ const logout = () => {
 
                 <q-separator />
 
-                <template v-if="$page.props.user.is_admin">
+                <template v-if="user.is_admin">
                   <q-item-label header>Admin Tools</q-item-label>
 
                   <q-item
@@ -171,17 +185,19 @@ const logout = () => {
             <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
           </a>
           <template v-for="(menuItem, index) in menuList" :key="index">
-            <q-item
-              clickable
-              @click="router.visit(menuItem.href)"
-              :active="$page.url.startsWith(menuItem.href)"
-              v-ripple
-            >
-              <q-item-section>
-                {{ menuItem.label }}
-              </q-item-section>
-            </q-item>
-            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+            <template v-if="showMenuItem(menuItem)">
+              <q-item
+                clickable
+                @click="router.visit(menuItem.href)"
+                :active="$page.url.startsWith(menuItem.href)"
+                v-ripple
+              >
+                <q-item-section>
+                  {{ menuItem.label }}
+                </q-item-section>
+              </q-item>
+              <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+            </template>
           </template>
         </q-list>
       </q-scroll-area>

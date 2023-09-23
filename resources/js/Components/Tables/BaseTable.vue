@@ -126,9 +126,7 @@
     <template v-slot:body="props">
       <q-tr
         :props="props"
-        :class="{'row--clickable': hasView}"
         :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
-        :tabindex="hasView ? 0 : -1"
       >
         <q-td v-if="hasActions">
           <q-btn-dropdown menu-self="top middle" flat dense>
@@ -189,10 +187,6 @@
 <style lang="scss" scoped>
 :deep(.q-table__top) {
   padding: 0 4px;
-}
-
-.row--clickable {
-  cursor: pointer;
 }
 </style>
 
@@ -347,7 +341,7 @@ export default {
     hasActions() {
       let ret = false
       const actionRoutes = ['fetch', 'edit', 'delete']
-      for (route in this.routes) {
+      for (const route in this.routes) {
         if (actionRoutes.includes(route)) {
           ret = true
           break
@@ -484,8 +478,8 @@ export default {
       this.$refs.tableRef.requestServerInteraction()
     },
 
-    getRoute(route, row) {
-      return route.replace('_id', row.id)
+    getRoute(goToRoute, row) {
+      return goToRoute.replace('_id', row.id)
     },
 
     onRowClick(row) {

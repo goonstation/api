@@ -40,13 +40,17 @@ class CreateUser extends Command
         }
 
         $action = new CreateNewUser();
-        $action->create([
+        $user = $action->create([
             'name' => $userName,
             'email' => $userEmail,
             'password' => $userPass,
             'password_confirmation' => $userPass,
-            'is_admin' => $userAdmin === 'Yes',
         ]);
+
+        if ($userAdmin === 'Yes') {
+            $user->is_admin = true;
+            $user->save();
+        }
 
         $this->info('User created!');
 
