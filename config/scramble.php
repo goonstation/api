@@ -26,7 +26,7 @@ return [
          */
         'description' => 'This is the documentation for the API routes.' .
             "\n \n" .
-            'For documentation regarding the events tracking system, please [go here](' . url('/docs/events') . ').',
+            'For documentation regarding the events tracking system, please [go here](' . config('app.url') . '/docs/events).',
     ],
 
     /*
