@@ -1,0 +1,13 @@
+- ## Get Started
+    - [Overview](/{{route}}/{{version}}/overview)
+- ## Events
+    - [AI Law](/{{route}}/{{version}}/events/ai-law)
+    - [Antag](/{{route}}/{{version}}/events/antag)
+    - [Antag Item Purchase](/{{route}}/{{version}}/events/antag-item-purchase)
+    - [Antag Objective](/{{route}}/{{version}}/events/antag-objective)
+    - [Bee Spawn](/{{route}}/{{version}}/events/bee-spawn)
+    - [Death](/{{route}}/{{version}}/events/death)
+    - [Fine](/{{route}}/{{version}}/events/fine)
+    - [Gauntlet High Score](/{{route}}/{{version}}/events/gauntlet-high-score)
+    - [Station Name](/{{route}}/{{version}}/events/station-name)
+    - [Ticket](/{{route}}/{{version}}/events/ticket)

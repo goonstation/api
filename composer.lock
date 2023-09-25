@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8801c6dee28f622b317f20da65ba758f",
+    "content-hash": "b6afb36cde8479b432ca498936b8cda0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -59,6 +59,85 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
             },
             "time": "2022-12-07T17:46:57+00:00"
+        },
+        {
+            "name": "binarytorch/larecipe",
+            "version": "v2.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saleem-hadad/larecipe.git",
+                "reference": "b77ef06a061f48bec677051ced451421266ecdd3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saleem-hadad/larecipe/zipball/b77ef06a061f48bec677051ced451421266ecdd3",
+                "reference": "b77ef06a061f48bec677051ced451421266ecdd3",
+                "shasum": ""
+            },
+            "require": {
+                "erusev/parsedown-extra": "^0.8.1|^0.8",
+                "illuminate/support": "^5.4|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/view": "^5.4|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.1|^8.0",
+                "symfony/dom-crawler": "^4.1|^5.0|^6.0"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.4|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "orchestra/testbench": "^3.4|^4.0|^5.0|^7.0|^8.0",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0|^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BinaryTorch\\LaRecipe\\LaRecipeServiceProvider"
+                    ],
+                    "aliases": {
+                        "LaRecipe": "BinaryTorch\\LaRecipe\\LaRecipe"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/helpers.php"
+                ],
+                "psr-4": {
+                    "BinaryTorch\\LaRecipe\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saleem Hadad",
+                    "email": "saleem@binary-torch.com"
+                }
+            ],
+            "description": "Generate gorgeous recipes for your Laravel applications using MarkDown",
+            "keywords": [
+                "api",
+                "docs",
+                "documentation",
+                "laravel",
+                "markdown"
+            ],
+            "support": {
+                "issues": "https://github.com/saleem-hadad/larecipe/issues",
+                "source": "https://github.com/saleem-hadad/larecipe"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/saleem-hadad",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/larecipe",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2023-02-21T19:12:38+00:00"
         },
         {
             "name": "brick/math",
@@ -307,16 +386,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.8.3",
+            "version": "v0.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "aa05297338260de10cf03c314897b89371c9643d"
+                "reference": "a7e02cb90eff09a6e751da750d9f72cf256b6d6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/aa05297338260de10cf03c314897b89371c9643d",
-                "reference": "aa05297338260de10cf03c314897b89371c9643d",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/a7e02cb90eff09a6e751da750d9f72cf256b6d6b",
+                "reference": "a7e02cb90eff09a6e751da750d9f72cf256b6d6b",
                 "shasum": ""
             },
             "require": {
@@ -370,7 +449,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.8.3"
+                "source": "https://github.com/dedoc/scramble/tree/v0.8.4"
             },
             "funding": [
                 {
@@ -378,7 +457,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-16T20:36:37+00:00"
+            "time": "2023-09-24T08:35:49+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1089,6 +1168,107 @@
                 }
             ],
             "time": "2023-01-14T14:17:03+00:00"
+        },
+        {
+            "name": "erusev/parsedown",
+            "version": "1.7.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Parsedown": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
+            "keywords": [
+                "markdown",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/erusev/parsedown/issues",
+                "source": "https://github.com/erusev/parsedown/tree/1.7.x"
+            },
+            "time": "2019-12-30T22:54:17+00:00"
+        },
+        {
+            "name": "erusev/parsedown-extra",
+            "version": "0.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/erusev/parsedown-extra.git",
+                "reference": "91ac3ff98f0cea243bdccc688df43810f044dcef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/erusev/parsedown-extra/zipball/91ac3ff98f0cea243bdccc688df43810f044dcef",
+                "reference": "91ac3ff98f0cea243bdccc688df43810f044dcef",
+                "shasum": ""
+            },
+            "require": {
+                "erusev/parsedown": "^1.7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ParsedownExtra": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "An extension of Parsedown that adds support for Markdown Extra.",
+            "homepage": "https://github.com/erusev/parsedown-extra",
+            "keywords": [
+                "markdown",
+                "markdown extra",
+                "parsedown",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/erusev/parsedown-extra/issues",
+                "source": "https://github.com/erusev/parsedown-extra/tree/0.8.x"
+            },
+            "time": "2019-12-30T23:20:37+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -3338,6 +3518,73 @@
                 }
             ],
             "time": "2022-04-17T13:12:02+00:00"
+        },
+        {
+            "name": "masterminds/html5",
+            "version": "2.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Masterminds/html5-php.git",
+                "reference": "f47dcf3c70c584de14f21143c55d9939631bc6cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f47dcf3c70c584de14f21143c55d9939631bc6cf",
+                "reference": "f47dcf3c70c584de14f21143c55d9939631bc6cf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Masterminds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Butcher",
+                    "email": "technosophos@gmail.com"
+                },
+                {
+                    "name": "Matt Farina",
+                    "email": "matt@mattfarina.com"
+                },
+                {
+                    "name": "Asmir Mustafic",
+                    "email": "goetas@gmail.com"
+                }
+            ],
+            "description": "An HTML5 parser and serializer.",
+            "homepage": "http://masterminds.github.io/html5-php",
+            "keywords": [
+                "HTML5",
+                "dom",
+                "html",
+                "parser",
+                "querypath",
+                "serializer",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/Masterminds/html5-php/issues",
+                "source": "https://github.com/Masterminds/html5-php/tree/2.8.1"
+            },
+            "time": "2023-05-10T11:58:31+00:00"
         },
         {
             "name": "maxmind-db/reader",
@@ -6081,6 +6328,73 @@
                 }
             ],
             "time": "2022-11-25T10:21:52+00:00"
+        },
+        {
+            "name": "symfony/dom-crawler",
+            "version": "v6.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dom-crawler.git",
+                "reference": "3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1",
+                "reference": "3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1",
+                "shasum": ""
+            },
+            "require": {
+                "masterminds/html5": "^2.6",
+                "php": ">=8.1",
+                "symfony/polyfill-ctype": "~1.8",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "symfony/css-selector": "^5.4|^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DomCrawler\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Eases DOM navigation for HTML and XML documents",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/dom-crawler/tree/v6.3.4"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-08-01T07:43:40+00:00"
         },
         {
             "name": "symfony/error-handler",

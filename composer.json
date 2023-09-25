@@ -1,11 +1,11 @@
 {
-    "name": "laravel/laravel",
+    "name": "goonstation/api",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "The Goonstation API",
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "binarytorch/larecipe": "^2.6",
         "dedoc/scramble": "^0.8.3",
         "doctrine/dbal": "^3.6",
         "geoip2/geoip2": "~2.0",
