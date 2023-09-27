@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @tags Job Bans
+ */
 class JobBansController extends Controller
 {
     use IndexableQuery;

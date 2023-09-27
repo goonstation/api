@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Jobs\RemoteMusic;
 use Illuminate\Http\Request;
 
+/**
+ * @tags Remote Music
+ */
 class RemoteMusicController extends Controller
 {
     /**

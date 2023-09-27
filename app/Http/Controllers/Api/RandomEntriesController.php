@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+/**
+ * @tags Random Entries
+ */
 class RandomEntriesController extends Controller
 {
     /**

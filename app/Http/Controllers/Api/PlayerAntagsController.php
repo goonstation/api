@@ -7,6 +7,9 @@ use App\Http\Resources\PlayerAntagResource;
 use App\Models\PlayerAntag;
 use Illuminate\Http\Request;
 
+/**
+ * @tags Player Antags
+ */
 class PlayerAntagsController extends Controller
 {
     /**

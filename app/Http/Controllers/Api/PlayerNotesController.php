@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @tags Player Notes
+ */
 class PlayerNotesController extends Controller
 {
     use IndexableQuery;

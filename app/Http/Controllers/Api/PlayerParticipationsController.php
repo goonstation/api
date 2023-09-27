@@ -7,6 +7,9 @@ use App\Http\Resources\PlayerParticipationResource;
 use App\Models\PlayerParticipation;
 use Illuminate\Http\Request;
 
+/**
+ * @tags Player Participations
+ */
 class PlayerParticipationsController extends Controller
 {
     /**

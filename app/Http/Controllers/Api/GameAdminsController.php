@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @tags Game Admins
+ */
 class GameAdminsController extends Controller
 {
     use IndexableQuery;

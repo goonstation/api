@@ -9,6 +9,9 @@ use App\Models\VpnWhitelist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @tags VPN Checks
+ */
 class VpnChecksController extends Controller
 {
     private $checkCacheTime = 30; // days

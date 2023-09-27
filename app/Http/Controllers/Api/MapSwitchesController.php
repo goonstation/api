@@ -9,6 +9,9 @@ use App\Models\MapSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @tags Map Switches
+ */
 class MapSwitchesController extends Controller
 {
     /**

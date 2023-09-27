@@ -10,6 +10,9 @@ use App\Models\PlayerSave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @tags Player Saves
+ */
 class PlayerSavesController extends Controller
 {
     /**

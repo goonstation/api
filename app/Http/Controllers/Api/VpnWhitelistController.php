@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @tags VPN Whitelist
+ */
 class VpnWhitelistController extends Controller
 {
     use IndexableQuery;

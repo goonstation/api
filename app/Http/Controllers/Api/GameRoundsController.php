@@ -8,6 +8,9 @@ use App\Models\GameRound;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+/**
+ * @tags Game Rounds
+ */
 class GameRoundsController extends Controller
 {
     /**
