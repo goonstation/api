@@ -13,11 +13,12 @@ use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
 use App\Http\Controllers\Web\PlayersController;
+use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TicketsController;
+use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Middleware\EnsureUserIsGameAdmin;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,10 @@ Route::controller(DonateController::class)->prefix('/donate')->group(function ()
     Route::get('/', 'index')->name('donate.index');
 });
 
+Route::controller(RedirectController::class)->prefix('/r')->group(function () {
+    Route::get('/{path}', 'redirect')->where('path', '.*')->name('redirect');
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -121,4 +126,4 @@ Route::middleware([
     });
 });
 
-require_once __DIR__ . '/jetstream.php';
+require_once __DIR__.'/jetstream.php';

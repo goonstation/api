@@ -3,8 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Ban;
-use App\Http\Resources\GameRoundResource;
-use App\Http\Resources\BanDetailResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

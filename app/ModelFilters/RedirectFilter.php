@@ -2,12 +2,13 @@
 
 namespace App\ModelFilters;
 
+use App\ModelFilters\Common\HasRangeFilters;
 use App\ModelFilters\Common\HasTimestampFilters;
 use EloquentFilter\ModelFilter;
 
-class GameAdminRankFilter extends ModelFilter
+class RedirectFilter extends ModelFilter
 {
-    use HasTimestampFilters;
+    use HasTimestampFilters, HasRangeFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter
@@ -22,8 +23,18 @@ class GameAdminRankFilter extends ModelFilter
         return $this->where('id', $val);
     }
 
-    public function rank($val)
+    public function from($val)
     {
-        return $this->where('rank', 'ILIKE', '%'.$val.'%');
+        return $this->where('from', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function to($val)
+    {
+        return $this->where('to', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function visits($val)
+    {
+        return $this->filterRange('visits', $val);
     }
 }

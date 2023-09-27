@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GameAdminResource extends JsonResource
+class RedirectResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,9 @@ class GameAdminResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'ckey' => $this->ckey,
-            'name' => $this->name,
-            'discord_id' => $this->discord_id,
-            /** @var GameAdminRankResource */
-            'rank' => $this->rank,
+            'from' => $this->from,
+            'to' => $this->to,
+            'visits' => $this->visits,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

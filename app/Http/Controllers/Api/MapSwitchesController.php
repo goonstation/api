@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MapSwitchResource;
 use App\Models\GameAdmin;
 use App\Models\MapSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Http\Resources\MapSwitchResource;
 
 class MapSwitchesController extends Controller
 {

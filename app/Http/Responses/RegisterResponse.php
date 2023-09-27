@@ -7,7 +7,7 @@ use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 class RegisterResponse implements RegisterResponseContract
 {
     /**
-     * @param  $request
+     * @param    $request
      * @return mixed
      */
     public function toResponse($request)
@@ -16,5 +16,4 @@ class RegisterResponse implements RegisterResponseContract
             ? response()->json($request->user())
             : '';
     }
-
 }
