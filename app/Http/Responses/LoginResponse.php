@@ -2,13 +2,12 @@
 
 namespace App\Http\Responses;
 
-use Illuminate\Http\Request;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
 {
     /**
-     * @param  $request
+     * @param    $request
      * @return mixed
      */
     public function toResponse($request)
@@ -20,5 +19,4 @@ class LoginResponse implements LoginResponseContract
             ? response()->json(['two_factor' => false])
             : $home;
     }
-
 }

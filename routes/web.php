@@ -16,9 +16,9 @@ use App\Http\Controllers\Web\PlayersController;
 use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TicketsController;
+use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Middleware\EnsureUserIsGameAdmin;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,4 +126,4 @@ Route::middleware([
     });
 });
 
-require_once __DIR__ . '/jetstream.php';
+require_once __DIR__.'/jetstream.php';

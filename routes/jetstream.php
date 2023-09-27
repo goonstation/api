@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
 use Laravel\Jetstream\Http\Controllers\Inertia\ApiTokenController;
@@ -13,8 +14,6 @@ use Laravel\Jetstream\Http\Controllers\Inertia\TermsOfServiceController;
 use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
 use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
-use App\Http\Middleware\EnsureUserIsAdmin;
-
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
@@ -49,7 +48,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
         Route::group(['middleware' => 'verified'], function () {
             // API...
             if (Jetstream::hasApiFeatures()) {
-                Route::group(['middleware' => EnsureUserIsAdmin::class], function() {
+                Route::group(['middleware' => EnsureUserIsAdmin::class], function () {
                     Route::get('/user/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');
                     Route::post('/user/api-tokens', [ApiTokenController::class, 'store'])->name('api-tokens.store');
                     Route::put('/user/api-tokens/{token}', [ApiTokenController::class, 'update'])->name('api-tokens.update');

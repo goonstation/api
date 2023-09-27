@@ -16,6 +16,7 @@ class RedirectController extends Controller
     {
         $redirect = Redirect::where('from', $path)->firstOrFail();
         $redirect->increment('visits');
+
         return FacadesRedirect::to($redirect->to);
     }
 }

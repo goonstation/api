@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\GameAdminRankResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GameAdminResource extends JsonResource

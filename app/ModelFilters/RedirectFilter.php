@@ -18,7 +18,8 @@ class RedirectFilter extends ModelFilter
      */
     public $relations = [];
 
-    public function id($val) {
+    public function id($val)
+    {
         return $this->where('id', $val);
     }
 

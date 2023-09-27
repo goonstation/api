@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\PlayerConnectionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlayerStatsResource extends JsonResource
