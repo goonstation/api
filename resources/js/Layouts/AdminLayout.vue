@@ -46,7 +46,7 @@ const menuList = [
 
 const showMenuItem = (menuItem) => {
   if (menuItem.isGameAdmin) {
-    return user.is_game_admin
+    return user.value.is_admin || user.value.is_game_admin
   }
   return true
 }
