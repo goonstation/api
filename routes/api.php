@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\PlayerSavesController;
 use App\Http\Controllers\Api\PlayersController;
 use App\Http\Controllers\Api\PollsController;
 use App\Http\Controllers\Api\RandomEntriesController;
+use App\Http\Controllers\Api\RedirectsController;
 use App\Http\Controllers\Api\RemoteMusicController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\VpnChecksController;
@@ -135,5 +136,11 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::post('/', 'store');
         Route::put('/{gameAdmin}', 'update');
         Route::delete('/{gameAdmin}', 'destroy');
+    });
+    Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{redirect}', 'update');
+        Route::delete('/{redirect}', 'destroy');
     });
 });

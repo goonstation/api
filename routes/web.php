@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
 use App\Http\Controllers\Web\PlayersController;
+use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TicketsController;
 use Illuminate\Support\Facades\Route;
@@ -82,6 +83,10 @@ Route::controller(MapsController::class)->prefix('/maps')->group(function () {
 
 Route::controller(DonateController::class)->prefix('/donate')->group(function () {
     Route::get('/', 'index')->name('donate.index');
+});
+
+Route::controller(RedirectController::class)->prefix('/r')->group(function () {
+    Route::get('/{path}', 'redirect')->where('path', '.*')->name('redirect');
 });
 
 Route::middleware([
