@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\GameAdminResource;
+use App\Http\Resources\PollOptionResource;
 
 class PollResource extends JsonResource
 {

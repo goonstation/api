@@ -37,7 +37,15 @@ class RedirectsController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            /**
+             * The path to redirect from. Appends to the root redirect URL, for example as `https://goonhub.com/r/foo`
+             * @example foo
+             */
             'from' => 'required|string',
+            /**
+             * The URL to redirect to
+             * @example https://example.com
+             */
             'to' => 'required|url',
         ]);
 
@@ -57,7 +65,15 @@ class RedirectsController extends Controller
     public function update(Request $request, Redirect $redirect)
     {
         $data = $request->validate([
+            /**
+             * The path to redirect from. Appends to the root redirect URL, for example as `https://goonhub.com/r/foo`
+             * @example foo
+             */
             'from' => 'required|string',
+            /**
+             * The URL to redirect to
+             * @example https://example.com
+             */
             'to' => 'required|url',
         ]);
 

@@ -58,8 +58,7 @@ class MapSwitchesController extends Controller
 
         return [
             'data' => [
-                /** @var MapSwitchResource */
-                'map_switch' => $mapSwitch,
+                'map_switch' => new MapSwitchResource($mapSwitch),
                 'status' => $res->status(),
             ],
         ];

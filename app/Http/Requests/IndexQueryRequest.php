@@ -24,9 +24,25 @@ class IndexQueryRequest extends FormRequest
     public function rules()
     {
         return [
+            /**
+             * Filter the results by column and value pairs. (Note: Unsupported in web documentation)
+             * @example filters[id]=1
+             */
             'filters' => 'array',
+            /**
+             * What column to sort results by
+             * @example id
+             */
             'sort_by' => 'string',
+            /**
+             * true or false
+             * @example true
+             */
             'descending' => 'string',
+            /**
+             * How many items to show per page
+             * @example 30
+             */
             'per_page' => 'number',
         ];
     }
