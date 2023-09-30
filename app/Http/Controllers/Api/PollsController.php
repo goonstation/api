@@ -68,16 +68,19 @@ class PollsController extends Controller
             'filters.servers' => 'nullable|array',
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.expires_at' => new DateRange,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.created_at' => new DateRange,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.updated_at' => new DateRange,

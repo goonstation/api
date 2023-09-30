@@ -11,6 +11,7 @@ trait HasTimestampFilters
 
         if (count($val) === 2) {
             $to = date($val[1]);
+
             return $this->whereBetween($key, [$from, $to]);
         } else {
             return $this->where($key, '=', $from);

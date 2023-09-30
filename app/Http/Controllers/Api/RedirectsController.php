@@ -32,19 +32,22 @@ class RedirectsController extends Controller
             'filters.to' => 'string',
             /**
              * A value, comparison, or range
+             *
              * @example 1 or >= 1 or 1-10
              */
             'filters.visits' => new Range,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.created_at' => new DateRange,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
-            'filters.updated_at' => new DateRange
+            'filters.updated_at' => new DateRange,
         ]);
 
         return RedirectResource::collection(
@@ -62,11 +65,13 @@ class RedirectsController extends Controller
         $data = $request->validate([
             /**
              * The path to redirect from. Appends to the root redirect URL, for example as `https://goonhub.com/r/foo`
+             *
              * @example foo
              */
             'from' => 'required|string',
             /**
              * The URL to redirect to
+             *
              * @example https://example.com
              */
             'to' => 'required|url',
@@ -90,11 +95,13 @@ class RedirectsController extends Controller
         $data = $request->validate([
             /**
              * The path to redirect from. Appends to the root redirect URL, for example as `https://goonhub.com/r/foo`
+             *
              * @example foo
              */
             'from' => 'required|string',
             /**
              * The URL to redirect to
+             *
              * @example https://example.com
              */
             'to' => 'required|url',

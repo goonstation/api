@@ -9,6 +9,7 @@ class DateRange implements InvokableRule
     private function validateDate($date, $format = 'Y/m/d H:i:s')
     {
         $d = \DateTime::createFromFormat($format, $date);
+
         return $d && $d->format($format) === $date;
     }
 
@@ -23,11 +24,13 @@ class DateRange implements InvokableRule
     public function __invoke($attribute, $value, $fail)
     {
         $validDate = $this->validateDate($value);
-        if (!str_contains($value, '-') && !$validDate) {
+        if (! str_contains($value, '-') && ! $validDate) {
             return $fail('The :attribute must be formatted as YYYY/MM/DD HH:mm:ss, or contain a - to denote a range');
         }
 
-        if ($validDate) return;
+        if ($validDate) {
+            return;
+        }
 
         $val = explode('-', $value);
 

@@ -40,16 +40,19 @@ class JobBansController extends Controller
             'filters.crashed' => 'boolean',
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.ended_at' => new DateRange,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.created_at' => new DateRange,
             /**
              * A date or date range
+             *
              * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
              */
             'filters.updated_at' => new DateRange,

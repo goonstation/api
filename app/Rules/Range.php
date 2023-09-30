@@ -17,11 +17,13 @@ class Range implements InvokableRule
     public function __invoke($attribute, $value, $fail)
     {
         $isNumber = filter_var($value, FILTER_VALIDATE_INT);
-        if (!str_contains($value, ' ') && !str_contains($value, '-') && !$isNumber) {
+        if (! str_contains($value, ' ') && ! str_contains($value, '-') && ! $isNumber) {
             return $fail('The :attribute must either be a number, or contain whitespace or a -');
         }
 
-        if ($isNumber) return;
+        if ($isNumber) {
+            return;
+        }
 
         $val = explode(' ', $value);
 
@@ -31,10 +33,10 @@ class Range implements InvokableRule
 
         if (count($val) === 2) {
             $rangeOperators = ['<', '<=', '>', '>=', '='];
-            if (!in_array($val[0], $rangeOperators)) {
-                return $fail('The :attribute left hand side must equal one of: ' . implode(', ', $rangeOperators));
+            if (! in_array($val[0], $rangeOperators)) {
+                return $fail('The :attribute left hand side must equal one of: '.implode(', ', $rangeOperators));
             }
-            if (!filter_var($val[1], FILTER_VALIDATE_INT)) {
+            if (! filter_var($val[1], FILTER_VALIDATE_INT)) {
                 return $fail('The :attribute right hand side must be an integer');
             }
         } else {
@@ -42,7 +44,7 @@ class Range implements InvokableRule
             if (count($betweenAmounts) > 2) {
                 return $fail('The :attribute cannot contain more than one -');
             }
-            if (!filter_var($betweenAmounts[0], FILTER_VALIDATE_INT) || !filter_var($betweenAmounts[1], FILTER_VALIDATE_INT)) {
+            if (! filter_var($betweenAmounts[0], FILTER_VALIDATE_INT) || ! filter_var($betweenAmounts[1], FILTER_VALIDATE_INT)) {
                 return $fail('The :attribute left and right hand side must be an integer.');
             }
         }
