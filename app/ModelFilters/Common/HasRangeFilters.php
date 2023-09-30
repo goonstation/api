@@ -6,9 +6,14 @@ trait HasRangeFilters
 {
     private function filterRangeRelationship($key, $val)
     {
-        $val = explode(' ', $val);
-        $operator = count($val) === 1 ? 'between' : $val[0];
-        $amount = count($val) === 1 ? $val[0] : $val[1];
+        if (filter_var($val, FILTER_VALIDATE_INT)) {
+            $operator = '=';
+            $amount = $val;
+        } else {
+            $val = explode(' ', $val);
+            $operator = count($val) === 1 ? 'between' : $val[0];
+            $amount = count($val) === 1 ? $val[0] : $val[1];
+        }
 
         if ($operator === 'between') {
             $amount = explode('-', $amount);
@@ -21,9 +26,14 @@ trait HasRangeFilters
 
     private function filterRange($key, $val)
     {
-        $val = explode(' ', $val);
-        $operator = count($val) === 1 ? 'between' : $val[0];
-        $amount = count($val) === 1 ? $val[0] : $val[1];
+        if (filter_var($val, FILTER_VALIDATE_INT)) {
+            $operator = '=';
+            $amount = $val;
+        } else {
+            $val = explode(' ', $val);
+            $operator = count($val) === 1 ? 'between' : $val[0];
+            $amount = count($val) === 1 ? $val[0] : $val[1];
+        }
 
         if ($operator === 'between') {
             $amount = explode('-', $amount);

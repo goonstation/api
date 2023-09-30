@@ -17,6 +17,11 @@ class GameRoundFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
     public function server($val)
     {
         return $this->where('server_id', 'ILIKE', '%'.$val.'%');
@@ -44,13 +49,6 @@ class GameRoundFilter extends ModelFilter
 
     public function endedAt($val)
     {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
-
-        return $this->whereBetween('ended_at', [$from, $to]);
+        return $this->filterDate('ended_at', $val);
     }
 }

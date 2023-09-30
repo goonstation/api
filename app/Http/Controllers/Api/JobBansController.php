@@ -7,6 +7,7 @@ use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\JobBanResource;
 use App\Models\GameAdmin;
 use App\Models\JobBan;
+use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,6 +30,31 @@ class JobBansController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            /** @example main1 */
+            'filters.server' => 'string',
+            'filters.map' => 'string',
+            'filters.game_type' => 'string',
+            'filters.rp_mode' => 'boolean',
+            'filters.crashed' => 'boolean',
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.ended_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+        ]);
+
         return JobBanResource::collection(
             $this->indexQuery(JobBan::with(['gameAdmin:id,ckey,name']))
         );

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\PlayerMetadataResource;
 use App\Models\PlayerMetadata;
+use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,6 +28,22 @@ class PlayerMetadataController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            'filters.ckey' => 'string',
+            'filters.data' => 'string',
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+        ]);
+
         return PlayerMetadataResource::collection(
             $this->indexQuery(PlayerMetadata::with('player'))
         );

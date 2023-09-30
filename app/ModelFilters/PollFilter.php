@@ -18,6 +18,11 @@ class PollFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
     public function gameAdmin($val)
     {
         return $this->related('game_admins', function ($query) use ($val) {

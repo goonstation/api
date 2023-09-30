@@ -12,6 +12,8 @@ use App\Models\BanDetail;
 use App\Models\GameAdmin;
 use App\Models\Player;
 use App\Models\PlayerNote;
+use App\Rules\DateRange;
+use App\Rules\Range;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -33,6 +35,40 @@ class BansController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            /** @example main1 */
+            'filters.server' => 'string',
+            'filters.admin_ckey' => 'string',
+            'filters.reason' => 'string',
+            'filters.original_ban_ckey' => 'string',
+            /**
+             * A value, comparison, or range
+             * @example 1 or >= 1 or 1-10
+             */
+            'filters.details' => new Range,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.expires_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.deleted_at' => new DateRange
+        ]);
+
         return BanResource::collection(
             $this->indexQuery(Ban::withTrashed()
                 ->with(['gameAdmin', 'gameRound', 'originalBanDetail']))

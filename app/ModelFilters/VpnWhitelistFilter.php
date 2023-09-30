@@ -17,6 +17,11 @@ class VpnWhitelistFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
     public function ckey($val)
     {
         return $this->whereLike('ckey', $val);

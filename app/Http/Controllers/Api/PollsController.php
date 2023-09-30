@@ -11,6 +11,7 @@ use App\Models\GameAdmin;
 use App\Models\Poll;
 use App\Models\PollAnswer;
 use App\Models\PollOption;
+use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -58,6 +59,30 @@ class PollsController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            'filters.game_admin' => 'string',
+            'filters.question' => 'string',
+            /** true or false */
+            'filters.active' => 'string',
+            'filters.servers' => 'nullable|array',
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.expires_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+        ]);
+
         $pollsPaged = $this->indexQuery(
             Poll::with([
                 'gameAdmin',

@@ -8,6 +8,7 @@ use App\Http\Resources\PlayerNoteResource;
 use App\Models\GameAdmin;
 use App\Models\Player;
 use App\Models\PlayerNote;
+use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -29,6 +30,25 @@ class PlayerNotesController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            'filters.ckey' => 'string',
+            'filters.game_admin' => 'string',
+            'filters.server' => 'string',
+            'filters.round' => 'int',
+            'filters.note' => 'string',
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+        ]);
+
         return PlayerNoteResource::collection(
             $this->indexQuery(PlayerNote::class)
         );

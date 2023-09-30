@@ -18,6 +18,11 @@ class BanFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
     public function server($val)
     {
         return $this->where('server_id', $val);
@@ -50,13 +55,11 @@ class BanFilter extends ModelFilter
 
     public function expiresAt($val)
     {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
+        return $this->filterDate('expires_at', $val);
+    }
 
-        return $this->whereBetween('expires_at', [$from, $to]);
+    public function deletedAt($val)
+    {
+        return $this->filterDate('deleted_at', $val);
     }
 }

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\RedirectResource;
 use App\Models\Redirect;
+use App\Rules\DateRange;
+use App\Rules\Range;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +26,27 @@ class RedirectsController extends Controller
      */
     public function index(IndexQueryRequest $request)
     {
+        $request->validate([
+            'filters.id' => 'int',
+            'filters.from' => 'string',
+            'filters.to' => 'string',
+            /**
+             * A value, comparison, or range
+             * @example 1 or >= 1 or 1-10
+             */
+            'filters.visits' => new Range,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange
+        ]);
+
         return RedirectResource::collection(
             $this->indexQuery(Redirect::class)
         );
