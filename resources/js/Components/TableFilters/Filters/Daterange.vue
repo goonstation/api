@@ -1,69 +1,116 @@
 <template>
-  <q-input
-    v-model="inputModel"
-    class="gh-input--denser"
-    placeholder="YYYY/MM/DD-YYYY/MM/DD"
-    square
-    filled
-    dense
-    clearable
-  >
-    <template v-slot:append>
-      <q-icon :name="ionCalendarClearOutline" class="cursor-pointer">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date v-model="model" range text-color="black">
+  <div>
+    <q-btn-group class="full-width" square flat>
+      <q-btn
+        :label="fromModel ? fromModel : ''"
+        :icon="fromModel ? '' : ionCalendarClearOutline"
+        :align="fromModel ? 'left' : 'center'"
+        class="flex-grow"
+        color="grey-10"
+      >
+        <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">
+          <div>
+            <div class="row">
+              <q-date v-model="fromModel" mask="YYYY/MM/DD HH:mm" text-color="black" />
+              <q-time v-model="fromModel" mask="YYYY/MM/DD HH:mm" text-color="black" />
+            </div>
             <div class="row items-center justify-end">
               <q-btn v-close-popup label="Close" color="primary" flat />
             </div>
-          </q-date>
+          </div>
         </q-popup-proxy>
-      </q-icon>
-    </template>
-  </q-input>
+      </q-btn>
+      <q-btn v-if="fromModel" :icon="ionClose" @click="clearFrom" color="grey-10" dense />
+    </q-btn-group>
+
+    <div class="text-center">to</div>
+
+    <q-btn-group class="full-width" square flat>
+      <q-btn
+        :label="toModel ? toModel : ''"
+        :icon="toModel ? '' : ionCalendarClearOutline"
+        :align="toModel ? 'left' : 'center'"
+        class="flex-grow"
+        color="grey-10"
+      >
+        <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">
+          <div>
+            <div class="row">
+              <q-date v-model="toModel" mask="YYYY/MM/DD HH:mm" text-color="black" />
+              <q-time v-model="toModel" mask="YYYY/MM/DD HH:mm" text-color="black" />
+            </div>
+            <div class="row items-center justify-end">
+              <q-btn v-close-popup label="Close" color="primary" flat />
+            </div>
+          </div>
+        </q-popup-proxy>
+      </q-btn>
+      <q-btn v-if="toModel" :icon="ionClose" @click="clearTo" color="grey-10" dense />
+    </q-btn-group>
+  </div>
 </template>
 
 <script>
-import { isObject } from 'lodash'
-import { ionCalendarClearOutline } from '@quasar/extras/ionicons-v6'
+import { ionCalendarClearOutline, ionClose } from '@quasar/extras/ionicons-v6'
 
 export default {
   props: ['modelValue'],
 
   setup() {
     return {
-      ionCalendarClearOutline
+      ionCalendarClearOutline,
+      ionClose,
     }
   },
 
   computed: {
-    model: {
+    dateRanges() {
+      if (typeof this.modelValue === 'string') {
+        return this.modelValue.split('-')
+      }
+      return this.modelValue
+    },
+
+    fromModel: {
       get() {
-        let dateObj = this.modelValue
-        if (typeof this.modelValue === 'string') {
-          const dates = this.modelValue.split('-')
-          if (dates && dates.length > 1) {
-            dateObj = { from: dates[0], to: dates[1] }
-          }
-        }
-        return dateObj
+        let ret = this.dateRanges
+        if (ret && typeof ret === 'object') ret = ret[0]
+        return ret
       },
       set(val) {
-        if (isObject(val)) val = `${val.from}-${val.to}`
-        this.$emit('update:modelValue', val)
+        let ret = ''
+        if (val) ret += val
+        if (this.toModel) ret += `-${this.toModel}`
+        this.$emit('update:modelValue', ret)
       },
     },
 
-    inputModel: {
+    toModel: {
       get() {
-        if (!this.model) return
-        return `${this.model.from}-${this.model.to}`
+        let ret = this.dateRanges
+        if (ret && typeof ret === 'object') ret = ret[1]
+        return ret
       },
       set(val) {
-        if (!val) return (this.model = null)
-        const dates = val.split('-')
-        if (!dates || dates.length < 2) return (this.model = null)
-        this.model = { from: dates[0], to: dates[1] }
+        let ret = ''
+        if (this.fromModel) ret += this.fromModel
+        if (this.fromModel && val) ret += '-'
+        if (val) ret += val
+        this.$emit('update:modelValue', ret)
       },
+    },
+  },
+
+  methods: {
+    clearFrom() {
+      this.fromModel = null
+      this.$nextTick(() => {
+        if (this.toModel) this.toModel = null
+      })
+    },
+
+    clearTo() {
+      this.toModel = null
     },
   },
 }

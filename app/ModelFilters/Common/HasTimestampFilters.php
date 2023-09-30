@@ -4,34 +4,26 @@ namespace App\ModelFilters\Common;
 
 trait HasTimestampFilters
 {
-    private function validateDate($date, $format = 'Y/m/d')
+    private function filterDate($key, $val)
     {
-        $d = \DateTime::createFromFormat($format, $date);
+        $val = explode('-', $val);
+        $from = date($val[0]);
 
-        return $d && $d->format($format) === $date;
+        if (count($val) === 2) {
+            $to = date($val[1]);
+            return $this->whereBetween($key, [$from, $to]);
+        } else {
+            return $this->where($key, '=', $from);
+        }
     }
 
     public function createdAt($val)
     {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
-
-        return $this->whereBetween('created_at', [$from, $to]);
+        return $this->filterDate('created_at', $val);
     }
 
     public function updatedAt($val)
     {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
-
-        return $this->whereBetween('updated_at', [$from, $to]);
+        return $this->filterDate('updated_at', $val);
     }
 }
