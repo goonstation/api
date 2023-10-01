@@ -23,7 +23,7 @@
         "league/csv": "^9.8",
         "mxl/laravel-job": "^1.4",
         "norkunas/youtube-dl-php": "dev-master",
-        "sentry/sentry-laravel": "^3.4",
+        "sentry/sentry-laravel": "^3.8",
         "tightenco/ziggy": "^1.0",
         "tucker-eric/eloquentfilter": "^3.1"
     },
