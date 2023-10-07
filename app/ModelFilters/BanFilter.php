@@ -48,6 +48,11 @@ class BanFilter extends ModelFilter
         });
     }
 
+    public function requiresAppeal($val)
+    {
+        return $this->where('requires_appeal', '=', $val);
+    }
+
     public function details($val)
     {
         return $this->filterRangeRelationship('details', $val);

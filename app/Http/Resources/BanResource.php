@@ -40,6 +40,7 @@ class BanResource extends JsonResource
             }),
             /** @var array<BanDetailResource> */
             'details' => $this->whenLoaded('details'),
+            'requires_appeal' => $this->requires_appeal,
         ];
     }
 }

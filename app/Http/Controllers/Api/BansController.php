@@ -42,6 +42,7 @@ class BansController extends Controller
             'filters.admin_ckey' => 'string',
             'filters.reason' => 'string',
             'filters.original_ban_ckey' => 'string',
+            'filters.requires_appeal' => 'boolean',
             /**
              * A value, comparison, or range
              *
@@ -76,7 +77,7 @@ class BansController extends Controller
 
         return BanResource::collection(
             $this->indexQuery(Ban::withTrashed()
-                ->with(['gameAdmin', 'gameRound', 'originalBanDetail']))
+                ->with(['gameAdmin', 'gameRound', 'details', 'originalBanDetail']))
         );
     }
 
@@ -101,12 +102,12 @@ class BansController extends Controller
 
         /*
         * Criteria:
-        * Get all existing regular bans that match any of ckey, compId, ip
+        * Get any existing regular ban that matches any of ckey, compId, ip
         * And apply to all servers, or have the serverId we provide
         * And are permanent, or have yet to expire
         */
 
-        $bans = Ban::with(['gameAdmin', 'details', 'gameRound'])
+        $ban = Ban::with(['gameAdmin', 'originalBanDetail', 'details', 'gameRound'])
             ->where(function (Builder $query) use ($serverId) {
                 // Check if the ban applies to all servers, or the server id we were provided
                 $query->whereNull('server_id')
@@ -123,9 +124,11 @@ class BansController extends Controller
                     ->orWhere('comp_id', $compId)
                     ->orWhere('ip', $ip);
             })
-            ->get();
+            ->orderBy('id', 'desc')
+            ->first();
 
-        return BanResource::collection(new BanResource($bans));
+        if (!$ban) abort(404);
+        return new BanResource($ban);
     }
 
     /**
@@ -137,7 +140,10 @@ class BansController extends Controller
     {
         $expiresAt = null;
         if (isset($request['duration'])) {
-            $expiresAt = Carbon::now()->addSeconds($request['duration'])->toDateTimeString();
+            $duration = (int)$request['duration'];
+            if ($duration > 0) {
+                $expiresAt = Carbon::now()->addSeconds($duration)->toDateTimeString();
+            }
         }
 
         $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
@@ -154,6 +160,7 @@ class BansController extends Controller
         $ban->server_id = isset($request['server_id']) ? $request['server_id'] : null;
         $ban->reason = $request['reason'];
         $ban->expires_at = $expiresAt;
+        $ban->requires_appeal = isset($request['requires_appeal']) ? (bool)$request['requires_appeal'] : false;
         $ban->save();
 
         $banDetail = new BanDetail();
@@ -174,13 +181,13 @@ class BansController extends Controller
         $note->note = sprintf(
             'Banned %s. Reason: %s',
             isset($request['duration'])
-                ? 'for '.CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
+                ? 'for ' . CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
                 : 'permanently',
             $request['reason']
         );
         $note->save();
 
-        return new BanResource($ban);
+        return new BanResource($ban->load('gameAdmin', 'originalBanDetail'));
     }
 
     /**
@@ -197,7 +204,7 @@ class BansController extends Controller
             $player = Player::where('ckey', $ckey)->first();
         }
 
-        $newBanDetails = $request->only(['server_id', 'reason']);
+        $newBanDetails = $request->only(['server_id', 'reason', 'requires_appeal']);
 
         // Ensure the server ID is nulled out if we're being told about it, and it's falsey
         if (isset($request['server_id'])) {
@@ -207,7 +214,7 @@ class BansController extends Controller
         if (isset($request['duration'])) {
             // A falsey duration means it's essentially "unset", and thus now a permanent ban
             // Otherwise, the admin is altering how long the ban lasts
-            if (! $request['duration']) {
+            if (!$request['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
                 // Ban is temporary, the duration starts from when the ban was first created
@@ -245,7 +252,7 @@ class BansController extends Controller
         );
         $note->save();
 
-        return new BanResource($ban);
+        return new BanResource($ban->load('gameAdmin', 'originalBanDetail'));
     }
 
     /**

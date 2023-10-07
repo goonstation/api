@@ -82,9 +82,12 @@ class MigrateBans extends Command
                 $deletedAt = $bansToInsert[$record['reason']]['deleted_at'];
             } else {
                 $expiresAt = null;
+                $requiresAppeal = false;
                 if ((int) $record['timestamp'] > 0) {
                     $byondEpochStart = Carbon::createFromFormat('d/m/Y H:i:s', '01/01/2000 00:00:00');
                     $expiresAt = $byondEpochStart->addMinutes((int) $record['timestamp']);
+                } else if ((int) $record['timestamp'] === -1) {
+                    $requiresAppeal = true;
                 }
 
                 $adminCkey = $record['original_admin_ckey'];
@@ -115,6 +118,7 @@ class MigrateBans extends Command
                 $ban->created_at = $record['created_at'];
                 $ban->updated_at = $record['updated_at'];
                 $ban->deleted_at = ! $record['removed'] ? null : $record['updated_at']; // we assume "removed" bans were removed when last modified
+                $ban->requires_appeal = $requiresAppeal;
                 $ban->save();
                 $banId = $ban->id;
                 $deletedAt = $ban->deleted_at;

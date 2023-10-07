@@ -32,6 +32,7 @@ class BanRequest extends FormRequest
             'ip' => 'required_without_all:ckey,comp_id|ip',
             'reason' => 'required',
             'duration' => 'nullable|integer',
+            'requires_appeal' => 'nullable|boolean'
         ];
     }
 }
