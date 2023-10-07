@@ -23,6 +23,8 @@ class DateRange implements InvokableRule
      */
     public function __invoke($attribute, $value, $fail)
     {
+        if ($value === 'false' || $value === 'null') return;
+
         $validDate = $this->validateDate($value);
         if (! str_contains($value, '-') && ! $validDate) {
             return $fail('The :attribute must be formatted as YYYY/MM/DD HH:mm:ss, or contain a - to denote a range');

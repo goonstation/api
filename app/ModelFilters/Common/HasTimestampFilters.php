@@ -6,6 +6,10 @@ trait HasTimestampFilters
 {
     private function filterDate($key, $val)
     {
+        if ($val === 'false' || $val === 'null') {
+            return $this->where($key, '=', null);
+        }
+
         $val = explode('-', $val);
         $from = date($val[0]);
 
