@@ -25,11 +25,11 @@ class BanRequest extends FormRequest
     {
         return [
             'game_admin_ckey' => 'required|exists:game_admins,ckey',
-            'round_id' => 'nullable|integer',
+            'round_id' => 'nullable|integer|exists:game_rounds,id',
             'server_id' => 'nullable|string',
             'ckey' => 'required_without_all:comp_id,ip',
             'comp_id' => 'required_without_all:ckey,ip',
-            'ip' => 'required_without_all:ckey,comp_id|ip',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
             'reason' => 'required',
             'duration' => 'nullable|integer',
             'requires_appeal' => 'nullable|boolean'
