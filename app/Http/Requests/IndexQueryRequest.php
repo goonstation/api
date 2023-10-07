@@ -47,7 +47,7 @@ class IndexQueryRequest extends FormRequest
              *
              * @example 30
              */
-            'per_page' => 'number',
+            'per_page' => 'int',
         ];
     }
 }

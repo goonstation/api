@@ -217,8 +217,10 @@ class BansController extends Controller
             if (!$request['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
-                // Ban is temporary, the duration starts from when the ban was first created
-                $newExpiresAt = $ban->created_at->addSeconds($request['duration']);
+                $existingExpiresAt = $ban->expires_at;
+                if (!$existingExpiresAt) $existingExpiresAt = Carbon::now()->toDateTimeString();
+                // Ban is temporary, add time on the existing expiry
+                $newExpiresAt = $existingExpiresAt->addSeconds($request['duration']);
 
                 // Bans can't expire in the past
                 if ($newExpiresAt->lte(Carbon::now())) {

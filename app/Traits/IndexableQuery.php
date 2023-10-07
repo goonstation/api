@@ -26,10 +26,11 @@ trait IndexableQuery
             $filtering = $model->filter($request->input('filters', []));
         }
 
+        $desc = $request->input('descending', $desc);
         $query = $filtering
             ->orderBy(
                 $request->input('sort_by', $sortBy),
-                $request->input('descending', $desc) === 'true' ? 'desc' : 'asc'
+                $desc === 'true' || $desc === '1' ? 'desc' : 'asc'
             );
 
         if ($simple) {
