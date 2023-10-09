@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,15 @@ class Ban extends Model
         'reason',
         'expires_at',
     ];
+
+    protected $appends = ['duration'];
+
+    public function getDurationAttribute()
+    {
+        $now = Carbon::now();
+        if ($now->isAfter($this->expires_at)) return 0;
+        return $now->diffInSeconds($this->expires_at);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

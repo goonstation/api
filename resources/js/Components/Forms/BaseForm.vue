@@ -1,6 +1,6 @@
 <template>
   <q-form @submit="submit">
-    <slot :form="form" />
+    <slot :form="form" :state="state" />
   </q-form>
 </template>
 
@@ -9,6 +9,11 @@ import { useForm } from '@inertiajs/vue3'
 
 export default {
   props: {
+    state: {
+      type: String,
+      required: false,
+      default: 'create'
+    },
     fields: {
       type: Object,
       default: () => ({}),
@@ -37,6 +42,8 @@ export default {
 
   created() {
     this.form = useForm(this.fields)
+
+    this.$emit('created', this.form)
   },
 
   methods: {

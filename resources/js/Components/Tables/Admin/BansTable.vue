@@ -70,7 +70,11 @@ export default {
 
   data() {
     return {
-      routes: { fetch: '/admin/bans', create: '/admin/bans/create' },
+      routes: {
+        fetch: '/admin/bans',
+        create: '/admin/bans/create',
+        edit: '/admin/bans/update/_id',
+      },
       columns: [
         {
           name: 'id',
@@ -90,7 +94,7 @@ export default {
             if (!val) return 'All'
             return this.$formats.server(val)
           },
-          filter: { type: 'selectservers' }
+          filter: { type: 'selectservers' },
         },
         {
           name: 'admin_ckey',

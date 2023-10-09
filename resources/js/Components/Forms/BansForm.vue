@@ -1,12 +1,8 @@
 <template>
   <div class="row">
     <div class="col-12 col-md-6">
-      <base-form
-        :fields="fields"
-        :submit-route="route('admin.bans.store')"
-        success-message="Ban added."
-      >
-        <template v-slot="{ form }">
+      <base-form v-bind="$attrs" @created="onFormCreated">
+        <template v-slot="{ form, state }">
           <q-card class="gh-card q-mb-md" flat>
             <div class="gh-card__header q-pa-md bordered">
               <span>Player Details</span>
@@ -73,94 +69,117 @@
                 :error="!!form.errors.reason"
                 :error-message="form.errors.reason"
               />
-              <div class="q-mb-md">
-                <div class="q-mb-sm">Duration</div>
-                <q-option-group
-                  v-model="form.duration"
-                  @update:model-value="onDurationChange"
-                  :options="durationOptions"
-                  inline
-                />
-                <div>or</div>
-                <div class="q-mt-sm q-ml-sm">
-                  <span class="q-mr-md">Ban Until</span>
-                  <q-btn
-                    :label="durationTimeUntil ? durationTimeUntil : 'Select a date'"
-                    :icon="ionCalendarClearOutline"
-                    color="grey-10"
-                  >
-                    <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">
-                      <div>
-                        <div class="row">
-                          <q-date
-                            v-model="durationTimeUntil"
-                            @update:model-value="onDurationTimeUntilChange($event, form)"
-                            mask="YYYY/MM/DD HH:mm"
-                            text-color="black"
-                          />
-                          <q-time
-                            v-model="durationTimeUntil"
-                            @update:model-value="onDurationTimeUntilChange($event, form)"
-                            mask="YYYY/MM/DD HH:mm"
-                            text-color="black"
-                          />
+              <div>
+                <template v-if="state === 'edit' && !editingDuration">
+                  <q-banner class="bg-grey-10 items-center">
+                    <q-icon
+                      :name="ionInformationCircleOutline"
+                      class="q-mr-sm"
+                      color="primary"
+                      size="md"
+                    />
+                    This ban expires {{ getExpiresAtFromDuration(form.duration) }}. Would you like
+                    to set a new duration? This will clear the existing duration.
+                    <template v-slot:action>
+                      <q-btn @click="editingDuration = true" flat> Edit Duration </q-btn>
+                    </template>
+                  </q-banner>
+                </template>
+
+                <template v-if="state === 'create' || editingDuration">
+                  <div class="q-mb-sm">Duration</div>
+                  <q-option-group
+                    v-model="form.duration"
+                    @update:model-value="onDurationChange"
+                    :options="durationOptions"
+                    inline
+                  />
+                  <div>or</div>
+                  <div class="q-mt-sm q-ml-sm">
+                    <span class="q-mr-md">Ban Until</span>
+                    <q-btn
+                      :label="durationTimeUntil ? durationTimeUntil : 'Select a date'"
+                      :icon="ionCalendarClearOutline"
+                      color="grey-10"
+                    >
+                      <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">
+                        <div>
+                          <div class="row">
+                            <q-date
+                              v-model="durationTimeUntil"
+                              @update:model-value="onDurationTimeUntilChange($event, form)"
+                              mask="YYYY/MM/DD HH:mm"
+                              text-color="black"
+                            />
+                            <q-time
+                              v-model="durationTimeUntil"
+                              @update:model-value="onDurationTimeUntilChange($event, form)"
+                              mask="YYYY/MM/DD HH:mm"
+                              text-color="black"
+                            />
+                          </div>
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
                         </div>
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Close" color="primary" flat />
-                        </div>
+                      </q-popup-proxy>
+                    </q-btn>
+                  </div>
+                  <div>or</div>
+                  <div class="row items-center q-gutter-md">
+                    <span class="col-auto q-ml-lg">Ban After</span>
+                    <div class="col">
+                      <div class="row q-col-gutter-sm">
+                        <q-input
+                          v-model="durationTimeAfterYears"
+                          @update:model-value="onDurationTimeAfterChange(form)"
+                          class="col-6 col-sm-3"
+                          type="number"
+                          label="Years"
+                          filled
+                          dense
+                        />
+                        <q-input
+                          v-model="durationTimeAfterDays"
+                          @update:model-value="onDurationTimeAfterChange(form)"
+                          class="col-6 col-sm-3"
+                          type="number"
+                          label="Days"
+                          filled
+                          dense
+                        />
+                        <q-input
+                          v-model="durationTimeAfterHours"
+                          @update:model-value="onDurationTimeAfterChange(form)"
+                          class="col-6 col-sm-3"
+                          type="number"
+                          label="Hours"
+                          filled
+                          dense
+                        />
+                        <q-input
+                          v-model="durationTimeAfterMinutes"
+                          @update:model-value="onDurationTimeAfterChange(form)"
+                          class="col-6 col-sm-3"
+                          type="number"
+                          label="Minutes"
+                          filled
+                          dense
+                        />
                       </div>
-                    </q-popup-proxy>
-                  </q-btn>
-                </div>
-                <div>or</div>
-                <div class="row items-center q-gutter-md">
-                  <span class="col-auto q-ml-lg">Ban After</span>
-                  <div class="col">
-                    <div class="row q-col-gutter-sm">
-                      <q-input
-                        v-model="durationTimeAfterYears"
-                        @update:model-value="onDurationTimeAfterChange(form)"
-                        class="col-6 col-sm-3"
-                        type="number"
-                        label="Years"
-                        filled
-                        dense
-                      />
-                      <q-input
-                        v-model="durationTimeAfterDays"
-                        @update:model-value="onDurationTimeAfterChange(form)"
-                        class="col-6 col-sm-3"
-                        type="number"
-                        label="Days"
-                        filled
-                        dense
-                      />
-                      <q-input
-                        v-model="durationTimeAfterHours"
-                        @update:model-value="onDurationTimeAfterChange(form)"
-                        class="col-6 col-sm-3"
-                        type="number"
-                        label="Hours"
-                        filled
-                        dense
-                      />
-                      <q-input
-                        v-model="durationTimeAfterMinutes"
-                        @update:model-value="onDurationTimeAfterChange(form)"
-                        class="col-6 col-sm-3"
-                        type="number"
-                        label="Minutes"
-                        filled
-                        dense
-                      />
                     </div>
                   </div>
-                </div>
+                  <q-banner class="bg-grey-10 items-center q-mt-md">
+                    <q-icon
+                      :name="ionInformationCircleOutline"
+                      class="q-mr-sm"
+                      color="primary"
+                      size="md"
+                    />
+                    This ban will expire {{ getExpiresAtFromDuration(form.duration) }}
+                  </q-banner>
+                </template>
               </div>
-              <q-banner class="bg-grey-10 items-center">
-                <q-icon :name="ionInformationCircleOutline" class="q-mr-sm" color="primary" size="md" />
-                This ban will expire {{ getExpiresAt(form.duration) }}
-              </q-banner>
             </q-card-section>
           </q-card>
 
@@ -198,14 +217,6 @@ export default {
 
   data() {
     return {
-      fields: {
-        ckey: null,
-        comp_id: null,
-        ip: null,
-        server_id: null,
-        reason: null,
-        duration: null,
-      },
       serverOptions: [
         { label: 'All', value: null },
         { label: this.$helpers.serverIdToFriendlyName('main1'), value: 'main1' },
@@ -225,16 +236,33 @@ export default {
         { label: 'One Month', value: 30 * 24 * 60 * 60 },
         { label: 'Permanent', value: null },
       ],
-      durationTimeAfterYearsOptions: [{ label: '' }],
       durationTimeUntil: null,
       durationTimeAfterYears: null,
       durationTimeAfterDays: null,
       durationTimeAfterHours: null,
       durationTimeAfterMinutes: null,
+      editingDuration: false,
     }
   },
 
   methods: {
+    onFormCreated(form) {
+      if (form.expires_at) {
+        const expiresAt = new Date(form.expires_at)
+
+        this.durationTimeUntil = `${expiresAt.getFullYear()}/${expiresAt.getMonth()}/`
+
+        this.durationTimeUntil = expiresAt.toLocaleString('en-GB', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: false,
+        }).replace(',', '')
+      }
+    },
+
     getSecondsUntil(date) {
       const now = new Date()
       const until = new Date(date)
@@ -271,13 +299,22 @@ export default {
       form.duration = seconds
     },
 
-    getExpiresAt(duration) {
+    getExpiresAt(expiresAt) {
+      if (!expiresAt) return 'never'
+      const expiresAtDate = new Date(expiresAt)
+      const userTz = new Date()
+        .toLocaleDateString(undefined, { day: '2-digit', timeZoneName: 'short' })
+        .substring(4)
+      return 'on ' + expiresAtDate.toLocaleString('en-GB') + ' ' + userTz
+    },
+
+    getExpiresAtFromDuration(duration) {
       if (!duration) return 'never'
       const expiresAtDate = new Date(new Date().getTime() + duration * 1000)
       const userTz = new Date()
         .toLocaleDateString(undefined, { day: '2-digit', timeZoneName: 'short' })
         .substring(4)
-      return 'on ' + expiresAtDate.toLocaleString('en-US') + ' ' + userTz
+      return 'on ' + expiresAtDate.toLocaleString('en-GB') + ' ' + userTz
     },
   },
 }

@@ -52,4 +52,17 @@ class BansController extends Controller
 
         return to_route('admin.bans.index');
     }
+
+    public function edit(Ban $ban)
+    {
+        $ban->load('originalBanDetail');
+        return Inertia::render('Admin/Bans/Edit', [
+            'ban' => $ban
+        ]);
+    }
+
+    public function update(BanRequest $request)
+    {
+        //
+    }
 }
