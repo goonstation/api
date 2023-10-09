@@ -91,6 +91,15 @@
 
         <q-space />
 
+        <q-btn
+          v-if="routes.create"
+          @click="router.visit(getRoute(routes.create))"
+          color="primary"
+          text-color="dark"
+        >
+          {{ createButtonText }}
+        </q-btn>
+
         <q-toggle
           v-if="hasTimestamps && !noTimestampToggle"
           v-model="showTimestamps"
@@ -264,6 +273,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    createButtonText: {
+      type: String,
+      default: 'Create'
+    }
   },
 
   data() {
@@ -340,7 +353,7 @@ export default {
 
     hasActions() {
       let ret = false
-      const actionRoutes = ['fetch', 'edit', 'delete']
+      const actionRoutes = ['view', 'edit', 'delete']
       for (const route in this.routes) {
         if (actionRoutes.includes(route)) {
           ret = true
@@ -352,7 +365,7 @@ export default {
 
     hasView() {
       return !!this.routes.view
-    }
+    },
   },
 
   created() {
@@ -479,13 +492,14 @@ export default {
     },
 
     getRoute(goToRoute, row) {
+      if (!row) return goToRoute
       return goToRoute.replace('_id', row.id)
     },
 
     onRowClick(row) {
       if (!this.hasView) return
       router.visit(this.getRoute(this.routes.view, row))
-    }
+    },
   },
 
   watch: {

@@ -122,6 +122,8 @@ Route::middleware([
         Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
             Route::get('/', 'index')->name('admin.bans.index');
             Route::get('/details', 'getDetails');
+            Route::get('/create', 'create')->name('admin.bans.create');
+            Route::post('/', 'store')->name('admin.bans.store');
         });
     });
 });

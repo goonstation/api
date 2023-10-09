@@ -1,5 +1,27 @@
 <template>
   <div>
+    <q-card flat>
+      <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
+        <q-avatar class="q-mt-xs" :style="`background-color: ${avatarBg};`" font-size="0.35em">
+          {{ initials }}
+        </q-avatar>
+        <div class="q-pb-xs">
+          <div class="text-weight-bold text-h6">
+            <template v-if="player.key">{{ player.key }}</template>
+            <template v-else>{{ $formats.capitalize(player.ckey) }}</template>
+          </div>
+          <div class="text-caption text-grey-5">
+            Last seen {{ dayjs(player.latest_connection.created_at).fromNow() }}
+          </div>
+          <div class="text-caption text-grey-5">
+            Started playing {{ dayjs(player.first_connection.created_at).fromNow() }}
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+
+    <br /><br /><br />
+
     <div class="row q-mb-md q-col-gutter-md">
       <div class="col-12 col-md-auto">
         <q-card flat>

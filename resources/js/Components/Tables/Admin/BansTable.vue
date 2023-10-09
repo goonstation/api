@@ -5,6 +5,7 @@
     :columns="columns"
     :hide-columns="['expires_at', 'deleted_at']"
     :pagination="{ rowsPerPage: 30 }"
+    create-button-text="Add Ban"
     dense
     flat
   >
@@ -69,7 +70,7 @@ export default {
 
   data() {
     return {
-      routes: { fetch: '/admin/bans' },
+      routes: { fetch: '/admin/bans', create: '/admin/bans/create' },
       columns: [
         {
           name: 'id',

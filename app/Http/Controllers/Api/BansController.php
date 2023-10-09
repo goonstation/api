@@ -89,9 +89,9 @@ class BansController extends Controller
     public function check(Request $request)
     {
         $request->validate([
-            'ckey' => 'required_without_all:comp_id,ip|string',
-            'comp_id' => 'required_without_all:ckey,ip|string',
-            'ip' => 'required_without_all:ckey,comp_id|ip',
+            'ckey' => 'required_without_all:comp_id,ip|string|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|string|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|ip|nullable',
             'server_id' => 'nullable|string',
         ]);
 
@@ -120,9 +120,14 @@ class BansController extends Controller
             })
             ->whereHas('details', function (Builder $query) use ($ckey, $compId, $ip) {
                 // Check any of the ban details match the provided player details
-                $query->where('ckey', $ckey)
-                    ->orWhere('comp_id', $compId)
-                    ->orWhere('ip', $ip);
+                if ($ckey) $query->where('ckey', $ckey);
+                else if (!$ckey && $compId) $query->where('comp_id', $compId);
+                else if (!$ckey && !$compId && $ip) $query->where('ip', $ip);
+
+                if ($ckey && $compId) $query->orWhere('comp_id', $compId);
+                if ($ckey && $ip) $query->orWhere('ip', $ip);
+
+                if ($compId && $ip) $query->orWhere('ip', $ip);
             })
             ->orderBy('id', 'desc')
             ->first();
@@ -277,9 +282,9 @@ class BansController extends Controller
     public function addDetails(Request $request, Ban $ban)
     {
         $data = $this->validate($request, [
-            'ckey' => 'required_without_all:comp_id,ip',
-            'comp_id' => 'required_without_all:ckey,ip',
-            'ip' => 'required_without_all:ckey,comp_id|ip',
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|ip|nullable',
         ]);
 
         $banDetail = new BanDetail();
