@@ -1,21 +1,21 @@
 export default {
   install: (app, options) => {
     app.config.globalProperties.$helpers = {
-      serverIdToFriendlyName: (val) => {
+      serverIdToFriendlyName: (val, short = false) => {
         if (val === 'dev') {
-          return 'Goonstation Development'
+          return short ? 'Goon Dev' : 'Goonstation Development'
         } else if (val === 'main1') {
-          return 'Goonstation 1 Classic: Heisenbee'
+          return short ? 'Goon 1' : 'Goonstation 1 Classic: Heisenbee'
         } else if (val === 'main2') {
-          return 'Goonstation 2 Classic: Bombini'
+          return short ? 'Goon 2' : 'Goonstation 2 Classic: Bombini'
         } else if (val === 'main3') {
-          return 'Goonstation 3 Roleplay: Morty'
+          return short ? 'Goon 3 RP' : 'Goonstation 3 Roleplay: Morty'
         } else if (val === 'main4') {
-          return 'Goonstation 4 Roleplay: Sylvester'
+          return short ? 'Goon 4 RP' : 'Goonstation 4 Roleplay: Sylvester'
         } else if (val === 'main5') {
-          return 'Goonstation 5 Event: Rocko'
+          return short ? 'Goon 5 Event' : 'Goonstation 5 Event: Rocko'
         } else {
-          return 'Goonstation'
+          return short ? 'Goon' : 'Goonstation'
         }
       },
     }

@@ -33,12 +33,12 @@ export default {
       currency: (val) => {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'USD',
         }).format(val)
       },
-      server: (val) => {
-        return app.config.globalProperties.$helpers.serverIdToFriendlyName(val)
-      }
+      server: (val, short = false) => {
+        return app.config.globalProperties.$helpers.serverIdToFriendlyName(val, short)
+      },
     }
   },
 }
