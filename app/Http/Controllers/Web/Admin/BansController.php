@@ -8,13 +8,15 @@ use App\Http\Requests\BanRequest;
 use App\Models\Ban;
 use App\Models\BanDetail;
 use App\Traits\IndexableQuery;
+use App\Traits\ManagesBans;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class BansController extends Controller
 {
-    use IndexableQuery;
+    use IndexableQuery, ManagesBans;
 
     public function index(Request $request)
     {
@@ -48,7 +50,7 @@ class BansController extends Controller
 
     public function store(BanRequest $request)
     {
-        app(ApiBansController::class)->store($request);
+        $ban = $this->addBan($request);
 
         return to_route('admin.bans.index');
     }
@@ -61,8 +63,14 @@ class BansController extends Controller
         ]);
     }
 
-    public function update(BanRequest $request)
+    public function update(BanRequest $request, Ban $ban)
     {
-        //
+        try {
+            $ban = $this->updateBan($request, $ban);
+        } catch (Exception $e) {
+            return Redirect::back()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        return to_route('admin.bans.index');
     }
 }

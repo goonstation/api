@@ -133,6 +133,7 @@
     </template>
 
     <template v-slot:body="props">
+      <slot name="body-prepend" :props="props" />
       <q-tr
         :props="props"
         :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
@@ -175,6 +176,7 @@
             v-if="$slots[`cell-content-${col.name}`]"
             :name="`cell-content-${col.name}`"
             :props="props"
+            :col="col"
           />
           <template v-else>
             <template v-if="booleanColumns.includes(col.name)">
@@ -189,6 +191,7 @@
           </template>
         </q-td>
       </q-tr>
+      <slot name="body-append" :props="props" />
     </template>
   </q-table>
 </template>

@@ -125,7 +125,7 @@ Route::middleware([
             Route::get('/create', 'create')->name('admin.bans.create');
             Route::post('/', 'store')->name('admin.bans.store');
             Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit');
-            Route::put('/', 'update')->name('admin.bans.update');
+            Route::put('/{ban}', 'update')->name('admin.bans.update');
         });
     });
 });

@@ -57,6 +57,14 @@ export default {
             color: 'positive',
           })
         },
+        onError: (errors) => {
+          const error = errors.error || 'An error occurred, please try again.'
+          this.$emit('error')
+          this.$q.notify({
+            message: error,
+            color: 'negative',
+          })
+        }
       })
     }
   }

@@ -9,38 +9,29 @@
     dense
     flat
   >
-    <template v-slot:body="props">
-      <q-tr
-        :props="props"
-        :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
+    <template v-slot:cell-content-details="{ props, col }">
+      <q-btn
+        class="q-pa-xs q-pl-sm full-width text-weight-regular"
+        style="font-size: 0.9em"
+        no-wrap
+        flat
+        @click="props.expand = !props.expand"
       >
-        <q-td v-for="col in props.cols" :key="col.name" :props="props">
-          <q-btn
-            v-if="col.name === 'details'"
-            class="q-pa-xs q-pl-sm full-width text-weight-regular"
-            style="font-size: 0.9em"
-            no-wrap
-            flat
-            @click="props.expand = !props.expand"
-          >
-            <span class="q-mr-xs">{{ col.value }}</span>
-            <span>
-              <q-icon :name="props.expand ? ionCaretUp : ionCaretDown" />
-            </span>
-          </q-btn>
-          <template v-else-if="col.name === 'status'">
-            <q-badge v-if="props.row.deleted_at" color="negative"> Removed </q-badge>
-            <q-badge
-              v-else-if="isBanExpired(props.row.expires_at)"
-              color="warning"
-              text-color="black"
-            >
-              Expired
-            </q-badge>
-          </template>
-          <template v-else>{{ col.value }}</template>
-        </q-td>
-      </q-tr>
+        <span class="q-mr-xs">{{ col.value }}</span>
+        <span>
+          <q-icon :name="props.expand ? ionCaretUp : ionCaretDown" />
+        </span>
+      </q-btn>
+    </template>
+
+    <template v-slot:cell-content-status="{ props }">
+      <q-badge v-if="props.row.deleted_at" color="negative"> Removed </q-badge>
+      <q-badge v-else-if="isBanExpired(props.row.expires_at)" color="warning" text-color="black">
+        Expired
+      </q-badge>
+    </template>
+
+    <template v-slot:body-append="{ props }">
       <q-tr v-show="props.expand" :props="props" class="qr-row--expansion">
         <q-td colspan="100%">
           <ban-details-table :expand="props.expand" :row="props.row" />
@@ -73,7 +64,7 @@ export default {
       routes: {
         fetch: '/admin/bans',
         create: '/admin/bans/create',
-        edit: '/admin/bans/update/_id',
+        edit: '/admin/bans/edit/_id',
       },
       columns: [
         {
@@ -92,7 +83,7 @@ export default {
           sortable: true,
           format: (val) => {
             if (!val) return 'All'
-            return this.$formats.server(val)
+            return this.$formats.server(val, true)
           },
           filter: { type: 'selectservers' },
         },

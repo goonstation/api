@@ -2,7 +2,8 @@
   <bans-form
     state="edit"
     :fields="fields"
-    :submit-route="route('admin.bans.update')"
+    :submit-route="route('admin.bans.update', { ban: ban.id })"
+    submit-method="put"
     success-message="Ban updated"
   />
 </template>
@@ -30,6 +31,7 @@ export default {
 
   created() {
     this.fields = {
+      game_admin_ckey: 'wirewraith',
       ckey: this.ban.original_ban_detail.ckey,
       comp_id: this.ban.original_ban_detail.comp_id,
       ip: this.ban.original_ban_detail.ip,

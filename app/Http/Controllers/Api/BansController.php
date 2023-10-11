@@ -17,14 +17,16 @@ use App\Rules\Range;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Traits\ManagesBans;
 
 class BansController extends Controller
 {
-    use IndexableQuery;
+    use IndexableQuery, ManagesBans;
 
     /**
      * List
@@ -143,56 +145,7 @@ class BansController extends Controller
      */
     public function store(BanRequest $request)
     {
-        $expiresAt = null;
-        if (isset($request['duration'])) {
-            $duration = (int)$request['duration'];
-            if ($duration > 0) {
-                $expiresAt = Carbon::now()->addSeconds($duration)->toDateTimeString();
-            }
-        }
-
-        $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
-
-        $player = null;
-        $ckey = isset($request['ckey']) ? $request['ckey'] : null;
-        if ($ckey) {
-            $player = Player::where('ckey', $ckey)->first();
-        }
-
-        $ban = new Ban();
-        $ban->game_admin_id = $gameAdmin->id;
-        $ban->round_id = isset($request['round_id']) ? $request['round_id'] : null;
-        $ban->server_id = isset($request['server_id']) ? $request['server_id'] : null;
-        $ban->reason = $request['reason'];
-        $ban->expires_at = $expiresAt;
-        $ban->requires_appeal = isset($request['requires_appeal']) ? (bool)$request['requires_appeal'] : false;
-        $ban->save();
-
-        $banDetail = new BanDetail();
-        $banDetail->ckey = $ckey;
-        $banDetail->comp_id = isset($request['comp_id']) ? $request['comp_id'] : null;
-        $banDetail->ip = isset($request['ip']) ? $request['ip'] : null;
-        $ban->details()->save($banDetail);
-
-        $note = new PlayerNote();
-        if ($player) {
-            $note->player_id = $player->id;
-        } else {
-            $note->ckey = $ckey;
-        }
-        $note->game_admin_id = $gameAdmin->id;
-        $note->server_id = isset($request['server_id']) ? $request['server_id'] : null;
-        $note->round_id = isset($request['round_id']) ? $request['round_id'] : null;
-        $note->note = sprintf(
-            'Banned %s. Reason: %s',
-            isset($request['duration'])
-                ? 'for ' . CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
-                : 'permanently',
-            $request['reason']
-        );
-        $note->save();
-
-        return new BanResource($ban->load('gameAdmin', 'originalBanDetail'));
+        return $this->addBan($request);
     }
 
     /**
@@ -202,68 +155,11 @@ class BansController extends Controller
      */
     public function update(BanRequest $request, Ban $ban)
     {
-        $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
-        $player = null;
-        $ckey = isset($request['ckey']) ? $request['ckey'] : null;
-        if ($ckey) {
-            $player = Player::where('ckey', $ckey)->first();
+        try {
+            return $this->updateBan($request, $ban);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-
-        $newBanDetails = $request->only(['server_id', 'reason', 'requires_appeal']);
-
-        // Ensure the server ID is nulled out if we're being told about it, and it's falsey
-        if (isset($request['server_id'])) {
-            $newBanDetails['server_id'] = $request['server_id'] ? $request['server_id'] : null;
-        }
-
-        if (isset($request['duration'])) {
-            // A falsey duration means it's essentially "unset", and thus now a permanent ban
-            // Otherwise, the admin is altering how long the ban lasts
-            if (!$request['duration']) {
-                $newBanDetails['expires_at'] = null;
-            } else {
-                // $existingExpiresAt = $ban->expires_at;
-                // if (!$existingExpiresAt) $existingExpiresAt = Carbon::now()->toDateTimeString();
-                // // Ban is temporary, add time on the existing expiry
-                // $newExpiresAt = $existingExpiresAt->addSeconds($request['duration']);
-
-                // Ban is temporary, the new duration shall apply from right now
-                // This is so we can add or reduce the duration if necessary
-                $newExpiresAt = Carbon::now()->addSeconds($request['duration']);
-
-                // Bans can't expire in the past
-                if ($newExpiresAt->lte(Carbon::now())) {
-                    return response()->json(['error' => 'The ban cannot expire in the past, please increase the duration.'], 400);
-                }
-
-                $newBanDetails['expires_at'] = $newExpiresAt->toDateTimeString();
-            }
-        }
-
-        $ban->update($newBanDetails);
-        $ban->originalBanDetail->update($request->only(['ckey', 'comp_id', 'ip']));
-
-        $note = new PlayerNote();
-        if ($player) {
-            $note->player_id = $player->id;
-        } else {
-            $note->ckey = $ckey;
-        }
-        $note->game_admin_id = $gameAdmin->id;
-        $note->server_id = $ban->server_id;
-        $note->round_id = $ban->round_id;
-        $note->note = sprintf(
-            'Edited ban. Duration: %s. Reason: %s. Computer ID: %s. IP: %s',
-            $ban->expires_at
-                ? $ban->expires_at->longAbsoluteDiffForHumans()
-                : 'permanent',
-            $request['reason'],
-            $ban->originalBanDetail->comp_id,
-            $ban->originalBanDetail->ip
-        );
-        $note->save();
-
-        return new BanResource($ban->load('gameAdmin', 'originalBanDetail'));
     }
 
     /**

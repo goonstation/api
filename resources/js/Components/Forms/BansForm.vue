@@ -72,16 +72,15 @@
               <div>
                 <template v-if="state === 'edit' && !editingDuration">
                   <q-banner class="bg-grey-10 items-center">
-                    <q-icon
-                      :name="ionInformationCircleOutline"
-                      class="q-mr-sm"
-                      color="primary"
-                      size="md"
-                    />
+                    <template v-slot:avatar>
+                      <q-icon :name="ionInformationCircleOutline" color="primary" size="md" />
+                    </template>
                     This ban expires {{ getExpiresAtFromDuration(form.duration) }}. Would you like
                     to set a new duration? This will clear the existing duration.
                     <template v-slot:action>
-                      <q-btn @click="editingDuration = true" flat> Edit Duration </q-btn>
+                      <div class="q-mt-sm">
+                        <q-btn @click="editingDuration = true" flat> Edit Duration </q-btn>
+                      </div>
                     </template>
                   </q-banner>
                 </template>
@@ -170,12 +169,14 @@
                     </div>
                   </div>
                   <q-banner class="bg-grey-10 items-center q-mt-md">
-                    <q-icon
-                      :name="ionInformationCircleOutline"
-                      class="q-mr-sm"
-                      color="primary"
-                      size="md"
-                    />
+                    <template v-slot:avatar>
+                      <q-icon
+                        :name="ionInformationCircleOutline"
+                        class="q-mt-xs"
+                        color="primary"
+                        size="md"
+                      />
+                    </template>
                     This ban will expire {{ getExpiresAtFromDuration(form.duration) }}
                   </q-banner>
                 </template>
@@ -186,7 +187,7 @@
           <div class="flex">
             <q-space />
             <q-btn
-              label="Add Ban"
+              :label="(state === 'edit' ? 'Edit' : 'Add') + ' Ban'"
               type="submit"
               color="primary"
               text-color="black"
@@ -200,6 +201,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 import { ionCalendarClearOutline, ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
 import BaseForm from './BaseForm.vue'
 
@@ -249,17 +251,7 @@ export default {
     onFormCreated(form) {
       if (form.expires_at) {
         const expiresAt = new Date(form.expires_at)
-
-        this.durationTimeUntil = `${expiresAt.getFullYear()}/${expiresAt.getMonth()}/`
-
-        this.durationTimeUntil = expiresAt.toLocaleString('en-GB', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: false,
-        }).replace(',', '')
+        this.durationTimeUntil = date.formatDate(expiresAt, 'YYYY/MM/DD HH:mm')
       }
     },
 
@@ -314,6 +306,8 @@ export default {
       const userTz = new Date()
         .toLocaleDateString(undefined, { day: '2-digit', timeZoneName: 'short' })
         .substring(4)
+
+      console.log(date.getDateDiff(expiresAtDate, new Date()))
       return 'on ' + expiresAtDate.toLocaleString('en-GB') + ' ' + userTz
     },
   },
