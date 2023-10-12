@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\GameRoundsController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\MapSwitchesController;
+use App\Http\Controllers\Api\NumbersStationController;
 use App\Http\Controllers\Api\PlayerAntagsController;
 use App\Http\Controllers\Api\PlayerMetadataController;
 use App\Http\Controllers\Api\PlayerNotesController;
@@ -142,5 +143,8 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::post('/', 'store');
         Route::put('/{redirect}', 'update');
         Route::delete('/{redirect}', 'destroy');
+    });
+    Route::controller(NumbersStationController::class)->prefix('numbers-station')->group(function () {
+        Route::get('/', 'index');
     });
 });

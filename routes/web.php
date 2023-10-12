@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\MapsController;
 use App\Http\Controllers\Web\PlayersController;
 use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
+use App\Http\Controllers\Web\TerminalController;
 use App\Http\Controllers\Web\TicketsController;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
@@ -87,6 +88,13 @@ Route::controller(DonateController::class)->prefix('/donate')->group(function ()
 
 Route::controller(RedirectController::class)->prefix('/r')->group(function () {
     Route::get('/{path}', 'redirect')->where('path', '.*')->name('redirect');
+});
+
+Route::controller(TerminalController::class)->prefix('/terminal')->group(function () {
+    Route::get('/', 'index')->name('terminal.index');
+    Route::post('/login', 'login')->name('terminal.login');
+    Route::post('/sudo', 'sudo')->name('terminal.sudo');
+    Route::post('/print', 'print')->name('terminal.print');
 });
 
 Route::middleware([

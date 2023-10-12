@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\BuildChangelog;
+use App\Jobs\GenerateNumbersStationPass;
 use App\Jobs\GetPlayerCounts;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new BuildChangelog)->everyFiveMinutes();
         $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
+        $schedule->job(new GenerateNumbersStationPass)->hourly();
 
         if (App::environment('local')) {
             $schedule->command('telescope:prune')->daily();

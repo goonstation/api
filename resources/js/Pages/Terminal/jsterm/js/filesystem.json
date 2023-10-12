@@ -1,0 +1,104 @@
+{
+  "name": "/",
+  "type": "dir",
+  "contents": [
+    {
+      "name": "dev",
+      "type": "dir",
+      "contents": [
+        {
+          "name": "server",
+          "type": "dir",
+          "contents": [
+            {
+              "name": "file#002-3",
+              "type": "textFile",
+              "contents": "file002-3.txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "home",
+      "type": "dir",
+      "contents": [
+        {
+          "name": "haringo",
+          "type": "dir",
+          "contents": [
+            {
+              "name": "evidentaj.txt",
+              "type": "textFile",
+              "contents": "evidentaj.txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mnt",
+      "type": "dir",
+      "contents": [
+        {
+          "name": "error.log",
+          "type": "textFile",
+          "contents": "mount_error.log"
+        },
+        {
+          "name": "mntSrv23.sh",
+          "type": "textFile",
+          "contents": "mntSrv23.sh"
+        }
+      ]
+    },
+    {
+      "name": "sbill",
+      "type": "dir",
+      "contents": [
+        {
+          "name": "NT-ShittyBillForensicsReport.txt",
+          "type": "textFile",
+          "contents": "NT-ShittyBillForensicsReport.txt"
+        },
+        {
+          "name": "NT-ShittyBillInterview.txt",
+          "type": "textFile",
+          "contents": "NT-ShittyBillInterview.txt"
+        },
+        {
+          "name": "NT-ShittyBillReport.txt",
+          "type": "textFile",
+          "contents": "NT-ShittyBillReport.txt"
+        },
+        {
+          "name": "NT-ShittyBillSketch.txt",
+          "type": "textFile",
+          "contents": "NT-ShittyBillSketch.txt"
+        }
+      ]
+    },
+    {
+      "name": "var",
+      "type": "dir",
+      "contents": [
+        {
+          "name": "log",
+          "type": "dir",
+          "contents": [
+            {
+              "name": "restore.log",
+              "type": "textFile",
+              "contents": "restore.log"
+            }
+          ]
+        },
+        {
+          "name": "mona",
+          "type": "img",
+          "contents": "mona.gif"
+        }
+      ]
+    }
+  ]
+}

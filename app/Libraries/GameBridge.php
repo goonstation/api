@@ -50,6 +50,7 @@ class GameBridge
         if (is_array($data)) {
             $data = http_build_query($data);
         }
+        $data = urlencode($data);
 
         $config = GameBridge::getConfig();
         if (! $config['url']) {
@@ -57,7 +58,7 @@ class GameBridge
         }
         $url = $config['url'];
         $response = Http::withBasicAuth($config['user'], $config['pass'])
-            ->get("$url/wiz/relay/$server?data=$data");
+            ->get("$url/wiz/relay/?server=$server&data=$data");
 
         return $response->throw()->json()['response'];
     }

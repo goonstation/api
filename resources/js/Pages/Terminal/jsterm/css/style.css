@@ -1,0 +1,83 @@
+html, body, #app, .jsterm-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.jsterm {
+    background: url('@/Pages/Terminal/jsterm/images/nt.png') no-repeat center center,
+         url('@/Pages/Terminal/jsterm/images/binding_dark.png') repeat,
+         black;
+    font-family: monospace;
+    font-size: 16px;
+    color: #0c0;
+    min-width: 100%;
+    min-height: 100%;
+    padding: 60px;
+    white-space: pre-wrap;
+    box-shadow: inset 0px 0px 60px 20px rgba(0,0,0,0.5);
+    overflow-x: scroll;
+ }
+
+.jsterm a {
+   color: #E0E0E0;
+   text-decoration: none;
+}
+
+.jsterm a:hover {
+   text-decoration: underline;
+}
+
+.jsterm .host, .jsterm .host a {
+   color: #5555ff;
+   font-weight: bold;
+}
+
+.jsterm .user, .jsterm .user a {
+   color: #ff5555;
+   font-weight: bold;
+}
+
+.jsterm .cwd, .jsterm .cwd a {
+   color: #ffff55;
+   font-weight: bold;
+}
+
+.jsterm .dir, .jsterm .dir a {
+   color: #5555ff;
+   font-weight: bold;
+}
+
+.jsterm .link, .jsterm .link a {
+   color: #5555ff;
+   font-weight: bold;
+}
+
+.jsterm .exec, .jsterm .exec a {
+   color: #55ff55;
+   font-weight: bold;
+}
+
+.jsterm .img, .jsterm .img a {
+   color: #ff55ff;
+   font-weight: bold;
+}
+
+.jsterm .error {
+    color: #ff5555;
+}
+
+.jsterm .file {
+    display: inline-block;
+    line-height: 1.2;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#blinker {
+    line-height: .9em;
+    animation: blink 1s infinite linear;
+}

@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Libraries\GameBridge;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class PrintGameMysteryFile implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    private $title = '';
+    private $file = '';
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct(string $title, string $file)
+    {
+        $this->title = $title;
+        $this->file = $file;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        // TODO: decide what server to send to
+        GameBridge::relay('local', [
+            'type' => 'mysteryPrint',
+            'print_title' => $this->title,
+            'print_file' => $this->file
+        ]);
+    }
+}

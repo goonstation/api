@@ -1,0 +1,21 @@
+
+##############################################
+# SERVER RESTORE LOG
+# GENERATED 2053/02/17 16:31:11
+##############################################
+
+Server restore initiated...
+
+Backup drive CHKDISK running...
+        The type of the file system is NTFS.
+
+        WARNING!  F parameter not specified.
+        Running CHKDSK in read-only mode.
+
+        CHKDSK is verifying files (stage 1 of 3)...
+        File verification completed.
+        CHKDSK is verifying indexes (stage 2 of 3)...
+        Index verification completed.
+        CHKDSK is recovering lost files.
+        Recovering orphaned file mona (42897) into directory file 20278.
+        Recovering orphaned file file#002-3 (51023) into directory file 20573.

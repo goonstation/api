@@ -1,0 +1,74 @@
+
+##############################################
+# SERVER AUTO MOUNT LOG
+# GENERATED 2053/01/23 02:00:05
+# ERROR COUNT: 1
+##############################################
+
+ERROR #1: No response from alias '1'
+
+ERROR #2: No response from alias '2'
+
+ERROR #3: No response from alias '3'
+
+ERROR #4: No response from alias '4'
+
+ERROR #5: No response from alias '5'
+
+ERROR #6: No response from alias '6'
+
+ERROR #7: No response from alias '7'
+
+ERROR #8: No response from alias '8'
+
+ERROR #9: No response from alias '9'
+
+ERROR #10: No response from alias '10'
+
+ERROR #11: No response from alias '11'
+
+ERROR #12: No response from alias '12'
+
+ERROR #13: Failed to mount drive 'terra13' to '/mnt/server/terra13'
+Stack Trace:
+ #1: (internal function)
+ #2: mount 184.84.243.27/backup /mnt/server/terra13
+ #3: usr:root
+
+ERROR #14: No response from alias '14'
+
+ERROR #15: No response from alias '15'
+
+ERROR #16: No response from alias '16'
+
+ERROR #17: No response from alias '17'
+
+ERROR #18: No response from alias '18'
+
+ERROR #19: No response from alias '19'
+
+ERROR #20: No response from alias '20'
+
+ERROR #21: No response from alias '21'
+
+ERROR #22: No response from alias '22'
+
+ERROR #23: Failed to mount drive 'nt23' to '/mnt/servers/nt23'
+Stack Trace:
+ #1: (internal function)
+ #2: mount $EXTADDR/backup /mnt/servers/nt23
+ #3: mntSrv23.sh, line:3:1
+
+ERROR #24: No response from alias '24'
+
+ERROR #25: No response from alias '25'
+
+ERROR #26: No response from alias '26'
+
+ERROR #27: No response from alias '27'
+
+ERROR #28: No response from alias '28'
+
+ERROR #29: No response from alias '29'
+
+ERROR #30: No response from alias '30'
