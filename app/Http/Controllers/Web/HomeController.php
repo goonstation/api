@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Helpers\ChangelogHelper;
 use App\Http\Controllers\Controller;
 use App\Models\GameRound;
+use App\Models\GameServer;
 use App\Models\PlayersOnline;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,12 +17,8 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $serversToShow = [
-            'main1',
-            'main3',
-            'main4',
-            'main5',
-        ];
+        $servers = GameServer::where('active', true)->where('invisible', false)->get();
+        $serversToShow = $servers->pluck('server_id');
 
         $playersOnline = PlayersOnline::whereIn('server_id', $serversToShow)
             ->where('created_at', '>=', Carbon::today()->subDays(7))
@@ -33,7 +30,8 @@ class HomeController extends Controller
 
         $lastRounds = [];
         foreach ($serversToShow as $server) {
-            $lastRounds[] = GameRound::where('server_id', $server)
+            $lastRounds[] = GameRound::with(['server:server_id,name'])
+                ->where('server_id', $server)
                 ->whereNotNull('ended_at')
                 ->orderByRaw('created_at DESC NULLS LAST')
                 ->first();
@@ -44,7 +42,7 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'serversToShow' => $serversToShow,
+            'servers' => $servers,
             'playersOnline' => $playersOnline,
             'lastRounds' => $lastRounds,
             'changelog' => $changelog,

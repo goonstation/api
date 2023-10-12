@@ -220,7 +220,8 @@ COMMANDS.lpr = function (argv, cb) {
 
   axios
     .post(route('terminal.print'), { fileName })
-    .then(() => {
+    .then((res) => {
+      const server = res.data.message
       this._terminal.write('lpr: file sent to to qqqqqqueeeeeeu---<br>')
       setTimeout(() => {
         this._terminal.write('.<br>')
@@ -230,7 +231,7 @@ COMMANDS.lpr = function (argv, cb) {
             this._terminal.write('...<br>')
             setTimeout(() => {
               this._terminal.write('lpr: destination host unknown<br>')
-              this._terminal.write('lpr: sending file to %$$##*- server<br><br>')
+              this._terminal.write(`lpr: sending file to %$$##*${server}- server<br><br>`)
               this._terminal.write(
                 'O26+M9i2iaPeSTMDHTgSg+tHgjW58+sqUpP6mSyqzpUPFmLGDiNjW9d//8Z0j9gjH35OPXU2XgRcjy1dYzhicTnP2D5er3OZHfQlkxUS5tY=<br><br>'
               )

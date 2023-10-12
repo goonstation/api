@@ -3,7 +3,7 @@
     <q-card class="q-mb-md" flat>
       <q-card-section>
         <div class="text-caption opacity-60 q-mb-xs">
-          {{ $helpers.serverIdToFriendlyName(round.server_id) }}
+          {{ round.server.name }}
         </div>
         <div class="text-weight-bold text-lg gh-link-card__title">
           {{ latestStationName }}

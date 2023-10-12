@@ -2,7 +2,7 @@
   <div class="q-table__grid-item col-xs-12 col-md-6 col-lg-4">
     <Link :href="`/rounds/${item.row.id}`" class="gh-link-card q-py-sm">
       <div class="text-caption opacity-60 q-mb-xs">
-        {{ $helpers.serverIdToFriendlyName(item.row.server_id) }}
+        {{ item.row.server.name }}
       </div>
       <div class="text-weight-bold ellipsis gh-link-card__title">
         {{ latestStationName }}

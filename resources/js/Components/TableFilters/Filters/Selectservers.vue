@@ -1,41 +1,18 @@
 <template>
-  <q-select
-    v-model="model"
-    :options="options"
-    class="gh-select--denser"
-    map-options
-    emit-value
-    square
-    filled
-    dense
-    :clearable="!!model"
+  <base-select
+    v-bind="$attrs"
+    load-route="/game-servers"
+    option-value="server_id"
+    option-label="name"
   />
 </template>
 
 <script>
+import BaseSelect from '@/Components/Selects/BaseSelect.vue'
+
 export default {
-  props: ['modelValue'],
-
-  computed: {
-    model: {
-      get() {
-        return this.modelValue
-      },
-      set(val) {
-        this.$emit('update:modelValue', val)
-      },
-    },
-
-    options() {
-      return [
-        { value: null, label: 'All' },
-        { value: 'main1', label: this.$helpers.serverIdToFriendlyName('main1') },
-        { value: 'main2', label: this.$helpers.serverIdToFriendlyName('main2') },
-        { value: 'main3', label: this.$helpers.serverIdToFriendlyName('main3') },
-        { value: 'main4', label: this.$helpers.serverIdToFriendlyName('main4') },
-        { value: 'main5', label: this.$helpers.serverIdToFriendlyName('main5') },
-      ]
-    },
+  components: {
+    BaseSelect,
   },
 }
 </script>

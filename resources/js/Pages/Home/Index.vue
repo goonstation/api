@@ -13,7 +13,7 @@
   <div class="row q-col-gutter-md q-mb-md">
     <div class="col-12 col-md-6">
       <player-trend :data="playersOnline" />
-      <server-status v-for="server in serversToShow" class="q-mt-md" :server="server" />
+      <server-status v-for="server in servers" class="q-mt-md" :server="server" />
     </div>
 
     <div class="col-12 col-md-6">
@@ -140,7 +140,7 @@ export default {
   props: {
     canLogin: Boolean,
     canRegister: Boolean,
-    serversToShow: Array,
+    servers: Array,
     playersOnline: Object,
     lastRounds: Object,
     changelog: Object,

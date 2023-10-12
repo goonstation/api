@@ -32,6 +32,11 @@ class GameRound extends Model
         'updated_at',
     ];
 
+    public function server()
+    {
+        return $this->belongsTo(GameServer::class, 'server_id', 'server_id');
+    }
+
     public function stationNames()
     {
         return $this->hasMany(EventStationName::class, 'round_id');

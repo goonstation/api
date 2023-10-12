@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\DonateController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
+use App\Http\Controllers\Web\GameServersController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
 use App\Http\Controllers\Web\PlayersController;
@@ -95,6 +96,10 @@ Route::controller(TerminalController::class)->prefix('/terminal')->group(functio
     Route::post('/login', 'login')->name('terminal.login');
     Route::post('/sudo', 'sudo')->name('terminal.sudo');
     Route::post('/print', 'print')->name('terminal.print');
+});
+
+Route::controller(GameServersController::class)->prefix('/game-servers')->group(function () {
+    Route::get('/', 'index')->name('game-servers.index');
 });
 
 Route::middleware([

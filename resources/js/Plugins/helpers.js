@@ -18,6 +18,14 @@ export default {
           return short ? 'Goon' : 'Goonstation'
         }
       },
+
+      isNumeric: (val) => {
+        if (typeof val != 'string') return false
+        return (
+          !isNaN(val) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+          !isNaN(parseFloat(val)) // ...and ensure strings of whitespace fail
+        )
+      },
     }
   },
 }

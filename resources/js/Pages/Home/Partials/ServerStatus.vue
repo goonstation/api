@@ -1,7 +1,7 @@
 <template>
   <q-card
     tag="a"
-    :href="`https://play.goonhub.com/${server}`"
+    :href="`https://play.goonhub.com/${server.server_id}`"
     target="_blank"
     class="server-status"
     flat
@@ -9,7 +9,7 @@
     <q-card-section class="row items-center no-wrap">
       <div class="server-status__info q-mr-md">
         <strong class="text-primary">
-          {{ $helpers.serverIdToFriendlyName(server) }}
+          {{ server.name }}
         </strong>
         <div class="server-status__station-name">
           <q-skeleton type="text" v-if="loading" />
@@ -112,7 +112,7 @@ import dayjs from 'dayjs'
 
 export default {
   props: {
-    server: String,
+    server: Object,
   },
 
   data: () => {
@@ -157,7 +157,7 @@ export default {
       try {
         const res = await axios.get(`${this.$page.props.env.GAME_BRIDGE_URL}/status`, {
           params: {
-            server: this.server,
+            server: this.server.server_id,
           },
         })
         this.status = res.data.response

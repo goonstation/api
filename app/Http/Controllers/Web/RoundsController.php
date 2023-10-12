@@ -15,6 +15,7 @@ class RoundsController extends Controller
     public function index(Request $request)
     {
         $rounds = $this->indexQuery(GameRound::with([
+            'server:server_id,name',
             'latestStationName',
         ])->where('ended_at', '!=', null), perPage: 30);
 
@@ -30,6 +31,7 @@ class RoundsController extends Controller
     public function show(Request $request, int $round)
     {
         $gameRound = GameRound::with([
+            'server:server_id,name',
             'latestStationName:id,round_id,name',
             'aiLaws:id,round_id,ai_name,law_number,law_text,uploader_name',
             'deaths:id,round_id,mob_name,mob_job,bruteloss,fireloss,toxloss,oxyloss,gibbed,created_at',

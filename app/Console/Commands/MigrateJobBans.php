@@ -62,7 +62,7 @@ class MigrateJobBans extends Command
             $jobBan = new JobBan();
             $jobBan->timestamps = false;
             $jobBan->game_admin_id = $gameAdmin->id;
-            $jobBan->server_id = $record['server_id'];
+            $jobBan->server_id = $record['server_id'] ? $record['server_id'] : null;
             $jobBan->ckey = $this->ckeyIzeAdmin($record['ckey']);
             $jobBan->banned_from_job = $record['banned_from_job'];
             $jobBan->created_at = $record['created_at'];

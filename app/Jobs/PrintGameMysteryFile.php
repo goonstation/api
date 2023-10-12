@@ -13,6 +13,7 @@ class PrintGameMysteryFile implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $serverId = '';
     private $title = '';
     private $file = '';
 
@@ -21,8 +22,9 @@ class PrintGameMysteryFile implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $title, string $file)
+    public function __construct(string $serverId, string $title, string $file)
     {
+        $this->serverId = $serverId;
         $this->title = $title;
         $this->file = $file;
     }
@@ -34,8 +36,7 @@ class PrintGameMysteryFile implements ShouldQueue
      */
     public function handle()
     {
-        // TODO: decide what server to send to
-        GameBridge::relay('local', [
+        GameBridge::relay($this->serverId, [
             'type' => 'mysteryPrint',
             'print_title' => $this->title,
             'print_file' => $this->file

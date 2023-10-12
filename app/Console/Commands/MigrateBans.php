@@ -109,11 +109,14 @@ class MigrateBans extends Command
                     }
                 }
 
+                $serverId = $record['server_id'] === "\N" ? null : $record['server_id'];
+                if ($serverId === 'rp') $serverId = null;
+
                 $ban = new Ban();
                 $ban->timestamps = false;
                 $ban->game_admin_id = $gameAdmin ? $gameAdmin['id'] : null;
                 $ban->reason = stripslashes($record['reason']);
-                $ban->server_id = $record['server_id'] === "\N" ? null : $record['server_id'];
+                $ban->server_id = $serverId;
                 $ban->expires_at = $expiresAt;
                 $ban->created_at = $record['created_at'];
                 $ban->updated_at = $record['updated_at'];

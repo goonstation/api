@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Libraries\GameBridge;
+use App\Models\GameServer;
 use App\Models\PlayersOnline;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -32,15 +33,14 @@ class GetPlayerCounts implements ShouldQueue
      */
     public function handle()
     {
-        // loop through active servers
-        // TODO: (determined how? from that dumb servers.conf file? manually?)
-        $servers = ['main1', 'main3', 'main4', 'main5'];
+        // Get player count for all active servers
+        $servers = GameServer::where('active', true)->where('invisible', false)->get();
 
         $when = Carbon::now();
         foreach ($servers as $server) {
             $playerCount = 0;
             try {
-                $status = GameBridge::status($server);
+                $status = GameBridge::status($server->server_id);
                 $playerCount = $status['players'];
             } catch (\Exception $e) {
                 // server might be dead, restarting, or otherwise in a bad state
@@ -49,7 +49,7 @@ class GetPlayerCounts implements ShouldQueue
             }
             $playersOnline = new PlayersOnline();
             $playersOnline->timestamps = false;
-            $playersOnline->server_id = $server;
+            $playersOnline->server_id = $server->server_id;
             $playersOnline->online = $playerCount;
             $playersOnline->created_at = $when;
             $playersOnline->save();

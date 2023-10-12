@@ -114,6 +114,10 @@ class MigrateNotes extends Command
                 $note['game_admin_id'] = null;
                 $legacyData['game_admin_ckey'] = $adminCkey;
             }
+
+            $serverId = strtolower($record['server_id']);
+            if ($serverId === "\n" || $serverId === 'discord') $serverId = null;
+
             $note['server_id'] = strtolower($record['server_id']);
             $note['note'] = urldecode(stripslashes($record['note']));
             $note['legacy_data'] = json_encode($legacyData);

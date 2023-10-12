@@ -13,17 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('game_rounds', function (Blueprint $table) {
+        Schema::create('game_servers', function (Blueprint $table) {
             $table->id();
-            $table->text('server_id')->nullable();
-            $table->text('map')->nullable();
-            $table->text('game_type')->nullable();
-            $table->boolean('rp_mode')->default(false);
-            $table->boolean('crashed')->default(false);
-            $table->timestamp('ended_at')->nullable();
+            $table->text('server_id')->unique();
+            $table->text('name');
+            $table->text('address');
+            $table->integer('port');
+            $table->boolean('active')->default(false);
+            $table->boolean('invisible')->default(false);
             $table->timestamps();
-
-            $table->index('server_id');
         });
     }
 
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('game_rounds');
+        Schema::dropIfExists('game_servers');
     }
 };

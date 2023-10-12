@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Libraries\GameBridge;
+use App\Models\GameServer;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -126,11 +127,13 @@ class GenerateNumbersStationPass implements ShouldQueue
             ]
         );
 
-        // send new numbers to all active servers
-        // TODO: how to determine active servers
-        GameBridge::relay('local', [
-            'type' => 'numbersStation',
-            'numbers' => $numbers,
-        ]);
+        // Send new numbers to all active servers
+        $servers = GameServer::where('active', true)->get();
+        foreach ($servers as $server) {
+            GameBridge::relay($server['server_id'], [
+                'type' => 'numbersStation',
+                'numbers' => $numbers,
+            ]);
+        }
     }
 }

@@ -30,7 +30,9 @@ export default {
     model: {
       get() {
         if (!this.modelValue) return
-        return parseInt(this.modelValue)
+        if (this.$helpers.isNumeric(this.modelValue))
+          return parseInt(this.modelValue)
+        return this.modelValue
       },
       set(val) {
         this.$emit('update:modelValue', val)

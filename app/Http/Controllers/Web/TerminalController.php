@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\PrintGameMysteryFile;
+use App\Models\GameServer;
 use App\Models\NumbersStationPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -54,8 +55,17 @@ class TerminalController extends Controller
 
         Cache::put('terminal-print-queue', true, now()->addMinutes(60));
 
-        PrintGameMysteryFile::dispatch('011010110110010101111001', 'mystery01.txt');
+        // Pick a random server to send our print output to
+        $servers = GameServer::where('active', true)->where('invisible', false)->get();
+        $servers = $servers->toArray();
+        $randomServer = $servers[array_rand($servers, 1)];
 
-        return response()->json(['message' => 'Printing ' . $fileName]);
+        PrintGameMysteryFile::dispatch(
+            $randomServer['server_id'],
+            '011010110110010101111001',
+            'mystery01.txt'
+        );
+
+        return response()->json(['message' => $randomServer['server_id']]);
     }
 }

@@ -1,7 +1,7 @@
 <template>
   <q-item class="q-px-none q-pt-md">
     <q-item-section>
-      <q-item-label caption>{{ $helpers.serverIdToFriendlyName(round.server_id) }}</q-item-label>
+      <q-item-label caption>{{ round.server.name }}</q-item-label>
       <q-item-label>Round #{{ $formats.number(round.id) }}</q-item-label>
       <q-item-label caption> Lasted for {{ duration }}, {{ ended }} </q-item-label>
     </q-item-section>
@@ -21,7 +21,7 @@
   <!-- <q-card class="gh-recent-round" :class="[round.map && `gh-recent-round--map-${round.map}`]" flat>
     <q-card-section>
       <div class="gh-recent-round__server q-mb-xs">
-        {{ $helpers.serverIdToFriendlyName(round.server_id) }}
+        {{ round.server.name }}
       </div>
       <div class="gh-recent-round__id q-mb-sm">Round #{{ $formats.number(round.id) }}</div>
       <div class="row items-center">
