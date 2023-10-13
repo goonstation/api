@@ -59,14 +59,19 @@ class MigratePlayers extends Command
             }
 
             if (! empty($record['ip']) && ! empty($record['comp_id'])) {
-                $geoRecord = $geoReader->country($record['ip']);
+                $geoRecord = null;
+                try {
+                    $geoRecord = $geoReader->country($record['ip']);
+                } catch (\Exception $e) {
+                    // pass
+                }
 
                 $connection = [];
                 $connection['player_id'] = $player['id'];
                 $connection['ip'] = $record['ip'];
                 $connection['comp_id'] = $record['comp_id'];
-                $connection['country'] = $geoRecord->country->name;
-                $connection['country_iso'] = $geoRecord->country->isoCode;
+                $connection['country'] = $geoRecord ? $geoRecord->country->name : null;
+                $connection['country_iso'] = $geoRecord ? $geoRecord->country->isoCode : null;
                 $connection['legacy_data'] = json_encode([
                     'server_id' => migval($record['server_id']),
                     'rp_mode' => (bool) migval($record['rp_mode']),

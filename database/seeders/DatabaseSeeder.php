@@ -72,6 +72,14 @@ class DatabaseSeeder extends Seeder
                 'active' => true,
                 'invisible' => true,
             ],
+            [
+                'server_id' => 'local',
+                'name' => 'Goonstation Local',
+                'address' => '127.0.0.1',
+                'port' => 4999,
+                'active' => false,
+                'invisible' => true,
+            ],
         ]);
 
         Map::insert([
