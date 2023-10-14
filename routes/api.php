@@ -92,7 +92,7 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::get('/get-for-player', 'getForPlayer');
         Route::post('/', 'store');
         Route::put('/{jobBan}', 'update');
-        Route::delete('/{jobBan}', 'destroy');
+        Route::delete('/', 'destroy');
     });
     Route::controller(MapsController::class)->prefix('maps')->group(function () {
         Route::post('/generate', 'generate');

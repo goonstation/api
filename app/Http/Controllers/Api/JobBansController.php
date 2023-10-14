@@ -10,6 +10,7 @@ use App\Models\JobBan;
 use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -95,9 +96,27 @@ class JobBansController extends Controller
         ]);
 
         $serverId = isset($data['server_id']) ? $data['server_id'] : null;
-        $jobBans = JobBan::getValidJobBans($data['ckey'], null, $serverId)->orderBy('id')->get();
+        $jobBans = JobBan::select('banned_from_job')
+            ->where('ckey', $data['ckey'])
+            ->where(function (Builder $builder) use ($serverId) {
+                // Check if the ban applies to all servers, or the server id we were provided
+                $builder->whereNull('server_id')
+                    ->orWhere('server_id', $serverId);
+            })
+            ->where(function (Builder $builder) {
+                // Check the ban is permanent, or has yet to expire
+                $builder->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', Carbon::now()->toDateTimeString());
+            })
+            ->get()
+            ->pluck('banned_from_job')
+            ->unique();
 
-        return JobBanResource::collection(new JobBanResource($jobBans));
+        /**
+         * A list of jobs this player is banned from
+         * @var array
+         */
+        return ['data' => $jobBans];
     }
 
     /**
@@ -113,7 +132,7 @@ class JobBansController extends Controller
             'server_id' => 'nullable|string',
             'ckey' => 'required',
             'job' => 'required',
-            'reason' => 'required',
+            'reason' => 'nullable|string',
             'duration' => 'nullable|integer',
         ]);
 
@@ -121,7 +140,7 @@ class JobBansController extends Controller
 
         // Check a ban doesn't already exist for the provided ckey and job
         $existingJobBan = JobBan::getValidJobBans($data['ckey'], $data['job'], $serverId)->first();
-        if (! empty($existingJobBan)) {
+        if (!empty($existingJobBan)) {
             return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
         }
 
@@ -155,7 +174,7 @@ class JobBansController extends Controller
         $data = $this->validate($request, [
             'server_id' => 'nullable|string',
             'job' => 'required',
-            'reason' => 'required',
+            'reason' => 'nullable|string',
             'duration' => 'nullable|integer',
         ]);
 
@@ -163,7 +182,7 @@ class JobBansController extends Controller
 
         // Check another ban doesn't already exist for the provided job
         $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
-        if (! empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
+        if (!empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
             return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
         }
 
@@ -178,7 +197,7 @@ class JobBansController extends Controller
         if (isset($data['duration'])) {
             // A falsey duration means it's essentially "unset", and thus now a permanent ban
             // Otherwise, the admin is altering how long the ban lasts
-            if (! $data['duration']) {
+            if (!$data['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
                 // Ban is temporary, the duration starts from when the ban was first created
@@ -203,10 +222,22 @@ class JobBansController extends Controller
      *
      * Delete an existing job ban
      */
-    public function destroy(JobBan $jobBan)
+    public function destroy(Request $request)
     {
-        $jobBan->delete();
+        $data = $this->validate($request, [
+            'server_id' => 'nullable|string',
+            'ckey' => 'required',
+            'job' => 'required'
+        ]);
 
-        return ['message' => 'Job ban removed'];
+        $jobBans = JobBan::where('ckey', $data['ckey'])
+            ->where('banned_from_job', $data['job']);
+
+        if (isset($data['server_id'])) {
+            $jobBans->where('server_id', $data['server_id']);
+        }
+
+        $jobBans->delete();
+        return ['message' => 'Job bans removed'];
     }
 }
