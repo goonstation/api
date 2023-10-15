@@ -42,6 +42,7 @@ class MigrateMapSwitches extends Command
                 'server_id' => $record['server_id'],
                 'map' => $record['map'],
                 'created_at' => $record['created_at'],
+                'updated_at' => $record['created_at'],
             ];
 
             $bar->advance();

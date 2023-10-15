@@ -23,7 +23,7 @@ class MapSwitchesController extends Controller
     {
         $data = $this->validate($request, [
             'game_admin_ckey' => 'nullable|string',
-            'server_id' => 'required|string',
+            'server_id' => 'nullable|string',
             'round_id' => 'required|integer',
             'map' => 'required|string',
             'votes' => 'nullable|integer',
@@ -41,7 +41,7 @@ class MapSwitchesController extends Controller
         $mapSwitch->round_id = $data['round_id'];
         $mapSwitch->server_id = isset($data['server_id']) ? $data['server_id'] : null;
         $mapSwitch->map = $data['map'];
-        $mapSwitch->votes = isset($data['votes']) ? $data['votes'] : null;
+        $mapSwitch->votes = isset($data['votes']) ? $data['votes'] : 0;
         $mapSwitch->save();
 
         $res = Http::withHeaders([
@@ -59,6 +59,7 @@ class MapSwitchesController extends Controller
         return [
             'data' => [
                 'map_switch' => new MapSwitchResource($mapSwitch),
+                /** @var int HTTP status code response from the build server */
                 'status' => $res->status(),
             ],
         ];
