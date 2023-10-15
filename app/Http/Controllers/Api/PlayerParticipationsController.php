@@ -31,4 +31,31 @@ class PlayerParticipationsController extends Controller
 
         return new PlayerParticipationResource($participation);
     }
+
+    /**
+     * Add Bulk
+     *
+     * Add multiple participations at once
+     */
+    public function storeBulk(Request $request)
+    {
+        $data = $request->validate([
+            'players' => 'required|array|exists:players,id',
+            'round_id' => 'required|integer|exists:game_rounds,id',
+        ]);
+
+        $insertData = [];
+        foreach ($data['players'] as $playerId) {
+            $insertData[] = [
+                'player_id' => $playerId,
+                'round_id' => $data['round_id'],
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        PlayerParticipation::insert($insertData);
+
+        return ['message' => 'Added participations'];
+    }
 }

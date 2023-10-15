@@ -50,6 +50,7 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(PlayerParticipationsController::class)->prefix('players/participations')->group(function () {
         Route::post('/', 'store');
+        Route::post('/bulk', 'storeBulk');
     });
     Route::controller(PlayerPlaytimeController::class)->prefix('players/playtime')->group(function () {
         Route::post('/bulk', 'storeBulk');
