@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlayerCompIdsResource;
+use App\Http\Resources\PlayerIpsResource;
 use App\Http\Resources\PlayerResource;
 use App\Http\Resources\PlayerSearchResource;
 use App\Http\Resources\PlayerStatsResource;
@@ -11,6 +13,7 @@ use App\Models\Player;
 use App\Models\PlayerConnection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class PlayersController extends Controller
@@ -89,9 +92,9 @@ class PlayersController extends Controller
     public function search(Request $request)
     {
         $data = $request->validate([
-            'ckey' => 'required_without_all:ip,comp_id|alpha_num',
-            'ip' => 'required_without_all:ckey,comp_id|ipv4',
-            'comp_id' => 'required_without_all:ckey,ip|integer',
+            'ckey' => 'required_without_all:ip,comp_id|nullable|alpha_num',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ipv4',
+            'comp_id' => 'required_without_all:ckey,ip|nullable|integer',
             /** When set, looks up player details by exact matches, rather than partial lookups */
             'exact' => 'nullable|boolean',
         ]);
@@ -174,6 +177,84 @@ class PlayersController extends Controller
         return PlayerSearchResource::collection(
             new PlayerSearchResource($conns)
         );
+    }
+
+    /**
+     * Get IPs
+     *
+     * Get a list of IPs associated with a player ckey,
+     * along with how many times they connected with each IP
+     */
+    public function getIps(Request $request)
+    {
+        $data = $request->validate([
+            'ckey' => 'required|alpha_num',
+        ]);
+
+        $player = Player::with([
+                'latestConnection',
+                'connections' => function ($query) {
+                    $query->select(
+                            DB::raw('DISTINCT(ip) as ip'),
+                            DB::raw('COUNT(*) as connected'),
+                            'player_id'
+                        )
+                        ->groupBy('ip', 'player_id')
+                        ->orderBy('connected', 'desc');
+                },
+            ])
+            ->where('ckey', $data['ckey'])
+            ->first();
+
+        if (!$player) return response()->json(['message' => 'Player does not exist'], 404);
+
+        $ips = $player->connections->map(function ($item) {
+            return ['ip' => $item->ip, 'connected' => $item->connected];
+        });
+
+        return new PlayerIpsResource([
+            'latest_connection' => $player->latestConnection,
+            'ips' => $ips
+        ]);
+    }
+
+    /**
+     * Get Comp Ids
+     *
+     * Get a list of computed IDs associated with a player ckey,
+     * along with how many times they connected with each computer ID
+     */
+    public function getCompIds(Request $request)
+    {
+        $data = $request->validate([
+            'ckey' => 'required|alpha_num',
+        ]);
+
+        $player = Player::with([
+                'latestConnection',
+                'connections' => function ($query) {
+                    $query->select(
+                            DB::raw('DISTINCT(comp_id) as comp_id'),
+                            DB::raw('COUNT(*) as connected'),
+                            'player_id'
+                        )
+                        ->groupBy('comp_id', 'player_id')
+                        ->orderBy('connected', 'desc');
+                },
+            ])
+            ->where('ckey', $data['ckey'])
+            ->first();
+
+        if (!$player) return response()->json(['message' => 'Player does not exist'], 404);
+
+        $compIds = $player->connections->map(function ($item) {
+            return ['comp_id' => $item->comp_id, 'connected' => $item->connected];
+        });
+
+        return new PlayerCompIdsResource([
+            'latest_connection' => $player->latestConnection,
+            'comp_ids' => $compIds
+        ]);
     }
 
     /**

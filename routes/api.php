@@ -46,6 +46,8 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     Route::controller(PlayersController::class)->prefix('players')->group(function () {
         Route::post('/', 'store');
         Route::get('/search', 'search');
+        Route::get('/get-ips', 'getIps');
+        Route::get('/get-compids', 'getCompIds');
         Route::get('/stats', 'stats');
     });
     Route::controller(PlayerParticipationsController::class)->prefix('players/participations')->group(function () {

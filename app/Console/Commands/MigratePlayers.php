@@ -53,6 +53,8 @@ class MigratePlayers extends Command
                 $player = [];
                 $player['id'] = $playerCount;
                 $player['ckey'] = $record['ckey'];
+                $player['created_at'] = $record['connection_created_at'];
+                $player['updated_at'] = $record['connection_created_at'];
                 $players[$record['ckey']] = $player;
             } else {
                 $player = $players[$record['ckey']];
