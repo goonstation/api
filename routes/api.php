@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BansController;
 use App\Http\Controllers\Api\GameAdminRanksController;
 use App\Http\Controllers\Api\GameAdminsController;
 use App\Http\Controllers\Api\GameRoundsController;
+use App\Http\Controllers\Api\GauntletController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\MapSwitchesController;
@@ -149,5 +150,8 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(NumbersStationController::class)->prefix('numbers-station')->group(function () {
         Route::get('/', 'index');
+    });
+    Route::controller(GauntletController::class)->prefix('gauntlet')->group(function () {
+        Route::get('/get-previous', 'getPrevious');
     });
 });
