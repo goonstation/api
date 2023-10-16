@@ -26,11 +26,11 @@ class PlayerMetadataFilter extends ModelFilter
     {
         return $this->related('player', function ($query) use ($val) {
             return $query->whereLike('ckey', $val);
-        })->orWhere('ckey', $val);
+        });
     }
 
-    public function data($val)
+    public function metadata($val)
     {
-        return $this->where('data', $val);
+        return $this->where('metadata', $val);
     }
 }

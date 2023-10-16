@@ -21,8 +21,7 @@ class PlayerMetadataResource extends JsonResource
             'player' => $this->whenLoaded('player', function () {
                 return $this->player()->select('id', 'ckey')->first();
             }),
-            'ckey' => $this->ckey,
-            'data' => $this->data,
+            'metadata' => $this->metadata,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

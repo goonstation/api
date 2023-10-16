@@ -31,7 +31,7 @@ class PlayerMetadataController extends Controller
         $request->validate([
             'filters.id' => 'int',
             'filters.ckey' => 'string',
-            'filters.data' => 'string',
+            'filters.metadata' => 'string',
             /**
              * A date or date range
              *
@@ -52,6 +52,42 @@ class PlayerMetadataController extends Controller
     }
 
     /**
+     * Get By Player
+     *
+     * Get all the metadata associated with a ckey
+     */
+    public function getByPlayer(string $ckey)
+    {
+        $metadata = PlayerMetadata::whereRelation('player', 'ckey', $ckey)
+            ->select('metadata')
+            ->get();
+
+        return [
+            /** @var array{string} */
+            'data' => $metadata->pluck('metadata')
+        ];
+    }
+
+    /**
+     * Get By Metadata
+     *
+     * Get all the ckeys associated with a piece of metadata
+     */
+    public function getByData(string $metadata)
+    {
+        $metadata = PlayerMetadata::with('player:id,ckey')
+            ->where('metadata', $metadata)
+            ->select('player_id', 'metadata')
+            ->distinct('player_id')
+            ->get();
+
+        return [
+            /** @var array{string} */
+            'data' => $metadata->pluck('player.ckey')
+        ];
+    }
+
+    /**
      * Add
      *
      * Add player metadata
@@ -60,40 +96,37 @@ class PlayerMetadataController extends Controller
     {
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
-            'data' => 'required|string',
+            'metadata' => 'required|string',
         ]);
 
         $metadata = new PlayerMetadata();
         $metadata->player_id = $data['player_id'];
-        $metadata->data = $data['data'];
+        $metadata->metadata = $data['metadata'];
         $metadata->save();
 
         return new PlayerMetadataResource($metadata);
     }
 
     /**
-     * Delete from player
+     * Delete By Player
      *
      * Delete all metadata associated with a specific player
      */
     public function destroyByPlayer(string $ckey)
     {
-        $entries = PlayerMetadata::whereRelation('player', 'ckey', $ckey)
-            ->orWhere('ckey', $ckey);
-        $entries->delete();
+        PlayerMetadata::whereRelation('player', 'ckey', $ckey)->delete();
 
         return ['message' => 'Metadata removed'];
     }
 
     /**
-     * Delete
+     * Delete By Metadata
      *
-     * Delete a specific item of metadata
+     * Delete all matching metadata items
      */
-    public function destroyByData(string $data)
+    public function destroyByData(string $metadata)
     {
-        $entries = PlayerMetadata::where('data', $data);
-        $entries->delete();
+        PlayerMetadata::where('metadata', $metadata)->delete();
 
         return ['message' => 'Metadata removed'];
     }

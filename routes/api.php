@@ -77,9 +77,11 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(PlayerMetadataController::class)->prefix('players/metadata')->group(function () {
         Route::get('/', 'index');
+        Route::get('/get-by-player/{ckey}', 'getByPlayer');
+        Route::get('/get-by-data/{data}', 'getByData');
         Route::post('/', 'store');
         Route::delete('/clear-by-player/{ckey}', 'destroyByPlayer');
-        Route::delete('/clear-by-data/{data}', 'destroyByData');
+        Route::delete('/clear-by-data/{metadata}', 'destroyByData');
     });
     Route::controller(BansController::class)->prefix('bans')->group(function () {
         Route::get('/', 'index');

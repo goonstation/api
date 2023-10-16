@@ -48,15 +48,13 @@ class MigrateMetadata extends Command
             $player = null;
             if (array_key_exists($record['ckey'], $players)) {
                 $player = $players[$record['ckey']];
+                $metadataToInsert[] = [
+                    'player_id' => $player['id'],
+                    'metadata' => $record['data'],
+                    'created_at' => $record['created_at'],
+                    'updated_at' => $record['updated_at'],
+                ];
             }
-
-            $metadataToInsert[] = [
-                'player_id' => $player ? $player['id'] : null,
-                'ckey' => $record['ckey'],
-                'data' => $record['data'],
-                'created_at' => $record['created_at'],
-                'updated_at' => $record['updated_at'],
-            ];
 
             $bar->advance();
         }
