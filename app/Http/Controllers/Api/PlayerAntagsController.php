@@ -22,8 +22,8 @@ class PlayerAntagsController extends Controller
         $data = $this->validate($request, [
             'player_id' => 'required|integer|exists:players,id',
             'round_id' => 'required|integer|exists:game_rounds,id',
-            'antag_role' => 'required',
-            'late_join' => 'nullable',
+            'antag_role' => 'required|string',
+            'late_join' => 'nullable|boolean',
             'weight_exempt' => 'nullable|string',
         ]);
 
