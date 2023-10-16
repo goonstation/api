@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('player_metadata', function (Blueprint $table) {
             $table->id();
             $table->integer('player_id')->nullable();
-            $table->text('ckey')->nullable();
-            $table->text('data');
+            $table->text('metadata');
             $table->timestamps();
 
             $table->foreign('player_id')->references('id')->on('players');
