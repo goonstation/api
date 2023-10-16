@@ -109,8 +109,9 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(VpnWhitelistController::class)->prefix('vpncheck-whitelist')->group(function () {
         Route::get('/', 'index');
+        Route::get('/search', 'search');
         Route::post('/', 'store');
-        Route::delete('/{vpnWhitelist}', 'destroy');
+        Route::delete('/', 'destroy');
     });
     Route::controller(RemoteMusicController::class)->prefix('remote-music')->group(function () {
         Route::post('/', 'store');

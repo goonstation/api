@@ -52,6 +52,25 @@ class VpnWhitelistController extends Controller
     }
 
     /**
+     * Search
+     *
+     * Search for a ckey in the whitelist
+     */
+    public function search(Request $request)
+    {
+        $data = $request->validate([
+            'ckey' => 'required|alpha_num'
+        ]);
+
+        $whitelisted = VpnWhitelist::where('ckey', $data['ckey'])->exists();
+
+        return ['data' => [
+            /** @var boolean */
+            'whitelisted' => $whitelisted
+        ]];
+    }
+
+    /**
      * Add
      *
      * Add a player into the whitelist. This will allow them to skip VPN checks.
@@ -81,11 +100,15 @@ class VpnWhitelistController extends Controller
     /**
      * Delete
      *
-     * Delete a whitelist entry
+     * Delete a whitelist entry by ckey
      */
-    public function destroy(VpnWhitelist $vpnWhitelist)
+    public function destroy(Request $request)
     {
-        $vpnWhitelist->delete();
+        $data = $request->validate([
+            'ckey' => 'required|alpha_num'
+        ]);
+
+        VpnWhitelist::where('ckey', $data['ckey'])->delete();
 
         return ['message' => 'VPN check whitelist entry removed'];
     }

@@ -30,14 +30,15 @@ class VpnChecksController extends Controller
 
         // Skip checks if whitelisted
         if (! empty($data['ckey'])) {
-            $whitelisted = VpnWhitelist::where('ckey', $data['ckey'])->first();
+            $whitelisted = VpnWhitelist::where('ckey', $data['ckey'])->exists();
             if ($whitelisted) {
                 return [
-                    'data' => null,
-                    'meta' => [
-                        'cached' => false,
-                        'whitelisted' => true,
-                    ],
+                    'data' => [
+                        'meta' => [
+                            'cached' => false,
+                            'whitelisted' => true
+                        ],
+                    ]
                 ];
             }
         }
@@ -45,11 +46,14 @@ class VpnChecksController extends Controller
         // Return cached response if available, and still valid
         $checked = VpnCheck::where('ip', $ip)->first();
         if ($checked && $checked->updated_at->diffInDays() <= $this->checkCacheTime) {
-            return (new VpnCheckResource($checked))->additional(['meta' => [
+            $checked['meta'] = [
                 'cached' => true,
-                'whitelisted' => false,
-            ]]);
+                'whitelisted' => false
+            ];
+            return new VpnCheckResource($checked);
         }
+
+        // dump(config('vpn-checks.ipq'));
 
         $res = Http::get(
             'https://ipqualityscore.com/api/json/ip/'
@@ -75,9 +79,10 @@ class VpnChecksController extends Controller
             ]
         );
 
-        return (new VpnCheckResource($vpnCheck))->additional(['meta' => [
+        $vpnCheck['meta'] = [
             'cached' => false,
-            'whitelisted' => false,
-        ]]);
+            'whitelisted' => false
+        ];
+        return new VpnCheckResource($vpnCheck);
     }
 }
