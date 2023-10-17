@@ -59,7 +59,7 @@ class GameRoundsController extends Controller
     public function endRound(Request $request, GameRound $gameRound)
     {
         $data = $request->validate([
-            'crashed' => 'boolean',
+            'crashed' => 'required|boolean',
         ]);
         $gameRound->crashed = isset($data['crashed']) ? (bool) $data['crashed'] : false;
         $gameRound->ended_at = Carbon::now();
