@@ -8,36 +8,16 @@ use App\Http\Resources\PlayerIpsResource;
 use App\Http\Resources\PlayerResource;
 use App\Http\Resources\PlayerSearchResource;
 use App\Http\Resources\PlayerStatsResource;
+use App\Jobs\RecordByondJoinDate;
 use App\Jobs\RecordPlayerConnection;
 use App\Models\Player;
 use App\Models\PlayerConnection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class PlayersController extends Controller
 {
-    /**
-     * Query byond for the join date of an account
-     *
-     * @param  string  $ckey
-     * @return string|null
-     */
-    private function getByondJoinDate(string $ckey)
-    {
-        $response = Http::get("https://secure.byond.com/members/$ckey?format=text");
-        if ($response->failed()) {
-            return null;
-        }
-        preg_match('/joined = "(.*)"/i', $response->body(), $matches);
-        if (empty($matches[1])) {
-            return null;
-        }
-
-        return $matches[1];
-    }
-
     /**
      * Login
      *
@@ -65,10 +45,6 @@ class PlayersController extends Controller
             $player->key = $data['key'];
         }
 
-        if (empty($player->byond_join_date)) {
-            $player->byond_join_date = $this->getByondJoinDate($data['ckey']);
-        }
-
         if (isset($data['byond_major'])) {
             $player->byond_major = $data['byond_major'];
         }
@@ -76,6 +52,10 @@ class PlayersController extends Controller
             $player->byond_minor = $data['byond_minor'];
         }
         $player->save();
+
+        if (empty($player->byond_join_date)) {
+            RecordByondJoinDate::dispatch($player->id, $player->ckey);
+        }
 
         RecordPlayerConnection::dispatch($player->id, $data);
 
