@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\PlayerResource;
+use App\Http\Resources\GameAdminResource;
 
 class PlayerNoteResource extends JsonResource
 {
@@ -17,8 +19,12 @@ class PlayerNoteResource extends JsonResource
         return [
             'id' => $this->id,
             'player_id' => $this->player_id,
+            /** @var PlayerResource */
+            'player' => $this->whenLoaded('player'),
             'ckey' => $this->ckey,
             'game_admin_id' => $this->game_admin_id,
+            /** @var GameAdminResource */
+            'game_admin' => $this->whenLoaded('gameAdmin'),
             'server_id' => $this->server_id,
             'round_id' => $this->round_id,
             'note' => $this->note,

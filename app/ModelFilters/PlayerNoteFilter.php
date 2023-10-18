@@ -22,11 +22,16 @@ class PlayerNoteFilter extends ModelFilter
         return $this->where('id', $val);
     }
 
+    public function player($val)
+    {
+        return $this->where('player_id', $val);
+    }
+
     public function ckey($val)
     {
-        return $this->related('players', function ($query) use ($val) {
+        return $this->whereHas('player', function ($query) use ($val) {
             return $query->whereLike('ckey', $val);
-        })->orWhere('ckey', $val);
+        })->whereLike('ckey', $val, 'or');
     }
 
     public function gameAdmin($val)

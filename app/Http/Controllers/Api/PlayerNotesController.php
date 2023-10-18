@@ -52,7 +52,7 @@ class PlayerNotesController extends Controller
         ]);
 
         return PlayerNoteResource::collection(
-            $this->indexQuery(PlayerNote::class)
+            $this->indexQuery(PlayerNote::with(['player', 'gameAdmin']))
         );
     }
 
