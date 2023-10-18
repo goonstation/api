@@ -72,8 +72,9 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::post('/data', 'storeData');
         Route::post('/file', 'storeFile');
         Route::post('/data-bulk', 'storeDataBulk');
-        Route::delete('/data/{playerData}', 'destroyData');
-        Route::delete('/file/{playerSave}', 'destroyFile');
+        Route::post('/transfer-files', 'transferSaves');
+        Route::delete('/data', 'destroyData');
+        Route::delete('/file', 'destroyFile');
     });
     Route::controller(PlayerMetadataController::class)->prefix('players/metadata')->group(function () {
         Route::get('/', 'index');

@@ -11,6 +11,12 @@ class PlayerData extends Model
 
     protected $table = 'player_data';
 
+    protected $fillable = [
+        'player_id',
+        'key',
+        'value'
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
