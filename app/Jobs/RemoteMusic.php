@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use YoutubeDl\Options;
 use YoutubeDl\YoutubeDl;
 
@@ -24,11 +25,13 @@ class RemoteMusic implements ShouldQueue
 
     private $roundId;
 
+    private $gameAdminCkey;
+
     private $round;
 
     private $youtubedlPath = '/usr/local/bin/yt-dlp';
 
-    private $storagePath = 'app/audio';
+    private $storagePath = 'app/public/audio';
 
     private $audioExt = 'mp3';
 
@@ -37,10 +40,11 @@ class RemoteMusic implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $video, int $roundId)
+    public function __construct(string $video, int $roundId, string $gameAdminCkey)
     {
         $this->video = $video;
         $this->roundId = $roundId;
+        $this->gameAdminCkey = $gameAdminCkey;
     }
 
     /**
@@ -91,13 +95,16 @@ class RemoteMusic implements ShouldQueue
         $fileName = "{$audio->getId()}.{$this->audioExt}";
         $filePath = storage_path("{$this->storagePath}/$fileName");
         $fileSize = File::size($filePath);
+        $publicPath = asset(Storage::url('audio/'.$fileName));
 
         $data = json_encode([
             'url' => $url,
-            'file' => "https://goonhub.com/storage/audio/$fileName",
+            'file' => $publicPath,
             'title' => $audio->getTitle(),
-            'duration' => gmdate('H:i:s', $audio->getDuration()),
+            'duration' => $audio->getDuration(),
+            'duration_human' => gmdate('H:i:s', $audio->getDuration()),
             'filesize' => HumanReadable::bytesToHuman($fileSize),
+            'admin_ckey' => $this->gameAdminCkey,
         ]);
 
         GameBridge::relay($this->round->server_id, "type=youtube&data=$data");

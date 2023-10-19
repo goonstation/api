@@ -26,9 +26,11 @@ class RemoteMusicController extends Controller
              */
             'video' => 'required',
             'round_id' => 'required|exists:game_rounds,id',
+            'game_admin_ckey' => 'nullable|alpha_num'
         ]);
 
-        RemoteMusic::dispatch($data['video'], $data['round_id']);
+        $gameAdminCkey = isset($data['game_admin_ckey']) ? $data['game_admin_ckey'] : '';
+        RemoteMusic::dispatch($data['video'], $data['round_id'], $gameAdminCkey);
 
         return ['message' => 'Success'];
     }
