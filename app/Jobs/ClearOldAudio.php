@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ClearOldDectalks implements ShouldQueue
+class ClearOldAudio implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,7 +31,7 @@ class ClearOldDectalks implements ShouldQueue
      */
     public function handle()
     {
-        $filePathPrefix = storage_path('app/public/dectalk');
+        $filePathPrefix = storage_path('app/public/audio');
         $files = scandir($filePathPrefix);
         foreach ($files as $file) {
             $filePath = $filePathPrefix . '/' . $file;
