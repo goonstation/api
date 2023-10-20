@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BansController;
+use App\Http\Controllers\Api\DectalkController;
 use App\Http\Controllers\Api\GameAdminRanksController;
 use App\Http\Controllers\Api\GameAdminsController;
 use App\Http\Controllers\Api\GameRoundsController;
@@ -157,5 +158,8 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(GauntletController::class)->prefix('gauntlet')->group(function () {
         Route::get('/get-previous', 'getPrevious');
+    });
+    Route::controller(DectalkController::class)->prefix('dectalk')->group(function () {
+        Route::post('/play', 'play');
     });
 });
