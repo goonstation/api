@@ -1,7 +1,10 @@
 <template>
   <q-btn-group>
     <q-btn class="text-sm" color="grey-9" padding="xs sm" dense no-caps unelevated>
-      {{ column.label }} {{ comparator }} {{ prettyFilter }}
+      <component v-if="filterContentComponent" :is="filterContentComponent" :filter="filter" />
+      <template v-else>
+        {{ column.label }} {{ comparator }} {{ prettyFilter }}
+      </template>
       <q-menu :offset="[0, 10]">
         <div class="q-pa-sm flex items-center">
           <span class="q-mr-sm text-caption">{{ column.label }}</span>
@@ -21,8 +24,19 @@
 </template>
 
 <script>
+import { upperFirst } from 'lodash'
+import { defineAsyncComponent } from 'vue'
 import { ionClose } from '@quasar/extras/ionicons-v6'
 import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
+
+const componentNames = import.meta.glob('./GridFilterContent/*.vue')
+const components = []
+for (const name in componentNames) {
+  const cleanName = name.replace(/(^.\/)|(\.vue$)|(GridFilterContent\/)/g, '')
+  components[cleanName] = defineAsyncComponent(() =>
+    import(/* @vite-ignore */ `./GridFilterContent/${cleanName}.vue`)
+  )
+}
 
 export default {
   setup() {
@@ -32,7 +46,8 @@ export default {
   },
 
   components: {
-    TableFilter
+    TableFilter,
+    ...components,
   },
 
   props: {
@@ -60,6 +75,13 @@ export default {
         return this.filter.replace('-', ' and ')
       }
       return this.filter
+    },
+
+    filterContentComponent() {
+      if (!this.column?.filter?.type) return null
+      const componentName = upperFirst(this.column.filter.type.toLowerCase())
+      if (components[componentName]) return componentName
+      return null
     },
   },
 }

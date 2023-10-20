@@ -13,4 +13,9 @@ class GameServerFilter extends ModelFilter
      * @var array
      */
     public $relations = [];
+
+    public function server($val)
+    {
+        return $this->where('server_id', $val);
+    }
 }
