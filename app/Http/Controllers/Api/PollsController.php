@@ -184,7 +184,7 @@ class PollsController extends Controller
             'servers.*' => 'sometimes|required|string',
         ]);
 
-        if (array_key_exists('question', $data)) {
+        if (array_key_exists('question', $data) && !is_null($data['question'])) {
             $poll->question = $data['question'];
         }
         if (array_key_exists('expires_at', $data)) {

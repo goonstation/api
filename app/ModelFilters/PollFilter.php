@@ -37,14 +37,7 @@ class PollFilter extends ModelFilter
 
     public function expiresAt($val)
     {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
-
-        return $this->whereBetween('expires_at', [$from, $to]);
+        return $this->filterDate('expires_at', $val);
     }
 
     public function active($val)
