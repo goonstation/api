@@ -42,7 +42,7 @@ class DectalkController extends Controller
         }
 
         $mp3FilePath = $filePathPrefix . "/$fileName.mp3";
-        exec("lame -V2 \"$dectalkFilePath\" \"$mp3FilePath\"");
+        exec("lame -V2 \"$dectalkFilePath\" \"$mp3FilePath\" 2>&1 >/dev/null");
         exec("rm \"$dectalkFilePath\"");
 
         return ['data' => [
