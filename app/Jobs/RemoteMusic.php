@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Helpers\HumanReadable;
 use App\Libraries\GameBridge;
+use App\Models\GameAdmin;
 use App\Models\GameRound;
+use App\Models\RemoteMusicPlay;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -106,6 +108,17 @@ class RemoteMusic implements ShouldQueue
             'filesize' => HumanReadable::bytesToHuman($fileSize),
             'admin_ckey' => $this->gameAdminCkey,
         ]);
+
+        $gameAdmin = null;
+        if ($this->gameAdminCkey) {
+            $gameAdmin = GameAdmin::where('ckey', $this->gameAdminCkey)->first();
+        }
+
+        $remoteMusicPlay = new RemoteMusicPlay();
+        $remoteMusicPlay->title = $audio->getTitle();
+        $remoteMusicPlay->round_id = $this->round->id;
+        $remoteMusicPlay->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
+        $remoteMusicPlay->save();
 
         GameBridge::relay($this->round->server_id, "type=youtube&data=$data");
     }

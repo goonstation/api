@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DectalkPhrase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,8 @@ class DectalkController extends Controller
     public function play(Request $request)
     {
         $data = $request->validate([
-            'text' => 'required'
+            'text' => 'required',
+            'round_id' => 'required|exists:game_rounds,id',
         ]);
 
         $fileName = Str::random(10);
@@ -44,6 +46,11 @@ class DectalkController extends Controller
         $mp3FilePath = $filePathPrefix . "/$fileName.mp3";
         exec("lame -V2 \"$dectalkFilePath\" \"$mp3FilePath\" 2>&1 >/dev/null");
         exec("rm \"$dectalkFilePath\"");
+
+        $dectalkPhrase = new DectalkPhrase();
+        $dectalkPhrase->phrase = $data['text'];
+        $dectalkPhrase->round_id = $data['round_id'];
+        $dectalkPhrase->save();
 
         return ['data' => [
             /**
