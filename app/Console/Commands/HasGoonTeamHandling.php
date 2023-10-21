@@ -37,7 +37,11 @@ trait HasGoonTeamHandling
     {
         $admins = [];
         foreach ($this->teamSheet as $record) {
-            $admins[$record['Byond Ckey']] = $record['Rank'];
+            $admins[$record['Byond Ckey']] = [
+                'alias' => $record['Alias'],
+                'rank' => $record['Rank'],
+                'discord_id' => $record['Discord ID']
+            ];
         }
 
         return $admins;

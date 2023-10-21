@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\GameAdmin;
 use App\Models\GameAdminRank;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use League\Csv\Reader;
 
 class MigrateGameAdmins extends Command
@@ -79,9 +82,18 @@ class MigrateGameAdmins extends Command
         $this->info('Parsing admins.txt from GitHub'.PHP_EOL);
         $admins = $this->getAdminsTxt();
 
+        foreach ($admins as $admin => $rank) {
+            $admins[$admin] = ['rank' => $rank];
+        }
+
         $this->info('Parsing admin team from Google sheets'.PHP_EOL);
         $this->getAdminTeamSheet();
-        $admins = array_merge($this->getTeamAdminsByRank(), $admins);
+        $adminsFromSheet = $this->getTeamAdminsByRank();
+        foreach ($adminsFromSheet as $admin => $details) {
+            if (array_key_exists($admin, $admins)) {
+                $admins[$admin] = $details;
+            }
+        }
 
         $this->info('Parsing bans CSV and processing data'.PHP_EOL);
         $reader = Reader::createFromPath(__DIR__.'/old-goonhub-data/bans.csv', 'r');
@@ -98,7 +110,7 @@ class MigrateGameAdmins extends Command
             $isExternalAdmin = str_ends_with($adminCkey, '(Discord)') || str_ends_with($adminCkey, '(AUTO)');
             $adminCkey = $this->ckeyIzeAdmin($adminCkey);
             if (! $isExternalAdmin && ! array_key_exists($adminCkey, $admins)) {
-                $admins[$adminCkey] = 'Inactive';
+                $admins[$adminCkey] = ['rank' => 'Inactive'];
             }
             $bar->advance();
         }
@@ -127,7 +139,7 @@ class MigrateGameAdmins extends Command
             $isExternalAdmin = str_ends_with($adminCkey, '(Discord)') || str_ends_with($adminCkey, '(AUTO)');
             $adminCkey = $this->ckeyIzeAdmin($record['admin_ckey']);
             if (! $isExternalAdmin && ! array_key_exists($adminCkey, $admins)) {
-                $admins[$adminCkey] = 'Inactive';
+                $admins[$adminCkey] = ['rank' => 'Inactive'];
             }
             $bar->advance();
         }
@@ -158,7 +170,7 @@ class MigrateGameAdmins extends Command
         $gameAdmin->name = 'Bot';
         $gameAdmin->rank_id = $botAdminRank->id;
         $gameAdmin->save();
-        foreach ($admins as $admin => $rank) {
+        foreach ($admins as $admin => $details) {
             $bar->advance();
             if (empty($admin) || in_array($admin, $notAdmins)) {
                 continue;
@@ -167,9 +179,15 @@ class MigrateGameAdmins extends Command
                 continue;
             }
 
+            $rank = $details['rank'];
             $rankModel = null;
             if ($rank) {
                 $rankModel = GameAdminRank::where('rank', $rank)->first();
+            }
+
+            $discordId = null;
+            if (array_key_exists('discord_id', $details)) {
+                $discordId = $details['discord_id'];
             }
 
             $newAdmin = new GameAdmin();
@@ -178,11 +196,25 @@ class MigrateGameAdmins extends Command
                 $newAdmin->rank_id = $rankModel->id;
             }
             $newAdmin->save();
+
+            $userName = $admin;
+            if (array_key_exists('alias', $details)) {
+                $userName = $details['alias'];
+            }
+
+            if ($rank !== 'Bot' && $rank !== 'Inactive') {
+                $user = new User();
+                $user->name = $userName;
+                $user->email = Str::random(20) . '@goonhub.com';
+                $user->password = Hash::make(Str::random(30));
+                $user->discord_id = $discordId ? $discordId : null;
+                $user->game_admin_id = $newAdmin->id;
+                $user->save();
+            }
         }
         $bar->finish();
 
         $this->line(PHP_EOL);
-
         return Command::SUCCESS;
     }
 }
