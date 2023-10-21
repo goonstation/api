@@ -187,6 +187,7 @@ return [
          */
         EloquentFilter\ServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        SocialiteProviders\Manager\ServiceProvider::class,
 
         /*
          * Application Service Providers...

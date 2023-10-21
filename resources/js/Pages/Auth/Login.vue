@@ -9,6 +9,16 @@
       <q-banner v-if="status" class="bg-positive text-dark q-mb-md" dense>
         {{ status }}
       </q-banner>
+      <q-banner v-if="$page.props.flash.error" class="bg-negative q-mb-md" dense>
+        {{ $page.props.flash.error }}
+      </q-banner>
+
+      <a :href="route('auth.redirect')" class="login-discord q-mb-md rounded-borders">
+        <q-icon :name="ionLogoDiscord" size="30px" class="q-mr-sm" />
+        Login with Discord
+      </a>
+
+      <div class="q-mb-md text-center">Or login with email and password</div>
 
       <q-form @submit="submit">
         <q-input
@@ -58,9 +68,27 @@
   </q-card>
 </template>
 
+<style lang="scss" scoped>
+.login-discord {
+  display: block;
+  padding: 10px;
+  background: #7289da;
+  text-align: center;
+  color: white;
+  font-size: 1.1em;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &:hover,
+  &:focus {
+    background: darken(#7289da, 3);
+  }
+}
+</style>
+
 <script>
 import { useForm } from '@inertiajs/vue3'
-import { ionLogIn } from '@quasar/extras/ionicons-v6'
+import { ionLogIn, ionLogoDiscord } from '@quasar/extras/ionicons-v6'
 import AuthLayout from '@/Layouts/AuthLayout.vue'
 
 export default {
@@ -74,6 +102,7 @@ export default {
   setup() {
     return {
       ionLogIn,
+      ionLogoDiscord,
     }
   },
 

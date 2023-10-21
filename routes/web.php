@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Admin\GameAdminRanksController as AdminGameAdminRan
 use App\Http\Controllers\Web\Admin\GameAdminsController as AdminGameAdminsController;
 use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
 use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
+use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\DonateController;
@@ -39,6 +40,11 @@ if (! env('INCLUDE_FRONTEND')) {
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
+});
+
+Route::controller(AuthController::class)->prefix('/auth')->group(function () {
+    Route::get('/redirect', 'redirect')->name('auth.redirect');
+    Route::get('/callback', 'callback')->name('auth.callback');
 });
 
 Route::controller(ChangelogController::class)->prefix('/changelog')->group(function () {
