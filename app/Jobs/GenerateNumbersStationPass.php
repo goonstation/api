@@ -35,6 +35,7 @@ class GenerateNumbersStationPass implements ShouldQueue
     {
         //Read and parse source material
         $source = Storage::disk('local')->get('numbers-station-cipher-source.txt');
+        if (!$source) return;
         $source = explode("\n", $source);
         $source = array_values(array_filter($source));
 
