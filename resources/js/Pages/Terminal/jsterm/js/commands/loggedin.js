@@ -38,7 +38,7 @@ COMMANDS.cat = async function (argv, cb) {
     if (!entry) this._terminal.write('cat: ' + filename + ': No such file or directory')
     else if (entry.type === 'dir') this._terminal.write('cat: ' + filename + ': Is a directory.')
     else if (entry.type === 'textFile') {
-      const file = await import(`../../files/${entry.contents}?raw`)
+      const file = await import(`../../files/${entry.contents}.txt?raw`)
       this._terminal.write(file.default, 'file')
     } else this._terminal.write(entry.contents, 'file')
 
@@ -113,7 +113,14 @@ COMMANDS.gimp = function (argv, cb) {
   if (!entry || entry.type !== 'img') {
     this._terminal.write('gimp: file ' + filename + ' is not an image file.')
   } else {
-    const imageUrl = new URL(`../../images/${entry.contents}`, import.meta.url).href
+    let importPath
+    if (entry.imageType === 'gif') {
+      importPath = `../../images/${entry.contents}.gif`
+    } else if (entry.imageType === 'png') {
+      importPath = `../../images/${entry.contents}.png`
+    }
+
+    const imageUrl = new URL(importPath, import.meta.url).href
     this._terminal.write('<img src="' + imageUrl + '"/>')
     imgs = this._terminal.div.getElementsByTagName('img')
     imgs[imgs.length - 1].onload = function () {

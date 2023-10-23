@@ -11,7 +11,7 @@ const components = []
 for (const name in componentNames) {
   const cleanName = name.replace(/(^.\/)|(\.vue$)|(Filters\/)/g, '')
   components[cleanName] = defineAsyncComponent(() =>
-    import(/* @vite-ignore */ `./Filters/${cleanName}.vue`)
+    import(`./Filters/${cleanName}.vue`)
   )
 }
 

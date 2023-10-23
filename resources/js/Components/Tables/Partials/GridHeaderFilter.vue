@@ -34,7 +34,7 @@ const components = []
 for (const name in componentNames) {
   const cleanName = name.replace(/(^.\/)|(\.vue$)|(GridFilterContent\/)/g, '')
   components[cleanName] = defineAsyncComponent(() =>
-    import(/* @vite-ignore */ `./GridFilterContent/${cleanName}.vue`)
+    import(`./GridFilterContent/${cleanName}.vue`)
   )
 }
 

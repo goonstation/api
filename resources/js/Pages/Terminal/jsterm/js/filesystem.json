@@ -13,7 +13,7 @@
             {
               "name": "file#002-3",
               "type": "textFile",
-              "contents": "file002-3.txt"
+              "contents": "file002-3"
             }
           ]
         }
@@ -30,7 +30,7 @@
             {
               "name": "evidentaj.txt",
               "type": "textFile",
-              "contents": "evidentaj.txt"
+              "contents": "evidentaj"
             }
           ]
         }
@@ -48,7 +48,7 @@
         {
           "name": "mntSrv23.sh",
           "type": "textFile",
-          "contents": "mntSrv23.sh"
+          "contents": "mntSrv23"
         }
       ]
     },
@@ -59,22 +59,22 @@
         {
           "name": "NT-ShittyBillForensicsReport.txt",
           "type": "textFile",
-          "contents": "NT-ShittyBillForensicsReport.txt"
+          "contents": "NT-ShittyBillForensicsReport"
         },
         {
           "name": "NT-ShittyBillInterview.txt",
           "type": "textFile",
-          "contents": "NT-ShittyBillInterview.txt"
+          "contents": "NT-ShittyBillInterview"
         },
         {
           "name": "NT-ShittyBillReport.txt",
           "type": "textFile",
-          "contents": "NT-ShittyBillReport.txt"
+          "contents": "NT-ShittyBillReport"
         },
         {
           "name": "NT-ShittyBillSketch.txt",
           "type": "textFile",
-          "contents": "NT-ShittyBillSketch.txt"
+          "contents": "NT-ShittyBillSketch"
         }
       ]
     },
@@ -89,14 +89,15 @@
             {
               "name": "restore.log",
               "type": "textFile",
-              "contents": "restore.log"
+              "contents": "restore"
             }
           ]
         },
         {
           "name": "mona",
           "type": "img",
-          "contents": "mona.gif"
+          "imageType": "gif",
+          "contents": "mona"
         }
       ]
     }
