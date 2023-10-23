@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -130,13 +131,15 @@ class GenerateNumbersStationPass implements ShouldQueue
             ]
         );
 
-        // Send new numbers to all active servers
-        $servers = GameServer::where('active', true)->get();
-        foreach ($servers as $server) {
-            GameBridge::relay($server['server_id'], [
-                'type' => 'numbersStation',
-                'numbers' => $numbers,
-            ]);
+        if (App::environment('production')) {
+            // Send new numbers to all active servers
+            $servers = GameServer::where('active', true)->get();
+            foreach ($servers as $server) {
+                GameBridge::relay($server['server_id'], [
+                    'type' => 'numbersStation',
+                    'numbers' => $numbers,
+                ]);
+            }
         }
     }
 }
