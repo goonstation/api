@@ -51,7 +51,7 @@ class PlayersController extends Controller
             ->groupBy('created_at')
             ->orderBy('total_online', 'desc')
             ->first();
-        $mostPlayersOnline = $mostPlayersOnline->total_online;
+        $mostPlayersOnline = $mostPlayersOnline ? $mostPlayersOnline->total_online : 0;
 
         $averagePlayersOnline = PlayersOnline::select(
             DB::raw('avg(online) as average_online')

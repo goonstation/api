@@ -38,10 +38,6 @@ if (! config('goonhub.include_frontend')) {
     return;
 }
 
-Route::get('/test', function() {
-    echo "Test";
-});
-
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
 });
@@ -101,7 +97,7 @@ Route::controller(RedirectController::class)->prefix('/r')->group(function () {
     Route::get('/{path}', 'redirect')->where('path', '.*')->name('redirect');
 });
 
-Route::controller(TerminalController::class)->prefix('/terminal')->group(function () {
+Route::controller(TerminalController::class)->prefix('/secret')->group(function () {
     Route::get('/', 'index')->name('terminal.index');
     Route::post('/login', 'login')->name('terminal.login');
     Route::post('/sudo', 'sudo')->name('terminal.sudo');

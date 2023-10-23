@@ -20,13 +20,36 @@ class HomeController extends Controller
         $servers = GameServer::where('active', true)->where('invisible', false)->get();
         $serversToShow = $servers->pluck('server_id');
 
-        $playersOnline = PlayersOnline::whereIn('server_id', $serversToShow)
-            ->where('created_at', '>=', Carbon::today()->subDays(7))
+        // Get the sum of players online for each server, grouped by when we fetched them (usually 5 minute intervals)
+        // Then, get the average of that total grouped by day
+        $playersOnlineHistory = DB::table(function ($query) use ($serversToShow) {
+            $query
+                ->select('created_at')
+                ->selectRaw('Date(created_at) as date')
+                ->selectRaw('sum(online) as online')
+                ->whereIn('server_id', $serversToShow)
+                ->where('created_at', '>=', Carbon::today()->subDays(7))
+                ->where('created_at', '<', Carbon::today())
+                ->from('players_online')
+                ->groupBy('created_at');
+        }, 'grouped')
+            ->selectRaw('grouped.date as date')
+            ->selectRaw('avg(grouped.online) as online')
             ->groupBy('date')
-            ->get([
-                DB::raw('Date(created_at) as "date"'),
-                DB::raw('avg(online) as "online"'),
-            ]);
+            ->get();
+
+        // Just get the sum of players online right now
+        $playersOnlineRightNow = PlayersOnline::selectRaw('Date(created_at) as date')
+            ->selectRaw('sum(online) as online')
+            ->whereIn('server_id', $serversToShow)
+            ->where('created_at', '>', Carbon::today())
+            ->groupBy('created_at')
+            ->orderBy('created_at', 'desc')
+            ->limit(1)
+            ->first();
+
+        $playersOnline = $playersOnlineHistory->toArray();
+        $playersOnline[] = $playersOnlineRightNow->toArray();
 
         $lastRounds = [];
         foreach ($serversToShow as $server) {

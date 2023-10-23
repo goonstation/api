@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
             'env' => [
                 'GAME_BRIDGE_URL' => config('goonhub.game_bridge_url'),
             ],

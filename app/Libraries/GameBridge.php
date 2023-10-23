@@ -9,9 +9,9 @@ class GameBridge
     public static function getConfig()
     {
         return [
-            'url' => config('game-bridge.url'),
-            'user' => config('game-bridge.user'),
-            'pass' => config('game-bridge.pass'),
+            'url' => config('goonhub.game_bridge_url'),
+            'user' => config('goonhub.game_bridge_user'),
+            'pass' => config('goonhub.game_bridge_pass'),
         ];
     }
 

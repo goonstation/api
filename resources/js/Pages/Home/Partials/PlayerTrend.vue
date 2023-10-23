@@ -12,7 +12,7 @@
       <q-space />
       <div class="row justify-end col-6 q-py-sm">
         <players-over-time
-          v-if="trendData.length && trendData.length >= 7"
+          v-if="trendData.length && trendData.length > 1"
           :data="trendData"
           @onPlayerHover="updateAmount"
         />
@@ -81,7 +81,7 @@ export default {
     trendData() {
       const res = []
       this.data.forEach((point, idx) => {
-        const newPoint = { y: point.online }
+        const newPoint = { y: Math.round(parseInt(point.online)) }
         if (idx === this.data.length - 1) {
           newPoint.x = 'Right now'
         } else {
