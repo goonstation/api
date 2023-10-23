@@ -40,9 +40,12 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'env' => [
+                'GAME_BRIDGE_URL' => config('goonhub.game_bridge_url'),
+            ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error')
+                'error' => fn () => $request->session()->get('error'),
             ],
         ]);
     }
