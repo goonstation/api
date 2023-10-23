@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->loadHelpers();
 
         Inertia::share('env', [
-            'GAME_BRIDGE_URL' => config('game-bridge.url'),
+            'GAME_BRIDGE_URL' => config('goonhub.game_bridge_url'),
         ]);
 
         Scramble::extendOpenApi(function (OpenApi $openApi) {

@@ -53,11 +53,9 @@ class VpnChecksController extends Controller
             return new VpnCheckResource($checked);
         }
 
-        // dump(config('vpn-checks.ipq'));
-
         $res = Http::get(
             'https://ipqualityscore.com/api/json/ip/'
-                .config('vpn-checks.ipquality_pass')
+                .config('goonhub.ipquality_pass')
                 .'/'.$ip,
             [
                 'allow_public_access_points' => 'true',

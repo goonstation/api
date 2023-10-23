@@ -45,11 +45,11 @@ class MapSwitchesController extends Controller
         $mapSwitch->save();
 
         $res = Http::withHeaders([
-            'Api-Key' => config('goonhub-ci.api_key'),
+            'Api-Key' => config('goonhub.ci_api_key'),
             'Content-Type' => 'application/json',
         ])
             ->post(
-                config('goonhub-ci.url').'/switch-map',
+                config('goonhub.ci_url').'/switch-map',
                 [
                     'map' => $mapSwitch->map,
                     'server' => $mapSwitch->server_id,

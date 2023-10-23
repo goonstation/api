@@ -34,7 +34,7 @@ use Inertia\Inertia;
 |
 */
 
-if (! env('INCLUDE_FRONTEND')) {
+if (! config('goonhub.include_frontend')) {
     return;
 }
 
