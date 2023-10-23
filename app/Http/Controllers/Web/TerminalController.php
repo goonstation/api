@@ -45,7 +45,7 @@ class TerminalController extends Controller
     {
         $fileName = $request->input('fileName');
 
-        if (!str_ends_with($fileName, 'file#002-3')) {
+        if (! str_ends_with($fileName, 'file#002-3')) {
             return response()->json(['message' => 'cannot print file'], 400);
         }
 

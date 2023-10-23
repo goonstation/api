@@ -64,7 +64,7 @@ class PlayerMetadataController extends Controller
 
         return [
             /** @var array{string} */
-            'data' => $metadata->pluck('metadata')
+            'data' => $metadata->pluck('metadata'),
         ];
     }
 
@@ -83,7 +83,7 @@ class PlayerMetadataController extends Controller
 
         return [
             /** @var array{string} */
-            'data' => $metadata->pluck('player.ckey')
+            'data' => $metadata->pluck('player.ckey'),
         ];
     }
 

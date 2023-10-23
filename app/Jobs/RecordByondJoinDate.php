@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Player;
-use App\Models\PlayerConnection;
-use GeoIp2\Database\Reader;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,6 +15,7 @@ class RecordByondJoinDate implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $playerId;
+
     private $ckey;
 
     private $data;
@@ -42,7 +41,7 @@ class RecordByondJoinDate implements ShouldQueue
         $byondJoinDate = $this->getByondJoinDate($this->ckey);
         Player::where('id', $this->playerId)
             ->update([
-                'byond_join_date' => $byondJoinDate
+                'byond_join_date' => $byondJoinDate,
             ]);
     }
 

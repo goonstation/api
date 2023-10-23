@@ -35,7 +35,9 @@ class GenerateNumbersStationPass implements ShouldQueue
     {
         //Read and parse source material
         $source = Storage::disk('local')->get('numbers-station-cipher-source.txt');
-        if (!$source) return;
+        if (! $source) {
+            return;
+        }
         $source = explode("\n", $source);
         $source = array_values(array_filter($source));
 
@@ -124,7 +126,7 @@ class GenerateNumbersStationPass implements ShouldQueue
             [
                 'password' => $password,
                 'numbers' => $numbers,
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]
         );
 

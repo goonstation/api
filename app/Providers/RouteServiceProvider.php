@@ -54,6 +54,7 @@ class RouteServiceProvider extends ServiceProvider
             if ($user && $user->is_admin) {
                 return Limit::none();
             }
+
             return Limit::perMinute(60)->by($user?->id ?: $request->ip());
         });
     }

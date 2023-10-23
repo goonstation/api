@@ -9,20 +9,17 @@ use App\Http\Resources\BanDetailResource;
 use App\Http\Resources\BanResource;
 use App\Models\Ban;
 use App\Models\BanDetail;
-use App\Models\GameAdmin;
 use App\Models\Player;
-use App\Models\PlayerNote;
 use App\Rules\DateRange;
 use App\Rules\Range;
 use App\Traits\IndexableQuery;
+use App\Traits\ManagesBans;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Traits\ManagesBans;
 
 class BansController extends Controller
 {
@@ -122,19 +119,32 @@ class BansController extends Controller
             })
             ->whereHas('details', function (Builder $query) use ($ckey, $compId, $ip) {
                 // Check any of the ban details match the provided player details
-                if ($ckey) $query->where('ckey', $ckey);
-                else if (!$ckey && $compId) $query->where('comp_id', $compId);
-                else if (!$ckey && !$compId && $ip) $query->where('ip', $ip);
+                if ($ckey) {
+                    $query->where('ckey', $ckey);
+                } elseif (! $ckey && $compId) {
+                    $query->where('comp_id', $compId);
+                } elseif (! $ckey && ! $compId && $ip) {
+                    $query->where('ip', $ip);
+                }
 
-                if ($ckey && $compId) $query->orWhere('comp_id', $compId);
-                if ($ckey && $ip) $query->orWhere('ip', $ip);
+                if ($ckey && $compId) {
+                    $query->orWhere('comp_id', $compId);
+                }
+                if ($ckey && $ip) {
+                    $query->orWhere('ip', $ip);
+                }
 
-                if ($compId && $ip) $query->orWhere('ip', $ip);
+                if ($compId && $ip) {
+                    $query->orWhere('ip', $ip);
+                }
             })
             ->orderBy('id', 'desc')
             ->first();
 
-        if (!$ban) abort(404);
+        if (! $ban) {
+            abort(404);
+        }
+
         return new BanResource($ban);
     }
 

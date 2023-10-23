@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
-use App\Http\Controllers\Api\BansController as ApiBansController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
 use App\Models\Ban;
@@ -58,8 +57,9 @@ class BansController extends Controller
     public function edit(Ban $ban)
     {
         $ban->load('originalBanDetail');
+
         return Inertia::render('Admin/Bans/Edit', [
-            'ban' => $ban
+            'ban' => $ban,
         ]);
     }
 

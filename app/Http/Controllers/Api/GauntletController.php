@@ -25,7 +25,7 @@ class GauntletController extends Controller
 
         return ['data' => [
             /** @var int */
-            'gauntlets_completed' => $gauntletsCompleted
+            'gauntlets_completed' => $gauntletsCompleted,
         ]];
     }
 }

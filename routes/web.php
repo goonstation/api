@@ -38,6 +38,10 @@ if (! config('goonhub.include_frontend')) {
     return;
 }
 
+Route::get('/test', function() {
+    echo "Test";
+});
+
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
 });

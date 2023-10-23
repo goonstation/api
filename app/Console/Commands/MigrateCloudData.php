@@ -65,7 +65,7 @@ class MigrateCloudData extends Command
                 'key' => $record['key'],
                 'value' => $record['value'],
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
             ];
 
             $bar->advance();

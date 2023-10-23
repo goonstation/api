@@ -36,9 +36,9 @@ class VpnChecksController extends Controller
                     'data' => [
                         'meta' => [
                             'cached' => false,
-                            'whitelisted' => true
+                            'whitelisted' => true,
                         ],
-                    ]
+                    ],
                 ];
             }
         }
@@ -48,8 +48,9 @@ class VpnChecksController extends Controller
         if ($checked && $checked->updated_at->diffInDays() <= $this->checkCacheTime) {
             $checked['meta'] = [
                 'cached' => true,
-                'whitelisted' => false
+                'whitelisted' => false,
             ];
+
             return new VpnCheckResource($checked);
         }
 
@@ -79,8 +80,9 @@ class VpnChecksController extends Controller
 
         $vpnCheck['meta'] = [
             'cached' => false,
-            'whitelisted' => false
+            'whitelisted' => false,
         ];
+
         return new VpnCheckResource($vpnCheck);
     }
 }

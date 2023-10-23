@@ -86,7 +86,7 @@ class MigrateBans extends Command
                 if ((int) $record['timestamp'] > 0) {
                     $byondEpochStart = Carbon::createFromFormat('d/m/Y H:i:s', '01/01/2000 00:00:00');
                     $expiresAt = $byondEpochStart->addMinutes((int) $record['timestamp']);
-                } else if ((int) $record['timestamp'] === -1) {
+                } elseif ((int) $record['timestamp'] === -1) {
                     $requiresAppeal = true;
                 }
 
@@ -110,7 +110,9 @@ class MigrateBans extends Command
                 }
 
                 $serverId = $record['server_id'] === "\N" ? null : $record['server_id'];
-                if ($serverId === 'rp') $serverId = null;
+                if ($serverId === 'rp') {
+                    $serverId = null;
+                }
 
                 $ban = new Ban();
                 $ban->timestamps = false;

@@ -22,8 +22,8 @@ class AuthController extends Controller
 
         if ($user) {
             Auth::login($user);
-            return redirect(RouteServiceProvider::HOME);
 
+            return redirect(RouteServiceProvider::HOME);
         } else {
             // No user exists for this discord account, tell them their login failed
             return redirect('/login')

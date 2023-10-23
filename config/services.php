@@ -37,7 +37,7 @@ return [
         'redirect' => env('DISCORD_REDIRECT_URI'),
 
         // optional
-        'allow_gif_avatars' => (bool)env('DISCORD_AVATAR_GIF', true),
+        'allow_gif_avatars' => (bool) env('DISCORD_AVATAR_GIF', true),
         'avatar_default_extension' => env('DISCORD_EXTENSION_DEFAULT', 'png'), // only pick from jpg, png, webp
-      ],
+    ],
 ];

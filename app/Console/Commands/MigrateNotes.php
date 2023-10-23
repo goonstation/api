@@ -116,7 +116,9 @@ class MigrateNotes extends Command
             }
 
             $serverId = strtolower($record['server_id']);
-            if ($serverId === "\n" || $serverId === 'discord') $serverId = null;
+            if ($serverId === "\n" || $serverId === 'discord') {
+                $serverId = null;
+            }
 
             $note['server_id'] = strtolower($record['server_id']);
             $note['note'] = urldecode(stripslashes($record['note']));

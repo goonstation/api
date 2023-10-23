@@ -9,7 +9,6 @@ use App\Models\Player;
 use App\Models\PlayerData;
 use App\Models\PlayerSave;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @tags Player Saves
@@ -99,7 +98,7 @@ class PlayerSavesController extends Controller
         $save->save();
 
         return [
-            'data' => new PlayerSaveResource($save)
+            'data' => new PlayerSaveResource($save),
         ];
     }
 
@@ -113,7 +112,7 @@ class PlayerSavesController extends Controller
     public function storeDataBulk(Request $request)
     {
         $data = $request->validate([
-            'data' => 'required|json'
+            'data' => 'required|json',
         ]);
 
         /**
@@ -125,11 +124,12 @@ class PlayerSavesController extends Controller
             $dataToUpset[] = [
                 'player_id' => $item->player_id,
                 'key' => $item->key,
-                'value' => $item->value
+                'value' => $item->value,
             ];
         }
 
         PlayerData::upsert($dataToUpset, ['player_id', 'key'], ['value']);
+
         return ['message' => 'Success'];
     }
 
@@ -148,18 +148,18 @@ class PlayerSavesController extends Controller
 
         // See who we're moving stuff from
         $fromPlayer = Player::where('ckey', $data['from_ckey'])->first();
-        if (!$fromPlayer) {
+        if (! $fromPlayer) {
             return response()->json(['message' => 'Unable to find source player'], 404);
         }
 
         // See who we're moving stuff to
         $toPlayer = Player::where('ckey', $data['to_ckey'])->first();
-        if (!$toPlayer) {
+        if (! $toPlayer) {
             return response()->json(['message' => 'Unable to find target player'], 404);
         }
 
         // Only transfer if there's stuff to move
-        if (!PlayerSave::where('player_id', $fromPlayer->id)->exists()) {
+        if (! PlayerSave::where('player_id', $fromPlayer->id)->exists()) {
             return response()->json(['message' => 'Source player has no saves to transfer'], 400);
         }
 
@@ -169,7 +169,7 @@ class PlayerSavesController extends Controller
         // Move files
         PlayerSave::where('player_id', $fromPlayer->id)
             ->update([
-                'player_id' => $toPlayer->id
+                'player_id' => $toPlayer->id,
             ]);
 
         return ['message' => 'Saves transferred'];
@@ -184,7 +184,7 @@ class PlayerSavesController extends Controller
     {
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
-            'key' => 'required'
+            'key' => 'required',
         ]);
 
         PlayerData::where('player_id', $data['player_id'])
@@ -203,7 +203,7 @@ class PlayerSavesController extends Controller
     {
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
-            'name' => 'required'
+            'name' => 'required',
         ]);
 
         PlayerSave::where('player_id', $data['player_id'])

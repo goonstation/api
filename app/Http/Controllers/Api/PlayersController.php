@@ -172,21 +172,23 @@ class PlayersController extends Controller
         ]);
 
         $player = Player::with([
-                'latestConnection',
-                'connections' => function ($query) {
-                    $query->select(
-                            DB::raw('DISTINCT(ip) as ip'),
-                            DB::raw('COUNT(*) as connected'),
-                            'player_id'
-                        )
-                        ->groupBy('ip', 'player_id')
-                        ->orderBy('connected', 'desc');
-                },
-            ])
+            'latestConnection',
+            'connections' => function ($query) {
+                $query->select(
+                    DB::raw('DISTINCT(ip) as ip'),
+                    DB::raw('COUNT(*) as connected'),
+                    'player_id'
+                )
+                    ->groupBy('ip', 'player_id')
+                    ->orderBy('connected', 'desc');
+            },
+        ])
             ->where('ckey', $data['ckey'])
             ->first();
 
-        if (!$player) return response()->json(['message' => 'Player does not exist'], 404);
+        if (! $player) {
+            return response()->json(['message' => 'Player does not exist'], 404);
+        }
 
         $ips = $player->connections->map(function ($item) {
             return ['ip' => $item->ip, 'connected' => $item->connected];
@@ -194,7 +196,7 @@ class PlayersController extends Controller
 
         return new PlayerIpsResource([
             'latest_connection' => $player->latestConnection,
-            'ips' => $ips
+            'ips' => $ips,
         ]);
     }
 
@@ -211,21 +213,23 @@ class PlayersController extends Controller
         ]);
 
         $player = Player::with([
-                'latestConnection',
-                'connections' => function ($query) {
-                    $query->select(
-                            DB::raw('DISTINCT(comp_id) as comp_id'),
-                            DB::raw('COUNT(*) as connected'),
-                            'player_id'
-                        )
-                        ->groupBy('comp_id', 'player_id')
-                        ->orderBy('connected', 'desc');
-                },
-            ])
+            'latestConnection',
+            'connections' => function ($query) {
+                $query->select(
+                    DB::raw('DISTINCT(comp_id) as comp_id'),
+                    DB::raw('COUNT(*) as connected'),
+                    'player_id'
+                )
+                    ->groupBy('comp_id', 'player_id')
+                    ->orderBy('connected', 'desc');
+            },
+        ])
             ->where('ckey', $data['ckey'])
             ->first();
 
-        if (!$player) return response()->json(['message' => 'Player does not exist'], 404);
+        if (! $player) {
+            return response()->json(['message' => 'Player does not exist'], 404);
+        }
 
         $compIds = $player->connections->map(function ($item) {
             return ['comp_id' => $item->comp_id, 'connected' => $item->connected];
@@ -233,7 +237,7 @@ class PlayersController extends Controller
 
         return new PlayerCompIdsResource([
             'latest_connection' => $player->latestConnection,
-            'comp_ids' => $compIds
+            'comp_ids' => $compIds,
         ]);
     }
 

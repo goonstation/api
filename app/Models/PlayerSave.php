@@ -10,7 +10,7 @@ class PlayerSave extends Model
     use HasFactory;
 
     protected $fillable = [
-        'player_id'
+        'player_id',
     ];
 
     /**

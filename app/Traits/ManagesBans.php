@@ -22,7 +22,7 @@ trait ManagesBans
     {
         $expiresAt = null;
         if (isset($request['duration'])) {
-            $duration = (int)$request['duration'];
+            $duration = (int) $request['duration'];
             if ($duration > 0) {
                 $expiresAt = Carbon::now()->addSeconds($duration)->toDateTimeString();
             }
@@ -42,7 +42,7 @@ trait ManagesBans
         $ban->server_id = isset($request['server_id']) ? $request['server_id'] : null;
         $ban->reason = $request['reason'];
         $ban->expires_at = $expiresAt;
-        $ban->requires_appeal = isset($request['requires_appeal']) ? (bool)$request['requires_appeal'] : false;
+        $ban->requires_appeal = isset($request['requires_appeal']) ? (bool) $request['requires_appeal'] : false;
         $ban->save();
 
         $banDetail = new BanDetail();
@@ -63,7 +63,7 @@ trait ManagesBans
         $note->note = sprintf(
             'Banned %s. Reason: %s',
             isset($request['duration'])
-                ? 'for ' . CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
+                ? 'for '.CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
                 : 'permanently',
             $request['reason']
         );
@@ -94,7 +94,7 @@ trait ManagesBans
         if (isset($request['duration'])) {
             // A falsey duration means it's essentially "unset", and thus now a permanent ban
             // Otherwise, the admin is altering how long the ban lasts
-            if (!$request['duration']) {
+            if (! $request['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
                 // $existingExpiresAt = $ban->expires_at;

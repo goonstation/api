@@ -20,6 +20,7 @@ class NumbersStationController extends Controller
     public function index(Request $request)
     {
         $numbersPass = NumbersStationPassword::first();
+
         return new NumbersStationPasswordResource($numbersPass);
     }
 }

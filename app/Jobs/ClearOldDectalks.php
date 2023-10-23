@@ -34,7 +34,7 @@ class ClearOldDectalks implements ShouldQueue
         $filePathPrefix = storage_path('app/public/dectalk');
         $files = scandir($filePathPrefix);
         foreach ($files as $file) {
-            $filePath = $filePathPrefix . '/' . $file;
+            $filePath = $filePathPrefix.'/'.$file;
             // Delete any mp3 files older than 1 hour
             if (is_file($filePath) && str_ends_with($filePath, '.mp3')) {
                 if (time() - filemtime($filePath) > 1 * 60 * 60) {

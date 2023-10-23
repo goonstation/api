@@ -23,7 +23,9 @@ class DateRange implements InvokableRule
      */
     public function __invoke($attribute, $value, $fail)
     {
-        if ($value === 'false' || $value === 'null') return;
+        if ($value === 'false' || $value === 'null') {
+            return;
+        }
 
         $validDate = $this->validateDate($value);
         if (! str_contains($value, '-') && ! $validDate) {

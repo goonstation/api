@@ -14,6 +14,6 @@ class VpnCheck extends Model
         'ip',
         'service',
         'error',
-        'response'
+        'response',
     ];
 }

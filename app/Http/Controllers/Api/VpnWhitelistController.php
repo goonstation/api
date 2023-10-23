@@ -59,14 +59,14 @@ class VpnWhitelistController extends Controller
     public function search(Request $request)
     {
         $data = $request->validate([
-            'ckey' => 'required|alpha_num'
+            'ckey' => 'required|alpha_num',
         ]);
 
         $whitelisted = VpnWhitelist::where('ckey', $data['ckey'])->exists();
 
         return ['data' => [
-            /** @var boolean */
-            'whitelisted' => $whitelisted
+            /** @var bool */
+            'whitelisted' => $whitelisted,
         ]];
     }
 
@@ -105,7 +105,7 @@ class VpnWhitelistController extends Controller
     public function destroy(Request $request)
     {
         $data = $request->validate([
-            'ckey' => 'required|alpha_num'
+            'ckey' => 'required|alpha_num',
         ]);
 
         VpnWhitelist::where('ckey', $data['ckey'])->delete();

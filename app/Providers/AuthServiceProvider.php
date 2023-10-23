@@ -26,10 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        if (App::environment('staging')) {
-            Gate::define('viewApiDocs', function ($user = null) {
-                return true;
-            });
-        }
+        Gate::define('viewApiDocs', function ($user = null) {
+            return true;
+        });
     }
 }

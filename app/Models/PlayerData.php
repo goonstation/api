@@ -14,7 +14,7 @@ class PlayerData extends Model
     protected $fillable = [
         'player_id',
         'key',
-        'value'
+        'value',
     ];
 
     /**

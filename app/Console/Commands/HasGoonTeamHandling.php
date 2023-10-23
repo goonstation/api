@@ -40,7 +40,7 @@ trait HasGoonTeamHandling
             $admins[$record['Byond Ckey']] = [
                 'alias' => $record['Alias'],
                 'rank' => $record['Rank'],
-                'discord_id' => $record['Discord ID']
+                'discord_id' => $record['Discord ID'],
             ];
         }
 

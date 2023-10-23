@@ -205,7 +205,7 @@ class MigrateGameAdmins extends Command
             if ($rank !== 'Bot' && $rank !== 'Inactive') {
                 $user = new User();
                 $user->name = $userName;
-                $user->email = Str::random(20) . '@goonhub.com';
+                $user->email = Str::random(20).'@goonhub.com';
                 $user->password = Hash::make(Str::random(30));
                 $user->discord_id = $discordId ? $discordId : null;
                 $user->game_admin_id = $newAdmin->id;
@@ -215,6 +215,7 @@ class MigrateGameAdmins extends Command
         $bar->finish();
 
         $this->line(PHP_EOL);
+
         return Command::SUCCESS;
     }
 }

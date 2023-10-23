@@ -50,7 +50,7 @@ class PlayerParticipationsController extends Controller
                 'player_id' => $playerId,
                 'round_id' => $data['round_id'],
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
             ];
         }
 

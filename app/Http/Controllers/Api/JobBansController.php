@@ -114,6 +114,7 @@ class JobBansController extends Controller
 
         /**
          * A list of jobs this player is banned from
+         *
          * @var array
          */
         return ['data' => $jobBans];
@@ -140,7 +141,7 @@ class JobBansController extends Controller
 
         // Check a ban doesn't already exist for the provided ckey and job
         $existingJobBan = JobBan::getValidJobBans($data['ckey'], $data['job'], $serverId)->first();
-        if (!empty($existingJobBan)) {
+        if (! empty($existingJobBan)) {
             return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
         }
 
@@ -182,7 +183,7 @@ class JobBansController extends Controller
 
         // Check another ban doesn't already exist for the provided job
         $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
-        if (!empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
+        if (! empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
             return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
         }
 
@@ -197,7 +198,7 @@ class JobBansController extends Controller
         if (isset($data['duration'])) {
             // A falsey duration means it's essentially "unset", and thus now a permanent ban
             // Otherwise, the admin is altering how long the ban lasts
-            if (!$data['duration']) {
+            if (! $data['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
                 // Ban is temporary, the duration starts from when the ban was first created
@@ -227,7 +228,7 @@ class JobBansController extends Controller
         $data = $this->validate($request, [
             'server_id' => 'nullable|string',
             'ckey' => 'required',
-            'job' => 'required'
+            'job' => 'required',
         ]);
 
         $jobBans = JobBan::where('ckey', $data['ckey'])
@@ -238,6 +239,7 @@ class JobBansController extends Controller
         }
 
         $jobBans->delete();
+
         return ['message' => 'Job bans removed'];
     }
 }

@@ -26,7 +26,7 @@ class RemoteMusicController extends Controller
              */
             'video' => 'required',
             'round_id' => 'required|exists:game_rounds,id',
-            'game_admin_ckey' => 'nullable|alpha_num'
+            'game_admin_ckey' => 'nullable|alpha_num',
         ]);
 
         $gameAdminCkey = isset($data['game_admin_ckey']) ? $data['game_admin_ckey'] : '';

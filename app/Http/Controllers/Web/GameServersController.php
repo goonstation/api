@@ -19,6 +19,7 @@ class GameServersController extends Controller
             sortBy: 'name',
             desc: false
         );
+
         return $gameServers;
     }
 }

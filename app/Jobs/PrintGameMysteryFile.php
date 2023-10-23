@@ -14,7 +14,9 @@ class PrintGameMysteryFile implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $serverId = '';
+
     private $title = '';
+
     private $file = '';
 
     /**
@@ -39,7 +41,7 @@ class PrintGameMysteryFile implements ShouldQueue
         GameBridge::relay($this->serverId, [
             'type' => 'mysteryPrint',
             'print_title' => $this->title,
-            'print_file' => $this->file
+            'print_file' => $this->file,
         ]);
     }
 }

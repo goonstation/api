@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DectalkPhrase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DectalkController extends Controller
 {
@@ -27,11 +27,11 @@ class DectalkController extends Controller
         $fileName = Str::random(10);
         $filePathPrefix = storage_path('app/public/dectalk');
 
-        $dectalkFilePath = $filePathPrefix . "/$fileName.wav";
+        $dectalkFilePath = $filePathPrefix."/$fileName.wav";
         $process = proc_open(
-            '/usr/local/bin/dectalk ' .
-                '-pre "[:phoneme on]" ' .
-                '-fo "' . $dectalkFilePath . '" ',
+            '/usr/local/bin/dectalk '.
+                '-pre "[:phoneme on]" '.
+                '-fo "'.$dectalkFilePath.'" ',
             [0 => ['pipe', 'r']],
             $pipes
         );
@@ -43,7 +43,7 @@ class DectalkController extends Controller
             return response()->json(['message' => 'Failed to run dectalk'], 400);
         }
 
-        $mp3FilePath = $filePathPrefix . "/$fileName.mp3";
+        $mp3FilePath = $filePathPrefix."/$fileName.mp3";
         exec("lame -V2 \"$dectalkFilePath\" \"$mp3FilePath\" 2>&1 >/dev/null");
         exec("rm \"$dectalkFilePath\"");
 
@@ -56,7 +56,7 @@ class DectalkController extends Controller
             /**
              * A URL pointing to an MP3 file of the recorded text
              */
-            'audio' => asset(Storage::url('dectalk/' . $fileName . '.mp3'))
+            'audio' => asset(Storage::url('dectalk/'.$fileName.'.mp3')),
         ]];
     }
 }
