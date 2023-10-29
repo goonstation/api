@@ -23,8 +23,9 @@ export default {
         return format
       },
       fromNow: (val) => {
-        if (!val) return 'never'
-        return dayjs(val).fromNow()
+        const date = dayjs.utc(val)
+        if (!date.isValid()) return 'never'
+        return date.fromNow()
       },
       capitalize: (val) => {
         if (!val) return val

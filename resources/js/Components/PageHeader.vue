@@ -5,7 +5,6 @@
       <page-back class="q-mr-sm" />
       {{ title }}
     </span>
-    <!-- <breadcrumbs class="breadcrumbs" /> -->
   </q-header>
 </template>
 
@@ -40,24 +39,16 @@ header {
     animation-timing-function: linear;
   }
 
-  // &:after {
-  //   content: '';
-  //   position: absolute;
-  //   z-index: -1;
-  //   top: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   height: 200%;
-  //   background: url('@img/starfield.png');
-  //   background-size: cover;
-  //   filter: brightness(0.6);
-  //   transform: translateY(-25%);
-  //   animation-name: space-move;
-  //   animation-duration: 5s;
-  //   animation-iteration-count: infinite;
-  //   animation-direction: alternate;
-  //   animation-timing-function: ease-out;
-  // }
+  &:after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(-35deg, rgb(128 74 0 / 25%) -80%, transparent);
+  }
 
   span {
     display: inline-flex;

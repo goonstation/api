@@ -103,6 +103,11 @@ class GameRound extends Model
         return $this->hasMany(PlayerParticipation::class, 'round_id');
     }
 
+    public function mapRecord()
+    {
+        return $this->hasOne(Map::class, 'map_id', 'map');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -113,6 +118,7 @@ class GameRound extends Model
 
     public function latestStationName()
     {
-        return $this->stationNames()->latestStationName();
+        // return $this->stationNames()->latestStationName();
+        return $this->hasOne(EventStationName::class, 'round_id')->latest();
     }
 }

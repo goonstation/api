@@ -14,7 +14,11 @@ class DeathsController extends Controller
 
     public function index(Request $request)
     {
-        $deaths = $this->indexQuery(EventDeath::class, perPage: 20);
+        $deaths = $this->indexQuery(
+            EventDeath::whereRelation('gameRound', 'ended_at', '!=', null)
+                ->whereRelation('gameRound.server', 'invisible', false),
+            perPage: 20
+        );
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Deaths/Index', [

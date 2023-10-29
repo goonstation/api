@@ -20,20 +20,26 @@ class PlayerFilter extends ModelFilter
 
     public function ckey($val)
     {
-        return $this->whereLike('ckey', $val);
+        return $this->where('ckey', 'ILIKE', '%'.$val.'%');
     }
 
     public function key($val)
     {
-        return $this->whereLike('key', $val)->whereLike('ckey', ckey($val), 'or');
+        return $this->where('key', 'ILIKE', '%'.$val.'%');
     }
 
-    public function connections($val)
+    public function name($val)
+    {
+        return $this->where('ckey', 'ILIKE', '%'.$val.'%')
+            ->orWhere('key', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function connectionsCount($val)
     {
         return $this->filterRangeRelationship('connections', $val);
     }
 
-    public function participations($val)
+    public function participationsCount($val)
     {
         return $this->filterRangeRelationship('participations', $val);
     }

@@ -36,10 +36,13 @@ trait ManagesBans
             $player = Player::where('ckey', $ckey)->first();
         }
 
+        $serverId = isset($request['server_id']) ? $request['server_id'] : null;
+        if ($serverId === 'all') $serverId = null;
+
         $ban = new Ban();
         $ban->game_admin_id = $gameAdmin->id;
         $ban->round_id = isset($request['round_id']) ? $request['round_id'] : null;
-        $ban->server_id = isset($request['server_id']) ? $request['server_id'] : null;
+        $ban->server_id = $serverId;
         $ban->reason = $request['reason'];
         $ban->expires_at = $expiresAt;
         $ban->requires_appeal = isset($request['requires_appeal']) ? (bool) $request['requires_appeal'] : false;
@@ -77,6 +80,13 @@ trait ManagesBans
      */
     private function updateBan(BanRequest $request, Ban $ban)
     {
+        if ($ban->deleted_at) {
+            throw new Exception('This ban has already been removed.');
+        }
+        if ($ban->expires_at && $ban->expires_at->lte(Carbon::now())) {
+            throw new Exception('This ban has already expired.');
+        }
+
         $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
         $player = null;
         $ckey = isset($request['ckey']) ? $request['ckey'] : null;
@@ -89,6 +99,7 @@ trait ManagesBans
         // Ensure the server ID is nulled out if we're being told about it, and it's falsey
         if (isset($request['server_id'])) {
             $newBanDetails['server_id'] = $request['server_id'] ? $request['server_id'] : null;
+            if ($newBanDetails['server_id'] === 'all') $newBanDetails['server_id'] = null;
         }
 
         if (isset($request['duration'])) {
@@ -97,11 +108,6 @@ trait ManagesBans
             if (! $request['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
-                // $existingExpiresAt = $ban->expires_at;
-                // if (!$existingExpiresAt) $existingExpiresAt = Carbon::now()->toDateTimeString();
-                // // Ban is temporary, add time on the existing expiry
-                // $newExpiresAt = $existingExpiresAt->addSeconds($request['duration']);
-
                 // Ban is temporary, the new duration shall apply from right now
                 // This is so we can add or reduce the duration if necessary
                 $newExpiresAt = Carbon::now()->addSeconds($request['duration']);

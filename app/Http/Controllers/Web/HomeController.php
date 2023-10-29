@@ -17,7 +17,10 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $servers = GameServer::where('active', true)->where('invisible', false)->get();
+        $servers = GameServer::where('active', true)
+            ->where('invisible', false)
+            ->orderBy('server_id', 'asc')
+            ->get();
         $serversToShow = $servers->pluck('server_id');
 
         // Get the sum of players online for each server, grouped by when we fetched them (usually 5 minute intervals)
@@ -49,11 +52,16 @@ class HomeController extends Controller
             ->first();
 
         $playersOnline = $playersOnlineHistory->toArray();
-        $playersOnline[] = $playersOnlineRightNow->toArray();
+        if ($playersOnlineRightNow) {
+            $playersOnline[] = $playersOnlineRightNow->toArray();
+        }
 
         $lastRounds = [];
         foreach ($serversToShow as $server) {
-            $lastRounds[] = GameRound::with(['server:server_id,name'])
+            $lastRounds[] = GameRound::with([
+                    'server:server_id,name',
+                    'latestStationName'
+                ])
                 ->where('server_id', $server)
                 ->whereNotNull('ended_at')
                 ->orderByRaw('created_at DESC NULLS LAST')

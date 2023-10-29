@@ -73,10 +73,9 @@
 <script>
 import { Link } from '@inertiajs/vue3'
 import BaseTable from './BaseTable.vue'
-import RoundsTableItem from './Partials/RoundsTableItem.vue'
 
 export default {
-  components: { Link, BaseTable, RoundsTableItem },
+  components: { Link, BaseTable },
   data() {
     return {
       routes: { fetch: '/events/deaths' },

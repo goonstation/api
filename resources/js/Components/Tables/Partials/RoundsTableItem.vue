@@ -1,7 +1,7 @@
 <template>
   <div class="q-table__grid-item col-xs-12 col-md-6 col-lg-4">
     <Link :href="`/rounds/${item.row.id}`" class="gh-link-card q-py-sm">
-      <div class="text-caption opacity-60 q-mb-xs">
+      <div v-if="item.row.server" class="text-caption opacity-60 q-mb-xs">
         {{ item.row.server.name }}
       </div>
       <div class="text-weight-bold ellipsis gh-link-card__title">
@@ -22,8 +22,15 @@
             Ended {{ endedFromNow }}
           </q-tooltip>
         </div>
-        <div v-if="item.row.map">
-          <div>{{ item.row.map }}</div>
+        <div v-if="item.row.map_record || item.row.map">
+          <div>
+            <template v-if="item.row.map_record">
+              {{ item.row.map_record.name }}
+            </template>
+            <template v-else>
+              {{ item.row.map }}
+            </template>
+          </div>
           <div>Map</div>
         </div>
         <div v-if="item.row.game_type">
@@ -31,10 +38,23 @@
           <div>Game Type</div>
         </div>
       </div>
-      <q-badge v-if="item.row.crashed" color="negative" floating>Crashed</q-badge>
+      <div class="badges">
+        <q-badge v-if="item.row.rp_mode" color="info" text-color="dark">Roleplay</q-badge>
+        <q-badge v-if="item.row.crashed" color="negative" text-color="dark">Crashed</q-badge>
+      </div>
     </Link>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.badges {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+</style>
 
 <script>
 import { Link } from '@inertiajs/vue3'
@@ -57,8 +77,8 @@ export default {
 
   computed: {
     latestStationName() {
-      if (!this.item.row.latest_station_name?.length) return 'Space Station 13'
-      return this.item.row.latest_station_name[0].name
+      if (!this.item.row.latest_station_name) return 'Space Station 13'
+      return this.item.row.latest_station_name.name
     },
 
     started() {

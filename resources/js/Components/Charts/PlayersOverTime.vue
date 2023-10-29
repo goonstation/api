@@ -6,7 +6,7 @@
     :options="chartOptions"
     :series="series"
     @mouseMove="onMouseMove"
-    @mouseleave="onMouseLeave"
+    @mouseLeave="onMouseLeave"
   />
 </template>
 
@@ -59,12 +59,6 @@ export default {
     }
   },
 
-  created() {
-    this.series = [{
-      data: this.data
-    }]
-  },
-
   methods: {
     onMouseMove(e, ctx, cfg) {
       let dataPoint = cfg.config.series[cfg.seriesIndex]?.data[cfg.dataPointIndex]
@@ -82,5 +76,17 @@ export default {
       })
     },
   },
+
+  watch: {
+    data: {
+      immediate: true,
+      deep: true,
+      handler(val) {
+        this.series = [{
+          data: val
+        }]
+      }
+    }
+  }
 }
 </script>

@@ -31,7 +31,6 @@ export default {
 
   created() {
     this.fields = {
-      game_admin_ckey: 'wirewraith',
       ckey: this.ban.original_ban_detail.ckey,
       comp_id: this.ban.original_ban_detail.comp_id,
       ip: this.ban.original_ban_detail.ip,

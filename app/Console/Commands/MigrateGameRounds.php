@@ -45,6 +45,9 @@ class MigrateGameRounds extends Command
             $gameRound['id'] = (int) $record['id'];
             $gameRound['server_id'] = $record['server_id'] === 'unknown' ? null : $record['server_id'];
             $gameRound['game_type'] = migval($record['game_type']);
+            if ($record['server_id'] === 'main3' || $record['server_id'] === 'main4') {
+                $gameRound['rp_mode'] = true;
+            }
             $gameRound['crashed'] = $record['crashed'] === "\N" ? false : (bool) $record['crashed'];
             $endedAt = $record['ended_at'];
             if ($endedAt === "\N") {

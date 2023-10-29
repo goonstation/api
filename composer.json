@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "awobaz/compoships": "^2.2",
         "aws/aws-sdk-php": "^3.283",
         "binarytorch/larecipe": "^2.6",
         "dedoc/scramble": "^0.8.3",

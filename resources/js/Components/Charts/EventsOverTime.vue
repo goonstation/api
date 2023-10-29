@@ -1,11 +1,8 @@
 <template>
-  <apexchart v-if="series" width="100%" :height="200" :options="chartOptions" :series="series" />
-  <div v-if="!series[0].data.length" class="chart-no-data">No data found</div>
+  <apexchart v-if="series" width="100%" :height="400" :options="chartOptions" :series="series" />
 </template>
 
 <script>
-import dayjs from 'dayjs'
-
 export default {
   props: {
     data: {
@@ -13,6 +10,11 @@ export default {
       required: true,
       default: () => [],
     },
+    type: {
+      type: String,
+      required: true,
+      default: ''
+    }
   },
 
   data: () => {
@@ -20,8 +22,8 @@ export default {
       series: null,
       chartOptions: {
         chart: {
-          id: 'deaths-over-time',
-          type: 'bar',
+          id: 'events-over-time',
+          type: 'area',
           stacked: false,
           foreColor: '#fff',
           zoom: {
@@ -31,25 +33,33 @@ export default {
             show: false,
           },
         },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            shadeIntensity: 0.5,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100],
+          },
+        },
         dataLabels: {
           enabled: false,
         },
         xaxis: {
           type: 'datetime',
-          categories: [],
+          // categories: [],
           axisTicks: {
             show: false,
           },
           axisBorder: {
-            color: '#333',
+            color: '#333'
           },
           tooltip: {
             enabled: false,
           },
-          labels: {
-            datetimeUTC: false,
-            format: 'h:mmtt',
-          },
+          // min: '2022-12-12'
         },
         yaxis: {
           min: 0,
@@ -61,9 +71,9 @@ export default {
           },
         },
         stroke: {
-          curve: 'smooth',
+          curve: 'straight',
           lineCap: 'round',
-          width: 0,
+          width: 2,
         },
         markers: {
           size: 0,
@@ -71,54 +81,41 @@ export default {
         },
         grid: {
           show: true,
-          borderColor: '#333',
+          borderColor: '#333'
         },
         colors: ['#ffd125'],
         tooltip: {
           theme: 'gh',
-          x: {
-            format: 'h:mmtt'
-          }
         },
       },
     }
   },
 
-  created() {
-    this.buildGraphData()
-  },
-
   methods: {
     buildGraphData() {
-      const dates = []
-      const deaths = []
-      // Group deaths by minute
-      this.data.forEach((death) => {
-        const prevDate = dates[dates.length - 1]
-        if (!prevDate) {
-          dates.push(death.created_at)
-          deaths.push(1)
-        } else {
-          const diff = dayjs(death.created_at).diff(dayjs(prevDate), 'm')
-          if (diff) {
-            dates.push(death.created_at)
-            deaths.push(1)
-          } else {
-            deaths[deaths.length - 1]++
-          }
-        }
+      const events = []
+      this.data.forEach((item) => {
+        events.push({x: item.day, y: item.events})
       })
 
-      this.chartOptions.xaxis.categories = dates
       this.series = [
         {
-          name: 'Deaths',
-          data: deaths,
+          name: this.type,
+          data: events,
         },
       ]
 
-      this.chartOptions.yaxis.labels.show = !!deaths.length
+      this.chartOptions.yaxis.labels.show = !!events.length
     },
   },
+
+  watch: {
+    data: {
+      immediate: true,
+      handler(val) {
+        this.buildGraphData()
+      }
+    }
+  }
 }
 </script>

@@ -64,4 +64,12 @@ class User extends Authenticatable
     {
         return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=ffd125&background=111';
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function gameAdmin()
+    {
+        return $this->hasOne(GameAdmin::class, 'id', 'game_admin_id');
+    }
 }

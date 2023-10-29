@@ -44,7 +44,7 @@ export default {
         { name: 'game_type', label: 'Game Type', field: 'game_type', sortable: true },
         {
           name: 'rp_mode',
-          label: 'RP Mode',
+          label: 'Roleplay',
           field: 'rp_mode',
           sortable: true,
           align: 'center',

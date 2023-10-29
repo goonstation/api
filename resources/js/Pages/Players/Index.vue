@@ -50,11 +50,11 @@
       </div>
     </div>
 
-    <q-card class="gh-card" flat>
+    <q-card class="gh-card q-mb-md" flat>
       <div class="gh-card__header">
         <q-icon :name="ionPeople" size="22px" />
         <span class="flex items-center">
-          Daily Players
+          Unique Daily Players
           <q-select
             v-model="dailyPlayersLength"
             class="q-ml-md"
@@ -69,6 +69,20 @@
         <player-participations-over-time :data="filteredParticipations" />
       </q-card-section>
     </q-card>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <q-card class="gh-card" flat>
+          <div class="gh-card__header">
+            <q-icon :name="ionPeople" size="22px" />
+            <span>Players By Country</span>
+          </div>
+          <q-card-section>
+            <players-by-country :data="playersByCountry" />
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,6 +91,7 @@ import { ionPeople } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PlayersLayout from '@/Layouts/PlayersLayout.vue'
 import PlayerParticipationsOverTime from '@/Components/Charts/PlayerParticipationsOverTime.vue'
+import PlayersByCountry from '@/Components/Charts/PlayersByCountry.vue'
 
 export default {
   layout: (h, page) => {
@@ -91,10 +106,12 @@ export default {
 
   components: {
     PlayerParticipationsOverTime,
+    PlayersByCountry,
   },
 
   props: {
     participations: Array,
+    playersByCountry: Array,
     totalPlayers: Number,
     mostPlayersOnline: Number,
     averagePlayersOnline: Number,
@@ -111,13 +128,14 @@ export default {
 
   data() {
     return {
-      dailyPlayersLength: null,
+      dailyPlayersLength: 365,
       dailyPlayersOptions: [
         { label: 'Last Week', value: 7 },
         { label: 'Last Month', value: 30 },
         { label: 'Last 3 Months', value: 91 },
         { label: 'Last 6 Months', value: 183 },
-        { label: 'Last Year', value: null },
+        { label: 'Last Year', value: 365 },
+        { label: 'All Time', value: null },
       ],
     }
   },

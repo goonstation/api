@@ -19,7 +19,7 @@ class NumbersStationController extends Controller
      */
     public function index(Request $request)
     {
-        $numbersPass = NumbersStationPassword::first();
+        $numbersPass = NumbersStationPassword::firstOrFail();
 
         return new NumbersStationPasswordResource($numbersPass);
     }

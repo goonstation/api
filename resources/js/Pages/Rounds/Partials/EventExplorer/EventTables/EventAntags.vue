@@ -40,9 +40,7 @@
             <q-list dense>
               <q-item-label header class="q-py-sm">Objectives</q-item-label>
               <q-item v-if="props.row.objectives.length" v-for="objective in props.row.objectives">
-                <q-item-section style="white-space: pre-wrap">{{
-                  objective.objective
-                }}</q-item-section>
+                <q-item-section style="white-space: pre-wrap;" v-dompurify-html="objective.objective"></q-item-section>
                 <q-item-section avatar>
                   <q-chip
                     v-if="objective.success"
@@ -56,6 +54,20 @@
                   <q-chip v-else class="text-sm" color="red" text-color="white" square>
                     Failed
                   </q-chip>
+                </q-item-section>
+              </q-item>
+              <q-item v-else>None</q-item>
+            </q-list>
+
+            <q-list dense>
+              <q-item-label header class="q-py-sm">Item Purchases</q-item-label>
+              <q-item v-if="props.row.item_purchases.length">
+                <q-item-section>
+                  <div class="flex wrap">
+                    <q-chip v-for="itemPurchase in props.row.item_purchases" color="grey-9" square>
+                      {{ itemPurchase.item }}
+                    </q-chip>
+                  </div>
                 </q-item-section>
               </q-item>
               <q-item v-else>None</q-item>
@@ -112,6 +124,7 @@ export default {
         return {
           ...event,
           objectives: this.getObjectives(event.player_id),
+          item_purchases: this.getItemPurchases(event.player_id),
         }
       })
     },
@@ -120,6 +133,10 @@ export default {
   methods: {
     getObjectives(playerId) {
       return this.allEvents.antag_objectives.filter((event) => event.player_id === playerId)
+    },
+
+    getItemPurchases(playerId) {
+      return this.allEvents.antag_item_purchases.filter((event) => event.player_id === playerId)
     },
   },
 }

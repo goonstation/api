@@ -19,9 +19,4 @@ class EventStationName extends Model
     {
         return $this->belongsTo(GameRound::class, 'round_id');
     }
-
-    public function scopeLatestStationName($query)
-    {
-        $query->latest();
-    }
 }

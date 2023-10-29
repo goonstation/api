@@ -2,7 +2,7 @@
   <div>
     <q-card class="q-mb-md" flat>
       <q-card-section>
-        <div class="text-caption opacity-60 q-mb-xs">
+        <div v-if="round.server" class="text-caption opacity-60 q-mb-xs">
           {{ round.server.name }}
         </div>
         <div class="text-weight-bold text-lg gh-link-card__title">
@@ -21,8 +21,8 @@
             <div>{{ endedFromNow }}</div>
             <div>Ended</div>
           </div>
-          <div v-if="round.map">
-            <div>{{ round.map }}</div>
+          <div v-if="map">
+            <div>{{ map }}</div>
             <div>Map</div>
           </div>
           <div v-if="round.game_type">
@@ -30,7 +30,10 @@
             <div>Game Type</div>
           </div>
         </div>
-        <q-badge v-if="round.crashed" color="negative" floating>Crashed</q-badge>
+        <div class="badges">
+          <q-badge v-if="round.rp_mode" color="info" text-color="dark">Roleplay</q-badge>
+          <q-badge v-if="round.crashed" color="negative" text-color="dark">Crashed</q-badge>
+        </div>
       </q-card-section>
     </q-card>
 
@@ -49,21 +52,12 @@
 </template>
 
 <style lang="scss" scoped>
-.gh-big-stats {
-  > div {
-    :first-child {
-      margin-bottom: 5px;
-      font-size: 3em;
-      font-weight: bold;
-      line-height: 1;
-      letter-spacing: 5px;
-    }
-
-    :last-child {
-      opacity: 0.7;
-      font-size: 0.9em;
-    }
-  }
+.badges {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  top: -2px;
+  right: -2px;
 }
 </style>
 
@@ -102,8 +96,13 @@ export default {
 
   computed: {
     latestStationName() {
-      if (!this.round.latest_station_name.length) return 'Space Station 13'
-      return this.round.latest_station_name[0].name
+      if (!this.round.latest_station_name) return 'Space Station 13'
+      return this.round.latest_station_name.name
+    },
+
+    map() {
+      if (this.round.map_record) return this.round.map_record.name
+      return this.round.map
     },
 
     started() {

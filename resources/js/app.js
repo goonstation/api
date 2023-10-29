@@ -5,11 +5,14 @@ import { createInertiaApp, Link } from '@inertiajs/vue3'
 import { Quasar, Notify } from 'quasar'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
+import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+dayjs.extend(utc)
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
 dayjs.extend(isSameOrBefore)
@@ -61,6 +64,7 @@ createInertiaApp({
       .use(formats)
       .use(globals)
       .use(VueApexCharts)
+      .use(VueDOMPurifyHTML)
       .mount(el)
   },
   progress: {

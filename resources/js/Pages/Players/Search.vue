@@ -49,7 +49,7 @@
     <players-table
       v-show="!showTutorial"
       flat
-      :search="{ key: searchFilter }"
+      :search="{ name: searchFilter }"
       :pagination="{ rowsPerPage: 20 }"
       @loaded="onTableLoaded"
       @fetch-start="tableFetching = true"
@@ -120,7 +120,7 @@ export default {
     },
 
     onTableLoaded({ filters }) {
-      if (filters.key) this.search = this.searchFilter = filters.key
+      if (filters.name) this.search = this.searchFilter = filters.name
     },
 
     onTableFetchEnd() {

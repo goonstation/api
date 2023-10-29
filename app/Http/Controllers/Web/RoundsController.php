@@ -14,10 +14,16 @@ class RoundsController extends Controller
 
     public function index(Request $request)
     {
-        $rounds = $this->indexQuery(GameRound::with([
-            'server:server_id,name',
-            'latestStationName',
-        ])->where('ended_at', '!=', null), perPage: 30);
+        $rounds = $this->indexQuery(
+            GameRound::with([
+                'server:server_id,name',
+                'mapRecord:id,map_id,name',
+                'latestStationName',
+            ])
+            ->where('ended_at', '!=', null)
+            ->whereRelation('server', 'invisible', '!=', true),
+            perPage: 30
+        );
 
         if ($this->wantsInertia()) {
             return Inertia::render('Rounds/Index', [
@@ -39,12 +45,14 @@ class RoundsController extends Controller
             'tickets:id,round_id,issuer,target,reason',
             'antags:id,round_id,player_id,mob_name,mob_job,traitor_type,success',
             'antagObjectives:id,round_id,player_id,objective,success',
-            'antagItemPurchases',
+            'antagItemPurchases:id,round_id,player_id,item,cost',
             'participations:round_id,created_at',
+            'mapRecord:id,map_id,name',
         ])->withCount([
             'beeSpawns',
         ])
             ->where('ended_at', '!=', null)
+            ->whereRelation('server', 'invisible', '!=', true)
             ->findOrFail($round);
 
         return Inertia::render('Rounds/Show', [

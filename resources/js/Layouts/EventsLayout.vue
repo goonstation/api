@@ -76,9 +76,10 @@ export default {
       tab: null,
       types: [
         { name: 'Overview', href: '/events' },
+        { name: 'Antagonists', href: '/events/antags' },
         { name: 'Deaths', href: '/events/deaths' },
-        { name: 'Tickets', href: '/events/tickets' },
         { name: 'Fines', href: '/events/fines' },
+        { name: 'Tickets', href: '/events/tickets' },
       ],
       loading: false,
     }

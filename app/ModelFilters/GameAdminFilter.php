@@ -24,12 +24,12 @@ class GameAdminFilter extends ModelFilter
 
     public function ckey($val)
     {
-        return $this->whereLike('ckey', $val);
+        return $this->where('ckey', 'ILIKE', '%'.$val.'%');
     }
 
-    public function key($val)
+    public function name($val)
     {
-        return $this->whereLike('key', $val)->whereLike('ckey', ckey($val), 'or');
+        return $this->where('name', 'ILIKE', '%'.$val.'%');
     }
 
     public function rank($val)

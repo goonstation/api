@@ -22,11 +22,13 @@ class PlayerParticipationsController extends Controller
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
             'round_id' => 'required|integer|exists:game_rounds,id',
+            'job' => 'nullable|string',
         ]);
 
         $participation = new PlayerParticipation;
         $participation->player_id = $data['player_id'];
         $participation->round_id = $data['round_id'];
+        $participation->job = isset($data['job']) ? $data['job'] : null;
         $participation->save();
 
         return new PlayerParticipationResource($participation);
@@ -40,15 +42,18 @@ class PlayerParticipationsController extends Controller
     public function storeBulk(Request $request)
     {
         $data = $request->validate([
-            'players' => 'required|array|exists:players,id',
+            'players' => 'required|array',
+            'players.*.player_id' => 'required|integer|exists:players,id',
+            'players.*.job' => 'sometimes|nullable|string',
             'round_id' => 'required|integer|exists:game_rounds,id',
         ]);
 
         $insertData = [];
-        foreach ($data['players'] as $playerId) {
+        foreach ($data['players'] as $player) {
             $insertData[] = [
-                'player_id' => $playerId,
+                'player_id' => $player['player_id'],
                 'round_id' => $data['round_id'],
+                'job' => isset($player['job']) ? $player['job'] : null,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];

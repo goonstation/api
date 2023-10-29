@@ -29,24 +29,20 @@ class BuildChangelog implements ShouldQueue
 
     private function getChangelogFromRepo()
     {
-        if (! app()->environment('local')) {
-            $res = Http::withHeaders([
-                'Accept: application/vnd.github+json',
-                'Authorization: Bearer '.config('github.user_token'),
-                'X-Github-Api-Version: 2022-11-28',
-                'User-Agent: SomethingOrOther',
-            ])
+        $res = Http::withHeaders([
+            'Accept: application/vnd.github+json',
+            'Authorization: Bearer ' . config('github.user_token'),
+            'X-Github-Api-Version: 2022-11-28',
+            'User-Agent: Goonhub',
+        ])
             ->get('https://api.github.com/repos/goonstation/goonstation/contents/strings/changelog.txt');
 
-            return base64_decode($res['content']);
-        } else {
-            return Storage::get('changelog.txt');
-        }
+        return base64_decode($res['content']);
     }
 
     private function flushEntry($date, $entry)
     {
-        if (! count($entry)) {
+        if (!count($entry)) {
             return false;
         }
         $this->entries[$date][] = $entry;
@@ -78,7 +74,7 @@ class BuildChangelog implements ShouldQueue
         $entry = [];
         $date = null;
         foreach ($lines as $line) {
-            if (! $line) {
+            if (!$line) {
                 continue;
             }
             if (str_starts_with($line, '#')) {

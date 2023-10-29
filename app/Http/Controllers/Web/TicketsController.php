@@ -14,7 +14,11 @@ class TicketsController extends Controller
 
     public function index(Request $request)
     {
-        $tickets = $this->indexQuery(EventTicket::class, perPage: 20);
+        $tickets = $this->indexQuery(
+            EventTicket::whereRelation('gameRound', 'ended_at', '!=', null)
+                ->whereRelation('gameRound.server', 'invisible', false),
+            perPage: 20
+        );
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Tickets/Index', [

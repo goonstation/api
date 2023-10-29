@@ -8,10 +8,10 @@
     flat
   >
     <template v-slot:cell-content-profile_photo_url="{ props }">
-      <img :src="props.props.row.profile_photo_url" alt="" class="photo" />
+      <img :src="props.row.profile_photo_url" alt="" class="photo" />
     </template>
     <template v-slot:cell-content-all_teams="{ props }">
-      <q-chip v-for="team in props.props.row.all_teams" color="grey-9" class="text-sm">
+      <q-chip v-for="team in props.row.all_teams" color="grey-9" class="text-sm">
         {{ team.name }}
       </q-chip>
     </template>

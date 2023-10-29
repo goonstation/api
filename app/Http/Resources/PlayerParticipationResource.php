@@ -18,6 +18,7 @@ class PlayerParticipationResource extends JsonResource
             'id' => $this->id,
             'player_id' => $this->ckey,
             'round_id' => $this->key,
+            'job' => $this->job,
             'legacy_data' => $this->byond_join_date,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

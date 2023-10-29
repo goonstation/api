@@ -1,19 +1,24 @@
 <template>
-  <div class="welcome q-mt-sm q-mb-lg">
+  <div class="welcome q-mt-sm q-mb-md">
     <img src="@img/bee.gif" alt="" class="gh-sprite" width="64" />
     <p class="bg-dark q-py-md q-px-lg q-mb-none">
       <span class="arrow" aria-hidden="true"></span>
-      Welcome to Goonhub, an information website designed to collect and display statistics from
-      the Goonstation branch of the popular game Space Station 13 developed on BYOND, and then
-      show them in a meaningful and useful way. Designed as a one-stop shop for all your
-      out-of-game nerding out. Have fun!
+      Welcome to Goonhub, an information website designed to collect and display statistics from the
+      Goonstation branch of the popular game Space Station 13 developed on BYOND, and then show them
+      in a meaningful and useful way. Designed as a one-stop shop for all your out-of-game nerding
+      out. Have fun!
     </p>
   </div>
 
   <div class="row q-col-gutter-md q-mb-md">
     <div class="col-12 col-md-6">
-      <player-trend :data="playersOnline" />
-      <server-status v-for="server in servers" class="q-mt-md" :server="server" />
+      <player-trend :data="_playersOnline" />
+      <server-status
+        v-for="server in servers"
+        class="q-mt-md"
+        :server="server"
+        @refreshed="onServerStatusRefreshed"
+      />
     </div>
 
     <div class="col-12 col-md-6">
@@ -68,6 +73,7 @@
   align-items: flex-end;
 
   img {
+    display: none;
     width: 50px;
     margin-right: 35px;
   }
@@ -81,7 +87,7 @@
 
     .arrow {
       position: absolute;
-      display: block;
+      display: none;
       bottom: 0;
       left: 0;
       transform: translateX(-100%);
@@ -96,6 +102,18 @@
         height: 200%;
         background: var(--q-dark);
         transform: translate(0, 15px) rotate(45deg);
+      }
+    }
+  }
+
+  @media (min-width: $breakpoint-sm-min) {
+    img {
+      display: block;
+    }
+
+    p {
+      .arrow {
+        display: block;
       }
     }
   }
@@ -125,7 +143,7 @@ export default {
     return {
       router,
       ionNotifications,
-      ionDocument
+      ionDocument,
     }
   },
 
@@ -137,6 +155,14 @@ export default {
     Changelog,
   },
 
+  data() {
+    return {
+      _playersOnline: null,
+      serverStatusRefreshCount: 0,
+      totalOnlinePlayers: 0,
+    }
+  },
+
   props: {
     canLogin: Boolean,
     canRegister: Boolean,
@@ -145,5 +171,21 @@ export default {
     lastRounds: Object,
     changelog: Object,
   },
+
+  created() {
+    this._playersOnline = this.playersOnline
+  },
+
+  methods: {
+    onServerStatusRefreshed({ status, error }) {
+      this.serverStatusRefreshCount++
+      if (!error) {
+        this.totalOnlinePlayers += parseInt(status.players)
+      }
+      if (this.serverStatusRefreshCount === this.servers.length) {
+        this._playersOnline[this._playersOnline.length - 1].online = this.totalOnlinePlayers
+      }
+    }
+  }
 }
 </script>

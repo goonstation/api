@@ -4,12 +4,14 @@ namespace App\Models\Events;
 
 use App\Models\GameRound;
 use App\Models\Player;
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Awobaz\Compoships\Compoships;
 
 class EventAntag extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable, Compoships;
 
     protected $table = 'events_antags';
 
@@ -27,5 +29,23 @@ class EventAntag extends Model
     public function player()
     {
         return $this->belongsTo(Player::class, 'player_id');
+    }
+
+    public function objectives()
+    {
+        return $this->hasMany(
+            EventAntagObjective::class,
+            ['player_id', 'round_id'],
+            ['player_id', 'round_id']
+        );
+    }
+
+    public function itemPurchases()
+    {
+        return $this->hasMany(
+            EventAntagItemPurchase::class,
+            ['player_id', 'round_id'],
+            ['player_id', 'round_id']
+        );
     }
 }

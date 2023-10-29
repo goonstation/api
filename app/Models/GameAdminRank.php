@@ -15,10 +15,10 @@ class GameAdminRank extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function admins()
     {
-        return $this->belongsToMany(GameAdmin::class);
+        return $this->hasMany(GameAdmin::class, 'rank_id');
     }
 }

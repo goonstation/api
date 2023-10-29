@@ -11,8 +11,12 @@
     map-options
     emit-value
     @virtual-scroll="onScroll"
-    @focus="onFocus"
-  />
+    @filter="filterFn"
+  >
+    <template #selected-item="{ opt }">
+      {{ opt[fieldLabel || optionLabel] }}
+    </template>
+  </q-select>
 </template>
 
 <script>
@@ -24,14 +28,15 @@ export default {
     loadRoute: String,
     optionValue: String,
     optionLabel: String,
+    fieldLabel: String,
+    defaultItems: Array,
   },
 
   computed: {
     model: {
       get() {
         if (!this.modelValue) return
-        if (this.$helpers.isNumeric(this.modelValue))
-          return parseInt(this.modelValue)
+        if (this.$helpers.isNumeric(this.modelValue)) return parseInt(this.modelValue)
         return this.modelValue
       },
       set(val) {
@@ -78,6 +83,10 @@ export default {
         this.loadedDefaultItem = true
       })
     }
+
+    if (this.defaultItems?.length) {
+      this.options = this.options.concat(this.defaultItems)
+    }
   },
 
   methods: {
@@ -97,7 +106,9 @@ export default {
 
       // Ensure we don't have duplicate items if we already loaded a default item
       for (const option of this.options) {
-        const existingItemIdx = newOptions.findIndex((newOption) => newOption[this.optionValue] === option[this.optionValue])
+        const existingItemIdx = newOptions.findIndex(
+          (newOption) => newOption[this.optionValue] === option[this.optionValue]
+        )
         if (existingItemIdx >= 0) {
           newOptions.splice(existingItemIdx, 1)
         }
@@ -123,10 +134,16 @@ export default {
       }
     },
 
-    onFocus() {
-      if (this.firstLoad || this.loadedDefaultItem) {
-        this.load()
+    filterFn(val, update, abort) {
+      if (!this.firstLoad) {
+        // already loaded
+        update()
+        return
       }
+
+      update(() => {
+        this.load()
+      })
     },
   },
 }

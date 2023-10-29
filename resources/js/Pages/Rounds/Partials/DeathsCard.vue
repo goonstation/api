@@ -55,6 +55,7 @@ export default {
     },
 
     averageDeaths() {
+      if (!this.deathCount) return 0
       return (this.deathCount / this.roundDuration).toFixed(2)
     },
   }

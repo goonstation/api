@@ -17,7 +17,7 @@
     </template>
 
     <template v-slot:top v-if="gridTopHasContent">
-      <div class="flex full-width bg-dark q-pa-sm rounded-borders">
+      <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
         <div v-if="showGridFilters" class="gh-grid-filters flex items-start gap-xs-sm">
           <!-- sort button/menu -->
           <q-btn color="grey-9" class="text-sm" padding="xs sm" dense no-caps unelevated>
@@ -100,26 +100,40 @@
           {{ createButtonText }}
         </q-btn>
 
-        <q-toggle
-          v-if="hasTimestamps && !noTimestampToggle"
-          v-model="showTimestamps"
-          :icon="ionCalendar"
-          left-label
-        >
-          <q-tooltip>Toggle timestamps</q-tooltip>
-        </q-toggle>
+        <q-btn :icon="ionSettings" class="q-ml-md" dense unelevated>
+          <q-tooltip>Table Settings</q-tooltip>
+          <q-menu :offset="[0, 10]">
+            <q-markup-table class="q-py-none" flat dense>
+              <tbody>
+                <tr v-if="hasTimestamps && !noTimestampToggle">
+                  <td>Toggle Timestamps</td>
+                  <td>
+                    <q-toggle v-model="showTimestamps" :icon="ionCalendar" />
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="text-right">
+                    <q-btn color="primary" text-color="dark" class="q-my-sm" @click="reset">
+                      Reset
+                    </q-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </q-menu>
+        </q-btn>
       </div>
     </template>
 
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th v-if="hasActions" />
+        <q-th v-if="hasActions" class="q-table--col-auto-width" />
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.label }}
         </q-th>
       </q-tr>
       <q-tr no-hover>
-        <q-th v-if="hasActions" />
+        <q-th v-if="hasActions" class="q-table--col-auto-width" />
         <q-th v-for="col in props.cols" :key="col.name">
           <table-filter
             v-if="col.filterable !== false"
@@ -204,7 +218,7 @@
 
 <script>
 import { router } from '@inertiajs/vue3'
-import { merge, isEmpty } from 'lodash'
+import { merge, isEmpty, isEqual } from 'lodash'
 import axios from 'axios'
 import {
   ionCalendar,
@@ -215,6 +229,7 @@ import {
   ionEye,
   ionPencil,
   ionTrash,
+  ionSettings,
 } from '@quasar/extras/ionicons-v6'
 import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
 import GridHeaderFilter from './Partials/GridHeaderFilter.vue'
@@ -231,6 +246,7 @@ export default {
       ionEye,
       ionPencil,
       ionTrash,
+      ionSettings,
     }
   },
 
@@ -278,8 +294,8 @@ export default {
     },
     createButtonText: {
       type: String,
-      default: 'Create'
-    }
+      default: 'Create',
+    },
   },
 
   data() {
@@ -299,6 +315,7 @@ export default {
         descending: true,
       },
       filters: {},
+      settingFiltersFromUrl: false,
       showTimestamps: false,
       timestampColumns: ['created_at', 'updated_at'],
     }
@@ -365,10 +382,6 @@ export default {
       }
       return ret
     },
-
-    hasView() {
-      return !!this.routes.view
-    },
   },
 
   created() {
@@ -377,8 +390,8 @@ export default {
     // For an initial server-built packet of data
     if (!isEmpty(this.initial)) {
       this.rows = this.initial.data
-      // mergedPagination.page = this.initial.current_page || 1
-      // mergedPagination.rowsPerPage = this.initial.per_page || 15
+      mergedPagination.page = this.initial.current_page || 1
+      mergedPagination.rowsPerPage = this.initial.per_page || 15
       mergedPagination.rowsNumber = this.initial.total
     }
 
@@ -441,7 +454,10 @@ export default {
         else if (key === 'descending') this._pagination.descending = param === 'true'
         else if (key === 'per_page') this._pagination.rowsPerPage = parseInt(param)
       })
-      this.filters = merge(this.filters, newFilters)
+      if (!isEqual(this.filters, newFilters)) {
+        this.settingFiltersFromUrl = true
+        this.filters = merge(this.filters, newFilters)
+      }
     },
 
     setUrlParams() {
@@ -499,9 +515,11 @@ export default {
       return goToRoute.replace('_id', row.id)
     },
 
-    onRowClick(row) {
-      if (!this.hasView) return
-      router.visit(this.getRoute(this.routes.view, row))
+    reset() {
+      if (!isEmpty(this.filters)) {
+        this.filters = {}
+      }
+      this._pagination = Object.assign({}, this.defaultPagination)
     },
   },
 
@@ -517,6 +535,12 @@ export default {
     filters: {
       deep: true,
       handler() {
+        // Skip a server fetch if we're setting filters from the URL
+        // Because we can assume our initial data from the server is already filtered
+        if (this.settingFiltersFromUrl) {
+          this.settingFiltersFromUrl = false
+          return
+        }
         this.onFiltersChange()
       },
     },

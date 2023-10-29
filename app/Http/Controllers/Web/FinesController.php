@@ -14,7 +14,11 @@ class FinesController extends Controller
 
     public function index(Request $request)
     {
-        $fines = $this->indexQuery(EventFine::class, perPage: 20);
+        $fines = $this->indexQuery(
+            EventFine::whereRelation('gameRound', 'ended_at', '!=', null)
+                ->whereRelation('gameRound.server', 'invisible', false),
+            perPage: 20
+        );
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Fines/Index', [

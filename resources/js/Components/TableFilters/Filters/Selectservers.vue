@@ -4,6 +4,7 @@
     load-route="/game-servers"
     option-value="server_id"
     option-label="name"
+    field-label="short_name"
   />
 </template>
 

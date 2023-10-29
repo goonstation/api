@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('player_id');
             $table->integer('round_id')->nullable();
+            $table->text('job')->nullable();
             $table->jsonb('legacy_data')->nullable();
             $table->timestamps();
 

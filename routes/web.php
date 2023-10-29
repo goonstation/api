@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Admin\GameAdminRanksController as AdminGameAdminRan
 use App\Http\Controllers\Web\Admin\GameAdminsController as AdminGameAdminsController;
 use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
 use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
+use App\Http\Controllers\Web\AntagsController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
@@ -66,6 +67,7 @@ Route::controller(RoundsController::class)->prefix('/rounds')->group(function ()
 Route::prefix('/events')->group(function () {
     Route::controller(EventsController::class)->prefix('/')->group(function () {
         Route::get('/', 'index')->name('events.index')->breadcrumb('Events');
+        Route::get('/stats', 'stats')->name('events.stats');
     });
 
     Route::controller(DeathsController::class)->prefix('/deaths')->group(function () {
@@ -81,6 +83,11 @@ Route::prefix('/events')->group(function () {
     Route::controller(FinesController::class)->prefix('/fines')->group(function () {
         Route::get('/', 'index')->name('fines.index')->breadcrumb('Fines');
         Route::get('/{fine}', 'show')->name('fines.show')->breadcrumb('', 'fines.index');
+    });
+
+    Route::controller(AntagsController::class)->prefix('/antags')->group(function () {
+        Route::get('/', 'index')->name('antags.index')->breadcrumb('Antagonists');
+        Route::get('/{antag}', 'show')->name('antags.show')->breadcrumb('', 'antags.index');
     });
 });
 
@@ -139,11 +146,12 @@ Route::middleware([
         });
 
         Route::controller(AdminBansController::class)->prefix('bans')->group(function () {
-            Route::get('/', 'index')->name('admin.bans.index');
+            Route::get('/', 'index')->name('admin.bans.index')->breadcrumb('Bans');
+            Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')->breadcrumb('Bans');
             Route::get('/details', 'getDetails');
-            Route::get('/create', 'create')->name('admin.bans.create');
+            Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
             Route::post('/', 'store')->name('admin.bans.store');
-            Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit');
+            Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');;
             Route::put('/{ban}', 'update')->name('admin.bans.update');
         });
     });

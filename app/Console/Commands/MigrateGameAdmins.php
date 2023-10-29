@@ -91,6 +91,8 @@ class MigrateGameAdmins extends Command
         $adminsFromSheet = $this->getTeamAdminsByRank();
         foreach ($adminsFromSheet as $admin => $details) {
             if (array_key_exists($admin, $admins)) {
+                // Prefer the rank in admins.txt, it's more up to date
+                $details['rank'] = $admins[$admin]['rank'];
                 $admins[$admin] = $details;
             }
         }
@@ -190,22 +192,28 @@ class MigrateGameAdmins extends Command
                 $discordId = $details['discord_id'];
             }
 
-            $newAdmin = new GameAdmin();
-            $newAdmin->ckey = $admin;
-            if ($rankModel && $rankModel->id) {
-                $newAdmin->rank_id = $rankModel->id;
-            }
-            $newAdmin->save();
-
             $userName = $admin;
             if (array_key_exists('alias', $details)) {
                 $userName = $details['alias'];
             }
 
+            $newAdmin = new GameAdmin();
+            $newAdmin->ckey = $admin;
+            $newAdmin->name = $admin !== $userName ? $userName : null;
+            if ($rankModel && $rankModel->id) {
+                $newAdmin->rank_id = $rankModel->id;
+            }
+            $newAdmin->save();
+
             if ($rank !== 'Bot' && $rank !== 'Inactive') {
+                $email = Str::random(20).'@goonhub.com';
+                if (array_key_exists('email', $details) && $details['email']) {
+                    $email = $details['email'];
+                }
+
                 $user = new User();
                 $user->name = $userName;
-                $user->email = Str::random(20).'@goonhub.com';
+                $user->email = $email;
                 $user->password = Hash::make(Str::random(30));
                 $user->discord_id = $discordId ? $discordId : null;
                 $user->game_admin_id = $newAdmin->id;

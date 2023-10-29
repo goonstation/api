@@ -1,172 +1,73 @@
 <template>
-  <div>
-    <q-card flat>
-      <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
-        <q-avatar class="q-mt-xs" :style="`background-color: ${avatarBg};`" font-size="0.35em">
-          {{ initials }}
-        </q-avatar>
-        <div class="q-pb-xs">
-          <div class="text-weight-bold text-h6">
-            <template v-if="player.key">{{ player.key }}</template>
-            <template v-else>{{ $formats.capitalize(player.ckey) }}</template>
-          </div>
-          <div class="text-caption text-grey-5">
-            Last seen {{ dayjs(player.latest_connection.created_at).fromNow() }}
-          </div>
-          <div class="text-caption text-grey-5">
-            Started playing {{ dayjs(player.first_connection.created_at).fromNow() }}
-          </div>
+  <q-card flat>
+    <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
+      <q-avatar class="q-mt-xs" :style="`background-color: ${avatarBg};`" font-size="0.35em">
+        {{ initials }}
+      </q-avatar>
+      <div class="q-pb-xs">
+        <div class="text-weight-bold text-h6">
+          <template v-if="player.key">{{ player.key }}</template>
+          <template v-else>{{ $formats.capitalize(player.ckey) }}</template>
         </div>
-      </q-card-section>
-    </q-card>
-
-    <br /><br /><br />
-
-    <div class="row q-mb-md q-col-gutter-md">
-      <div class="col-12 col-md-auto">
-        <q-card flat>
-          <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
-            <q-avatar class="q-mt-xs" :style="`background-color: ${avatarBg};`" font-size="0.35em">
-              {{ initials }}
-            </q-avatar>
-            <div class="q-pb-xs">
-              <div class="text-weight-bold text-h6">
-                <template v-if="player.key">{{ player.key }}</template>
-                <template v-else>{{ $formats.capitalize(player.ckey) }}</template>
-              </div>
-              <div class="text-caption text-grey-5">
-                Last seen {{ dayjs(player.latest_connection.created_at).fromNow() }}
-              </div>
-              <div class="text-caption text-grey-5">
-                Started playing {{ dayjs(player.first_connection.created_at).fromNow() }}
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col flex items-center justify-evenly gap-xs-lg">
-        <div class="gh-big-stat">
-          <div class="gh-big-stat__number">
-            {{ $formats.number(player.participations_count) }}
-          </div>
-          <div class="gh-big-stat__label">Rounds Played</div>
+        <div v-if="player.latest_connection" class="text-caption text-grey-5">
+          Last seen {{ dayjs(player.latest_connection.created_at).fromNow() }}
         </div>
-        <div class="gh-big-stat">
-          <div class="gh-big-stat__number">
-            {{ $formats.number(totalPlaytime) }}
-          </div>
-          <div class="gh-big-stat__label">Hours Played</div>
-        </div>
-        <div class="gh-big-stat">
-          <div class="gh-big-stat__number">
-            {{ $formats.number(player.deaths_count) }}
-          </div>
-          <div class="gh-big-stat__label">Deaths</div>
+        <div class="text-caption text-grey-5">
+          Started playing {{ dayjs(player.first_connection.created_at).fromNow() }}
         </div>
       </div>
-    </div>
+    </q-card-section>
 
-    <!-- <q-card class="gh-card" flat>
-      <div class="gh-card__header">
-        <q-icon :name="ionStarHalfOutline" size="22px" />
-        <span>Most Picked Antagonist Roles</span>
-      </div>
-      <q-card-section class="q-py-sm">
-        <q-list separator>
-          <q-item v-for="antag in antagPicks">
-            <q-item-section>{{ antag.traitor_type }}</q-item-section>
-            <q-item-section side>{{ antag.picked }}</q-item-section>
-          </q-item>
-        </q-list>
-      </q-card-section>
-    </q-card> -->
-
-    <!-- <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12 col-md-6">
-        <q-card flat class="gh-last-round">
-          <q-card-section>
-            foo
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12 col-md-6">
-        <q-markup-table flat separator="none">
-          <thead>
-            <tr>
-              <th colspan="2" class="text-left">
-                <div class="text-body1">Most Played Antagonists</div>
-              </th>
-            </tr>
-            <tr>
-              <th class="text-left">Antagonist Type</th>
-              <th class="text-left">Rounds Played</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="antag in antagPicks">
-              <td class="text-left">
-                {{ $formats.capitalize(antag.traitor_type) }}
-              </td>
-              <td class="text-left">
-                {{ $formats.number(antag.picked) }}
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-      </div>
-    </div>
-
-    <q-card flat>
-      <q-card-section>
-        <div style="position: relative;">
-          <player-connections-over-time :data="connections" />
-        </div>
-      </q-card-section>
-    </q-card> -->
-
-    <br /><br /><br />
-    <pre>
-      if latest_connected has round_id
-        link to last connected round
-
-      favorite job / a generated title based on rounds played as job
-
-      graph of connections over time
-    </pre>
-  </div>
+    <q-markup-table class="player-details" bordered>
+      <tbody>
+        <tr v-if="latestRound">
+          <td>Last Round Played</td>
+          <td>
+            <Link :href="`/rounds/${latestRound.id}`">
+              <template v-if="latestRound.latest_station_name">
+                {{ latestRound.latest_station_name.name }}
+              </template>
+              <template v-else>
+                #{{ latestRound.id }}
+              </template>
+            </Link>
+          </td>
+        </tr>
+        <tr v-if="favoriteJob">
+          <td>Favorite Job</td>
+          <td>{{ favoriteJob }}</td>
+        </tr>
+        <tr>
+          <td>Rounds Played</td>
+          <td>{{ $formats.number(player.participations_count) }}</td>
+        </tr>
+        <tr>
+          <td>Hours Played</td>
+          <td>{{ $formats.number(totalPlaytime) }}</td>
+        </tr>
+        <tr>
+          <td>Total Deaths</td>
+          <td>{{ $formats.number(player.deaths_count) }}</td>
+        </tr>
+      </tbody>
+    </q-markup-table>
+  </q-card>
 </template>
 
 <style lang="scss" scoped>
-.gh-big-stat {
-  &__number {
-    margin-bottom: 5px;
-    font-size: 3.5em;
-    font-weight: bold;
-    line-height: 1;
-    letter-spacing: 5px;
-  }
-
-  &__label {
-    opacity: 0.7;
-    font-size: 0.9em;
-  }
+.q-card {
+  max-width: 500px;
 }
 
-.gh-last-round {
-  position: relative;
-  overflow: hidden;
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 4px;
-    background: var(--q-primary);
-    transition: all 200ms;
+.player-details {
+  tr {
+    td:first-child {
+      width: 0;
+      font-weight: 600;
+    }
+    td:last-child {
+      white-space: unset;
+    }
   }
 }
 </style>
@@ -176,14 +77,9 @@ import { getHsla } from 'pastel-color'
 import dayjs from 'dayjs'
 import { ionStarHalfOutline } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
-// import PlayerConnectionsOverTime from '@/Components/Charts/PlayerConnectionsOverTime.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Player' }, () => page),
-
-  components: {
-    // PlayerConnectionsOverTime,
-  },
 
   setup() {
     return {
@@ -195,7 +91,7 @@ export default {
   props: {
     player: Object,
     latestRound: Object,
-    connections: Object,
+    favoriteJob: String,
   },
 
   computed: {

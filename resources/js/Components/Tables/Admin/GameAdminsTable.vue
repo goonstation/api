@@ -28,6 +28,7 @@ export default {
           sortable: true,
           filterable: false,
           format: this.$formats.number,
+          headerClasses: 'q-table--col-auto-width',
         },
         { name: 'ckey', label: 'Ckey', field: 'ckey', sortable: true },
         { name: 'name', label: 'Name', field: 'name', sortable: true },

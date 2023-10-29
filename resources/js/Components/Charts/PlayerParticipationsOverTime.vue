@@ -1,10 +1,9 @@
 <template>
   <apexchart v-if="series" width="100%" :height="400" :options="chartOptions" :series="series" />
+  <div v-if="!data.length" class="chart-no-data">No data found</div>
 </template>
 
 <script>
-import dayjs from 'dayjs'
-
 export default {
   props: {
     data: {
@@ -46,7 +45,6 @@ export default {
         },
         xaxis: {
           type: 'datetime',
-          // categories: [],
           axisTicks: {
             show: false,
           },
@@ -56,7 +54,6 @@ export default {
           tooltip: {
             enabled: false,
           },
-          // min: '2022-12-12'
         },
         yaxis: {
           min: 0,
@@ -101,6 +98,8 @@ export default {
           data: players,
         },
       ]
+
+      this.chartOptions.yaxis.labels.show = !!players.length
     },
   },
 

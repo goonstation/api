@@ -23,7 +23,7 @@ export default {
         ckey: null,
         comp_id: null,
         ip: null,
-        server_id: null,
+        server_id: 'all',
         reason: null,
         duration: null,
       },

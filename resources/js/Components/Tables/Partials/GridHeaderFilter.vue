@@ -62,7 +62,7 @@ export default {
         if (this.filter.includes('-')) return 'is between'
         else return 'is on'
       } else if (type === 'boolean') {
-        return 'is'
+        return ''
       } else if (type === 'range') {
         return ''
       } else {
@@ -73,6 +73,9 @@ export default {
     prettyFilter() {
       if (this.column.filter?.type === 'daterange') {
         return this.filter.replace('-', ' and ')
+      }
+      if (this.column.filter?.type === 'boolean') {
+        return ''
       }
       return this.filter
     },

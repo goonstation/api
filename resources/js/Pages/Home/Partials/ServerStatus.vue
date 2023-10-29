@@ -138,8 +138,8 @@ export default {
     },
 
     mapId() {
-      if (!this.status.map_name) return ''
-      return this.status.map_name.toLowerCase().replace('/\s/g', '')
+      if (!this.status.map_id) return ''
+      return this.status.map_id.toLowerCase().replace('/\s/g', '')
     }
   },
 
@@ -154,6 +154,7 @@ export default {
 
   methods: {
     async refresh() {
+      this.error = false
       try {
         const res = await axios.get(`${this.$page.props.env.GAME_BRIDGE_URL}/status`, {
           params: {
@@ -164,6 +165,10 @@ export default {
       } catch (e) {
         this.error = e.message
       }
+      this.$emit('refreshed', {
+        status: this.status,
+        error: this.error
+      })
       this.loading = false
     },
   },

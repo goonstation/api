@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\BuildChangelog;
+use App\Jobs\CacheGlobalPlayerStats;
 use App\Jobs\ClearOldAudio;
 use App\Jobs\ClearOldDectalks;
 use App\Jobs\GenerateNumbersStationPass;
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new GenerateNumbersStationPass)->hourly();
         $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
         $schedule->job(new ClearOldAudio)->dailyAt('03:07');
+        $schedule->job(new CacheGlobalPlayerStats)->daily();
 
         if (App::environment('local')) {
             $schedule->command('telescope:prune')->daily();

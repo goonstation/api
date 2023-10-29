@@ -13,8 +13,17 @@ class GameServersController extends Controller
 
     public function index(Request $request)
     {
+        $data = $request->validate([
+            'with_invisible' => 'nullable|boolean'
+        ]);
+
+        $query = GameServer::where('invisible', false);
+        if (isset($data['with_invisible']) && $data['with_invisible']) {
+            $query = $query->orWhere('invisible', true);
+        }
+
         $gameServers = $this->indexQuery(
-            GameServer::where('active', true)->where('invisible', false),
+            $query,
             perPage: 30,
             sortBy: 'name',
             desc: false

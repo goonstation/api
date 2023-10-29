@@ -41,6 +41,7 @@ trait HasGoonTeamHandling
                 'alias' => $record['Alias'],
                 'rank' => $record['Rank'],
                 'discord_id' => $record['Discord ID'],
+                'email' => $record['Email'],
             ];
         }
 

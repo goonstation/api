@@ -51,6 +51,14 @@ class Ban extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function gameServer()
+    {
+        return $this->belongsTo(GameServer::class, 'server_id', 'server_id');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function details()

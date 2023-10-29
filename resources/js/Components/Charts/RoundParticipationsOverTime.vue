@@ -1,5 +1,6 @@
 <template>
   <apexchart v-if="series" width="100%" :height="200" :options="chartOptions" :series="series" />
+  <div v-if="!series.data" class="chart-no-data">No data found</div>
 </template>
 
 <script>
@@ -46,16 +47,16 @@ export default {
             enabled: false,
           },
           labels: {
-            formatter: function (val) {
-              return dayjs(val).format('h:mma')
-            },
+            datetimeUTC: false,
+            format: 'h:mmtt',
           },
         },
         yaxis: {
           min: 0,
+          showAlways: false,
           forceNiceScale: true,
           labels: {
-            formatter: function (val) {
+            formatter: function (val, index) {
               return val.toFixed(0)
             },
           },
@@ -76,6 +77,9 @@ export default {
         colors: ['#ffd125'],
         tooltip: {
           theme: 'gh',
+          x: {
+            format: 'h:mmtt'
+          }
         },
       },
     }
@@ -113,6 +117,8 @@ export default {
           data: playerJoins,
         },
       ]
+
+      this.chartOptions.yaxis.labels.show = !!playerJoins.length
     },
   },
 }

@@ -14,7 +14,7 @@ class GameAdminRanksController extends Controller
 
     public function index(Request $request)
     {
-        $gameAdminRanks = $this->indexQuery(GameAdminRank::class, perPage: 30);
+        $gameAdminRanks = $this->indexQuery(GameAdminRank::withCount('admins'), perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/GameAdminRanks/Index', [

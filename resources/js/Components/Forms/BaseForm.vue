@@ -1,9 +1,3 @@
-<template>
-  <q-form @submit="submit">
-    <slot :form="form" :state="state" />
-  </q-form>
-</template>
-
 <script>
 import { useForm } from '@inertiajs/vue3'
 
@@ -31,7 +25,7 @@ export default {
     successMessage: {
       type: String,
       required: true,
-    }
+    },
   },
 
   data: () => {
@@ -48,6 +42,7 @@ export default {
 
   methods: {
     submit() {
+      if (this.disabled) return
       this.$emit('submit')
       this.form.submit(this.submitMethod, this.submitRoute, {
         onSuccess: () => {

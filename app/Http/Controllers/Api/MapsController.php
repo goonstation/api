@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Jobs\BuildMap;
 use App\Models\Map;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use ZipArchive;
 
 class MapsController extends Controller
@@ -34,13 +36,13 @@ class MapsController extends Controller
     public function generate(Request $request)
     {
         $data = $this->validate($request, [
-            'map' => 'required',
+            'map' => 'required|string',
             /** A zip file containing map screenshot images */
             'images' => 'required|file|mimes:zip',
         ]);
 
-        $map = Map::where('uri', '=', $data['map'])->where('active', '=', true)->first();
-        if (! $map) {
+        $map = Map::where('map_id', Str::upper($data['map']))->where('active', '=', true)->first();
+        if (!$map) {
             return response()->json(['error' => 'Unable to locate configuration for that map.'], 400);
         }
 
@@ -54,20 +56,10 @@ class MapsController extends Controller
             return response()->json(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
         }
 
-        $inputPath = BuildMap::$inputPath;
-        $storageInputPath = storage_path($inputPath);
-
-        // Create or empty input directory
-        if (! is_dir($storageInputPath)) {
-            mkdir($storageInputPath);
-        } else {
-            array_map('unlink', array_filter((array) glob("$storageInputPath/*")));
-        }
-
-        $zip->extractTo($storageInputPath);
         $zip->close();
 
-        BuildMap::dispatch($data['map']);
+        $mapZipPath = $file->move(storage_path(BuildMap::$workPath), Str::random(10) . '.zip');
+        BuildMap::dispatch($data['map'], $mapZipPath);
 
         return ['message' => 'Success'];
     }

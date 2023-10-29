@@ -10,4 +10,9 @@ class Map extends Model
     use HasFactory;
 
     protected $dates = ['last_updated_at'];
+
+    public function latestGameRound()
+    {
+        return $this->hasOne(GameRound::class, 'map', 'map_id')->latest();
+    }
 }

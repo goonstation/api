@@ -55,6 +55,7 @@ export default {
     },
 
     averagePlayers() {
+      if (!this.playerCount) return 0
       return (this.playerCount / this.roundDuration).toFixed(2)
     },
   }

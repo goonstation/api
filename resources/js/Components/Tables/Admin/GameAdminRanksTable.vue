@@ -27,8 +27,16 @@ export default {
           sortable: true,
           filterable: false,
           format: this.$formats.number,
+          headerClasses: 'q-table--col-auto-width',
         },
         { name: 'rank', label: 'Rank', field: 'rank', sortable: true },
+        {
+          name: 'admins_count',
+          label: 'Admins',
+          field: 'admins_count',
+          sortable: true,
+          filterable: false,
+        },
         {
           name: 'created_at',
           label: 'Created',

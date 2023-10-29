@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('server_id')->unique();
             $table->text('name');
+            $table->text('short_name');
             $table->text('address');
             $table->integer('port');
             $table->boolean('active')->default(false);
