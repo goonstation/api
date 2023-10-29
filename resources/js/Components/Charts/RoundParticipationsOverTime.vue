@@ -1,6 +1,6 @@
 <template>
   <apexchart v-if="series" width="100%" :height="200" :options="chartOptions" :series="series" />
-  <div v-if="!series.data" class="chart-no-data">No data found</div>
+  <div v-if="!series[0].data.length" class="chart-no-data">No data found</div>
 </template>
 
 <script>
@@ -53,10 +53,9 @@ export default {
         },
         yaxis: {
           min: 0,
-          showAlways: false,
           forceNiceScale: true,
           labels: {
-            formatter: function (val, index) {
+            formatter: function (val) {
               return val.toFixed(0)
             },
           },

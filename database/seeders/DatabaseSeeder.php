@@ -90,17 +90,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Map::insert([
-            ['uri' => 'atlas', 'name' => 'Atlas', 'active' => true],
-            ['uri' => 'cogmap', 'name' => 'Cogmap', 'active' => true],
-            ['uri' => 'cogmap2', 'name' => 'Cogmap 2', 'active' => true],
-            ['uri' => 'clarion', 'name' => 'Clarion', 'active' => true],
-            ['uri' => 'destiny', 'name' => 'Destiny', 'active' => true],
-            ['uri' => 'donut2', 'name' => 'Donut 2', 'active' => true],
-            ['uri' => 'donut3', 'name' => 'Donut 3', 'active' => true],
-            ['uri' => 'kondaru', 'name' => 'Kondaru', 'active' => true],
-            ['uri' => 'nadir', 'name' => 'Nadir', 'active' => true],
-            ['uri' => 'oshan', 'name' => 'Oshan', 'active' => true],
-            ['uri' => 'podwars', 'name' => 'Pod Wars', 'active' => true],
+            ['map_id' => 'ATLAS', 'name' => 'Atlas', 'active' => true],
+            ['map_id' => 'COGMAP', 'name' => 'Cogmap', 'active' => true],
+            ['map_id' => 'COGMAP2', 'name' => 'Cogmap 2', 'active' => true],
+            ['map_id' => 'CLARION', 'name' => 'Clarion', 'active' => true],
+            ['map_id' => 'DEBRIS', 'name' => 'Debris', 'active' => false],
+            ['map_id' => 'DESTINY', 'name' => 'Destiny', 'active' => true],
+            ['map_id' => 'DONUT2', 'name' => 'Donut 2', 'active' => true],
+            ['map_id' => 'DONUT3', 'name' => 'Donut 3', 'active' => true],
+            ['map_id' => 'KONDARU', 'name' => 'Kondaru', 'active' => true],
+            ['map_id' => 'NADIR', 'name' => 'Nadir', 'active' => true],
+            ['map_id' => 'OSHAN', 'name' => 'Oshan', 'active' => true],
+            ['map_id' => 'PODWARS', 'name' => 'Pod Wars', 'active' => true],
         ]);
 
         // $this->call([

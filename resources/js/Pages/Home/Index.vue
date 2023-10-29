@@ -127,6 +127,7 @@
 </style>
 
 <script>
+import dayjs from 'dayjs'
 import { router } from '@inertiajs/vue3'
 import { ionNotifications, ionDocument } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
@@ -183,7 +184,14 @@ export default {
         this.totalOnlinePlayers += parseInt(status.players)
       }
       if (this.serverStatusRefreshCount === this.servers.length) {
-        this._playersOnline[this._playersOnline.length - 1].online = this.totalOnlinePlayers
+        if (this._playersOnline.length) {
+          this._playersOnline[this._playersOnline.length - 1].online = this.totalOnlinePlayers
+        } else {
+          this._playersOnline.push({
+            date: dayjs().format('YYYY-MM-DD'),
+            online: this.totalOnlinePlayers
+          })
+        }
       }
     }
   }

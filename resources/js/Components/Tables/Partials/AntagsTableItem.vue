@@ -53,6 +53,7 @@ export default {
 
   computed: {
     traitorType() {
+      if (!this.item.row.traitor_type) return ''
       return startCase(this.item.row.traitor_type.replace('_', ' '))
     },
 

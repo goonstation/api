@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('maps', function (Blueprint $table) {
             $table->id();
-            $table->text('uri')->unique();
+            $table->text('map_id')->unique();
             $table->text('name');
             $table->boolean('active');
             $table->timestamp('last_built_at')->nullable();

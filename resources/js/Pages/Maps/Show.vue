@@ -1,5 +1,5 @@
 <template>
-  <Head :title="map" />
+  <Head :title="mapName" />
 
   <div id="map"></div>
 
@@ -76,6 +76,11 @@ export default {
       required: true,
       default: 'cogmap',
     },
+    mapName: {
+      type: String,
+      required: true,
+      default: 'Cogmap'
+    }
   },
 
   setup() {

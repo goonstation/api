@@ -8,7 +8,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -62,12 +61,12 @@ class BuildMap implements ShouldQueue
      */
     public function handle()
     {
-        $mapUri = $this->map;
-        $mapUri = preg_replace('/[^A-Za-z0-9]/', '', $mapUri);
+        $mapId = preg_replace('/[^A-Za-z0-9]/', '', $this->map);
+        $mapUri = Str::lower($mapId);
 
-        $map = Map::where('uri', '=', $mapUri)->where('active', '=', true)->first();
+        $map = Map::where('map_id', Str::upper($mapId))->first();
         if (! $map) {
-            return;
+            throw new \Exception('Invalid map');
         }
 
         // Generate our working directories
@@ -92,8 +91,7 @@ class BuildMap implements ShouldQueue
         $inputImages = File::allFiles(storage_path($workDirInput));
         $imagesPerRow = self::MAP_SIZE / self::SCREENSHOT_SIZE;
         if (count($inputImages) < $this->getExpectedImageCount()) {
-            // $this->error('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
-            return;
+            throw new \Exception('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
         }
 
         $canvas = Image::canvas(self::MAP_SIZE, self::MAP_SIZE);

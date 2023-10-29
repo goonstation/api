@@ -17,6 +17,7 @@ class MapsController extends Controller
                         ->whereRelation('server', 'invisible', false);
                 }
             ])
+            ->where('active', true)
             ->orderBy('name', 'asc')
             ->get();
 
@@ -27,10 +28,11 @@ class MapsController extends Controller
 
     public function show(string $map)
     {
-        $map = Map::where('map_id', Str::upper($map))->firstOrFail();
+        $map = Map::where('map_id', Str::upper($map))->where('active', true)->firstOrFail();
 
         return Inertia::render('Maps/Show', [
             'map' => Str::lower($map->map_id),
+            'mapName' => $map->name
         ]);
     }
 }

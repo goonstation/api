@@ -41,7 +41,7 @@ class MapsController extends Controller
             'images' => 'required|file|mimes:zip',
         ]);
 
-        $map = Map::where('map_id', Str::upper($data['map']))->where('active', '=', true)->first();
+        $map = Map::where('map_id', Str::upper($data['map']))->first();
         if (!$map) {
             return response()->json(['error' => 'Unable to locate configuration for that map.'], 400);
         }

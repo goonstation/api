@@ -46,7 +46,7 @@ class RoundsController extends Controller
             'antags:id,round_id,player_id,mob_name,mob_job,traitor_type,success',
             'antagObjectives:id,round_id,player_id,objective,success',
             'antagItemPurchases:id,round_id,player_id,item,cost',
-            'participations:round_id,created_at',
+            'participations:id,round_id,created_at',
             'mapRecord:id,map_id,name',
         ])->withCount([
             'beeSpawns',
