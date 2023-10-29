@@ -54,7 +54,6 @@ Route::controller(ChangelogController::class)->prefix('/changelog')->group(funct
 
 Route::controller(PlayersController::class)->prefix('/players')->group(function () {
     Route::get('/', 'index')->name('players.index')->breadcrumb('Players');
-    Route::get('/highscores', 'highscores')->name('players.highscores')->breadcrumb('Highscores');
     Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
     Route::get('/{player}', 'show')->name('players.show')->breadcrumb('', 'players.search');
 });

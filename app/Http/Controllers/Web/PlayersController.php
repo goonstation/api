@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\GameRound;
 use App\Models\Player;
-use App\Models\PlayerConnection;
-use App\Models\PlayerHighscore;
 use App\Models\PlayerParticipation;
 use App\Models\PlayersOnline;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -46,43 +43,6 @@ class PlayersController extends Controller
             'mostPlayersOnline' => (int) $mostPlayersOnline,
             'averagePlayersOnline' => (int) $averagePlayersOnline,
         ]);
-    }
-
-    public function highscores(Request $request)
-    {
-        $types = PlayerHighscore::select('type')
-            ->distinct('type')
-            ->orderBy('type', 'asc')
-            ->pluck('type');
-
-        $filters = $request->input('filters', []);
-        if (! array_key_exists('type', $filters) && count($types)) {
-            $filters['type'] = $types[0];
-        }
-
-        $highscores = PlayerHighscore::join('players', 'players.id', '=', 'player_highscores.player_id')
-            ->filter($filters)
-            ->orderBy(
-                $request->input('sort_by', 'value'),
-                $request->input('descending', 'true') === 'true' ? 'desc' : 'asc'
-            )
-            ->select(
-                DB::raw('ROW_NUMBER () OVER (ORDER BY "value" desc) as position'),
-                'player_highscores.*',
-                'players.ckey',
-                'players.key'
-            )
-            ->paginateFilter($request->input('per_page', 10));
-
-        if ($this->wantsInertia($request)) {
-            return Inertia::render('Players/Highscores', [
-                'highscores' => $highscores,
-                'types' => $types,
-                'filteredType' => isset($filters['type']) ? $filters['type'] : null,
-            ]);
-        } else {
-            return $highscores;
-        }
     }
 
     public function search(Request $request)

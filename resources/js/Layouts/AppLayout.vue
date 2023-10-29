@@ -229,10 +229,6 @@ export default {
               href: '/players',
             },
             {
-              label: 'Highscores',
-              href: '/players/highscores',
-            },
-            {
               label: 'Search',
               href: '/players/search',
             },

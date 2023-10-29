@@ -64,7 +64,6 @@ export default {
       tab: null,
       types: [
         { name: 'Overview', href: '/players' },
-        { name: 'Highscores', href: '/players/highscores' },
         { name: 'Search', href: '/players/search' },
       ],
       loading: false,
