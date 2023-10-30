@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('players_online', function (Blueprint $table) {
             $table->id();
             $table->text('server_id');
-            $table->integer('online');
+            $table->integer('online')->nullable();
             $table->timestamps();
 
             $table->index('server_id');

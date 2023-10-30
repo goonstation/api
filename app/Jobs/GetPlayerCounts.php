@@ -43,9 +43,7 @@ class GetPlayerCounts implements ShouldQueue
                 $status = GameBridge::status($server->server_id);
                 $playerCount = $status['players'];
             } catch (\Exception $e) {
-                // server might be dead, restarting, or otherwise in a bad state
-                // we want uniformly inserted data for online players soooo default to 0
-                // we'll just have to remove outliers like this when showing averages later
+                $playerCount = null;
             }
             $playersOnline = new PlayersOnline();
             $playersOnline->timestamps = false;

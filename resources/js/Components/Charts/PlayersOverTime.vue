@@ -1,23 +1,16 @@
 <template>
-  <apexchart
-    v-if="series"
-    :width="200"
-    :height="80"
-    :options="chartOptions"
-    :series="series"
-    @mouseMove="onMouseMove"
-    @mouseLeave="onMouseLeave"
-  />
+  <apexchart v-if="series" width="100%" :height="400" :options="chartOptions" :series="series" />
+  <div v-if="!Object.keys(data).length" class="chart-no-data">No data found</div>
 </template>
 
 <script>
 export default {
   props: {
     data: {
-      type: Array,
+      type: Object,
       required: true,
-      default: () => []
-    }
+      default: () => ({}),
+    },
   },
 
   data: () => {
@@ -25,17 +18,41 @@ export default {
       series: null,
       chartOptions: {
         chart: {
-          id: 'players-over-time',
+          id: 'player-connections-over-time',
           type: 'line',
-          sparkline: {
-            enabled: true,
+          stacked: false,
+          foreColor: '#fff',
+          zoom: {
+            enabled: false,
+          },
+          toolbar: {
+            show: false,
           },
         },
+        dataLabels: {
+          enabled: false,
+        },
         xaxis: {
-          type: 'category',
+          type: 'datetime',
+          axisTicks: {
+            show: false,
+          },
+          axisBorder: {
+            color: '#333'
+          },
+          tooltip: {
+            enabled: false,
+          },
+        },
+        yaxis: {
+          min: 0,
+          forceNiceScale: true,
+          labels: {
+            show: true
+          }
         },
         stroke: {
-          curve: 'smooth',
+          curve: 'straight',
           lineCap: 'round',
           width: 2,
         },
@@ -44,47 +61,48 @@ export default {
           strokeWidth: 0,
         },
         grid: {
+          show: true,
+          borderColor: '#333',
           padding: {
-            top: 10,
-            bottom: 10,
-            left: 10,
-            right: 10,
-          },
+            bottom: 10
+          }
         },
-        colors: ['#ffd125'],
+        colors: ['#ffd125', '#24c024', '#e33434', '#5490ff'],
         tooltip: {
-          theme: 'hidden',
+          theme: 'gh',
         },
       },
     }
   },
 
   methods: {
-    onMouseMove(e, ctx, cfg) {
-      let dataPoint = cfg.config.series[cfg.seriesIndex]?.data[cfg.dataPointIndex]
-      if (!dataPoint) {
-        dataPoint = cfg.config.series[0].data[cfg.config.series[0].data.length - 1]
-      }
-      this.$emit('onPlayerHover', { date: dataPoint.x, players: dataPoint.y })
-    },
+    buildGraphData() {
+      const series = []
 
-    onMouseLeave() {
-      const dataPoint = this.series[0].data[this.series[0].data.length - 1]
-      this.$emit('onPlayerHover', {
-        date: dataPoint.x,
-        players: dataPoint.y,
-      })
+      for (const serverId in this.data) {
+        const data = this.data[serverId]
+        const seriesItem = {
+          name: serverId,
+          data: []
+        }
+
+        for (const item of data) {
+          seriesItem.data.push({ x: item[0], y: item[1] })
+        }
+
+        series.push(seriesItem)
+      }
+
+      this.series = series
+      this.chartOptions.yaxis.labels.show = !!series.length
     },
   },
 
   watch: {
     data: {
       immediate: true,
-      deep: true,
       handler(val) {
-        this.series = [{
-          data: val
-        }]
+        this.buildGraphData()
       }
     }
   }

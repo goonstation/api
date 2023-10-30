@@ -34,7 +34,7 @@
               >
                 Gibbed
               </q-chip>
-              <div class="gh-details-list gh-details-list--small">
+              <div class="gh-details-list gh-details-list--non-collapsible gh-details-list--small">
                 <div>
                   <div class="bruteloss">{{ $formats.number(props.row.bruteloss) }}</div>
                   <div>Brute</div>

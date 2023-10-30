@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\GameServer;
 use App\Models\PlayerConnection;
 use App\Models\PlayerParticipation;
 use Carbon\Carbon;
@@ -33,6 +34,12 @@ class CacheGlobalPlayerStats implements ShouldQueue
      */
     public function handle()
     {
+        // $servers = GameServer::where('active', true)
+        //     ->where('invisible', false)
+        //     ->orderBy('server_id', 'asc')
+        //     ->get();
+        // $serversToShow = $servers->pluck('server_id');
+
         // Unique player participations per day
         $data = PlayerParticipation::select(
             DB::raw('Date(created_at) as date'),

@@ -11,7 +11,7 @@
       </q-card-section>
       <q-space />
       <div class="row justify-end col-6 q-py-sm">
-        <players-over-time
+        <player-trend-over-time
           v-if="trendData.length && trendData.length > 1"
           :data="trendData"
           @onPlayerHover="updateAmount"
@@ -49,11 +49,11 @@
 <script>
 import dayjs from 'dayjs'
 import { ionPeople } from '@quasar/extras/ionicons-v6'
-import PlayersOverTime from '@/Components/Charts/PlayersOverTime.vue'
+import PlayerTrendOverTime from '@/Components/Charts/PlayerTrendOverTime.vue'
 
 export default {
   components: {
-    PlayersOverTime,
+    PlayerTrendOverTime,
   },
 
   props: {

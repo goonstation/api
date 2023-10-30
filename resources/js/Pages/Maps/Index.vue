@@ -52,7 +52,6 @@
 </style>
 
 <script>
-import dayjs from 'dayjs'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 export default {

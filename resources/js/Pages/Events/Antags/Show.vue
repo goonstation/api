@@ -5,8 +5,10 @@
         <div>
           <div class="text-primary text-lg">{{ antag.mob_name }}</div>
           <div v-if="antag.mob_job">{{ antag.mob_job }}</div>
-          <q-chip v-if="antag.success" color="positive" square> Succeeded </q-chip>
-          <q-chip v-else color="negative" square> Failed </q-chip>
+          <q-chip v-if="antag.success" color="positive" class="q-ma-none" square>
+            Succeeded
+          </q-chip>
+          <q-chip v-else color="negative" class="q-ma-none" square> Failed </q-chip>
         </div>
 
         <q-space />

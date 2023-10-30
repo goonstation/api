@@ -1,10 +1,10 @@
 <template>
-  <div class="q-my-sm flex items-center">
+  <div class="q-my-sm flex items-center gap-xs-sm">
     <q-chip square color="grey-9" class="q-ma-none">
       <q-avatar :icon="ionPerson" color="primary" text-color="black" />
       {{ entry.user }}
     </q-chip>
-    <span v-if="entry.emojiLabels?.emojis" class="q-ml-sm emojis">
+    <span v-if="entry.emojiLabels?.emojis" class="emojis">
       {{ entry.emojiLabels.emojis }}
     </span>
     <q-space />

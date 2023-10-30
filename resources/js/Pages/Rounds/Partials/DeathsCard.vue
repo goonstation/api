@@ -16,7 +16,9 @@
         </div>
       </div>
 
-      <deaths-over-time :data="deaths" />
+      <div class="relative-position">
+        <deaths-over-time :data="deaths" />
+      </div>
     </q-card-section>
   </q-card>
 </template>

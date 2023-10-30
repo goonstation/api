@@ -1,20 +1,5 @@
 <template>
   <div>
-    <!--
-      most players online at once
-        PlayersOnline::sortBy('amount', 'desc')->first()
-
-      average players per day
-
-      total amount of players seen
-        Player::count()
-
-      pie graph of connection countries
-
-      line graph of players online over time
-        line for each server
-        line for total (maybe??)
-    -->
     <div class="row q-mb-md q-col-gutter-md">
       <div class="col-12 col-md-4">
         <q-card flat>
@@ -43,12 +28,32 @@
           <q-card-section>
             <div class="text-weight-medium">Average Players Online</div>
             <div class="text-xl text-weight-bolder text-primary">
-              {{ $formats.number(averagePlayersOnline) }}
+              {{ $formats.number(totalAveragePlayersOnline) }}
             </div>
           </q-card-section>
         </q-card>
       </div>
     </div>
+
+    <q-card class="gh-card q-mb-md" flat>
+      <div class="gh-card__header">
+        <q-icon :name="ionPeople" size="22px" />
+        <span class="flex items-center">
+          Average Players Online
+          <!-- <q-select
+            v-model="dailyPlayersLength"
+            class="q-ml-md"
+            :options="dailyPlayersOptions"
+            emit-value
+            map-options
+            dense
+          /> -->
+        </span>
+      </div>
+      <q-card-section>
+        <players-over-time :data="averagePlayersOnline" />
+      </q-card-section>
+    </q-card>
 
     <q-card class="gh-card q-mb-md" flat>
       <div class="gh-card__header">
@@ -70,7 +75,7 @@
       </q-card-section>
     </q-card>
 
-    <div class="row">
+    <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
         <q-card class="gh-card" flat>
           <div class="gh-card__header">
@@ -82,6 +87,19 @@
           </q-card-section>
         </q-card>
       </div>
+
+      <div class="col-12 col-md-6">
+        <q-card class="gh-card" flat style="height: 100%;">
+          <div class="gh-card__header">
+            <q-icon :name="ionPeople" size="22px" />
+            <span>Something</span>
+          </div>
+          <q-card-section>
+            Some chart here that shows something about overall player statistics.
+            Give me ideas.
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
   </div>
 </template>
@@ -90,6 +108,7 @@
 import { ionPeople } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PlayersLayout from '@/Layouts/PlayersLayout.vue'
+import PlayersOverTime from '@/Components/Charts/PlayersOverTime.vue'
 import PlayerParticipationsOverTime from '@/Components/Charts/PlayerParticipationsOverTime.vue'
 import PlayersByCountry from '@/Components/Charts/PlayersByCountry.vue'
 
@@ -105,16 +124,18 @@ export default {
   },
 
   components: {
+    PlayersOverTime,
     PlayerParticipationsOverTime,
     PlayersByCountry,
   },
 
   props: {
+    averagePlayersOnline: Object,
     participations: Array,
     playersByCountry: Array,
     totalPlayers: Number,
     mostPlayersOnline: Number,
-    averagePlayersOnline: Number,
+    totalAveragePlayersOnline: Number,
   },
 
   computed: {

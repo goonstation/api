@@ -121,7 +121,7 @@ export default {
       layerOptions = {
         tileSize,
         bounds,
-        minZoom: -2,
+        minZoom: -3,
         maxZoom: 2,
         minNativeZoom: 0,
         maxNativeZoom: 0,

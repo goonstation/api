@@ -116,12 +116,12 @@
       scale: 1.1;
       transform-origin: center;
       filter: grayscale(1) brightness(500%);
-      z-index: -1;
       opacity: 0.3;
       transition: all 400ms ease-in-out;
     }
 
     img {
+      position: relative;
       max-width: 100%;
       height: auto;
     }
@@ -152,7 +152,6 @@
 
   &__bar {
     position: absolute;
-    z-index: -1;
     top: 0;
     left: 0;
     width: 5px;
@@ -238,6 +237,28 @@ export default {
           label: 'Events',
           href: '/events',
           separator: false,
+          children: [
+            {
+              label: 'Overview',
+              href: '/events'
+            },
+            {
+              label: 'Antagonists',
+              href: '/events/antags'
+            },
+            {
+              label: 'Deaths',
+              href: '/events/deaths'
+            },
+            {
+              label: 'Fines',
+              href: '/events/fines'
+            },
+            {
+              label: 'Tickets',
+              href: '/events/tickets'
+            },
+          ]
         },
         {
           label: 'Maps',

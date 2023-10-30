@@ -6,9 +6,7 @@
         <template v-if="round.latest_station_name">
           {{ round.latest_station_name.name }}
         </template>
-        <template v-else>
-          Space Station 13
-        </template>
+        <template v-else> Space Station 13 </template>
       </q-item-label>
       <q-item-label caption> Lasted for {{ duration }}, {{ ended }} </q-item-label>
     </q-item-section>
@@ -19,6 +17,7 @@
         color="primary"
         text-color="primary"
         :icon-right="ionEye"
+        @click="router.visit(route('rounds.show', round.id))"
         label="View"
         size="0.75rem"
         padding="xs sm"
@@ -37,6 +36,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import { router } from '@inertiajs/vue3'
 import { ionEye } from '@quasar/extras/ionicons-v6'
 
 export default {
@@ -46,7 +46,8 @@ export default {
 
   setup() {
     return {
-      ionEye
+      router,
+      ionEye,
     }
   },
 

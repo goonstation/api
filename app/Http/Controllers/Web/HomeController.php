@@ -33,12 +33,14 @@ class HomeController extends Controller
                 ->whereIn('server_id', $serversToShow)
                 ->where('created_at', '>=', Carbon::today()->subDays(7))
                 ->where('created_at', '<', Carbon::today())
+                ->where('online', '!=', null)
                 ->from('players_online')
                 ->groupBy('created_at');
         }, 'grouped')
             ->selectRaw('grouped.date as date')
             ->selectRaw('avg(grouped.online) as online')
             ->groupBy('date')
+            ->orderBy('date')
             ->get();
 
         // Just get the sum of players online right now

@@ -16,7 +16,9 @@
         </div>
       </div>
 
-      <round-participations-over-time :data="participations" />
+      <div class="relative-position">
+        <round-participations-over-time :data="participations" />
+      </div>
     </q-card-section>
   </q-card>
 </template>

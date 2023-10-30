@@ -18,7 +18,7 @@
 
       <div class="text-sm opacity-60 q-mt-md q-mb-xs">Died from</div>
       <div class="flex items-center">
-        <div class="gh-details-list">
+        <div class="gh-details-list gh-details-list--non-collapsible">
           <div>
             <div class="bruteloss">{{ $formats.number(death.bruteloss) }}</div>
             <div>Brute</div>
