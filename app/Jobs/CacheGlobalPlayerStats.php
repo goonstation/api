@@ -2,18 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Models\GameServer;
+use App\Models\GlobalStat;
 use App\Models\PlayerConnection;
 use App\Models\PlayerParticipation;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class CacheGlobalPlayerStats implements ShouldQueue
+class GenerateGlobalPlayerStats implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
@@ -34,12 +32,6 @@ class CacheGlobalPlayerStats implements ShouldQueue
      */
     public function handle()
     {
-        // $servers = GameServer::where('active', true)
-        //     ->where('invisible', false)
-        //     ->orderBy('server_id', 'asc')
-        //     ->get();
-        // $serversToShow = $servers->pluck('server_id');
-
         // Unique player participations per day
         $data = PlayerParticipation::select(
             DB::raw('Date(created_at) as date'),
@@ -54,9 +46,9 @@ class CacheGlobalPlayerStats implements ShouldQueue
             $niceData[] = [$conn->date, $conn->connections];
         }
         $playerParticipationsPerDay = $niceData;
-        Cache::put(
-            'unique_player_participations_per_day',
-            $playerParticipationsPerDay
+        GlobalStat::updateOrCreate(
+            ['key' => 'unique_player_participations_per_day'],
+            ['stats' => json_encode($playerParticipationsPerDay)]
         );
 
         // Countries by unique player connections
@@ -85,9 +77,9 @@ class CacheGlobalPlayerStats implements ShouldQueue
 
         $niceData[] = ['Other', $groupedCountries];
         $playersByCountry = $niceData;
-        Cache::put(
-            'players_by_country',
-            $playersByCountry
+        GlobalStat::updateOrCreate(
+            ['key' => 'players_by_country'],
+            ['stats' => json_encode($playersByCountry)]
         );
     }
 }
