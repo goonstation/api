@@ -37,7 +37,9 @@ trait ManagesBans
         }
 
         $serverId = isset($request['server_id']) ? $request['server_id'] : null;
-        if ($serverId === 'all') $serverId = null;
+        if ($serverId === 'all') {
+            $serverId = null;
+        }
 
         $ban = new Ban();
         $ban->game_admin_id = $gameAdmin->id;
@@ -99,7 +101,9 @@ trait ManagesBans
         // Ensure the server ID is nulled out if we're being told about it, and it's falsey
         if (isset($request['server_id'])) {
             $newBanDetails['server_id'] = $request['server_id'] ? $request['server_id'] : null;
-            if ($newBanDetails['server_id'] === 'all') $newBanDetails['server_id'] = null;
+            if ($newBanDetails['server_id'] === 'all') {
+                $newBanDetails['server_id'] = null;
+            }
         }
 
         if (isset($request['duration'])) {

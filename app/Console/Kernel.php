@@ -3,9 +3,9 @@
 namespace App\Console;
 
 use App\Jobs\BuildChangelog;
-use App\Jobs\GenerateGlobalPlayerStats;
 use App\Jobs\ClearOldAudio;
 use App\Jobs\ClearOldDectalks;
+use App\Jobs\GenerateGlobalPlayerStats;
 use App\Jobs\GenerateNumbersStationPass;
 use App\Jobs\GetPlayerCounts;
 use Illuminate\Console\Scheduling\Schedule;

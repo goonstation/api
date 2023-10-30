@@ -6,7 +6,6 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -61,9 +61,9 @@ class HomeController extends Controller
         $lastRounds = [];
         foreach ($serversToShow as $server) {
             $lastRounds[] = GameRound::with([
-                    'server:server_id,name',
-                    'latestStationName'
-                ])
+                'server:server_id,name',
+                'latestStationName',
+            ])
                 ->where('server_id', $server)
                 ->whereNotNull('ended_at')
                 ->orderByRaw('created_at DESC NULLS LAST')

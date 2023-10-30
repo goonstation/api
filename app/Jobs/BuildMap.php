@@ -8,10 +8,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Intervention\Image\ImageManagerStatic as Image;
-use Illuminate\Support\Str;
-use ZipArchive;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManagerStatic as Image;
+use ZipArchive;
 
 class BuildMap implements ShouldQueue
 {
@@ -27,7 +27,9 @@ class BuildMap implements ShouldQueue
     public static $publicMapsPath = 'app/public/maps';
 
     private $map = '';
+
     private $zipPath = null;
+
     private $workDir = null;
 
     /**
@@ -70,7 +72,7 @@ class BuildMap implements ShouldQueue
         }
 
         // Generate our working directories
-        $this->workDir = self::$workPath . '/' . Str::random(10);
+        $this->workDir = self::$workPath.'/'.Str::random(10);
         $workDirInput = $this->workDir.'/input';
         $workDirOutput = $this->workDir.'/output';
         mkdir(storage_path($this->workDir));

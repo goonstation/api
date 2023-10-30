@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class BuildChangelog implements ShouldQueue
 {
@@ -31,7 +30,7 @@ class BuildChangelog implements ShouldQueue
     {
         $res = Http::withHeaders([
             'Accept: application/vnd.github+json',
-            'Authorization: Bearer ' . config('github.user_token'),
+            'Authorization: Bearer '.config('github.user_token'),
             'X-Github-Api-Version: 2022-11-28',
             'User-Agent: Goonhub',
         ])
@@ -42,7 +41,7 @@ class BuildChangelog implements ShouldQueue
 
     private function flushEntry($date, $entry)
     {
-        if (!count($entry)) {
+        if (! count($entry)) {
             return false;
         }
         $this->entries[$date][] = $entry;
@@ -74,7 +73,7 @@ class BuildChangelog implements ShouldQueue
         $entry = [];
         $date = null;
         foreach ($lines as $line) {
-            if (!$line) {
+            if (! $line) {
                 continue;
             }
             if (str_starts_with($line, '#')) {

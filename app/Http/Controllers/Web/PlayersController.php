@@ -10,7 +10,6 @@ use App\Models\Player;
 use App\Models\PlayerParticipation;
 use App\Models\PlayersOnline;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -35,6 +34,7 @@ class PlayersController extends Controller
             ->get();
         $averagePlayersOnline = $averagePlayersOnline->mapToGroups(function ($item, $key) use ($servers) {
             $serverName = $servers->where('server_id', $item['server_id'])->first()->name;
+
             return [$serverName => [$item['date'], $item['average_online']]];
         })->sortKeys();
 
@@ -57,8 +57,8 @@ class PlayersController extends Controller
         $mostPlayersOnline = $mostPlayersOnline ? $mostPlayersOnline->total_online : 0;
 
         $totalAveragePlayersOnline = PlayersOnline::select(
-                DB::raw('avg(online) as average_online')
-            )
+            DB::raw('avg(online) as average_online')
+        )
             ->where('online', '!=', null)
             ->first();
         $totalAveragePlayersOnline = $totalAveragePlayersOnline->average_online;
@@ -134,7 +134,7 @@ class PlayersController extends Controller
         return Inertia::render('Players/Show', [
             'player' => $player,
             'latestRound' => $latestRound,
-            'favoriteJob' => $favoriteJob ? $favoriteJob->job : null
+            'favoriteJob' => $favoriteJob ? $favoriteJob->job : null,
         ]);
     }
 }

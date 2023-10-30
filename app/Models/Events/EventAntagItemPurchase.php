@@ -4,9 +4,9 @@ namespace App\Models\Events;
 
 use App\Models\GameRound;
 use App\Models\Player;
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Awobaz\Compoships\Compoships;
 
 class EventAntagItemPurchase extends Model
 {

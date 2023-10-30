@@ -11,6 +11,6 @@ class GlobalStat extends Model
 
     protected $fillable = [
         'key',
-        'stats'
+        'stats',
     ];
 }

@@ -67,11 +67,11 @@ class GenerateGlobalPlayerStats implements ShouldQueue
         $niceData = [];
         $groupedCountries = 0;
         foreach ($data as $conn) {
-            $percent = (float)number_format($conn->unique_connections / $total * 100, 2, '.', '');
+            $percent = (float) number_format($conn->unique_connections / $total * 100, 2, '.', '');
             if ($percent <= 2) {
                 $groupedCountries += $percent;
             } else {
-                $niceData[] = [$conn->country, (float)$percent];
+                $niceData[] = [$conn->country, (float) $percent];
             }
         }
 

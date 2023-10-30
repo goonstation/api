@@ -150,7 +150,7 @@ Route::middleware([
             Route::get('/details', 'getDetails');
             Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
             Route::post('/', 'store')->name('admin.bans.store');
-            Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');;
+            Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
             Route::put('/{ban}', 'update')->name('admin.bans.update');
         });
     });

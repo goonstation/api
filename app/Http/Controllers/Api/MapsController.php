@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\BuildMap;
 use App\Models\Map;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
 
@@ -42,7 +41,7 @@ class MapsController extends Controller
         ]);
 
         $map = Map::where('map_id', Str::upper($data['map']))->first();
-        if (!$map) {
+        if (! $map) {
             return response()->json(['error' => 'Unable to locate configuration for that map.'], 400);
         }
 
@@ -58,7 +57,7 @@ class MapsController extends Controller
 
         $zip->close();
 
-        $mapZipPath = $file->move(storage_path(BuildMap::$workPath), Str::random(10) . '.zip');
+        $mapZipPath = $file->move(storage_path(BuildMap::$workPath), Str::random(10).'.zip');
         BuildMap::dispatch($data['map'], $mapZipPath);
 
         return ['message' => 'Success'];

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class EventsController extends Controller
@@ -49,10 +49,10 @@ class EventsController extends Controller
         $type = $data['type'];
 
         $stats = Cache::remember(
-            'event_stats_' . $type,
+            'event_stats_'.$type,
             Carbon::tomorrow()->startOfDay(),
             function () use ($type) {
-                return DB::table('events_' . $type)
+                return DB::table('events_'.$type)
                     ->selectRaw('count(id) as events')
                     ->selectRaw('Date(created_at) as "day"')
                     ->where('created_at', '>=', Carbon::now()->subYear())

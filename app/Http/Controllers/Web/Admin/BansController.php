@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
 use App\Models\Ban;
 use App\Models\BanDetail;
-use App\Models\User;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesBans;
 use Carbon\Carbon;
@@ -27,7 +26,7 @@ class BansController extends Controller
                 ->with(['originalBanDetail', 'gameAdmin', 'gameServer'])
                 ->where('expires_at', '>', Carbon::now())
                 ->orWhere('expires_at', null),
-                perPage: 30);
+            perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Bans/Index', [
@@ -46,7 +45,7 @@ class BansController extends Controller
                 ->with(['originalBanDetail', 'gameAdmin', 'gameServer'])
                 ->where('deleted_at', '!=', null)
                 ->orWhere('expires_at', '<=', Carbon::now()),
-                perPage: 30);
+            perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Bans/IndexRemoved', [
@@ -73,7 +72,7 @@ class BansController extends Controller
     public function store(BanRequest $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey
+            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
         ]);
         $this->addBan($request);
 
@@ -93,7 +92,7 @@ class BansController extends Controller
     {
         try {
             $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey
+                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
             ]);
             $this->updateBan($request, $ban);
         } catch (Exception $e) {

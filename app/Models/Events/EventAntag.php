@@ -4,10 +4,10 @@ namespace App\Models\Events;
 
 use App\Models\GameRound;
 use App\Models\Player;
+use Awobaz\Compoships\Compoships;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Awobaz\Compoships\Compoships;
 
 class EventAntag extends Model
 {

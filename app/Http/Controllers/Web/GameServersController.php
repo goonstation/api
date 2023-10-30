@@ -14,7 +14,7 @@ class GameServersController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'with_invisible' => 'nullable|boolean'
+            'with_invisible' => 'nullable|boolean',
         ]);
 
         $query = GameServer::where('invisible', false);
