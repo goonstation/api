@@ -218,4 +218,9 @@ return [
 
     'max_execution_time' => 30,
 
+    'swoole' => [
+        'options' => [
+            'package_max_length' => 1024 * 1024 * 100, // 100mb
+        ],
+    ],
 ];
