@@ -22,12 +22,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new BuildChangelog)->everyFiveMinutes();
-        $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
-        $schedule->job(new GenerateNumbersStationPass)->hourly();
-        $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
-        $schedule->job(new ClearOldAudio)->dailyAt('03:07');
-        $schedule->job(new GenerateGlobalPlayerStats)->daily();
+        $schedule->job(new BuildChangelog)->everyFiveMinutes()->sentryMonitor();
+        $schedule->job(new GetPlayerCounts)->everyFiveMinutes()->sentryMonitor();
+        $schedule->job(new GenerateNumbersStationPass)->hourly()->sentryMonitor();
+        $schedule->job(new ClearOldDectalks)->dailyAt('03:03')->sentryMonitor();
+        $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor();
+        $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor();
 
         if (App::environment('local')) {
             $schedule->command('telescope:prune')->daily();
