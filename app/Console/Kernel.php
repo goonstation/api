@@ -22,12 +22,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new BuildChangelog)->everyFiveMinutes()->sentryMonitor();
-        $schedule->job(new GetPlayerCounts)->everyFiveMinutes()->sentryMonitor();
-        $schedule->job(new GenerateNumbersStationPass)->hourly()->sentryMonitor();
-        $schedule->job(new ClearOldDectalks)->dailyAt('03:03')->sentryMonitor();
-        $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor();
-        $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor();
+        $schedule->job(new BuildChangelog)->everyFiveMinutes()->sentryMonitor('build-changelog');
+        $schedule->job(new GetPlayerCounts)->everyFiveMinutes()->sentryMonitor('get-player-counts');
+        $schedule->job(new GenerateNumbersStationPass)->hourly()->sentryMonitor('generate-numbers-station-pass');
+        $schedule->job(new ClearOldDectalks)->dailyAt('03:03')->sentryMonitor('clear-old-dectalks');
+        $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor('clear-old-audio');
+        $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor('generate-global-player-stats');
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
