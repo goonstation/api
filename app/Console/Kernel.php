@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor();
         $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor();
 
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
         if (App::environment('local')) {
             $schedule->command('telescope:prune')->daily();
         }
