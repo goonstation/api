@@ -1,7 +1,7 @@
 <template>
   <Head :title="mapName" />
 
-  <div id="map"></div>
+  <div id="map" :class="{ 'ground': isOnGround }"></div>
 
   <Link href="/maps" class="go-back">
     <q-icon :name="ionArrowBack" />
@@ -19,6 +19,10 @@
   width: 100dvw;
   height: 100dvh;
   image-rendering: pixelated;
+
+  &.ground {
+    background: #838c8c url('@img/cliffs.png');
+  }
 }
 
 :deep(.leaflet-control-zoom) {
@@ -96,6 +100,12 @@ export default {
         { name: 'Station', value: 'station' },
         { name: 'Debris', value: 'debris' },
       ],
+    }
+  },
+
+  computed: {
+    isOnGround() {
+      return this.map === 'oshan' || this.map === 'nadir'
     }
   },
 
