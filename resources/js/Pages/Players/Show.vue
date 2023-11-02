@@ -1,9 +1,7 @@
 <template>
   <q-card flat>
     <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
-      <q-avatar class="q-mt-xs" :style="`background-color: ${avatarBg};`" font-size="0.35em">
-        {{ initials }}
-      </q-avatar>
+      <player-avatar :player="player" class="q-mt-xs" />
       <div class="q-pb-xs">
         <div class="text-weight-bold text-h6">
           <template v-if="player.key">{{ player.key }}</template>
@@ -27,9 +25,7 @@
               <template v-if="latestRound.latest_station_name">
                 {{ latestRound.latest_station_name.name }}
               </template>
-              <template v-else>
-                #{{ latestRound.id }}
-              </template>
+              <template v-else> #{{ latestRound.id }} </template>
             </Link>
           </td>
         </tr>
@@ -38,8 +34,14 @@
           <td>{{ favoriteJob }}</td>
         </tr>
         <tr>
-          <td>Rounds Played</td>
-          <td>{{ $formats.number(player.participations_count) }}</td>
+          <td>Classic Rounds Played</td>
+          <td>
+            {{ $formats.number(player.participations_count - player.participations_rp_count) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Roleplay Rounds Played</td>
+          <td>{{ $formats.number(player.participations_rp_count) }}</td>
         </tr>
         <tr>
           <td>Hours Played</td>
@@ -73,13 +75,17 @@
 </style>
 
 <script>
-import { getHsla } from 'pastel-color'
 import dayjs from 'dayjs'
 import { ionStarHalfOutline } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Player' }, () => page),
+
+  components: {
+    PlayerAvatar,
+  },
 
   setup() {
     return {
@@ -95,23 +101,6 @@ export default {
   },
 
   computed: {
-    displayableKey() {
-      return this.player.key || this.player.ckey
-    },
-
-    avatarBg() {
-      return getHsla(this.player.ckey)
-    },
-
-    initials() {
-      const names = this.displayableKey.split(' ')
-      let initials = names[0].substring(0, 1).toUpperCase()
-      if (names.length > 1) {
-        initials += names[names.length - 1].substring(0, 1).toUpperCase()
-      }
-      return initials
-    },
-
     totalPlaytime() {
       if (!this.player.playtime.length) return 0
       const seconds = this.player.playtime

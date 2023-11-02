@@ -51,6 +51,18 @@ class Player extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function participationsRp()
+    {
+        return $this->hasMany(PlayerParticipation::class, 'player_id')
+            ->where(function($q) {
+                $q->whereRelation('gameRound', 'rp_mode', true)
+                ->orWhere('legacy_data->rp_mode', 'true');
+            });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function playtime()
     {
         return $this->hasMany(PlayerPlaytime::class, 'player_id');

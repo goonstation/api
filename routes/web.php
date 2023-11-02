@@ -135,13 +135,13 @@ Route::middleware([
         });
 
         Route::controller(AdminGameAdminsController::class)->prefix('game-admins')->group(function () {
-            Route::get('/', 'index')->name('admin.game-admins.index');
-            Route::get('/{gameAdmin}', 'show')->name('admin.game-admins.show');
+            Route::get('/', 'index')->name('admin.game-admins.index')->breadcrumb('Admins');
+            Route::get('/{gameAdmin}', 'show')->name('admin.game-admins.show')->breadcrumb('', 'admin.game-admins.index');
         });
 
         Route::controller(AdminPlayersController::class)->prefix('players')->group(function () {
-            Route::get('/', 'index')->name('admin.players.index');
-            Route::get('/{player}', 'show')->name('admin.players.show');
+            Route::get('/', 'index')->name('admin.players.index')->breadcrumb('Players');
+            Route::get('/{player}', 'show')->name('admin.players.show')->breadcrumb('', 'admin.players.index');
         });
 
         Route::controller(AdminBansController::class)->prefix('bans')->group(function () {

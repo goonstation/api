@@ -13,15 +13,7 @@
       <div class="q-table__grid-item col-xs-12 col-sm-4 col-md-3">
         <Link :href="`/players/${props.row.id}`" class="gh-link-card">
           <div class="flex items-center no-wrap">
-            <q-avatar
-              class="q-mr-sm text-uppercase text-bold"
-              :style="`background-color: ${getAvatarBg(props.row.ckey)};`"
-              font-size="0.35em"
-              text-color="dark"
-              size="md"
-            >
-              {{ props.row.ckey.substr(0, 2) }}
-            </q-avatar>
+            <player-avatar :player="props.row" class="q-mr-sm" size="md" />
             <div>
               <div class="text-weight-bold ellipsis">
                 <template v-if="props.row.key">{{ props.row.key }}</template>
@@ -53,11 +45,15 @@
 <script>
 import { Link } from '@inertiajs/vue3'
 import dayjs from 'dayjs'
-import { getHsla } from 'pastel-color'
 import BaseTable from './BaseTable.vue'
+import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 
 export default {
-  components: { Link, BaseTable },
+  components: {
+    Link,
+    BaseTable,
+    PlayerAvatar,
+  },
 
   setup() {
     return {
@@ -91,12 +87,6 @@ export default {
         // },
       ],
     }
-  },
-
-  methods: {
-    getAvatarBg(val) {
-      return getHsla(val)
-    },
   },
 }
 </script>

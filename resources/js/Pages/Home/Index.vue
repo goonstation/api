@@ -48,7 +48,7 @@
       <span>Changelog</span>
     </div>
     <q-card-section class="q-py-sm">
-      <q-scroll-area style="height: 500px">
+      <q-scroll-area class="q-pr-md" style="height: 500px">
         <changelog :changelog="changelog" />
 
         <div class="text-center q-mb-md">

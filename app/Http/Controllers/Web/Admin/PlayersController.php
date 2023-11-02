@@ -27,6 +27,8 @@ class PlayersController extends Controller
 
     public function show(Request $request, Player $player)
     {
-        //
+        return Inertia::render('Admin/Players/Show', [
+            'player' => $player,
+        ]);
     }
 }

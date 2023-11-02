@@ -77,9 +77,9 @@
 
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
-        <q-card class="gh-card" flat>
+        <q-card class="gh-card" flat style="height: 100%;">
           <div class="gh-card__header">
-            <q-icon :name="ionPeople" size="22px" />
+            <q-icon :name="ionNavigateCircle" size="22px" />
             <span>Players By Country</span>
           </div>
           <q-card-section>
@@ -91,12 +91,11 @@
       <div class="col-12 col-md-6">
         <q-card class="gh-card" flat style="height: 100%;">
           <div class="gh-card__header">
-            <q-icon :name="ionPeople" size="22px" />
-            <span>Something</span>
+            <q-icon :name="ionToday" size="22px" />
+            <span>Average Players By Weekday</span>
           </div>
           <q-card-section>
-            Some chart here that shows something about overall player statistics.
-            Give me ideas.
+            <players-by-day :data="averagePlayersByDay" />
           </q-card-section>
         </q-card>
       </div>
@@ -105,12 +104,13 @@
 </template>
 
 <script>
-import { ionPeople } from '@quasar/extras/ionicons-v6'
+import { ionPeople, ionNavigateCircle, ionToday } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PlayersLayout from '@/Layouts/PlayersLayout.vue'
 import PlayersOverTime from '@/Components/Charts/PlayersOverTime.vue'
 import PlayerParticipationsOverTime from '@/Components/Charts/PlayerParticipationsOverTime.vue'
 import PlayersByCountry from '@/Components/Charts/PlayersByCountry.vue'
+import PlayersByDay from '@/Components/Charts/PlayersByDay.vue'
 
 export default {
   layout: (h, page) => {
@@ -120,6 +120,8 @@ export default {
   setup() {
     return {
       ionPeople,
+      ionNavigateCircle,
+      ionToday,
     }
   },
 
@@ -127,10 +129,12 @@ export default {
     PlayersOverTime,
     PlayerParticipationsOverTime,
     PlayersByCountry,
+    PlayersByDay,
   },
 
   props: {
     averagePlayersOnline: Object,
+    averagePlayersByDay: Array,
     participations: Array,
     playersByCountry: Array,
     totalPlayers: Number,

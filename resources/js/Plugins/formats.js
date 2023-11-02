@@ -32,10 +32,7 @@ export default {
         return val.charAt(0).toUpperCase() + val.slice(1)
       },
       currency: (val) => {
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(val)
+        return val + ' ⪽'
       },
       server: (val, short = false) => {
         return app.config.globalProperties.$helpers.serverIdToFriendlyName(val, short)
