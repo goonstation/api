@@ -8,7 +8,6 @@ export default {
       },
       date: (val, noTime) => {
         if (!val) return
-        const date = new Date(val)
         const opts = {
           weekday: 'short',
           year: 'numeric',
@@ -19,8 +18,19 @@ export default {
           opts.hour = '2-digit'
           opts.minute = '2-digit'
         }
-        const format = date.toLocaleDateString('en-GB', opts)
-        return format
+        return new Date(val).toLocaleDateString('en-GB', opts)
+      },
+      dateWithTime: (val) => {
+        if (!val) return
+        const opts = {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+        return new Date(val).toLocaleDateString('en-GB', opts)
       },
       fromNow: (val) => {
         const date = dayjs.utc(val)

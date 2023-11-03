@@ -27,6 +27,12 @@ const menuList = [
   {
     label: 'Admins',
     href: '/admin/game-admins',
+    separator: false,
+    isGameAdmin: true,
+  },
+  {
+    label: 'Maps',
+    href: '/admin/maps',
     separator: true,
     isGameAdmin: true,
   },

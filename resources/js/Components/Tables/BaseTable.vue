@@ -91,6 +91,8 @@
 
         <q-space />
 
+        <slot name="header-right" />
+
         <q-btn
           v-if="routes.create"
           @click="router.visit(getRoute(routes.create))"

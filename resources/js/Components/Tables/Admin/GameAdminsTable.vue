@@ -38,7 +38,7 @@ export default {
           field: 'rank',
           sortable: true,
           format: (val) => val.rank,
-          filter: { type: 'gameadminranks' },
+          filter: { type: 'GameAdminRanks' },
         },
         {
           name: 'created_at',

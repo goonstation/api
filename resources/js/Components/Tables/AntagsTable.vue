@@ -47,7 +47,7 @@ export default {
           field: 'success',
           sortable: true,
           align: 'center',
-          filter: { type: 'boolean' },
+          filter: { type: 'Boolean' },
         },
       ],
     }

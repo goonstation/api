@@ -95,15 +95,11 @@ class BansController extends Controller
             $request = $request->merge([
                 'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
             ]);
-            dump($request);
-            // $this->updateBan($request, $ban);
+            $this->updateBan($request, $ban);
         } catch (Exception $e) {
-            return Inertia::render('Admin/Bans/Edit', [
-                'ban' => $ban,
-            ]);
-            // return Redirect::back()->withErrors(['error' => $e->getMessage()]);
+            return Redirect::back()->withErrors(['error' => $e->getMessage()]);
         }
 
-        // return to_route('admin.bans.index');
+        return to_route('admin.bans.index');
     }
 }

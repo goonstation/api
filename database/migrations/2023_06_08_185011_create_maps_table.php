@@ -19,7 +19,10 @@ return new class extends Migration
             $table->text('name');
             $table->boolean('active');
             $table->timestamp('last_built_at')->nullable();
+            $table->integer('last_built_by')->nullable();
             $table->timestamps();
+
+            $table->foreign('last_built_by')->references('id')->on('game_admins');
         });
     }
 

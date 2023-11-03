@@ -38,7 +38,7 @@ export default {
           label: 'Server',
           field: 'server_id',
           sortable: true,
-          filter: { type: 'selectservers' },
+          filter: { type: 'SelectServers' },
         },
         { name: 'map', label: 'Map', field: 'map', sortable: true },
         { name: 'game_type', label: 'Game Type', field: 'game_type', sortable: true },
@@ -48,7 +48,7 @@ export default {
           field: 'rp_mode',
           sortable: true,
           align: 'center',
-          filter: { type: 'boolean' },
+          filter: { type: 'Boolean' },
         },
         {
           name: 'crashed',
@@ -56,7 +56,7 @@ export default {
           field: 'crashed',
           sortable: true,
           align: 'center',
-          filter: { type: 'boolean' },
+          filter: { type: 'Boolean' },
         },
         {
           name: 'created_at',
@@ -64,7 +64,7 @@ export default {
           field: 'created_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'GridDateRange' },
         },
         {
           name: 'ended_at',
@@ -72,7 +72,7 @@ export default {
           field: 'ended_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'GridDateRange' },
         },
         // {
         //   name: 'updated_at',
@@ -80,7 +80,7 @@ export default {
         //   field: 'updated_at',
         //   sortable: true,
         //   format: this.$formats.date,
-        //   filter: { type: 'daterange' },
+        //   filter: { type: 'GridDateRange' },
         // },
       ],
     }

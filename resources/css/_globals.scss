@@ -47,6 +47,10 @@ a {
   padding-bottom: 10px;
 }
 
+.q-field--error .q-field__bottom {
+  font-weight: 600;
+}
+
 /* Firefox */
 * {
   scrollbar-width: thin;

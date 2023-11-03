@@ -11,7 +11,7 @@ trait ManagesFileUploads
      *
      * @param UploadedFile $file
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
     protected function saveFile(UploadedFile $file)
     {
@@ -28,11 +28,12 @@ trait ManagesFileUploads
         // move the file name
         $file->move($finalPath, $fileName);
 
-        return response()->json([
+        return [
             'path' => $filePath,
+            'storage_path' => $finalPath . $fileName,
             'name' => $fileName,
             'mime_type' => $mime
-        ]);
+        ];
     }
 
     /**

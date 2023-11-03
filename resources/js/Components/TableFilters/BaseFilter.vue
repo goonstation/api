@@ -1,9 +1,8 @@
 <template>
-  <component :is="filterComponent" v-bind="$attrs" class="gh-select--denser" square filled dense />
+  <component :is="filterType" v-bind="$attrs" class="gh-select--denser" square filled dense />
 </template>
 
 <script>
-import { upperFirst } from 'lodash'
 import { defineAsyncComponent } from 'vue'
 
 const componentNames = import.meta.glob('./Filters/*.vue')
@@ -22,12 +21,6 @@ export default {
     filterType: {
       type: String,
       required: true,
-    },
-  },
-
-  computed: {
-    filterComponent() {
-      return upperFirst(this.filterType.toLowerCase())
     },
   },
 }

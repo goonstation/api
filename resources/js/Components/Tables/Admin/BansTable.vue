@@ -85,7 +85,7 @@ export default {
             if (!val) return 'All'
             return row.game_server.short_name
           },
-          filter: { type: 'selectservers' },
+          filter: { type: 'SelectServers' },
         },
         {
           name: 'admin_ckey',
@@ -120,7 +120,7 @@ export default {
           field: 'created_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'DateRange' },
         },
         {
           name: 'updated_at',
@@ -128,7 +128,7 @@ export default {
           field: 'updated_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'DateRange' },
         },
         {
           name: 'expires_at',
@@ -136,7 +136,7 @@ export default {
           field: 'expires_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'DateRange' },
         },
         {
           name: 'deleted_at',
@@ -144,7 +144,7 @@ export default {
           field: 'deleted_at',
           sortable: true,
           format: this.$formats.date,
-          filter: { type: 'daterange' },
+          filter: { type: 'DateRange' },
         },
         {
           name: 'status',

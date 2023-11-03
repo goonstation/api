@@ -80,7 +80,7 @@ export default {
         //   field: 'created_at',
         //   sortable: true,
         //   format: this.$formats.date,
-        //   filter: { type: 'daterange' },
+        //   filter: { type: 'GridDateRange' },
         // },
       ],
     }
