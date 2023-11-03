@@ -26,6 +26,7 @@
         "league/csv": "^9.8",
         "mxl/laravel-job": "^1.4",
         "norkunas/youtube-dl-php": "dev-master",
+        "pion/laravel-chunk-upload": "^1.5",
         "sentry/sentry-laravel": "^3.8",
         "socialiteproviders/discord": "^4.2",
         "tightenco/ziggy": "^1.0",

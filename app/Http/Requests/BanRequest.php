@@ -24,7 +24,8 @@ class BanRequest extends FormRequest
     public function rules()
     {
         return [
-            'game_admin_ckey' => 'required|exists:game_admins,ckey',
+            'game_admin_id' => 'required_without:game_admin_ckey|exists:game_admins,id',
+            'game_admin_ckey' => 'required_without:game_admin_id|exists:game_admins,ckey',
             'round_id' => 'nullable|integer|exists:game_rounds,id',
             'server_id' => 'nullable|string',
             'ckey' => 'required_without_all:comp_id,ip|nullable',

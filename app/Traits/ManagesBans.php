@@ -15,6 +15,39 @@ use Exception;
 
 trait ManagesBans
 {
+    private function banHistory($ckey, $compIds, $ips)
+    {
+        $bans = Ban::with([
+                'gameAdmin',
+                'gameServer',
+                'originalBanDetail',
+                'details',
+                'gameRound'
+            ])
+            ->withTrashed()
+            ->whereHas('details', function ($query) use ($ckey, $compIds, $ips) {
+                // Check any of the ban details match the provided player details
+                if ($ckey) {
+                    $query->where('ckey', $ckey);
+                } elseif (!$ckey && $compIds) {
+                    $query->whereIn('comp_id', $compIds);
+                } elseif (!$ckey && !$compIds && $ips) {
+                    $query->whereIn('ip', $ips);
+                }
+
+                if ($ckey && $compIds) {
+                    $query->orWhereIn('comp_id', $compIds);
+                }
+                if ($ckey && $ips) {
+                    $query->orWhereIn('ip', $ips);
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return $bans;
+    }
+
     /**
      * Add a ban
      */
@@ -68,7 +101,7 @@ trait ManagesBans
         $note->note = sprintf(
             'Banned %s. Reason: %s',
             isset($request['duration'])
-                ? 'for '.CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
+                ? 'for ' . CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
                 : 'permanently',
             $request['reason']
         );
@@ -109,7 +142,7 @@ trait ManagesBans
         if (isset($request['duration'])) {
             // A falsey duration means it's essentially "unset", and thus now a permanent ban
             // Otherwise, the admin is altering how long the ban lasts
-            if (! $request['duration']) {
+            if (!$request['duration']) {
                 $newBanDetails['expires_at'] = null;
             } else {
                 // Ban is temporary, the new duration shall apply from right now

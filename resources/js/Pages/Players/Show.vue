@@ -10,7 +10,7 @@
         <div v-if="player.latest_connection" class="text-caption text-grey-5">
           Last seen {{ dayjs(player.latest_connection.created_at).fromNow() }}
         </div>
-        <div class="text-caption text-grey-5">
+        <div v-if="player.first_connection" class="text-caption text-grey-5">
           Started playing {{ dayjs(player.first_connection.created_at).fromNow() }}
         </div>
       </div>
@@ -81,7 +81,14 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 
 export default {
-  layout: (h, page) => h(AppLayout, { title: 'Player' }, () => page),
+  layout: (h, page) =>
+    h(
+      AppLayout,
+      {
+        title: `Player ${page.props.player.key || page.props.player.ckey}`,
+      },
+      () => page
+    ),
 
   components: {
     PlayerAvatar,

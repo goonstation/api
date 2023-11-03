@@ -242,16 +242,6 @@ export default {
 
   data() {
     return {
-      // TODO: get these from server
-      serverOptions: [
-        { label: 'All', value: null },
-        { label: this.$helpers.serverIdToFriendlyName('main1'), value: 'main1' },
-        { label: this.$helpers.serverIdToFriendlyName('main2'), value: 'main2' },
-        { label: this.$helpers.serverIdToFriendlyName('main3'), value: 'main3' },
-        { label: this.$helpers.serverIdToFriendlyName('main4'), value: 'main4' },
-        { label: this.$helpers.serverIdToFriendlyName('main5'), value: 'main5' },
-        { label: this.$helpers.serverIdToFriendlyName('dev'), value: 'dev' },
-      ],
       durationOptions: [
         { label: 'Half Hour', value: 30 * 60 },
         { label: 'One Hour', value: 60 * 60 },

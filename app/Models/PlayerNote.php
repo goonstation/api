@@ -41,4 +41,12 @@ class PlayerNote extends Model
     {
         return $this->belongsTo(GameAdmin::class, 'game_admin_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function gameServer()
+    {
+        return $this->belongsTo(GameServer::class, 'server_id', 'server_id');
+    }
 }

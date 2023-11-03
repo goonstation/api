@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -91,14 +92,18 @@ class BansController extends Controller
     public function update(BanRequest $request, Ban $ban)
     {
         try {
-            $request->merge([
+            $request = $request->merge([
                 'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
             ]);
-            $this->updateBan($request, $ban);
+            dump($request);
+            // $this->updateBan($request, $ban);
         } catch (Exception $e) {
-            return Redirect::back()->withErrors(['error' => $e->getMessage()]);
+            return Inertia::render('Admin/Bans/Edit', [
+                'ban' => $ban,
+            ]);
+            // return Redirect::back()->withErrors(['error' => $e->getMessage()]);
         }
 
-        return to_route('admin.bans.index');
+        // return to_route('admin.bans.index');
     }
 }

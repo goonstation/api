@@ -122,7 +122,6 @@ class PlayersController extends Controller
             'playtime',
         ])
             ->withCount([
-                'connections',
                 'participations',
                 'participationsRp',
                 'deaths',

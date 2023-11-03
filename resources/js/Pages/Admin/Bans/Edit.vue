@@ -31,10 +31,11 @@ export default {
 
   created() {
     this.fields = {
+      game_admin_id: this.$page.props.user.game_admin_id,
       ckey: this.ban.original_ban_detail.ckey,
       comp_id: this.ban.original_ban_detail.comp_id,
       ip: this.ban.original_ban_detail.ip,
-      server_id: this.ban.server_id,
+      server_id: this.ban.server_id || 'all',
       reason: this.ban.reason,
       duration: this.ban.duration,
       expires_at: this.ban.expires_at

@@ -75,4 +75,28 @@ class Player extends Model
     {
         return $this->hasMany(EventDeath::class, 'player_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function vpnWhitelist()
+    {
+        return $this->hasOne(VpnWhitelist::class, 'ckey', 'ckey');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function jobBans()
+    {
+        return $this->hasMany(JobBan::class, 'ckey', 'ckey');
+    }
+
+        /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function notes()
+    {
+        return $this->hasMany(PlayerNote::class, 'player_id');
+    }
 }

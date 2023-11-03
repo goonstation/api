@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Admin\BansController as AdminBansController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController as AdminGameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController as AdminGameAdminsController;
+use App\Http\Controllers\Web\Admin\MapsController as AdminMapsController;
 use App\Http\Controllers\Web\Admin\PlayersController as AdminPlayersController;
 use App\Http\Controllers\Web\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\Web\AntagsController;
@@ -152,6 +153,11 @@ Route::middleware([
             Route::post('/', 'store')->name('admin.bans.store');
             Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
             Route::put('/{ban}', 'update')->name('admin.bans.update');
+        });
+
+        Route::controller(AdminMapsController::class)->prefix('maps')->group(function () {
+            Route::get('/upload', 'showUpload')->name('admin.maps.upload')->breadcrumb('Map Upload');
+            Route::post('/upload', 'uploadFile')->name('admin.maps.upload-file');
         });
     });
 });

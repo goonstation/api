@@ -39,6 +39,14 @@ class JobBan extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function gameServer()
+    {
+        return $this->belongsTo(GameServer::class, 'server_id', 'server_id');
+    }
+
+    /**
      * @param  string  $ckey
      * @param  null|string  $job
      * @param  null|string  $serverId
