@@ -78,12 +78,12 @@ class PlayerSavesController extends Controller
         ]);
 
         if (strlen($data['data']) >= 51200) {
-            return response()->json(['error' => 'Savefile exceeds 51200 bytes.'], 413);
+            return response()->json(['message' => 'Savefile exceeds 51200 bytes.'], 413);
         }
 
         $currentSaves = PlayerSave::where('player_id', $data['player_id'])->count();
         if ($currentSaves >= 15) {
-            return response()->json(['error' => 'Your account can only hold 15 savefiles.'], 400);
+            return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
         }
 
         PlayerSave::where([

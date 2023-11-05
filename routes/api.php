@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\MapSwitchesController;
 use App\Http\Controllers\Api\NumbersStationController;
 use App\Http\Controllers\Api\PlayerAntagsController;
+use App\Http\Controllers\Api\PlayerMedalsController;
 use App\Http\Controllers\Api\PlayerMetadataController;
 use App\Http\Controllers\Api\PlayerNotesController;
 use App\Http\Controllers\Api\PlayerParticipationsController;
@@ -84,6 +85,12 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
         Route::post('/', 'store');
         Route::delete('/clear-by-player/{ckey}', 'destroyByPlayer');
         Route::delete('/clear-by-data/{metadata}', 'destroyByData');
+    });
+    Route::controller(PlayerMedalsController::class)->prefix('players/medals')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{player}', 'show');
+        Route::post('/', 'store');
+        Route::delete('/', 'destroy');
     });
     Route::controller(BansController::class)->prefix('bans')->group(function () {
         Route::get('/', 'index');

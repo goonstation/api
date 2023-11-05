@@ -29,6 +29,8 @@
         "pion/laravel-chunk-upload": "^1.5",
         "sentry/sentry-laravel": "^3.8",
         "socialiteproviders/discord": "^4.2",
+        "symfony/css-selector": "^6.3",
+        "symfony/panther": "^2.1",
         "tightenco/ziggy": "^1.0",
         "tucker-eric/eloquentfilter": "^3.1"
     },

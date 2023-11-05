@@ -73,7 +73,7 @@ class VpnChecksController extends Controller
             [
                 'round_id' => ! empty($data['round_id']) ? $data['round_id'] : null,
                 'service' => 'ipqualityscore',
-                'error' => ! $res->success ? $res->message : null,
+                'message' => ! $res->success ? $res->message : null,
                 'response' => $jsonRes,
             ]
         );

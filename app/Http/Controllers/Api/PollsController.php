@@ -276,7 +276,7 @@ class PollsController extends Controller
 
         // Check if poll is expired
         if ($pollOption->poll->expires_at && $pollOption->poll->expires_at->isPast()) {
-            return response()->json(['error' => 'That poll is no longer active.'], 400);
+            return response()->json(['message' => 'That poll is no longer active.'], 400);
         }
 
         $existingAnswers = PollAnswer::where('player_id', $data['player_id'])
@@ -286,7 +286,7 @@ class PollsController extends Controller
         // Can't pick the same thing
         foreach ($existingAnswers as $answer) {
             if ($answer->poll_option_id === $pollOption->id) {
-                return response()->json(['error' => 'You have already voted for that option.'], 400);
+                return response()->json(['message' => 'You have already voted for that option.'], 400);
             }
         }
 

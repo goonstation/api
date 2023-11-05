@@ -11,4 +11,7 @@ return [
     'game_bridge_pass' => env('GAME_BRIDGE_PASS', null),
 
     'ipquality_pass' => env('IPQUALITY_PASS', null),
+
+    'byond_user' => env('BYOND_USER', null),
+    'byond_pass' => env('BYOND_PASS', null),
 ];

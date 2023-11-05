@@ -92,11 +92,19 @@ class Player extends Model
         return $this->hasMany(JobBan::class, 'ckey', 'ckey');
     }
 
-        /**
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function notes()
     {
         return $this->hasMany(PlayerNote::class, 'player_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function medals()
+    {
+        return $this->hasManyThrough(Medal::class, PlayerMedal::class);
     }
 }

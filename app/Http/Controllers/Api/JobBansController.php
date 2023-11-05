@@ -142,7 +142,7 @@ class JobBansController extends Controller
         // Check a ban doesn't already exist for the provided ckey and job
         $existingJobBan = JobBan::getValidJobBans($data['ckey'], $data['job'], $serverId)->first();
         if (! empty($existingJobBan)) {
-            return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
+            return response()->json(['message' => 'The player is already banned from that job on this server.'], 400);
         }
 
         $expiresAt = null;
@@ -184,7 +184,7 @@ class JobBansController extends Controller
         // Check another ban doesn't already exist for the provided job
         $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
         if (! empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
-            return response()->json(['error' => 'The player is already banned from that job on this server.'], 400);
+            return response()->json(['message' => 'The player is already banned from that job on this server.'], 400);
         }
 
         $newBanDetails = $request->only(['server_id', 'reason']);
@@ -206,7 +206,7 @@ class JobBansController extends Controller
 
                 // Bans can't expire in the past
                 if ($newExpiresAt->lte(Carbon::now())) {
-                    return response()->json(['error' => 'The ban cannot expire in the past, please increase the duration.'], 400);
+                    return response()->json(['message' => 'The ban cannot expire in the past, please increase the duration.'], 400);
                 }
 
                 $newBanDetails['expires_at'] = $newExpiresAt->toDateTimeString();

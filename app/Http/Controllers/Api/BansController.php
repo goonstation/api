@@ -168,7 +168,7 @@ class BansController extends Controller
         try {
             return $this->updateBan($request, $ban);
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 

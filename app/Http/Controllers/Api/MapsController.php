@@ -42,7 +42,7 @@ class MapsController extends Controller
 
         $map = Map::where('map_id', Str::upper($data['map']))->first();
         if (! $map) {
-            return response()->json(['error' => 'Unable to locate configuration for that map.'], 400);
+            return response()->json(['message' => 'Unable to locate configuration for that map.'], 400);
         }
 
         $zip = new ZipArchive();
@@ -52,7 +52,7 @@ class MapsController extends Controller
         $expectedImageCount = BuildMap::getExpectedImageCount();
         $imageCount = $zip->count();
         if ($imageCount !== $expectedImageCount) {
-            return response()->json(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
+            return response()->json(['message' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
         }
 
         $zip->close();
