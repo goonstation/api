@@ -21,5 +21,4 @@ class Map extends Model
     {
         return $this->belongsTo(GameAdmin::class, 'last_built_by');
     }
-
 }

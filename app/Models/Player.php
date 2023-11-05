@@ -54,7 +54,7 @@ class Player extends Model
     public function participationsRp()
     {
         return $this->hasMany(PlayerParticipation::class, 'player_id')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereRelation('gameRound', 'rp_mode', true)
                 ->orWhere('legacy_data->rp_mode', 'true');
             });

@@ -30,10 +30,10 @@ class PlayersController extends Controller
     public function show(Request $request, Player $player)
     {
         $player->load([
-            'connections' => function($q) {
+            'connections' => function ($q) {
                 $q->orderBy('id', 'asc');
             },
-            'jobBans' => function($q) {
+            'jobBans' => function ($q) {
                 $q->withTrashed()
                     ->orderBy('id', 'desc');
             },
@@ -67,7 +67,7 @@ class PlayersController extends Controller
         return Inertia::render('Admin/Players/Show', [
             'player' => $player,
             'latestRound' => $latestRound,
-            'banHistory' => $banHistory
+            'banHistory' => $banHistory,
         ]);
     }
 }

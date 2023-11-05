@@ -7,14 +7,14 @@ use App\Jobs\BuildMap;
 use App\Models\Map;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
-use Illuminate\Http\Request;
 use Illuminate\Http\File;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
-use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Pion\Laravel\ChunkUpload\Handler\AbstractHandler;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use ZipArchive;
 
 class MapsController extends Controller
@@ -54,7 +54,7 @@ class MapsController extends Controller
             'filePath' => 'required|string',
         ]);
 
-        $finalPath = storage_path("app/" . $data['filePath'] . $data['fileName']);
+        $finalPath = storage_path('app/'.$data['filePath'].$data['fileName']);
         $file = new File($finalPath);
         $mapZipPath = $file->move(storage_path(BuildMap::$workPath), $data['fileName']);
         BuildMap::dispatch($data['map'], $mapZipPath);
@@ -65,8 +65,9 @@ class MapsController extends Controller
     /**
      * Handles the file upload
      *
-     * @param FileReceiver $receiver
+     * @param  FileReceiver  $receiver
      * @return \Illuminate\Http\JsonResponse
+     *
      * @throws UploadMissingFileException
      */
     public function uploadFile(FileReceiver $receiver)
@@ -89,7 +90,8 @@ class MapsController extends Controller
             $expectedImageCount = BuildMap::getExpectedImageCount();
             $imageCount = $zip->count();
             if ($imageCount !== $expectedImageCount) {
-                Storage::delete($fileDetails['path'] . $fileDetails['name']);
+                Storage::delete($fileDetails['path'].$fileDetails['name']);
+
                 return response()->json(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
             }
             $zip->close();
@@ -104,8 +106,9 @@ class MapsController extends Controller
         // we are in chunk mode, lets send the current progress
         /** @var AbstractHandler $handler */
         $handler = $save->handler();
+
         return response()->json([
-            'done' => $handler->getPercentageDone()
+            'done' => $handler->getPercentageDone(),
         ]);
     }
 }

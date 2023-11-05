@@ -4,15 +4,14 @@ namespace App\Jobs;
 
 use App\Models\Medal;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
-use Illuminate\Support\Facades\Http;
 
 class ImportMedalsFromByond implements ShouldQueue
 {
@@ -43,13 +42,13 @@ class ImportMedalsFromByond implements ShouldQueue
             '--disable-blink-features=AutomationControlled',
             '--headless',
             '--disable-dev-shm-usage',
-            '--no-sandbox'
+            '--no-sandbox',
         ]);
 
         $client->request('GET', 'https://secure.byond.com/login.cgi');
         $client->submitForm('Login', [
             'key' => config('goonhub.byond_user'),
-            'password' => config('goonhub.byond_pass')
+            'password' => config('goonhub.byond_pass'),
         ]);
 
         $client->request('GET', 'https://secure.byond.com/members/?command=edit_hub_entry&hub=77041#tab=medals');
@@ -59,7 +58,9 @@ class ImportMedalsFromByond implements ShouldQueue
         $elements = $crawler->filter('#all_medals > div');
         $elements->each(function (Crawler $element) use (&$medals) {
             $medalId = $element->attr('id');
-            if ($medalId === 'new_medal') return true;
+            if ($medalId === 'new_medal') {
+                return true;
+            }
             $medalId = explode('_', $medalId);
             $medalId = $medalId[1];
 
@@ -81,7 +82,9 @@ class ImportMedalsFromByond implements ShouldQueue
         });
 
         foreach ($medals as $medalData) {
-            if (Medal::where('title', $medalData['title'])->exists()) continue;
+            if (Medal::where('title', $medalData['title'])->exists()) {
+                continue;
+            }
 
             $medal = new Medal();
             $medal->title = $medalData['title'];
