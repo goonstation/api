@@ -1,7 +1,7 @@
 <template>
-  <Head :title="mapName" />
+  <Head :title="map.name" />
 
-  <div id="map" :class="{ 'ground': isOnGround }"></div>
+  <div id="map" :class="{ ground: isOnGround }"></div>
 
   <Link href="/maps" class="go-back">
     <q-icon :name="ionArrowBack" />
@@ -60,9 +60,6 @@ import 'leaflet/dist/leaflet.css'
 import { ionArrowBack } from '@quasar/extras/ionicons-v6'
 import { Head, Link } from '@inertiajs/vue3'
 
-const tileSize = 960
-const mapSize = 9600
-
 let map
 let bounds
 let layerOptions
@@ -76,15 +73,10 @@ export default {
 
   props: {
     map: {
-      type: String,
+      type: Object,
       required: true,
-      default: 'cogmap',
+      default: () => ({}),
     },
-    mapName: {
-      type: String,
-      required: true,
-      default: 'Cogmap'
-    }
   },
 
   setup() {
@@ -105,8 +97,8 @@ export default {
 
   computed: {
     isOnGround() {
-      return this.map === 'oshan' || this.map === 'nadir'
-    }
+      return this.map.map_id === 'OSHAN' || this.map.map_id === 'NADIR'
+    },
   },
 
   mounted() {
@@ -118,14 +110,21 @@ export default {
 
   methods: {
     buildMap() {
-      const factor = tileSize / mapSize
+      const tileSize = this.map.screenshot_tiles * 32
+      const tilesPerRow = this.map.tile_width / this.map.screenshot_tiles
+      const tilesPerColumn = this.map.tile_height / this.map.screenshot_tiles
+      const mapSizeWidth = tilesPerRow * tileSize
+      const mapSizeHeight = tilesPerColumn * tileSize
+
+      const factorX = tilesPerRow / mapSizeWidth
+      const factorY = tilesPerColumn / mapSizeHeight
       L.CRS.myCRS = L.extend({}, L.CRS.Simple, {
-        transformation: new L.Transformation(factor, 0, factor, 0),
+        transformation: new L.Transformation(factorX, 0, factorY, 0),
       })
       map = L.map('map', { crs: L.CRS.myCRS })
 
-      const southWest = map.unproject([0, mapSize], 0)
-      const northEast = map.unproject([mapSize, 0], 0)
+      const southWest = map.unproject([0, mapSizeHeight], 0)
+      const northEast = map.unproject([mapSizeWidth, 0], 0)
       bounds = L.latLngBounds(southWest, northEast)
 
       layerOptions = {
@@ -142,10 +141,11 @@ export default {
     },
 
     buildLayerStation() {
+      const mapUri = this.map.map_id.toLowerCase()
       L.TileLayer.Station = L.TileLayer.extend({
         options: layerOptions,
         getTileUrl: (coords) => {
-          return `/storage/maps/${this.map}/${coords.x},${coords.y}.png`
+          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png`
         },
       })
       L.tileLayer.station = function (opts) {

@@ -4,13 +4,7 @@
     class="gh-link-card gh-link-card--bar-left gh-link-card--bar-on q-mb-sm text-weight-medium"
     :href="`/maps/${map.map_id.toLowerCase()}`"
   >
-    <img
-      :src="`/storage/maps/${map.map_id.toLowerCase()}/thumb.png`"
-      :alt="map.name"
-      class="q-mr-md"
-      width="75"
-      height="75"
-    />
+    <map-thumbnail :map="map" />
     <div>
       <div class="text-weight-medium q-mb-xs">{{ map.name }}</div>
       <div class="text-sm opacity-60">
@@ -28,23 +22,6 @@
   display: flex;
   align-items: center;
 
-  img {
-    position: relative;
-    border: 1px solid #444;
-    border-radius: 5px;
-
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: $dark;
-    }
-  }
-
   span:first-child {
     font-size: 1.1em;
   }
@@ -53,9 +30,14 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import MapThumbnail from '@/Components/MapThumbnail.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Maps' }, () => page),
+
+  components: {
+    MapThumbnail
+  },
 
   props: {
     maps: {

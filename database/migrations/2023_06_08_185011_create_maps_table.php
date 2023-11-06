@@ -17,7 +17,11 @@ return new class extends Migration
             $table->id();
             $table->text('map_id')->unique();
             $table->text('name');
-            $table->boolean('active');
+            $table->boolean('active')->default(false);
+            $table->boolean('is_layer')->default(false);
+            $table->integer('tile_width')->default(300);
+            $table->integer('tile_height')->default(300);
+            $table->integer('screenshot_tiles')->default(30);
             $table->timestamp('last_built_at')->nullable();
             $table->integer('last_built_by')->nullable();
             $table->timestamps();

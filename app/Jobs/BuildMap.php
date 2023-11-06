@@ -7,8 +7,10 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\File as FileFacade;
+use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use ZipArchive;
@@ -17,19 +19,15 @@ class BuildMap implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
-    // Just hardcoded dimensions based on how the ingame map-world proc is set up
-    const MAP_SIZE = 9600;
-
-    const SCREENSHOT_SIZE = 960;
+    // If this ever changes we have bigger problems to worry about
+    const TILE_SIZE = 32;
 
     public static $workPath = 'app/map-processing';
-
     public static $publicMapsPath = 'app/public/maps';
 
-    private $map = '';
-
+    private $map = null;
     private $zipPath = null;
-
+    private $gameAdminId = null;
     private $workDir = null;
 
     /**
@@ -37,23 +35,35 @@ class BuildMap implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $map, string $zipPath)
+    public function __construct(string $map, string $zipPath, int $gameAdminId)
     {
-        $this->map = $map;
+        $mapId = preg_replace('/[^A-Za-z0-9_]/', '', $map);
+        $this->map = Map::where('map_id', Str::upper($mapId))->first();
         $this->zipPath = $zipPath;
+        $this->gameAdminId = $gameAdminId;
+        $this->workDir = self::$workPath.'/'.Str::random(10);
     }
 
-    public static function getExpectedImageCount()
+    public static function moveUploadedFile(UploadedFile|File $file)
     {
-        $imagesPerRow = self::MAP_SIZE / self::SCREENSHOT_SIZE;
-
-        return pow($imagesPerRow, 2);
+        return $file->move(storage_path(self::$workPath), Str::random(10).'.zip');
     }
 
-    private function cleanup()
+    public function getExpectedImageCount()
     {
-        exec('rm -r "'.storage_path($this->workDir).'"');
-        unlink($this->zipPath);
+        $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
+        $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
+        return $imagesPerRow * $imagesPerColumn;
+    }
+
+    public function cleanup()
+    {
+        if ($this->workDir) {
+            exec('rm -r "'.storage_path($this->workDir).'"');
+        }
+        if ($this->zipPath) {
+            unlink($this->zipPath);
+        }
     }
 
     /**
@@ -63,61 +73,78 @@ class BuildMap implements ShouldQueue
      */
     public function handle()
     {
-        $mapId = preg_replace('/[^A-Za-z0-9]/', '', $this->map);
-        $mapUri = Str::lower($mapId);
-
-        $map = Map::where('map_id', Str::upper($mapId))->first();
-        if (! $map) {
+        if (!$this->map) {
             throw new \Exception('Invalid map');
+        }
+        if (!$this->zipPath) {
+            throw new \Exception('Invalid zip path');
         }
 
         // Generate our working directories
-        $this->workDir = self::$workPath.'/'.Str::random(10);
         $workDirInput = $this->workDir.'/input';
         $workDirOutput = $this->workDir.'/output';
         mkdir(storage_path($this->workDir));
         mkdir(storage_path($workDirInput));
         mkdir(storage_path($workDirOutput));
 
+        // Extract image files for processing
         $zip = new ZipArchive();
         $zip->open($this->zipPath);
         $zip->extractTo(storage_path($workDirInput));
         $zip->close();
 
+        // See if we have enough images to build a map
+        $inputImages = FileFacade::allFiles(storage_path($workDirInput));
+        if (count($inputImages) < $this->getExpectedImageCount()) {
+            throw new \Exception('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
+        }
+
+        // Build a canvas and generate tiles for our map
+        // The canvas is for making a thumbnail of the whole thing afterwards
+        $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
+        $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
+        $canvas = Image::canvas(
+            $this->map->tile_width * self::TILE_SIZE,
+            $this->map->tile_height * self::TILE_SIZE
+        );
+        $imageIndex = 0;
+        for ($y = 0; $y < $imagesPerColumn; $y++) {
+            for ($x = 0; $x < $imagesPerRow; $x++) {
+                $imagePath = $inputImages[$imageIndex]->getRealPath();
+                $image = Image::make($imagePath);
+                $gdImage = $image->getCore();
+
+                // Remove pink background color, to reduce image size
+                $colorToRemove = imagecolorallocate($gdImage, 255, 0, 228); // pink, #ff00e4
+                imagecolortransparent($gdImage, $colorToRemove);
+
+                // Generate tile image
+                imagepng($gdImage, storage_path($workDirOutput."/$x,$y.png"));
+
+                // Add this tile to our ongoing canvas
+                $canvas->insert(
+                    $gdImage,
+                    'top-left',
+                    $x * ($this->map->screenshot_tiles * self::TILE_SIZE),
+                    $y * ($this->map->screenshot_tiles * self::TILE_SIZE)
+                );
+                $imageIndex++;
+            }
+        }
+
+        // Make a dinky little thumbnail of the map
+        $canvas
+            ->resize(200, 200)
+            ->save(storage_path($workDirOutput.'/thumb.png'), 100);
+
         // Make sure public output directory exists
+        $mapUri = Str::lower($this->map->map_id);
         $outputPublic = self::$publicMapsPath."/$mapUri";
         if (! is_dir(storage_path($outputPublic))) {
             mkdir(storage_path($outputPublic));
         }
 
-        $inputImages = File::allFiles(storage_path($workDirInput));
-        $imagesPerRow = self::MAP_SIZE / self::SCREENSHOT_SIZE;
-        if (count($inputImages) < $this->getExpectedImageCount()) {
-            throw new \Exception('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
-        }
-
-        $canvas = Image::canvas(self::MAP_SIZE, self::MAP_SIZE);
-        $imageIndex = 0;
-        for ($y = 0; $y < $imagesPerRow; $y++) { //this is fine as long as maps remain squares
-            for ($x = 0; $x < $imagesPerRow; $x++) {
-                // $imagePath = storage_path('app/'.$inputImages[$imageIndex]);
-                $imagePath = $inputImages[$imageIndex]->getRealPath();
-                $image = Image::make($imagePath);
-
-                $gdImage = $image->getCore();
-                $colorToRemove = imagecolorallocate($gdImage, 255, 0, 228); // pink, #ff00e4
-                imagecolortransparent($gdImage, $colorToRemove);
-                imagepng($gdImage, storage_path($workDirOutput."/$x,$y.png"));
-
-                $canvas->insert($gdImage, 'top-left', $x * self::SCREENSHOT_SIZE, $y * self::SCREENSHOT_SIZE);
-                $imageIndex++;
-            }
-        }
-
-        $canvas
-            ->resize(200, 200)
-            ->save(storage_path($workDirOutput.'/thumb.png'), 100);
-
+        // Move all our tiles and thumbnail to the right public map dir
         $files = scandir(storage_path($workDirOutput));
         $oldFolder = storage_path($workDirOutput).'/';
         $newFolder = storage_path($outputPublic).'/';
@@ -127,8 +154,9 @@ class BuildMap implements ShouldQueue
             }
         }
 
-        $map->last_built_at = Carbon::now();
-        $map->save();
+        $this->map->last_built_at = Carbon::now();
+        $this->map->last_built_by = $this->gameAdminId;
+        $this->map->save();
         $this->cleanup();
     }
 

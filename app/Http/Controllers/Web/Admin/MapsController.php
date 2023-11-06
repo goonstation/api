@@ -9,6 +9,7 @@ use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -54,10 +55,26 @@ class MapsController extends Controller
             'filePath' => 'required|string',
         ]);
 
+        $gameAdminId = Auth::user()->game_admin_id;
+
         $finalPath = storage_path('app/'.$data['filePath'].$data['fileName']);
         $file = new File($finalPath);
-        $mapZipPath = $file->move(storage_path(BuildMap::$workPath), $data['fileName']);
-        BuildMap::dispatch($data['map'], $mapZipPath);
+
+        $mapZipPath = BuildMap::moveUploadedFile($file);
+        $job = new BuildMap($data['map'], $mapZipPath, $gameAdminId);
+
+        // image count check
+        $zip = new ZipArchive();
+        $zip->open($mapZipPath);
+        $expectedImageCount = $job->getExpectedImageCount();
+        $imageCount = $zip->count();
+        if ($imageCount !== $expectedImageCount) {
+            $job->cleanup();
+            return Redirect::back()->withErrors(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."]);
+        }
+        $zip->close();
+
+        $job->dispatch($data['map'], $mapZipPath, $gameAdminId);
 
         return Redirect::back();
     }
@@ -83,19 +100,6 @@ class MapsController extends Controller
         if ($save->isFinished()) {
             // save the file and return any response you need
             $fileDetails = $this->saveFile($save->getFile());
-
-            $zip = new ZipArchive();
-            $zip->open($fileDetails['storage_path']);
-
-            $expectedImageCount = BuildMap::getExpectedImageCount();
-            $imageCount = $zip->count();
-            if ($imageCount !== $expectedImageCount) {
-                Storage::delete($fileDetails['path'].$fileDetails['name']);
-
-                return response()->json(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
-            }
-            $zip->close();
-
             return response()->json([
                 'path' => $fileDetails['path'],
                 'name' => $fileDetails['name'],
@@ -110,5 +114,64 @@ class MapsController extends Controller
         return response()->json([
             'done' => $handler->getPercentageDone(),
         ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Admin/Maps/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'map_id' => 'required|string|uppercase',
+            'name' => 'required',
+            'active' => 'required|boolean',
+            'is_layer' => 'required|boolean',
+            'tile_width' => 'required|integer',
+            'tile_height' => 'required|integer',
+        ]);
+
+        $map = new Map();
+        $map->map_id = $data['map_id'];
+        $map->name = $data['name'];
+        $map->active = $data['active'];
+        $map->is_layer = $data['is_layer'];
+        $map->tile_width = $data['tile_width'];
+        $map->tile_height = $data['tile_height'];
+        $map->screenshot_tiles = $data['tile_width'] / 10;
+        $map->save();
+
+        return to_route('admin.maps.index');
+    }
+
+    public function edit(Map $map)
+    {
+        return Inertia::render('Admin/Maps/Edit', [
+            'map' => $map,
+        ]);
+    }
+
+    public function update(Request $request, Map $map)
+    {
+        $data = $request->validate([
+            'map_id' => 'required|string|uppercase',
+            'name' => 'required',
+            'active' => 'required|boolean',
+            'is_layer' => 'required|boolean',
+            'tile_width' => 'required|integer',
+            'tile_height' => 'required|integer',
+        ]);
+
+        $map->map_id = $data['map_id'];
+        $map->name = $data['name'];
+        $map->active = $data['active'];
+        $map->is_layer = $data['is_layer'];
+        $map->tile_width = $data['tile_width'];
+        $map->tile_height = $data['tile_height'];
+        $map->screenshot_tiles = $data['tile_width'] / 10;
+        $map->save();
+
+        return to_route('admin.maps.index');
     }
 }

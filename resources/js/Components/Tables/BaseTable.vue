@@ -91,16 +91,18 @@
 
         <q-space />
 
-        <slot name="header-right" />
+        <div class="flex items-center gap-xs-sm">
+          <slot name="header-right" />
 
-        <q-btn
-          v-if="routes.create"
-          @click="router.visit(getRoute(routes.create))"
-          color="primary"
-          text-color="dark"
-        >
-          {{ createButtonText }}
-        </q-btn>
+          <q-btn
+            v-if="routes.create"
+            @click="router.visit(getRoute(routes.create))"
+            color="primary"
+            text-color="dark"
+          >
+            {{ createButtonText }}
+          </q-btn>
+        </div>
 
         <q-btn :icon="ionSettings" class="q-ml-md" dense unelevated>
           <q-tooltip>Table Settings</q-tooltip>

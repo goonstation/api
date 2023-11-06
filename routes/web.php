@@ -160,6 +160,10 @@ Route::middleware([
             Route::get('/upload', 'showUpload')->name('admin.maps.upload')->breadcrumb('', 'admin.maps.index');
             Route::post('/upload', 'upload')->name('admin.maps.update');
             Route::post('/upload-file', 'uploadFile')->name('admin.maps.upload-file');
+            Route::get('/create', 'create')->name('admin.maps.create')->breadcrumb('', 'admin.maps.index');
+            Route::post('/', 'store')->name('admin.maps.store');
+            Route::get('/edit/{map}', 'edit')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
+            Route::put('/{map}', 'update')->name('admin.maps.update');
         });
     });
 });
