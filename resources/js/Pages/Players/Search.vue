@@ -48,12 +48,13 @@
 
     <players-table
       v-show="!showTutorial"
-      flat
+      :initial="players"
       :search="{ name: searchFilter }"
       :pagination="{ rowsPerPage: 20 }"
       @loaded="onTableLoaded"
       @fetch-start="tableFetching = true"
       @fetch-end="onTableFetchEnd"
+      flat
     />
   </div>
 </template>
@@ -87,6 +88,10 @@ export default {
 
   components: {
     PlayersTable,
+  },
+
+  props: {
+    players: Object,
   },
 
   data() {
