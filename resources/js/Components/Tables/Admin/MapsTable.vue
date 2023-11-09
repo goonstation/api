@@ -51,6 +51,7 @@ export default {
         // view: '/admin/maps/_id',
         create: '/admin/maps/create',
         edit: '/admin/maps/edit/_id',
+        delete: '/admin/maps/_id',
       },
       columns: [
         {

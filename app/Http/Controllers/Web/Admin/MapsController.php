@@ -174,4 +174,10 @@ class MapsController extends Controller
 
         return to_route('admin.maps.index');
     }
+
+    public function destroy(Map $map)
+    {
+        $map->delete();
+        return ['message' => 'Map removed'];
+    }
 }
