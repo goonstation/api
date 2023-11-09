@@ -48,6 +48,12 @@ class IndexQueryRequest extends FormRequest
              * @example 30
              */
             'per_page' => 'int',
+            /**
+             * What page of results to display
+             *
+             * @example 1
+             */
+            'page' => 'int'
         ];
     }
 }
