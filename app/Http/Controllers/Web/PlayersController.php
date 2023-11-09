@@ -99,7 +99,7 @@ class PlayersController extends Controller
                 $request->input('sort_by', 'id'),
                 $request->input('descending', 'true') === 'true' ? 'desc' : 'asc'
             )
-            ->paginateFilter($request->input('per_page', 15));
+            ->paginateFilter($request->input('per_page', 20));
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Players/Search', [

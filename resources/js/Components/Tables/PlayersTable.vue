@@ -10,7 +10,7 @@
     grid
   >
     <template v-slot:item="props">
-      <div class="q-table__grid-item col-xs-12 col-sm-4 col-md-3">
+      <div class="q-table__grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3">
         <Link :href="`/players/${props.row.id}`" class="gh-link-card">
           <div class="flex items-center no-wrap">
             <player-avatar :player="props.row" class="q-mr-sm" size="md" />
