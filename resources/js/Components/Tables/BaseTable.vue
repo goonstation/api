@@ -1,222 +1,245 @@
 <template>
-  <q-table
-    ref="tableRef"
-    :rows="rows"
-    :columns="columns"
-    row-key="id"
-    v-model:pagination="_pagination"
-    :loading="loading"
-    :rows-per-page-options="[3, 5, 7, 10, 15, 20, 25, 30, 50]"
-    :visible-columns="visibleColumns"
-    separator="none"
-    binary-state-sort
-    @request="onRequest"
-  >
-    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
-    </template>
+  <div>
+    <q-table
+      ref="tableRef"
+      v-bind="$attrs"
+      :rows="rows"
+      :columns="columns"
+      row-key="id"
+      v-model:pagination="_pagination"
+      :loading="loading"
+      :rows-per-page-options="[3, 5, 7, 10, 15, 20, 25, 30, 50]"
+      :visible-columns="visibleColumns"
+      separator="none"
+      binary-state-sort
+      @request="onRequest"
+    >
+      <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+        <slot :name="name" v-bind="slotData" />
+      </template>
 
-    <template v-slot:top v-if="gridTopHasContent">
-      <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
-        <div v-if="showGridFilters" class="gh-grid-filters flex items-start gap-xs-sm">
-          <!-- sort button/menu -->
-          <q-btn color="grey-9" class="text-sm" padding="xs sm" dense no-caps unelevated>
-            <q-icon :name="ionSwapVertical" size="xs" class="q-mr-sm" /> {{ sortedByLabel }}
-            <q-menu :offset="[0, 10]">
-              <q-list style="min-width: 100px">
-                <q-item>
-                  <q-toggle
-                    v-model="_pagination.descending"
-                    :label="_pagination.descending ? 'Descending' : 'Ascending'"
-                    @update:model-value="onSortChange({ descending: $event })"
-                  />
-                </q-item>
-                <q-separator />
-                <q-item class="column">
-                  <div v-for="column in columns">
-                    <q-radio
-                      v-model="_pagination.sortBy"
-                      :val="column.name"
-                      :label="column.label"
-                      @update:model-value="onSortChange({ column: $event })"
-                      size="sm"
+      <template v-slot:top v-if="gridTopHasContent">
+        <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
+          <div v-if="showGridFilters" class="gh-grid-filters flex items-start gap-xs-sm">
+            <!-- sort button/menu -->
+            <q-btn color="grey-9" class="text-sm" padding="xs sm" dense no-caps unelevated>
+              <q-icon :name="ionSwapVertical" size="xs" class="q-mr-sm" /> {{ sortedByLabel }}
+              <q-menu :offset="[0, 10]">
+                <q-list style="min-width: 100px">
+                  <q-item>
+                    <q-toggle
+                      v-model="_pagination.descending"
+                      :label="_pagination.descending ? 'Descending' : 'Ascending'"
+                      @update:model-value="onSortChange({ descending: $event })"
                     />
-                  </div>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
+                  </q-item>
+                  <q-separator />
+                  <q-item class="column">
+                    <div v-for="column in columns">
+                      <q-radio
+                        v-model="_pagination.sortBy"
+                        :val="column.name"
+                        :label="column.label"
+                        @update:model-value="onSortChange({ column: $event })"
+                        size="sm"
+                      />
+                    </div>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
 
-          <template v-for="(filter, name) in filters">
-            <grid-header-filter
-              v-if="filter"
-              :column="columns.find((col) => col.name === name)"
-              :filter="filter"
-              @update="onFilterInput(name, $event)"
-              @clear="filters[name] = null"
+            <template v-for="(filter, name) in filters">
+              <grid-header-filter
+                v-if="filter"
+                :column="columns.find((col) => col.name === name)"
+                :filter="filter"
+                @update="onFilterInput(name, $event)"
+                @clear="filters[name] = null"
+              >
+              </grid-header-filter>
+            </template>
+
+            <q-btn class="text-sm" color="grey-9" padding="xs sm" :icon="ionAdd" dense unelevated>
+              <q-tooltip anchor="center right" self="center left"> Add a filter </q-tooltip>
+              <q-menu :offset="[0, 10]">
+                <q-markup-table class="q-py-sm" separator="none" flat dense>
+                  <tbody>
+                    <template v-for="col in columns">
+                      <tr v-if="col.filterable !== false">
+                        <td style="width: 1px">
+                          <q-chip color="grey-9" square>{{ col.label }}</q-chip>
+                        </td>
+                        <td>
+                          <table-filter
+                            :model-value="filters[col.name]"
+                            @update:modelValue="onFilterInput(col.name, $event)"
+                            @clear="filters[col.name] = null"
+                            :filter-type="col.filter?.type || 'text'"
+                          />
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </q-markup-table>
+                <q-separator />
+                <div class="row q-pa-sm">
+                  <q-space />
+                  <q-btn v-close-popup>Close</q-btn>
+                </div>
+              </q-menu>
+            </q-btn>
+          </div>
+
+          <q-space />
+
+          <div class="flex items-center gap-xs-sm">
+            <slot name="header-right" />
+
+            <q-btn
+              v-if="routes.create"
+              @click="router.visit(getRoute(routes.create))"
+              color="primary"
+              text-color="dark"
             >
-            </grid-header-filter>
-          </template>
+              {{ createButtonText }}
+            </q-btn>
+          </div>
 
-          <q-btn class="text-sm" color="grey-9" padding="xs sm" :icon="ionAdd" dense unelevated>
-            <q-tooltip anchor="center right" self="center left"> Add a filter </q-tooltip>
+          <q-btn :icon="ionSettings" class="q-ml-md" dense unelevated>
+            <q-tooltip>Table Settings</q-tooltip>
             <q-menu :offset="[0, 10]">
-              <q-markup-table class="q-py-sm" separator="none" flat dense>
+              <q-markup-table class="q-py-none" flat dense>
                 <tbody>
-                  <template v-for="col in columns">
-                    <tr v-if="col.filterable !== false">
-                      <td style="width: 1px">
-                        <q-chip color="grey-9" square>{{ col.label }}</q-chip>
-                      </td>
-                      <td>
-                        <table-filter
-                          :model-value="filters[col.name]"
-                          @update:modelValue="onFilterInput(col.name, $event)"
-                          @clear="filters[col.name] = null"
-                          :filter-type="col.filter?.type || 'text'"
-                        />
-                      </td>
-                    </tr>
-                  </template>
+                  <tr v-if="hasTimestamps && !noTimestampToggle">
+                    <td>Toggle Timestamps</td>
+                    <td>
+                      <q-toggle v-model="showTimestamps" :icon="ionCalendar" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="text-right">
+                      <q-btn color="primary" text-color="dark" class="q-my-sm" @click="reset">
+                        Reset
+                      </q-btn>
+                    </td>
+                  </tr>
                 </tbody>
               </q-markup-table>
-              <q-separator />
-              <div class="row q-pa-sm">
-                <q-space />
-                <q-btn v-close-popup>Close</q-btn>
-              </div>
             </q-menu>
           </q-btn>
         </div>
+      </template>
 
-        <q-space />
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th v-if="hasActions" class="q-table--col-auto-width" />
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+        <q-tr no-hover>
+          <q-th v-if="hasActions" class="q-table--col-auto-width" />
+          <q-th v-for="col in props.cols" :key="col.name">
+            <table-filter
+              v-if="col.filterable !== false"
+              :model-value="filters[col.name]"
+              @update:modelValue="onFilterInput(col.name, $event)"
+              @clear="filters[col.name] = null"
+              :filter-type="col.filter?.type || 'text'"
+            />
+          </q-th>
+        </q-tr>
+      </template>
 
-        <div class="flex items-center gap-xs-sm">
-          <slot name="header-right" />
-
-          <q-btn
-            v-if="routes.create"
-            @click="router.visit(getRoute(routes.create))"
-            color="primary"
-            text-color="dark"
-          >
-            {{ createButtonText }}
-          </q-btn>
-        </div>
-
-        <q-btn :icon="ionSettings" class="q-ml-md" dense unelevated>
-          <q-tooltip>Table Settings</q-tooltip>
-          <q-menu :offset="[0, 10]">
-            <q-markup-table class="q-py-none" flat dense>
-              <tbody>
-                <tr v-if="hasTimestamps && !noTimestampToggle">
-                  <td>Toggle Timestamps</td>
-                  <td>
-                    <q-toggle v-model="showTimestamps" :icon="ionCalendar" />
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="text-right">
-                    <q-btn color="primary" text-color="dark" class="q-my-sm" @click="reset">
-                      Reset
-                    </q-btn>
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </q-menu>
-        </q-btn>
-      </div>
-    </template>
-
-    <template v-slot:header="props">
-      <q-tr :props="props">
-        <q-th v-if="hasActions" class="q-table--col-auto-width" />
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ col.label }}
-        </q-th>
-      </q-tr>
-      <q-tr no-hover>
-        <q-th v-if="hasActions" class="q-table--col-auto-width" />
-        <q-th v-for="col in props.cols" :key="col.name">
-          <table-filter
-            v-if="col.filterable !== false"
-            :model-value="filters[col.name]"
-            @update:modelValue="onFilterInput(col.name, $event)"
-            @clear="filters[col.name] = null"
-            :filter-type="col.filter?.type || 'text'"
-          />
-        </q-th>
-      </q-tr>
-    </template>
-
-    <template v-slot:body="props">
-      <slot name="body-prepend" :props="props" />
-      <q-tr
-        :props="props"
-        :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
-      >
-        <q-td v-if="hasActions">
-          <q-btn-dropdown menu-self="top middle" flat dense>
-            <q-list dense>
-              <q-item
-                v-if="routes.view"
-                @click="router.visit(getRoute(routes.view, props.row))"
-                clickable
-                v-close-popup
-              >
-                <q-item-section avatar><q-icon :name="ionEye" /></q-item-section>
-                <q-item-section>View</q-item-section>
-              </q-item>
-              <q-item
-                v-if="routes.edit"
-                @click="router.visit(getRoute(routes.edit, props.row))"
-                clickable
-                v-close-popup
-              >
-                <q-item-section><q-icon :name="ionPencil" /></q-item-section>
-                <q-item-section>Edit</q-item-section>
-              </q-item>
-              <q-item
-                v-if="routes.delete"
-                @click="router.visit(getRoute(routes.delete, props.row))"
-                clickable
-                v-close-popup
-              >
-                <q-item-section><q-icon :name="ionTrash" /></q-item-section>
-                <q-item-section>Delete</q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-td>
-        <q-td v-for="col in props.cols" :key="col.name" :props="props">
-          <slot
-            v-if="$slots[`cell-content-${col.name}`]"
-            :name="`cell-content-${col.name}`"
-            :props="props"
-            :col="col"
-          />
-          <template v-else>
-            <template v-if="booleanColumns.includes(col.name)">
-              <q-icon
-                :name="col.value === 'true' || col.value === true ? ionCheckmark : ionClose"
-                size="xs"
-              />
-            </template>
+      <template v-slot:body="props">
+        <slot name="body-prepend" :props="props" />
+        <q-tr
+          :props="props"
+          :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
+        >
+          <q-td v-if="hasActions">
+            <q-btn-dropdown menu-self="top middle" flat dense>
+              <q-list class="action-dropdown" dense>
+                <q-item
+                  v-if="routes.view"
+                  @click="router.visit(getRoute(routes.view, props.row))"
+                  clickable
+                  v-close-popup
+                >
+                  <q-item-section avatar><q-icon :name="ionEye" /></q-item-section>
+                  <q-item-section>View</q-item-section>
+                </q-item>
+                <q-item
+                  v-if="routes.edit"
+                  @click="router.visit(getRoute(routes.edit, props.row))"
+                  clickable
+                  v-close-popup
+                >
+                  <q-item-section avatar><q-icon :name="ionPencil" /></q-item-section>
+                  <q-item-section>Edit</q-item-section>
+                </q-item>
+                <q-item
+                  v-if="routes.delete"
+                  @click="openConfirmDelete(props.row)"
+                  clickable
+                  v-close-popup
+                >
+                  <q-item-section avatar><q-icon :name="ionTrash" /></q-item-section>
+                  <q-item-section>Delete</q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-td>
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <slot
+              v-if="$slots[`cell-content-${col.name}`]"
+              :name="`cell-content-${col.name}`"
+              :props="props"
+              :col="col"
+            />
             <template v-else>
-              {{ col.value }}
+              <template v-if="booleanColumns.includes(col.name)">
+                <q-icon
+                  :name="col.value === 'true' || col.value === true ? ionCheckmark : ionClose"
+                  size="xs"
+                />
+              </template>
+              <template v-else>
+                {{ col.value }}
+              </template>
             </template>
-          </template>
-        </q-td>
-      </q-tr>
-      <slot name="body-append" :props="props" />
-    </template>
-  </q-table>
+          </q-td>
+        </q-tr>
+        <slot name="body-append" :props="props" />
+      </template>
+    </q-table>
+
+    <q-dialog v-model="confirmDelete">
+      <q-card flat bordered>
+        <q-card-section class="row items-center no-wrap">
+          <q-avatar :icon="ionInformationCircleOutline" color="negative" text-color="dark" />
+          <span class="q-ml-sm"> Are you sure you want to delete this? </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Confirm" color="negative" @click="deleteItem" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 :deep(.q-table__top) {
   padding: 0 4px;
+}
+
+.action-dropdown {
+  .q-item__section--avatar {
+    min-width: 0;
+  }
 }
 </style>
 
@@ -234,6 +257,7 @@ import {
   ionPencil,
   ionTrash,
   ionSettings,
+  ionInformationCircleOutline,
 } from '@quasar/extras/ionicons-v6'
 import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
 import GridHeaderFilter from './Partials/GridHeaderFilter.vue'
@@ -251,6 +275,7 @@ export default {
       ionPencil,
       ionTrash,
       ionSettings,
+      ionInformationCircleOutline,
     }
   },
 
@@ -322,6 +347,8 @@ export default {
       settingFiltersFromUrl: false,
       showTimestamps: false,
       timestampColumns: ['created_at', 'updated_at'],
+      confirmDelete: false,
+      deletingItem: null,
     }
   },
 
@@ -524,6 +551,34 @@ export default {
         this.filters = {}
       }
       this._pagination = Object.assign({}, this.defaultPagination)
+    },
+
+    openConfirmDelete(item) {
+      this.deletingItem = item
+      this.confirmDelete = true
+    },
+
+    async deleteItem() {
+      const deleteRoute = this.getRoute(this.routes.delete, this.deletingItem)
+      try {
+        await axios.delete(deleteRoute)
+      } catch {
+        this.deletingItem = null
+        this.confirmDelete = false
+        this.$q.notify({
+          message: 'Failed to delete item, please try again.',
+          color: 'negative',
+        })
+        return
+      }
+
+      this.deletingItem = null
+      this.confirmDelete = false
+      this.$refs.tableRef.requestServerInteraction()
+      this.$q.notify({
+        message: 'Item successfully deleted.',
+        color: 'positive',
+      })
     },
   },
 
