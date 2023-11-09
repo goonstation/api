@@ -25,8 +25,6 @@ cp .env.example .env
 
 The above will initialize the database, guide you through creating a user, and then guide you through creating an API token.
 
-If you have the Thunder Client VSCode extension installed, it should pre-populate a collection with test requests for every API route. You will need to enter your API token into the auth settings for the collection in order to run them.
-
 ### Limitations
 
 There are some external services that the API relies on that are not yet public/integrated. As such, the following features are unavailable during development:
