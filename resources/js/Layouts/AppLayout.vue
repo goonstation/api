@@ -25,7 +25,6 @@
               dense-toggle
               v-model="menuItem.active"
               @after-hide="onNavItemLeave"
-              @after-show="onExpansionShow"
             >
               <template #header>
                 <q-item-section class="site-nav__label q-pl-sm">
@@ -335,10 +334,6 @@ export default {
       const href = menuItem.match ? menuItem.match : menuItem.href
       if (href === '/' && this.$page.url === '/') return true
       else if (href !== '/') return this.$page.url.startsWith(href)
-    },
-
-    onExpansionShow() {
-      this.moveNavSliderTo(document.querySelector(`.site-nav__item--active`))
     }
   },
 
