@@ -164,6 +164,7 @@ Route::middleware([
             Route::post('/', 'store')->name('admin.maps.store');
             Route::get('/edit/{map}', 'edit')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
             Route::put('/{map}', 'update')->name('admin.maps.update');
+            Route::delete('/{map}', 'destroy')->name('admin.maps.delete');
         });
     });
 });
