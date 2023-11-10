@@ -1,25 +1,26 @@
 <script setup>
-import { computed } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/Jetstream/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/Jetstream/AuthenticationCardLogo.vue';
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
+// import { computed } from 'vue';
+// import { Head, Link, useForm } from '@inertiajs/vue3';
+// import AuthenticationCard from '@/Components/Jetstream/AuthenticationCard.vue';
+// import AuthenticationCardLogo from '@/Components/Jetstream/AuthenticationCardLogo.vue';
+// import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
 
-const props = defineProps({
-    status: String,
-});
+// const props = defineProps({
+//     status: String,
+// });
 
-const form = useForm({});
+// const form = useForm({});
 
-const submit = () => {
-    form.post(route('verification.send'));
-};
+// const submit = () => {
+//     form.post(route('verification.send'));
+// };
 
-const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
+// const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
 </script>
 
 <template>
-    <Head title="Email Verification" />
+  <div>TODO</div>
+    <!-- <Head title="Email Verification" />
 
     <AuthenticationCard>
         <template #logo>
@@ -58,5 +59,5 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                 </div>
             </div>
         </form>
-    </AuthenticationCard>
+    </AuthenticationCard> -->
 </template>

@@ -1,111 +1,116 @@
-<script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/Jetstream/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/Jetstream/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Jetstream/Checkbox.vue';
-import InputError from '@/Components/Jetstream/InputError.vue';
-import InputLabel from '@/Components/Jetstream/InputLabel.vue';
-import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
-import TextInput from '@/Components/Jetstream/TextInput.vue';
-
-const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    terms: false,
-});
-
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
-</script>
-
 <template>
-    <Head title="Register" />
+  <q-card class="gh-card" flat style="width: 100%; max-width: 500px">
+    <div class="gh-card__header">
+      <q-icon :name="ionPersonAdd" size="22px" />
+      <span>Register</span>
+    </div>
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+    <q-card-section>
+      <q-banner v-if="$page.props.flash.error" class="bg-negative q-mb-md" dense>
+        {{ $page.props.flash.error }}
+      </q-banner>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+      <q-form @submit="submit">
+        <q-input
+          v-model="form.name"
+          type="text"
+          label="Name"
+          autocomplete="name"
+          filled
+          lazy-rules
+          required
+          autofocus
+          :error="!!form.errors.name"
+          :error-message="form.errors.name"
+        />
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+        <q-input
+          v-model="form.email"
+          type="email"
+          label="Email"
+          filled
+          lazy-rules
+          required
+          :error="!!form.errors.email"
+          :error-message="form.errors.email"
+        />
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+        <q-input
+          v-model="form.password"
+          type="password"
+          label="Password"
+          autocomplete="new-password"
+          filled
+          lazy-rules
+          required
+          :error="!!form.errors.password"
+          :error-message="form.errors.password"
+        />
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
+        <q-input
+          v-model="form.password_confirmation"
+          type="password"
+          label="Confirm Password"
+          autocomplete="new-password"
+          filled
+          lazy-rules
+          required
+          :error="!!form.errors.password_confirmation"
+          :error-message="form.errors.password_confirmation"
+        />
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
-
-                        <div class="ml-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 hover:text-gray-900">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a>
-                        </div>
-                    </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
+        <div class="flex">
+          <Link :href="route('login')"> Already registered? </Link>
+          <q-space />
+          <q-btn
+            label="Register"
+            type="submit"
+            color="primary"
+            text-color="black"
+            :loading="form.processing"
+          />
+        </div>
+      </q-form>
+    </q-card-section>
+  </q-card>
 </template>
+
+<script>
+import { ionPersonAdd } from '@quasar/extras/ionicons-v6'
+import { Link, useForm } from '@inertiajs/vue3'
+import AuthLayout from '@/Layouts/AuthLayout.vue'
+
+export default {
+  layout: (h, page) => h(AuthLayout, { title: 'Register' }, () => page),
+
+  components: {
+    Link,
+  },
+
+  setup() {
+    return {
+      ionPersonAdd
+    }
+  },
+
+  data() {
+    return {
+      form: useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        terms: false,
+      }),
+    }
+  },
+
+  methods: {
+    submit() {
+      this.form.post(route('register'), {
+        onFinish: () => this.form.reset('password', 'password_confirmation'),
+      })
+    },
+  },
+}
+</script>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { router, useForm, usePage } from '@inertiajs/vue3'
-import ConfirmsPassword from '@/Components/Jetstream/ConfirmsPassword.vue'
+import ConfirmsPassword from '@/Components/ConfirmsPassword.vue'
 
 const props = defineProps({
   requiresConfirmation: Boolean,

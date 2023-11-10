@@ -1,7 +1,7 @@
 import './bootstrap'
 
 import { createApp, h } from 'vue'
-import { createInertiaApp, Link } from '@inertiajs/vue3'
+import { createInertiaApp } from '@inertiajs/vue3'
 import { Quasar, Notify } from 'quasar'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'

@@ -1,10 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import ActionSection from '@/Components/Jetstream/ActionSection.vue'
-import ConfirmationModal from '@/Components/Jetstream/ConfirmationModal.vue'
-import DangerButton from '@/Components/Jetstream/DangerButton.vue'
-import SecondaryButton from '@/Components/Jetstream/SecondaryButton.vue'
 
 const props = defineProps({
   team: Object,

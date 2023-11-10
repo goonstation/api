@@ -4,7 +4,7 @@
 - Permissions!
 
 ### UI
-- Remove tailwind setup from jetstream
+- 
 
 ### Admin
 - so much

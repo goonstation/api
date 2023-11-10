@@ -1,6 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import ActionMessage from '@/Components/Jetstream/ActionMessage.vue'
+import ActionMessage from '@/Components/ActionMessage.vue'
 
 const props = defineProps({
   team: Object,

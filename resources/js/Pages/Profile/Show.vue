@@ -74,7 +74,6 @@
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import DeleteUserForm from './Partials/DeleteUserForm.vue'
 import LogoutOtherBrowserSessionsForm from './Partials/LogoutOtherBrowserSessionsForm.vue'
-import SectionBorder from '@/Components/Jetstream/SectionBorder.vue'
 import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm.vue'
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue'
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue'
@@ -83,7 +82,6 @@ export default {
   components: {
     DeleteUserForm,
     LogoutOtherBrowserSessionsForm,
-    SectionBorder,
     TwoFactorAuthenticationForm,
     UpdatePasswordForm,
     UpdateProfileInformationForm,
