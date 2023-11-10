@@ -2,7 +2,7 @@
   <img
     :src="`/storage/maps/${map.map_id.toLowerCase()}/thumb.png`"
     :alt="map.name"
-    class="q-mr-md"
+    class="q-mr-md gh-sprite"
     width="75"
     height="75"
   />

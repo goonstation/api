@@ -137,7 +137,7 @@ const closeModal = () => {
               filled
               required
               hide-bottom-space
-              @keyup.enter="confirmPassword"
+              @keyup.enter="logoutOtherBrowserSessions"
               :error="!!form.errors.password"
               :error-message="form.errors.password"
             />

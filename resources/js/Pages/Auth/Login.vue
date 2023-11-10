@@ -23,24 +23,28 @@
       <q-form @submit="submit">
         <q-input
           v-model="form.email"
+          class="q-mb-md"
           type="email"
           label="Email"
           filled
           lazy-rules
           required
           autofocus
+          hide-bottom-space
           :error="!!form.errors.email"
           :error-message="form.errors.email"
         />
 
         <q-input
           v-model="form.password"
+          class="q-mb-md"
           type="password"
           label="Password"
           filled
           lazy-rules
           required
           autocomplete="current-password"
+          hide-bottom-space
           :error="!!form.errors.password"
           :error-message="form.errors.password"
         />

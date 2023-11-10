@@ -70,10 +70,6 @@
   }
 }
 
-.gh-sprite {
-  image-rendering: pixelated;
-}
-
 .gh-link-card {
   $self: &;
   position: relative;
@@ -210,8 +206,6 @@
 .oxyloss {
   color: #9292fa;
 }
-
-.break-all { word-break: break-all; }
 
 .chart-no-data {
   position: absolute;

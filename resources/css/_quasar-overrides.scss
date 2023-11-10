@@ -1,0 +1,29 @@
+// Override default menu styles to force a clear border rather than a white shadow
+.q-menu {
+  &--dark {
+    box-shadow: none;
+    border: 1px solid $grey-8;
+  }
+}
+
+// Increase table bottom padding, as dense mode has it way too...dense
+.q-table__bottom {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+// Our dark red text is hard to read on the dark bg we usually have stuff on
+.q-field--error .q-field__bottom {
+  font-weight: 600;
+}
+
+// More legible typography for input hints/errors
+.q-field__bottom {
+  font-size: 13px;
+}
+.q-field--dense .q-field__bottom {
+  font-size: 12px;
+}
+.q-field__messages {
+  line-height: 1.2;
+}

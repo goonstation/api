@@ -8,6 +8,8 @@ a {
   }
 }
 
+// gap-{breakpoint}-{size}
+// E.g. gap-sm-md
 @each $sizeName, $width in $sizes {
   @each $spaceName, $space in $spaces {
     @media (min-width: $width) {
@@ -35,29 +37,16 @@ a {
 
 .bordered { border: 1px solid; }
 
-.q-menu {
-  &--dark {
-    box-shadow: none;
-    border: 1px solid $grey-8;
-  }
-}
+.break-all { word-break: break-all; }
+.gh-sprite { image-rendering: pixelated; }
 
-.q-table__bottom {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.q-field--error .q-field__bottom {
-  font-weight: 600;
-}
-
-/* Firefox */
+// Firefox
 * {
   scrollbar-width: thin;
   scrollbar-color: #F0C523 #8d8d8d;
 }
 
-/* Chrome, Edge and Safari */
+// Chrome, Edge and Safari
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -67,16 +56,13 @@ a {
   border-radius: 5px;
   background-color: transparent;
 }
-
 *::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: #8d8d8d;
 }
-
 *::-webkit-scrollbar-thumb:hover {
   background-color: #F0C523;
 }
-
 *::-webkit-scrollbar-thumb:active {
   background-color: #F0C523;
 }
