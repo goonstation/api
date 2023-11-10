@@ -80,14 +80,24 @@ class PlayerMedalsController extends Controller
     public function store(Request $request)
     {
         $data = $this->validate($request, [
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => 'required_without:ckey|nullable|integer|exists:players,id',
+            'ckey' => 'required_without:player_id|nullable|alpha_num',
             'medal' => 'required|string|exists:medals,title',
             'round_id' => 'nullable|integer|exists:game_rounds,id',
         ]);
 
         $medal = Medal::where('title', $data['medal'])->first();
 
-        $existingPlayerMedal = PlayerMedal::where('player_id', $data['player_id'])
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId && isset($data['ckey'])) {
+            $player = Player::where('ckey', $data['ckey'])->first();
+            if (!$player) {
+                return response()->json(['message' => 'Unable to locate that player'], 400);
+            }
+            $playerId = $player->id;
+        }
+
+        $existingPlayerMedal = PlayerMedal::where('player_id', $playerId)
             ->where('medal_id', $medal->id)
             ->exists();
         if ($existingPlayerMedal) {
@@ -95,7 +105,7 @@ class PlayerMedalsController extends Controller
         }
 
         $playerMedal = new PlayerMedal();
-        $playerMedal->player_id = $data['player_id'];
+        $playerMedal->player_id = $playerId;
         $playerMedal->medal_id = $medal->id;
         $playerMedal->round_id = isset($data['round_id']) ? $data['round_id'] : null;
         $playerMedal->save();
@@ -111,13 +121,23 @@ class PlayerMedalsController extends Controller
     public function destroy(Request $request)
     {
         $data = $this->validate($request, [
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => 'required_without:ckey|nullable|integer|exists:players,id',
+            'ckey' => 'required_without:player_id|nullable|alpha_num',
             'medal' => 'required|string|exists:medals,title',
         ]);
 
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId && isset($data['ckey'])) {
+            $player = Player::where('ckey', $data['ckey'])->first();
+            if (!$player) {
+                return response()->json(['message' => 'Unable to locate that player'], 400);
+            }
+            $playerId = $player->id;
+        }
+
         $medal = Medal::where('title', $data['medal'])->first();
 
-        PlayerMedal::where('player_id', $data['player_id'])
+        PlayerMedal::where('player_id', $playerId)
             ->where('medal_id', $medal->id)
             ->delete();
 
