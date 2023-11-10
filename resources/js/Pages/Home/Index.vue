@@ -13,12 +13,14 @@
   <div class="row q-col-gutter-md q-mb-md">
     <div class="col-12 col-md-6">
       <player-trend :data="_playersOnline" />
-      <server-status
-        v-for="server in servers"
-        class="q-mt-md"
-        :server="server"
-        @refreshed="onServerStatusRefreshed"
-      />
+      <div class="server-statuses">
+        <server-status
+          v-for="server in servers"
+          class="q-mt-md"
+          :server="server"
+          @refreshed="onServerStatusRefreshed"
+        />
+      </div>
     </div>
 
     <div class="col-12 col-md-6">
@@ -123,6 +125,11 @@
       width: 64px;
     }
   }
+}
+
+.server-statuses {
+  display: flex;
+  flex-direction: column;
 }
 </style>
 
