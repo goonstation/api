@@ -10,7 +10,6 @@ use App\Http\Controllers\Web\AntagsController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
-use App\Http\Controllers\Web\DonateController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\GameServersController;
@@ -94,10 +93,6 @@ Route::prefix('/events')->group(function () {
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/', 'index')->name('maps.index')->breadcrumb('Maps');
     Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
-});
-
-Route::controller(DonateController::class)->prefix('/donate')->group(function () {
-    Route::get('/', 'index')->name('donate.index');
 });
 
 Route::controller(RedirectController::class)->prefix('/r')->group(function () {
