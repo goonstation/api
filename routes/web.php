@@ -158,7 +158,7 @@ Route::middleware([
         Route::controller(AdminMapsController::class)->prefix('maps')->group(function () {
             Route::get('/', 'index')->name('admin.maps.index')->breadcrumb('Maps');
             Route::get('/upload', 'showUpload')->name('admin.maps.upload')->breadcrumb('', 'admin.maps.index');
-            Route::post('/upload', 'upload')->name('admin.maps.update');
+            Route::post('/upload', 'upload')->name('admin.maps.upload-update');
             Route::post('/upload-file', 'uploadFile')->name('admin.maps.upload-file');
             Route::get('/create', 'create')->name('admin.maps.create')->breadcrumb('', 'admin.maps.index');
             Route::post('/', 'store')->name('admin.maps.store');

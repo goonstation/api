@@ -188,7 +188,7 @@ export default {
     },
 
     submitForm() {
-      this.form.post(route('admin.maps.update'), {
+      this.form.post(route('admin.maps.upload-update'), {
         onSuccess: () => {
           this.form.reset()
           this.$q.notify({
