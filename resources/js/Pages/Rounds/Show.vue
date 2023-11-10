@@ -22,7 +22,15 @@
             <div>Ended</div>
           </div>
           <div v-if="map">
-            <div>{{ map }}</div>
+            <div>
+              <a v-if="mapUri" :href="route('maps.show', mapUri)" target="_blank">
+                {{ map }}
+                <q-icon :name="ionOpenOutline" />
+              </a>
+              <template v-else>
+                {{ map }}
+              </template>
+            </div>
             <div>Map</div>
           </div>
           <div v-if="round.game_type">
@@ -63,6 +71,7 @@
 
 <script>
 import dayjs, { duration } from 'dayjs'
+import { ionOpenOutline } from '@quasar/extras/ionicons-v6'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventExplorer from './Partials/EventExplorer/EventExplorer.vue'
 import PlayersCard from './Partials/PlayersCard.vue'
@@ -87,6 +96,7 @@ export default {
   setup() {
     return {
       dayjs,
+      ionOpenOutline
     }
   },
 
@@ -103,6 +113,11 @@ export default {
     map() {
       if (this.round.map_record) return this.round.map_record.name
       return this.round.map
+    },
+
+    mapUri() {
+      if (!this.round.map_record) return
+      return this.round.map_record.map_id.toLowerCase()
     },
 
     started() {
