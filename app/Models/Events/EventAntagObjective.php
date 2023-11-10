@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventAntagObjective extends Model
 {
-    use HasFactory, Compoships;
+    use Compoships, HasFactory;
 
     protected $table = 'events_antag_objectives';
 

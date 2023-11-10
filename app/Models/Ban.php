@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ban extends Model
 {
-    use SoftDeletes, HasFactory, Filterable;
+    use Filterable, HasFactory, SoftDeletes;
 
     protected $dates = ['expires_at'];
 

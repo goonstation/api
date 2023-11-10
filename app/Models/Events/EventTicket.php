@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventTicket extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'events_tickets';
 

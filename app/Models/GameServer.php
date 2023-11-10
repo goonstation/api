@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class GameServer extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 }

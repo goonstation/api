@@ -48,7 +48,6 @@ class RecordByondJoinDate implements ShouldQueue
     /**
      * Query byond for the join date of an account
      *
-     * @param  string  $ckey
      * @return string|null
      */
     private function getByondJoinDate(string $ckey)

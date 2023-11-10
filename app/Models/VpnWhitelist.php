@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VpnWhitelist extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'vpn_whitelist';
 

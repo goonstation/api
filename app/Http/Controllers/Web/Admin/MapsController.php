@@ -11,7 +11,6 @@ use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Handler\AbstractHandler;
@@ -70,6 +69,7 @@ class MapsController extends Controller
         $imageCount = $zip->count();
         if ($imageCount !== $expectedImageCount) {
             $job->cleanup();
+
             return Redirect::back()->withErrors(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."]);
         }
         $zip->close();
@@ -82,7 +82,6 @@ class MapsController extends Controller
     /**
      * Handles the file upload
      *
-     * @param  FileReceiver  $receiver
      * @return \Illuminate\Http\JsonResponse
      *
      * @throws UploadMissingFileException
@@ -100,6 +99,7 @@ class MapsController extends Controller
         if ($save->isFinished()) {
             // save the file and return any response you need
             $fileDetails = $this->saveFile($save->getFile());
+
             return response()->json([
                 'path' => $fileDetails['path'],
                 'name' => $fileDetails['name'],
@@ -178,6 +178,7 @@ class MapsController extends Controller
     public function destroy(Map $map)
     {
         $map->delete();
+
         return ['message' => 'Map removed'];
     }
 }

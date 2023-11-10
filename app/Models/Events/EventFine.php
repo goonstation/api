@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventFine extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'events_fines';
 

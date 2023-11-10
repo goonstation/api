@@ -8,7 +8,7 @@ use EloquentFilter\ModelFilter;
 
 class EventFineFilter extends ModelFilter
 {
-    use HasTimestampFilters, HasRangeFilters;
+    use HasRangeFilters, HasTimestampFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter

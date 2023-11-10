@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlayerMedal extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

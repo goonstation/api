@@ -32,7 +32,7 @@ class MapFilter extends ModelFilter
     {
         return $this->related('gameAdmin', function ($query) use ($val) {
             return $query->where('name', 'ILIKE', '%'.$val.'%')
-                    ->orWhere('ckey', 'ILIKE', '%'.$val.'%');
+                ->orWhere('ckey', 'ILIKE', '%'.$val.'%');
         });
     }
 

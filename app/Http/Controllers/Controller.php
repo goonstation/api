@@ -15,7 +15,6 @@ class Controller extends BaseController
     /**
      * Determine whether a request should respond with an Inertia object
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
     public function wantsInertia(Request $request = null)

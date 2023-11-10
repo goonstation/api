@@ -18,7 +18,6 @@ class GameBridge
     /**
      * Get status of a game server
      *
-     * @param  string  $server
      * @param  mixed  $data
      * @return string|void
      *
@@ -39,7 +38,6 @@ class GameBridge
     /**
      * Query a game server
      *
-     * @param  string  $server
      * @param  mixed  $data
      * @return string|void
      *

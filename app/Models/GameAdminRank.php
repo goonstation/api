@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GameAdminRank extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $fillable = [
         'rank',

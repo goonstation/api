@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $fillable = [
         'id',
@@ -56,7 +56,7 @@ class Player extends Model
         return $this->hasMany(PlayerParticipation::class, 'player_id')
             ->where(function ($q) {
                 $q->whereRelation('gameRound', 'rp_mode', true)
-                ->orWhere('legacy_data->rp_mode', 'true');
+                    ->orWhere('legacy_data->rp_mode', 'true');
             });
     }
 

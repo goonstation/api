@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobBan extends Model
 {
-    use SoftDeletes, HasFactory, Filterable;
+    use Filterable, HasFactory, SoftDeletes;
 
     protected $dates = ['expires_at'];
 
@@ -47,12 +47,9 @@ class JobBan extends Model
     }
 
     /**
-     * @param  string  $ckey
-     * @param  null|string  $job
-     * @param  null|string  $serverId
      * @return Builder
      */
-    public static function getValidJobBans(string $ckey, ?string $job = null, ?string $serverId = null)
+    public static function getValidJobBans(string $ckey, string $job = null, string $serverId = null)
     {
         $query = JobBan::with(['gameAdmin:id,ckey,name'])
             ->where('ckey', $ckey)

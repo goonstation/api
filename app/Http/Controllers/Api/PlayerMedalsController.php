@@ -89,9 +89,9 @@ class PlayerMedalsController extends Controller
         $medal = Medal::where('title', $data['medal'])->first();
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId && isset($data['ckey'])) {
+        if (! $playerId && isset($data['ckey'])) {
             $player = Player::where('ckey', $data['ckey'])->first();
-            if (!$player) {
+            if (! $player) {
                 return response()->json(['message' => 'Unable to locate that player'], 400);
             }
             $playerId = $player->id;
@@ -127,9 +127,9 @@ class PlayerMedalsController extends Controller
         ]);
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId && isset($data['ckey'])) {
+        if (! $playerId && isset($data['ckey'])) {
             $player = Player::where('ckey', $data['ckey'])->first();
-            if (!$player) {
+            if (! $player) {
                 return response()->json(['message' => 'Unable to locate that player'], 400);
             }
             $playerId = $player->id;

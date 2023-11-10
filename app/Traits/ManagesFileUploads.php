@@ -9,7 +9,6 @@ trait ManagesFileUploads
     /**
      * Saves the file
      *
-     * @param  UploadedFile  $file
      * @return array
      */
     protected function saveFile(UploadedFile $file)
@@ -38,7 +37,6 @@ trait ManagesFileUploads
     /**
      * Create unique filename for uploaded file
      *
-     * @param  UploadedFile  $file
      * @return string
      */
     protected function createFilename(UploadedFile $file)

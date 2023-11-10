@@ -18,8 +18,8 @@ class AntagsController extends Controller
             EventAntag::with([
                 'objectives:id,round_id,player_id,success',
             ])
-            ->whereRelation('gameRound', 'ended_at', '!=', null)
-            ->whereRelation('gameRound.server', 'invisible', false),
+                ->whereRelation('gameRound', 'ended_at', '!=', null)
+                ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
 

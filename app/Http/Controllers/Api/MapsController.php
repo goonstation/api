@@ -58,6 +58,7 @@ class MapsController extends Controller
         $imageCount = $zip->count();
         if ($imageCount !== $expectedImageCount) {
             $job->cleanup();
+
             return response()->json(['message' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
         }
         $zip->close();

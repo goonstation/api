@@ -53,7 +53,7 @@ class IndexQueryRequest extends FormRequest
              *
              * @example 1
              */
-            'page' => 'int'
+            'page' => 'int',
         ];
     }
 }

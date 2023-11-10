@@ -20,8 +20,8 @@ class RoundsController extends Controller
                 'mapRecord:id,map_id,name',
                 'latestStationName',
             ])
-            ->where('ended_at', '!=', null)
-            ->whereRelation('server', 'invisible', '!=', true),
+                ->where('ended_at', '!=', null)
+                ->whereRelation('server', 'invisible', '!=', true),
             perPage: 30
         );
 

@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GameRound extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $dates = ['ended_at'];
 

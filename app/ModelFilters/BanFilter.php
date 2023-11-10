@@ -8,7 +8,7 @@ use EloquentFilter\ModelFilter;
 
 class BanFilter extends ModelFilter
 {
-    use HasTimestampFilters, HasRangeFilters;
+    use HasRangeFilters, HasTimestampFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter
@@ -32,7 +32,7 @@ class BanFilter extends ModelFilter
     {
         return $this->related('gameAdmin', function ($query) use ($val) {
             return $query->where('name', 'ILIKE', '%'.$val.'%')
-                    ->orWhere('ckey', 'ILIKE', '%'.$val.'%');
+                ->orWhere('ckey', 'ILIKE', '%'.$val.'%');
         });
     }
 

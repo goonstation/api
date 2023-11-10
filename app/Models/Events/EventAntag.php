@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventAntag extends Model
 {
-    use HasFactory, Filterable, Compoships;
+    use Compoships, Filterable, HasFactory;
 
     protected $table = 'events_antags';
 

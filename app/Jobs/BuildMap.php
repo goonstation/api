@@ -7,10 +7,10 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\File as FileFacade;
-use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
 use ZipArchive;
@@ -23,11 +23,15 @@ class BuildMap implements ShouldQueue
     const TILE_SIZE = 32;
 
     public static $workPath = 'app/map-processing';
+
     public static $publicMapsPath = 'app/public/maps';
 
     private $map = null;
+
     private $zipPath = null;
+
     private $gameAdminId = null;
+
     private $workDir = null;
 
     /**
@@ -53,6 +57,7 @@ class BuildMap implements ShouldQueue
     {
         $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
         $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
+
         return $imagesPerRow * $imagesPerColumn;
     }
 
@@ -73,10 +78,10 @@ class BuildMap implements ShouldQueue
      */
     public function handle()
     {
-        if (!$this->map) {
+        if (! $this->map) {
             throw new \Exception('Invalid map');
         }
-        if (!$this->zipPath) {
+        if (! $this->zipPath) {
             throw new \Exception('Invalid zip path');
         }
 
@@ -163,7 +168,6 @@ class BuildMap implements ShouldQueue
     /**
      * Handle a job failure.
      *
-     * @param  \Throwable  $exception
      * @return void
      */
     public function failed(\Throwable $exception)
