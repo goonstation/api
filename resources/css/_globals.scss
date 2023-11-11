@@ -40,18 +40,11 @@ a {
 .break-all { word-break: break-all; }
 .gh-sprite { image-rendering: pixelated; }
 
-// Firefox
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #F0C523 #8d8d8d;
-}
-
-// Chrome, Edge and Safari
+// Scrollbar customization for Chrome, Edge and Safari
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 *::-webkit-scrollbar-track {
   border-radius: 5px;
   background-color: transparent;

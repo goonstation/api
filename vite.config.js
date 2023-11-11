@@ -12,6 +12,9 @@ export default defineConfig({
       host: 'localhost',
     },
   },
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     laravel({
       input: 'resources/js/app.js',

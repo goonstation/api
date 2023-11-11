@@ -45,6 +45,7 @@
 }
 
 .links-grid {
+  flex-grow: 1;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 4px;

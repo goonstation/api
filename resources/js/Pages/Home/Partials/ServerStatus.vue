@@ -6,7 +6,7 @@
     class="server-status"
     flat
   >
-    <q-card-section class="row items-center no-wrap">
+    <q-card-section class="row items-center no-wrap full-height">
       <div class="server-status__info q-mr-md">
         <strong class="text-primary">
           {{ server.name }}
@@ -59,6 +59,7 @@
     transform: translateY(-50%);
     z-index: 0;
     width: 50%;
+    max-width: 300px;
     filter: blur(1px);
     mask-image: linear-gradient(to left, var(--q-dark) 0%, transparent 100%);
     transition: all 200ms;
@@ -94,7 +95,11 @@
   }
 
   &__info {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
     width: 0;
+    height: 100%;
     flex: 1;
   }
 

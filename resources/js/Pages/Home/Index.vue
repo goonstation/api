@@ -1,6 +1,6 @@
 <template>
   <div class="welcome q-mt-sm q-mb-md">
-    <img src="@img/bee.gif" alt="" class="gh-sprite" width="64" />
+    <img src="@img/bee.gif" alt="" class="gh-sprite" width="64" height="64" />
     <p class="bg-dark q-py-md q-px-lg q-mb-none">
       <span class="arrow" aria-hidden="true"></span>
       Welcome to Goonhub, an information website designed to collect and display statistics from the
@@ -11,12 +11,11 @@
   </div>
 
   <div class="row q-col-gutter-md q-mb-md">
-    <div class="col-12 col-md-6">
-      <player-trend :data="_playersOnline" />
-      <div class="server-statuses">
+    <div class="col-12 col-md-6 flex column no-wrap">
+      <player-trend :data="_playersOnline" class="q-mb-md" />
+      <div class="server-statuses gap-xs-sm">
         <server-status
           v-for="server in servers"
-          class="q-mt-md"
           :server="server"
           @refreshed="onServerStatusRefreshed"
         />
@@ -77,6 +76,7 @@
   img {
     display: none;
     width: 50px;
+    height: 50px;
     margin-right: 35px;
   }
 
@@ -123,6 +123,7 @@
   @media (min-width: $breakpoint-md-min) {
     img {
       width: 64px;
+      height: 64px;
     }
   }
 }
@@ -130,6 +131,11 @@
 .server-statuses {
   display: flex;
   flex-direction: column;
+  height: 100%;
+
+  .server-status {
+    flex-grow: 1;
+  }
 }
 </style>
 
