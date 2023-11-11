@@ -16,6 +16,7 @@
       <div class="server-statuses gap-xs-sm">
         <server-status
           v-for="server in servers"
+          :ref="`serverStatus${server.server_id}`"
           :server="server"
           @refreshed="onServerStatusRefreshed"
         />
@@ -172,8 +173,6 @@ export default {
   data() {
     return {
       _playersOnline: null,
-      serverStatusRefreshCount: 0,
-      totalOnlinePlayers: 0,
     }
   },
 
@@ -191,20 +190,25 @@ export default {
   },
 
   methods: {
-    onServerStatusRefreshed({ status, error }) {
-      this.serverStatusRefreshCount++
-      if (!error) {
-        this.totalOnlinePlayers += parseInt(status.players)
-      }
-      if (this.serverStatusRefreshCount === this.servers.length) {
-        if (this._playersOnline.length) {
-          this._playersOnline[this._playersOnline.length - 1].online = this.totalOnlinePlayers
-        } else {
-          this._playersOnline.push({
-            date: dayjs().format('YYYY-MM-DD'),
-            online: this.totalOnlinePlayers
-          })
+    onServerStatusRefreshed({ serverId, status, error }) {
+      let totalPlayers = error ? 0 : parseInt(status.players)
+      // Check all the other servers for their reported player counts
+      for (const server of this.servers) {
+        if (serverId === server.server_id) continue
+        const serverStatusRef = this.$refs[`serverStatus${server.server_id}`][0]
+        if (serverStatusRef.status?.players) {
+          totalPlayers += parseInt(serverStatusRef.status.players)
         }
+      }
+
+      // Insert or update the "online right now" entry for the players online chart
+      if (this._playersOnline.length) {
+        this._playersOnline[this._playersOnline.length - 1].online = totalPlayers
+      } else {
+        this._playersOnline.push({
+          date: dayjs().format('YYYY-MM-DD'),
+          online: totalPlayers
+        })
       }
     }
   }

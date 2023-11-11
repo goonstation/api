@@ -13,7 +13,9 @@
         </strong>
         <div class="server-status__station-name">
           <q-skeleton type="text" v-if="loading" />
-          <div v-else-if="error" class="text-red text-weight-medium">Unable to reach the server.</div>
+          <div v-else-if="error" class="text-red text-weight-medium">
+            Unable to reach the server.
+          </div>
           <template v-else>{{ status.station_name }}</template>
         </div>
         <div class="text-caption row">
@@ -91,7 +93,7 @@
     position: relative;
     z-index: 1;
     padding: 0.65rem 1rem;
-    text-shadow: 1px 1px 1px black
+    text-shadow: 1px 1px 1px black;
   }
 
   &__info {
@@ -125,6 +127,7 @@ export default {
       loading: true,
       error: false,
       status: {},
+      refreshTimer: null,
     }
   },
 
@@ -145,7 +148,11 @@ export default {
     mapId() {
       if (!this.status.map_id) return ''
       return this.status.map_id.toLowerCase().replace('/\s/g', '')
-    }
+    },
+  },
+
+  beforeUnmount() {
+    clearTimeout(this.refreshTimer)
   },
 
   watch: {
@@ -167,12 +174,19 @@ export default {
           },
         })
         this.status = res.data.response
+
+        // Refresh again when the cache has expired
+        this.refreshTimer = setTimeout(() => {
+          this.refresh()
+        }, (res.data.meta.cacheExpires + 1) * 1000)
       } catch (e) {
         this.error = e.message
+        this.status = {}
       }
       this.$emit('refreshed', {
+        serverId: this.server.server_id,
         status: this.status,
-        error: this.error
+        error: this.error,
       })
       this.loading = false
     },
