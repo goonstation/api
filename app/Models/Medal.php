@@ -9,6 +9,12 @@ class Medal extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'description',
+        'hidden'
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */

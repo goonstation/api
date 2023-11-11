@@ -14,4 +14,6 @@ return [
 
     'byond_user' => env('BYOND_USER', null),
     'byond_pass' => env('BYOND_PASS', null),
+
+    'maxmind_license_key' => env('MAXMIND_LICENSE_KEY', null),
 ];

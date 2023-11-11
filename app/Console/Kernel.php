@@ -8,6 +8,8 @@ use App\Jobs\ClearOldDectalks;
 use App\Jobs\GenerateGlobalPlayerStats;
 use App\Jobs\GenerateNumbersStationPass;
 use App\Jobs\GetPlayerCounts;
+use App\Jobs\UpdateGeoLite;
+use App\Jobs\UpdateYoutubeDLP;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\App;
@@ -27,6 +29,9 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ClearOldDectalks)->dailyAt('03:03')->sentryMonitor('clear-old-dectalks');
         $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor('clear-old-audio');
         $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor('generate-global-player-stats');
+
+        $schedule->job(new UpdateGeoLite)->weekly()->sentryMonitor('update-geo-lite');
+        $schedule->job(new UpdateYoutubeDLP)->weekly()->sentryMonitor('update-youtube-dlp');
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 

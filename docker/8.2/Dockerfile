@@ -55,7 +55,7 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
 # Youtube DLP
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
-        chmod a+rx /usr/local/bin/yt-dlp
+        chmod a+rwx /usr/local/bin/yt-dlp
 
 ## Dectalk
 RUN cd /home/sail && \

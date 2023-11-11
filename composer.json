@@ -32,6 +32,7 @@
         "symfony/css-selector": "^6.3",
         "symfony/panther": "^2.1",
         "tightenco/ziggy": "^1.0",
+        "tronovav/geoip2-update": "^2.3",
         "tucker-eric/eloquentfilter": "^3.1"
     },
     "require-dev": {

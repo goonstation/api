@@ -35,7 +35,7 @@ class MigratePlayers extends Command
         $reader->setHeaderOffset(0);
         $records = $reader->getRecords();
 
-        $geoReader = new GeoReader(storage_path('app').'/GeoLite2-Country.mmdb');
+        $geoReader = new GeoReader(storage_path('app').'/GeoLite2-Country/GeoLite2-Country.mmdb');
 
         $players = [];
 
