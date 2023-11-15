@@ -152,11 +152,10 @@ class PlayerSavesController extends Controller
             return response()->json(['message' => 'Unable to find source player'], 404);
         }
 
-        // See who we're moving stuff to
-        $toPlayer = Player::where('ckey', $data['to_ckey'])->first();
-        if (! $toPlayer) {
-            return response()->json(['message' => 'Unable to find target player'], 404);
-        }
+        // We allow player creation here so that admins can transfer saves to accounts that haven't connected before
+        $toPlayer = Player::firstOrCreate(
+            ['ckey' => $data['to_ckey']],
+        );
 
         // Only transfer if there's stuff to move
         if (! PlayerSave::where('player_id', $fromPlayer->id)->exists()) {

@@ -90,10 +90,11 @@ class PlayerMedalsController extends Controller
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
         if (! $playerId && isset($data['ckey'])) {
-            $player = Player::where('ckey', $data['ckey'])->first();
-            if (! $player) {
-                return response()->json(['message' => 'Unable to locate that player'], 400);
-            }
+            // If we don't have a player_id, we are likely requested via the "Copy Medals" ingame verb
+            // which doesn't require a logged in target player
+            $player = Player::firstOrCreate([
+                'ckey' => $data['ckey']
+            ]);
             $playerId = $player->id;
         }
 
