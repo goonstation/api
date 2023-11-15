@@ -1,5 +1,0 @@
-- Install yt-dlp on main image (https://github.com/yt-dlp/yt-dlp/wiki/Installation)
-  - Depends on ffmpeg. Install from package manager.
-- Set up laravel cron task for scheduling
-  - https://laravel.com/docs/10.x/scheduling#running-the-scheduler
-- Upload GeoLite2-Country.mmdb to storage/app
