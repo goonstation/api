@@ -30,7 +30,8 @@ export default {
   },
 
   created() {
-    removeBeforeListener = router.on('before', () => {
+    removeBeforeListener = router.on('before', (event) => {
+      if (event.detail.visit.method !== 'get') return
       this.searchParams = window.location.search
     })
   },
