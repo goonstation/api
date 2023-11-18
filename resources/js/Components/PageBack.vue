@@ -13,6 +13,8 @@
 import { router } from '@inertiajs/vue3'
 import { ionChevronBackCircle } from '@quasar/extras/ionicons-v6'
 
+let removeBeforeListener
+
 export default {
   setup() {
     return {
@@ -28,11 +30,13 @@ export default {
   },
 
   created() {
-    const removeBeforeListener = router.on('before', () => {
-      console.log('here', window.location.search)
+    removeBeforeListener = router.on('before', () => {
       this.searchParams = window.location.search
-      removeBeforeListener()
     })
+  },
+
+  beforeUnmount() {
+    removeBeforeListener()
   },
 
   computed: {
