@@ -3,9 +3,6 @@
     <div class="col-12 col-md-6">
       <q-form @submit="submit">
         <q-card class="gh-card q-mb-md" flat>
-          <div class="gh-card__header q-pa-md bordered">
-            <span>Map</span>
-          </div>
           <q-card-section>
             <q-input
               v-model="form.map_id"

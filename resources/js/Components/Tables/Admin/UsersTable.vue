@@ -39,7 +39,7 @@ export default {
     return {
       routes: {
         fetch: '/admin/users',
-        edit: '/admin/users/_id'
+        edit: '/admin/users/edit/_id'
       },
       columns: [
         {

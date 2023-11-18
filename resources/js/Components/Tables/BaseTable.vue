@@ -339,10 +339,6 @@ export default {
         rowsNumber: 0,
       },
       defaultPagination: {},
-      customSort: {
-        sortBy: null,
-        descending: true,
-      },
       filters: {},
       settingFiltersFromUrl: false,
       showTimestamps: false,
@@ -421,7 +417,9 @@ export default {
     // For an initial server-built packet of data
     if (!isEmpty(this.initial)) {
       this.rows = this.initial.data
-      mergedPagination.page = this.initial.current_page || 1
+      // if (this.initial.current_page > 1) {
+      //   mergedPagination.page = this.initial.current_page
+      // }
       mergedPagination.rowsPerPage = this.initial.per_page || 15
       mergedPagination.rowsNumber = this.initial.total
     }
@@ -579,7 +577,7 @@ export default {
         message: 'Item successfully deleted.',
         color: 'positive',
       })
-    },
+    }
   },
 
   watch: {

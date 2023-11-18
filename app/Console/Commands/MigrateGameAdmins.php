@@ -217,6 +217,10 @@ class MigrateGameAdmins extends Command
                 $user->password = Hash::make(Str::random(30));
                 $user->discord_id = $discordId ? $discordId : null;
                 $user->game_admin_id = $newAdmin->id;
+                // might as well. i'm lazy
+                if ($user->email === 'wirewraith@gmail.com') {
+                    $user->is_admin = true;
+                }
                 $user->save();
             }
         }

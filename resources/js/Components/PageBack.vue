@@ -28,8 +28,10 @@ export default {
   },
 
   created() {
-    router.on('before', () => {
+    const removeBeforeListener = router.on('before', () => {
+      console.log('here', window.location.search)
       this.searchParams = window.location.search
+      removeBeforeListener()
     })
   },
 

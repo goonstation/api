@@ -30,13 +30,12 @@ export default {
 
   data: () => {
     return {
-      form: {}
+      form: {},
     }
   },
 
   created() {
     this.form = useForm(this.fields)
-
     this.$emit('created', this.form)
   },
 

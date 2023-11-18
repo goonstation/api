@@ -121,7 +121,9 @@ Route::middleware([
 
     Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
         Route::controller(AdminUsersController::class)->prefix('users')->group(function () {
-            Route::get('/', 'index')->name('admin.users.index');
+            Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
+            Route::get('/edit/{user}', 'edit')->name('admin.users.edit')->breadcrumb('', 'admin.users.index');
+            Route::put('/{user}', 'update')->name('admin.users.update');
         });
 
         Route::controller(AdminGameAdminRanksController::class)->prefix('game-admin-ranks')->group(function () {
