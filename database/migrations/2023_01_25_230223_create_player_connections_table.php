@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreign('round_id')->references('id')->on('game_rounds');
 
             $table->index('player_id');
+            $table->index('ip');
+            $table->index('comp_id');
         });
     }
 

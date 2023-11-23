@@ -28,6 +28,7 @@
         "pastel-color": "^1.0.3",
         "quasar": "^2.13.1",
         "resumablejs": "^1.1.0",
+        "trendline": "^1.0.0",
         "vue-dompurify-html": "^4.1.4",
         "vue3-apexcharts": "^1.4.4"
     }

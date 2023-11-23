@@ -8,9 +8,9 @@
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="175" :breakpoint="600">
       <q-scroll-area class="fit">
         <q-list class="site-nav" ref="siteNav">
-          <a class="block q-mt-lg q-mb-md logo" @click.prevent="router.visit('/')" href="/">
+          <Link class="block q-mt-lg q-mb-md logo" href="/">
             <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
-          </a>
+          </Link>
           <template v-for="(menuItem, index) in menuList" :key="index">
             <q-expansion-item
               v-if="menuItem.children"
@@ -24,6 +24,8 @@
               :expand-icon="ionChevronDown"
               dense-toggle
               v-model="menuItem.active"
+              @focusin.native="onNavItemEnter"
+              @focusout.native="onNavItemLeave"
               @after-hide="onNavItemLeave"
             >
               <template #header>
@@ -35,48 +37,52 @@
               <div class="site-nav__exp-content q-pl-sm">
                 <q-item
                   v-for="(childItem, index) in menuItem.children"
-                  class="site-nav__item q-px-lg"
+                  class="site-nav__item q-pa-none"
                   :class="[
                     {
                       'site-nav__item--active': childItem.active,
                     },
                     `site-nav__item-${index}`,
                   ]"
-                  clickable
-                  @click.prevent="onNavItemClick($event, childItem.href)"
-                  @focus="onNavItemEnter"
-                  @blur="onNavItemLeave"
-                  :href="childItem.href"
                   :active="childItem.active"
-                  v-ripple
                 >
-                  <q-item-section class="site-nav__label">
-                    {{ childItem.label }}
-                  </q-item-section>
+                  <Link
+                    :href="childItem.href"
+                    @focus="onNavItemEnter"
+                    @blur="onNavItemLeave"
+                    class="q-px-lg q-py-sm"
+                    v-ripple
+                  >
+                    <q-item-section class="site-nav__label">
+                      {{ childItem.label }}
+                    </q-item-section>
+                  </Link>
                 </q-item>
               </div>
             </q-expansion-item>
 
             <q-item
               v-else
-              class="site-nav__item q-px-lg"
+              class="site-nav__item q-pa-none"
               :class="[
                 {
                   'site-nav__item--active': menuItem.active,
                 },
                 `site-nav__item-${index}`,
               ]"
-              clickable
-              @click.prevent="onNavItemClick($event, menuItem.href)"
-              @focus="onNavItemEnter"
-              @blur="onNavItemLeave"
-              :href="menuItem.href"
               :active="menuItem.active"
-              v-ripple
             >
-              <q-item-section class="site-nav__label">
-                {{ menuItem.label }}
-              </q-item-section>
+              <Link
+                :href="menuItem.href"
+                @focus="onNavItemEnter"
+                @blur="onNavItemLeave"
+                class="q-px-lg q-py-sm"
+                v-ripple
+              >
+                <q-item-section class="site-nav__label">
+                  {{ menuItem.label }}
+                </q-item-section>
+              </Link>
             </q-item>
             <q-separator :key="'sep' + index" v-if="menuItem.separator" />
           </template>
@@ -163,6 +169,33 @@
       transition: all 200ms;
     }
   }
+
+  &__item {
+    a {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      color: white;
+      transition: color 0.3s, background-color 0.3s;
+
+      &:focus,
+      &:hover {
+        outline: 0;
+        background: rgba(white, 0.15);
+      }
+    }
+
+    &--active {
+      a {
+        color: var(--q-primary);
+
+        &:focus,
+        &:hover {
+        background: color-mix(in srgb, var(--q-primary) 15%, transparent);
+      }
+      }
+    }
+  }
 }
 
 .page-wrapper {
@@ -189,7 +222,7 @@ export default {
   setup() {
     return {
       router,
-      ionChevronDown
+      ionChevronDown,
     }
   },
 
@@ -239,25 +272,25 @@ export default {
           children: [
             {
               label: 'Overview',
-              href: '/events'
+              href: '/events',
             },
             {
               label: 'Antagonists',
-              href: '/events/antags'
+              href: '/events/antags',
             },
             {
               label: 'Deaths',
-              href: '/events/deaths'
+              href: '/events/deaths',
             },
             {
               label: 'Fines',
-              href: '/events/fines'
+              href: '/events/fines',
             },
             {
               label: 'Tickets',
-              href: '/events/tickets'
+              href: '/events/tickets',
             },
-          ]
+          ],
         },
         {
           label: 'Maps',
@@ -334,7 +367,7 @@ export default {
       const href = menuItem.match ? menuItem.match : menuItem.href
       if (href === '/' && this.$page.url === '/') return true
       else if (href !== '/') return this.$page.url.startsWith(href)
-    }
+    },
   },
 
   created() {
@@ -350,8 +383,12 @@ export default {
     this.onNavItemLeave()
     this.animateNavBar = true
 
-    const navItems = Array.from(this.$refs.siteNav.$el.querySelectorAll('.site-nav__item:not(.site-nav__item-parent)'))
-    const parentNavItems = Array.from(this.$refs.siteNav.$el.querySelectorAll('.site-nav__item-parent .q-item'))
+    const navItems = Array.from(
+      this.$refs.siteNav.$el.querySelectorAll('.site-nav__item:not(.site-nav__item-parent)')
+    )
+    const parentNavItems = Array.from(
+      this.$refs.siteNav.$el.querySelectorAll('.site-nav__item-parent .q-item')
+    )
     navItems.concat(parentNavItems).forEach((item) => {
       item.addEventListener('mouseenter', this.onNavItemEnter)
       item.addEventListener('mouseleave', this.onNavItemLeave)

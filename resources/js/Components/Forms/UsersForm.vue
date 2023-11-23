@@ -64,18 +64,6 @@
               :error="!!form.errors.discord_id"
               :error-message="form.errors.discord_id"
             />
-            <!-- <q-input
-              v-model="form.game_admin_id"
-              type="number"
-              class="q-mb-md"
-              label="Game Admin ID"
-              filled
-              lazy-rules
-              dense
-              hide-bottom-space
-              :error="!!form.errors.game_admin_id"
-              :error-message="form.errors.game_admin_id"
-            /> -->
             <select-game-admins
               v-model="form.game_admin_id"
               class="q-mb-md"

@@ -41,7 +41,9 @@ class PlayersController extends Controller
             'jobBans.gameServer',
             'playtime',
             'vpnWhitelist:id,ckey',
-            'notes',
+            'notes' => function ($q) {
+                $q->orderBy('id', 'desc');
+            },
             'notes.gameAdmin',
             'notes.gameServer',
         ])
@@ -64,10 +66,23 @@ class PlayersController extends Controller
             $player->connections->pluck('ip')->unique(),
         );
 
+        $ips = $player->connections->pluck('ip')->unique()->values();
+        $compIds = $player->connections->pluck('comp_id')->unique()->values();
+
+        $otherAccounts = Player::with(['latestConnection'])
+            ->whereHas('connections', function ($query) use ($ips, $compIds) {
+                $query->whereIn('ip', $ips)
+                    ->orWhereIn('comp_id', $compIds);
+            })
+            ->where('id', '!=', $player->id)
+            ->orderBy('id', 'desc')
+            ->get();
+
         return Inertia::render('Admin/Players/Show', [
             'player' => $player,
             'latestRound' => $latestRound,
             'banHistory' => $banHistory,
+            'otherAccounts' => $otherAccounts,
         ]);
     }
 }

@@ -12,7 +12,7 @@
     </template> -->
     <template v-slot:body-cell-admin_ckey="props">
       <q-td :props="props">
-        <Link :href="route('admin.game-admins.show', props.row.game_admin.id)">
+        <Link v-if="props.row.game_admin" :href="route('admin.game-admins.show', props.row.game_admin.id)">
           {{ props.row.game_admin.name || props.row.game_admin.ckey }}
         </Link>
       </q-td>
@@ -51,6 +51,13 @@ export default {
           name: 'admin_ckey',
           label: 'Admin',
           sortable: true,
+        },
+        {
+          name: 'created_at',
+          label: 'Created',
+          field: 'created_at',
+          sortable: true,
+          format: this.$formats.date,
         },
       ],
     }

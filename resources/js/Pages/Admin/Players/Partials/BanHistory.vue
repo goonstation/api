@@ -91,6 +91,13 @@ export default {
           sortable: true,
         },
         {
+          name: 'created_at',
+          label: 'Created',
+          field: 'created_at',
+          sortable: true,
+          format: this.$formats.date,
+        },
+        {
           name: 'status',
           label: '',
           headerClasses: 'q-table--col-auto-width',

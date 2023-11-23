@@ -18,7 +18,7 @@ export default {
       series: null,
       chartOptions: {
         chart: {
-          id: 'player-connections-over-time',
+          id: 'players-over-time',
           type: 'line',
           stacked: false,
           foreColor: '#fff',

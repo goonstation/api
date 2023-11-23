@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-card class="q-mb-md" flat>
-      <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-xl q-pb-md">
+      <q-card-section class="flex gap-xs-md items-start q-pl-lg q-pr-md q-pb-md">
         <player-avatar :player="player" class="q-mt-xs" />
         <div class="q-pb-xs">
           <div class="text-weight-bold text-h6">
@@ -15,32 +15,40 @@
             Started playing {{ dayjs(firstConnection.created_at).fromNow() }}
           </div>
         </div>
+        <q-space />
+        <div>
+          <q-chip v-if="isBanned" color="negative" text-color="dark" class="text-weight-bold" square
+            >Banned</q-chip
+          >
+          <q-chip v-else color="positive" text-color="dark" class="text-weight-bold" square
+            >Not Banned</q-chip
+          >
+          <q-chip
+            v-if="player.vpn_whitelist"
+            color="info"
+            text-color="dark"
+            class="text-weight-bold"
+            square
+          >
+            VPN Whitelisted
+          </q-chip>
+        </div>
       </q-card-section>
 
-      <q-markup-table class="player-details" bordered>
+      <q-markup-table class="player-details" bordered dense>
         <tbody>
-          <tr>
-            <td colspan="2">
-              <q-chip
-                v-if="isBanned"
-                color="negative"
-                text-color="dark"
-                class="text-weight-bold"
-                square
-                >Banned</q-chip
-              >
-              <q-chip v-else color="positive" text-color="dark" class="text-weight-bold" square
-                >Not Banned</q-chip
-              >
-              <q-chip
-                v-if="player.vpn_whitelist"
-                color="info"
-                text-color="dark"
-                class="text-weight-bold"
-                square
-              >
-                VPN Whitelisted
-              </q-chip>
+          <tr v-if="latestConnection">
+            <td>Last Seen IP</td>
+            <td>
+              {{ latestConnection.ip }}
+              <ips :connections="player.connections" class="q-ml-sm" />
+            </td>
+          </tr>
+          <tr v-if="latestConnection">
+            <td>Last Seen Computer ID</td>
+            <td>
+              {{ latestConnection.comp_id }}
+              <comp-ids :connections="player.connections" class="q-ml-sm" />
             </td>
           </tr>
           <tr v-if="latestRound">
@@ -74,6 +82,16 @@
 
     <q-card class="gh-card gh-card--small q-mb-md" flat>
       <div class="gh-card__header">
+        <q-icon :name="ionEarth" size="22px" />
+        <span>Connections ({{ player.connections.length }})</span>
+      </div>
+      <q-card-section class="q-pa-none">
+        <connections :connections="player.connections" />
+      </q-card-section>
+    </q-card>
+
+    <q-card class="gh-card gh-card--small q-mb-md" flat>
+      <div class="gh-card__header">
         <q-icon :name="ionBan" size="22px" />
         <q-tabs v-model="banTab" active-color="primary" indicator-color="transparent">
           <q-tab
@@ -83,6 +101,10 @@
             content-class="q-pa-sm text-sm text-weight-medium"
           >
             {{ type }}
+            <template v-if="type === 'Ban History'"> ({{ banHistory.length }}) </template>
+            <template v-else-if="type === 'Job Ban History'">
+              ({{ player.job_bans.length }})
+            </template>
           </q-tab>
         </q-tabs>
       </div>
@@ -98,34 +120,37 @@
       </q-card-section>
     </q-card>
 
-    <q-card class="gh-card gh-card--small" flat>
+    <q-card class="gh-card gh-card--small q-mb-md" flat>
       <div class="gh-card__header">
         <q-icon :name="ionPencil" size="22px" />
-        <span>Notes</span>
+        <span>Notes ({{ player.notes.length }})</span>
       </div>
       <q-card-section class="q-pa-none">
         <notes :notes="player.notes" />
       </q-card-section>
     </q-card>
 
-    <pre>
-      stats (same as public player view page)
-      labels
-        vpn whitelisted
-        banned
-      connection history (graph with drill down into specific rounds)
-      associated accounts (players with the same IP/compID details)
-      ban/jobban history
-      notes
-    </pre>
+    <q-card class="gh-card gh-card--small" flat>
+      <div class="gh-card__header">
+        <q-icon :name="ionPeople" size="22px" />
+        <span>Other Accounts ({{ otherAccounts.length }})</span>
+      </div>
+      <q-card-section class="q-pa-none">
+        <q-banner class="bg-grey-10 q-ma-md">
+          <template v-slot:avatar>
+            <q-icon :name="ionInformationCircleOutline" color="primary" size="md" class="q-mt-xs" />
+          </template>
+          These are accounts that have connected with the same IP Address or Computer ID as this
+          player. Please note that this doesn't always mean they are played by the same person. This
+          information is provided for investigation purposes only.
+        </q-banner>
+        <other-accounts :accounts="otherAccounts" />
+      </q-card-section>
+    </q-card>
   </div>
 </template>
 
 <style lang="scss" scoped>
-// .q-card {
-//   max-width: 500px;
-// }
-
 .player-details {
   tr {
     td:first-child {
@@ -141,13 +166,23 @@
 
 <script>
 import dayjs from 'dayjs'
-import { ionBan, ionPencil } from '@quasar/extras/ionicons-v6'
+import {
+  ionEarth,
+  ionBan,
+  ionPencil,
+  ionPeople,
+  ionInformationCircleOutline,
+} from '@quasar/extras/ionicons-v6'
 import { Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
+import Ips from './Partials/Ips.vue'
+import CompIds from './Partials/CompIds.vue'
+import Connections from './Partials/Connections.vue'
 import BanHistory from './Partials/BanHistory.vue'
 import JobBanHistory from './Partials/JobBanHistory.vue'
 import Notes from './Partials/Notes.vue'
+import OtherAccounts from './Partials/OtherAccounts.vue'
 
 export default {
   layout: (h, page) =>
@@ -162,16 +197,23 @@ export default {
   components: {
     Link,
     PlayerAvatar,
+    Ips,
+    CompIds,
+    Connections,
     BanHistory,
     JobBanHistory,
     Notes,
+    OtherAccounts,
   },
 
   setup() {
     return {
       dayjs,
+      ionEarth,
       ionBan,
       ionPencil,
+      ionPeople,
+      ionInformationCircleOutline,
     }
   },
 
@@ -179,6 +221,7 @@ export default {
     player: Object,
     latestRound: Object,
     banHistory: Object,
+    otherAccounts: Object,
   },
 
   data() {
