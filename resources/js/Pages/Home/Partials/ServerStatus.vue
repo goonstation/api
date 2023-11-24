@@ -2,6 +2,7 @@
   <q-card
     tag="a"
     :href="`https://play.goonhub.com/${server.server_id}`"
+    :class="mapId && `server-status--map-${mapId}`"
     target="_blank"
     class="server-status"
     flat
@@ -65,6 +66,26 @@
     filter: blur(1px);
     mask-image: linear-gradient(to left, var(--q-dark) 0%, transparent 100%);
     transition: all 200ms;
+  }
+
+  // Help with centering some maps that don't have the station quite in the middle
+  &--map-atlas &__map {
+    margin-top: 30px;
+    margin-right: 20px;
+  }
+  &--map-clarion &__map {
+    margin-top: -20px;
+    margin-right: -10px;
+  }
+  &--map-nadir &__map {
+    margin-top: 5px;
+  }
+  &--map-kondaru &__map {
+    margin-top: -15px;
+    margin-right: 25px;
+  }
+  &--map-donut3 &__map {
+    margin-top: -10px;
   }
 
   &:after {
@@ -167,6 +188,7 @@ export default {
   methods: {
     async refresh() {
       this.error = false
+      let expireTime = 60 // seconds
       try {
         const res = await axios.get(`${this.$page.props.env.GAME_BRIDGE_URL}/status`, {
           params: {
@@ -174,15 +196,17 @@ export default {
           },
         })
         this.status = res.data.response
-
-        // Refresh again when the cache has expired
-        this.refreshTimer = setTimeout(() => {
-          this.refresh()
-        }, (res.data.meta.cacheExpires + 1) * 1000)
+        expireTime = res.data.meta.cacheExpires + 1
       } catch (e) {
         this.error = e.message
         this.status = {}
       }
+
+      // Refresh again when the cache has expired
+      this.refreshTimer = setTimeout(() => {
+        this.refresh()
+      }, expireTime * 1000)
+
       this.$emit('refreshed', {
         serverId: this.server.server_id,
         status: this.status,
