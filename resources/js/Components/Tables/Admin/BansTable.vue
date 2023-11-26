@@ -63,6 +63,7 @@ export default {
     return {
       routes: {
         fetch: '/admin/bans',
+        view: '/admin/bans/_id',
         create: '/admin/bans/create',
         edit: '/admin/bans/edit/_id',
       },

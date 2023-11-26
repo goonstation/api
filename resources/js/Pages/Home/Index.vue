@@ -177,8 +177,6 @@ export default {
   },
 
   props: {
-    canLogin: Boolean,
-    canRegister: Boolean,
     servers: Array,
     playersOnline: Object,
     lastRounds: Object,

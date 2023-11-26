@@ -62,6 +62,7 @@ export default {
     return {
       routes: {
         fetch: '/admin/bans/removed',
+        view: '/admin/bans/_id',
       },
       columns: [
         {

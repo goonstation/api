@@ -43,7 +43,7 @@
             <q-chip
               v-if="objective.success"
               class="text-sm text-weight-bold"
-              color="green"
+              color="positive"
               text-color="dark"
               square
             >

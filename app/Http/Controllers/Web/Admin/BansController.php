@@ -101,4 +101,23 @@ class BansController extends Controller
 
         return to_route('admin.bans.index');
     }
+
+    public function show(int $ban)
+    {
+        $ban = Ban::withTrashed()
+            ->with([
+                'originalBanDetail',
+                'gameAdmin',
+                'gameServer',
+                'details' => function($q) {
+                    $q->where('deleted_at', null)
+                        ->orderBy('id', 'desc');
+                },
+            ])
+            ->findOrFail($ban);
+
+        return Inertia::render('Admin/Bans/Show', [
+            'ban' => $ban
+        ]);
+    }
 }

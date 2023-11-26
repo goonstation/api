@@ -24,7 +24,7 @@
       </div>
 
       <div class="text-weight-medium">
-        <span class="opacity-60 text-sm">Created at</span>
+        <span class="opacity-60 text-sm">Fined on</span>
         {{ dayjs(fine.created_at).format('YYYY-MM-DD [at] h:mma') }}
       </div>
     </q-card-section>
