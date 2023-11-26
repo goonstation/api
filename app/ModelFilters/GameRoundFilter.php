@@ -27,6 +27,13 @@ class GameRoundFilter extends ModelFilter
         return $this->where('server_id', 'ILIKE', '%'.$val.'%');
     }
 
+    public function stationName($val)
+    {
+        return $this->related('latestStationName', function ($query) use ($val) {
+            return $query->where('name', 'ILIKE', '%'.$val.'%');
+        });
+    }
+
     public function map($val)
     {
         return $this->where('map', 'ILIKE', '%'.$val.'%');

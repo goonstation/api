@@ -37,7 +37,14 @@
           </div>
         </div>
 
-        <q-chip v-if="death.gibbed" class="q-ml-md" size="sm" color="red" square outline>
+        <q-chip
+          v-if="death.gibbed"
+          class="q-ml-md text-weight-bold"
+          size="sm"
+          color="red"
+          square
+          outline
+        >
           Gibbed
         </q-chip>
       </div>
@@ -75,7 +82,7 @@ export default {
     ),
 
   components: {
-    LinkGameRound
+    LinkGameRound,
   },
 
   props: {

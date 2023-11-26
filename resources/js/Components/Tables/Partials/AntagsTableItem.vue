@@ -12,7 +12,7 @@
           <div>{{ traitorType }}</div>
           <q-chip
             v-if="item.row.success"
-            class="q-mx-none"
+            class="q-mx-none text-weight-bold"
             size="sm"
             color="positive"
             text-color="dark"
@@ -20,7 +20,14 @@
           >
             Succeeded
           </q-chip>
-          <q-chip v-else class="q-mx-none" size="sm" color="negative" text-color="dark" square>
+          <q-chip
+            v-else
+            class="q-mx-none text-weight-bold"
+            size="sm"
+            color="negative"
+            text-color="dark"
+            square
+          >
             Failed
           </q-chip>
         </div>

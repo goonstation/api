@@ -5,10 +5,24 @@
         <div>
           <div class="text-primary text-lg">{{ antag.mob_name }}</div>
           <div v-if="antag.mob_job">{{ antag.mob_job }}</div>
-          <q-chip v-if="antag.success" color="positive" class="q-ma-none" square>
+          <q-chip
+            v-if="antag.success"
+            color="positive"
+            class="q-ml-none text-weight-bold"
+            text-color="dark"
+            square
+          >
             Succeeded
           </q-chip>
-          <q-chip v-else color="negative" class="q-ma-none" square> Failed </q-chip>
+          <q-chip
+            v-else
+            color="negative"
+            class="q-ml-none text-weight-bold"
+            text-color="dark"
+            square
+          >
+            Failed
+          </q-chip>
         </div>
 
         <q-space />
@@ -28,14 +42,16 @@
           <q-item-section avatar>
             <q-chip
               v-if="objective.success"
-              class="text-sm"
+              class="text-sm text-weight-bold"
               color="green"
-              text-color="white"
+              text-color="dark"
               square
             >
               Succeeded
             </q-chip>
-            <q-chip v-else class="text-sm" color="red" text-color="white" square> Failed </q-chip>
+            <q-chip v-else class="text-sm text-weight-bold" color="red" text-color="dark" square>
+              Failed
+            </q-chip>
           </q-item-section>
         </q-item>
         <q-item v-else>None</q-item>

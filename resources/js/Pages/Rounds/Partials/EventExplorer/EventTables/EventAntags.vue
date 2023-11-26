@@ -13,10 +13,18 @@
       <q-tr :props="props">
         <q-td v-for="col in props.cols" :key="col.name" :props="props">
           <template v-if="col.name === 'success'">
-            <q-chip v-if="col.value" class="text-sm" color="green" text-color="white" square>
+            <q-chip
+              v-if="col.value"
+              class="text-sm text-weight-bold"
+              color="green"
+              text-color="dark"
+              square
+            >
               Succeeded
             </q-chip>
-            <q-chip v-else class="text-sm" color="red" text-color="white" square> Failed </q-chip>
+            <q-chip v-else class="text-sm text-weight-bold" color="red" text-color="dark" square>
+              Failed
+            </q-chip>
           </template>
 
           <template v-else>{{ col.value }}</template>
@@ -40,18 +48,27 @@
             <q-list dense>
               <q-item-label header class="q-py-sm">Objectives</q-item-label>
               <q-item v-if="props.row.objectives.length" v-for="objective in props.row.objectives">
-                <q-item-section style="white-space: pre-wrap;" v-dompurify-html="objective.objective"></q-item-section>
+                <q-item-section
+                  style="white-space: pre-wrap"
+                  v-dompurify-html="objective.objective"
+                ></q-item-section>
                 <q-item-section avatar>
                   <q-chip
                     v-if="objective.success"
-                    class="text-sm"
+                    class="text-sm text-weight-bold"
                     color="green"
-                    text-color="white"
+                    text-color="dark"
                     square
                   >
                     Succeeded
                   </q-chip>
-                  <q-chip v-else class="text-sm" color="red" text-color="white" square>
+                  <q-chip
+                    v-else
+                    class="text-sm text-weight-bold"
+                    color="red"
+                    text-color="dark"
+                    square
+                  >
                     Failed
                   </q-chip>
                 </q-item-section>

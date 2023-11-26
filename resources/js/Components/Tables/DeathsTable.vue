@@ -23,10 +23,9 @@
               </div>
             </div>
             <div class="col-xs-12 col-md-auto flex items-center q-ml-auto gap-xs-sm gap-md-md">
-              <div class="text-xs opacity-60">Died from</div>
               <q-chip
                 v-if="props.row.gibbed"
-                class="q-mx-none"
+                class="q-mx-none text-weight-bold"
                 size="sm"
                 color="red"
                 square
@@ -34,6 +33,7 @@
               >
                 Gibbed
               </q-chip>
+              <div class="text-xs opacity-60">Died from</div>
               <div class="gh-details-list gh-details-list--non-collapsible gh-details-list--small">
                 <div>
                   <div class="bruteloss">{{ $formats.number(props.row.bruteloss) }}</div>

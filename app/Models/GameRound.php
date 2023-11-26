@@ -118,7 +118,6 @@ class GameRound extends Model
 
     public function latestStationName()
     {
-        // return $this->stationNames()->latestStationName();
         return $this->hasOne(EventStationName::class, 'round_id')->latest();
     }
 }

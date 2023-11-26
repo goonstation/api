@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center">
-    <q-checkbox v-model="model" />
+    <q-toggle v-model="model" />
   </div>
 </template>
 

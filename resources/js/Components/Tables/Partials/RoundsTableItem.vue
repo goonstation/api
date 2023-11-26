@@ -18,9 +18,7 @@
             Duration
             <q-icon :name="ionInformationCircle" />
           </div>
-          <q-tooltip :offset="[0, 5]" class="text-sm">
-            Ended {{ endedFromNow }}
-          </q-tooltip>
+          <q-tooltip :offset="[0, 5]" class="text-sm"> Ended {{ endedFromNow }} </q-tooltip>
         </div>
         <div v-if="item.row.map_record || item.row.map">
           <div>
@@ -39,8 +37,12 @@
         </div>
       </div>
       <div class="badges">
-        <q-badge v-if="item.row.rp_mode" color="info" text-color="dark">Roleplay</q-badge>
-        <q-badge v-if="item.row.crashed" color="negative" text-color="dark">Crashed</q-badge>
+        <q-badge v-if="item.row.rp_mode" color="info" text-color="dark" class="text-weight-bold"
+          >Roleplay</q-badge
+        >
+        <q-badge v-if="item.row.crashed" color="negative" text-color="dark" class="text-weight-bold"
+          >Crashed</q-badge
+        >
       </div>
     </Link>
   </div>
@@ -67,12 +69,12 @@ export default {
   setup() {
     return {
       dayjs,
-      ionInformationCircle
+      ionInformationCircle,
     }
   },
 
   props: {
-    item: Object
+    item: Object,
   },
 
   computed: {
@@ -94,7 +96,7 @@ export default {
     endedFromNow() {
       if (!this.item.row.ended_at) return
       return dayjs(this.item.row.ended_at).fromNow()
-    }
-  }
+    },
+  },
 }
 </script>

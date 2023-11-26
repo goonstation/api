@@ -2,7 +2,12 @@
   <q-table :rows="events" :columns="columns" :rows-per-page-options="[0]" row-key="name" wrap-cells>
     <template v-slot:body-cell-gibbed="props">
       <q-td :props="props">
-        <q-chip v-if="props.value" class="text-sm" color="red" text-color="white" square
+        <q-chip
+          v-if="props.value"
+          class="text-sm text-weight-bold"
+          color="red"
+          text-color="dark"
+          square
           >Gibbed</q-chip
         >
       </q-td>

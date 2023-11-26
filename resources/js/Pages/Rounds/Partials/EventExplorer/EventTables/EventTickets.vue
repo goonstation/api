@@ -1,5 +1,11 @@
 <template>
-  <q-table :rows="events" :columns="columns" :rows-per-page-options="[0]" row-key="name" wrap-cells />
+  <q-table
+    :rows="events"
+    :columns="columns"
+    :rows-per-page-options="[0]"
+    row-key="name"
+    wrap-cells
+  />
 </template>
 
 <script>

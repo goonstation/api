@@ -34,6 +34,9 @@ export default {
         dataLabels: {
           enabled: false,
         },
+        fill: {
+          opacity: 1,
+        },
         xaxis: {
           type: 'datetime',
           categories: [],

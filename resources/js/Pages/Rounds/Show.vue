@@ -39,8 +39,20 @@
           </div>
         </div>
         <div class="badges">
-          <q-badge v-if="round.rp_mode" color="info" text-color="dark">Roleplay</q-badge>
-          <q-badge v-if="round.crashed" color="negative" text-color="dark">Crashed</q-badge>
+          <q-badge
+            v-if="round.rp_mode"
+            class="q-pa-sm text-weight-bold"
+            color="info"
+            text-color="dark"
+            >Roleplay</q-badge
+          >
+          <q-badge
+            v-if="round.crashed"
+            class="q-pa-sm text-weight-bold"
+            color="negative"
+            text-color="dark"
+            >Crashed</q-badge
+          >
         </div>
       </q-card-section>
     </q-card>
@@ -96,7 +108,7 @@ export default {
   setup() {
     return {
       dayjs,
-      ionOpenOutline
+      ionOpenOutline,
     }
   },
 

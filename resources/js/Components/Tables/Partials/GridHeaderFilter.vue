@@ -1,5 +1,5 @@
 <template>
-  <q-btn-group>
+  <q-btn-group v-if="column">
     <q-btn class="text-sm" color="grey-9" padding="xs sm" dense no-caps unelevated>
       <component v-if="filterContentComponent" :is="filterContentComponent" :filter="filter" />
       <template v-else>
@@ -57,8 +57,8 @@ export default {
 
   computed: {
     comparator() {
-      const type = this.column.filter?.type ?? ''
-      if (type === 'daterange') {
+      const type = this.column.filter?.type.toLowerCase() ?? ''
+      if (type === 'daterange' || type === 'griddaterange') {
         if (this.filter.includes('-')) return 'is between'
         else return 'is on'
       } else if (type === 'boolean') {
@@ -71,10 +71,11 @@ export default {
     },
 
     prettyFilter() {
-      if (this.column.filter?.type === 'daterange') {
+      const type = this.column.filter?.type.toLowerCase() ?? ''
+      if (type === 'daterange' || type === 'griddaterange') {
         return this.filter.replace('-', ' and ')
       }
-      if (this.column.filter?.type === 'boolean') {
+      if (type === 'boolean') {
         return ''
       }
       return this.filter

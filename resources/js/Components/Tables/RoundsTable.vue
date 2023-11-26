@@ -40,6 +40,12 @@ export default {
           sortable: true,
           filter: { type: 'SelectServers' },
         },
+        {
+          name: 'station_name',
+          label: 'Station Name',
+          field: 'station_name',
+          sortable: false,
+        },
         { name: 'map', label: 'Map', field: 'map', sortable: true },
         { name: 'game_type', label: 'Game Type', field: 'game_type', sortable: true },
         {

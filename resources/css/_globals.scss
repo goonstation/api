@@ -8,6 +8,11 @@ a {
   }
 }
 
+::selection {
+  background: $primary;
+  color: $dark;
+}
+
 // gap-{breakpoint}-{size}
 // E.g. gap-sm-md
 @each $sizeName, $width in $sizes {
@@ -41,6 +46,7 @@ a {
 .gh-sprite { image-rendering: pixelated; }
 
 // Scrollbar customization for Chrome, Edge and Safari
+// Firefox has poor customization controls and can thus get boned
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;

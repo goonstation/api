@@ -35,15 +35,17 @@
                   </q-item>
                   <q-separator />
                   <q-item class="column">
-                    <div v-for="column in columns">
-                      <q-radio
-                        v-model="_pagination.sortBy"
-                        :val="column.name"
-                        :label="column.label"
-                        @update:model-value="onSortChange({ column: $event })"
-                        size="sm"
-                      />
-                    </div>
+                    <template v-for="column in columns">
+                      <div v-if="column.sortable">
+                        <q-radio
+                          v-model="_pagination.sortBy"
+                          :val="column.name"
+                          :label="column.label"
+                          @update:model-value="onSortChange({ column: $event })"
+                          size="sm"
+                        />
+                      </div>
+                    </template>
                   </q-item>
                 </q-list>
               </q-menu>
@@ -420,7 +422,7 @@ export default {
       // if (this.initial.current_page > 1) {
       //   mergedPagination.page = this.initial.current_page
       // }
-      mergedPagination.rowsPerPage = this.initial.per_page || 15
+      // mergedPagination.rowsPerPage = this.initial.per_page || 15
       mergedPagination.rowsNumber = this.initial.total
     }
 

@@ -18,7 +18,7 @@ class RoundsController extends Controller
             GameRound::with([
                 'server:server_id,name',
                 'mapRecord:id,map_id,name',
-                'latestStationName',
+                'latestStationName:id,round_id,name',
             ])
                 ->where('ended_at', '!=', null)
                 ->whereRelation('server', 'invisible', '!=', true),
