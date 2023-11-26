@@ -17,7 +17,8 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $servers = GameServer::where('active', true)
+        $servers = GameServer::select('id', 'server_id', 'name')
+            ->where('active', true)
             ->where('invisible', false)
             ->orderBy('server_id', 'asc')
             ->get();
@@ -62,8 +63,9 @@ class HomeController extends Controller
         foreach ($serversToShow as $server) {
             $lastRounds[] = GameRound::with([
                 'server:server_id,name',
-                'latestStationName',
+                'latestStationName:round_id,name',
             ])
+                ->select('id', 'server_id', 'created_at', 'ended_at')
                 ->where('server_id', $server)
                 ->whereNotNull('ended_at')
                 ->orderByRaw('created_at DESC NULLS LAST')
@@ -73,8 +75,6 @@ class HomeController extends Controller
         $changelog = ChangelogHelper::get(7);
 
         return Inertia::render('Home/Index', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
             'servers' => $servers,
             'playersOnline' => $playersOnline,
             'lastRounds' => $lastRounds,

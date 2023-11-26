@@ -15,7 +15,8 @@ class FinesController extends Controller
     public function index(Request $request)
     {
         $fines = $this->indexQuery(
-            EventFine::whereRelation('gameRound', 'ended_at', '!=', null)
+            EventFine::select('id', 'round_id', 'amount', 'issuer', 'issuer_job', 'target', 'reason')
+                ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
@@ -29,8 +30,23 @@ class FinesController extends Controller
         return $fines;
     }
 
-    public function show(Request $request, EventFine $fine)
+    public function show(Request $request, int $fine)
     {
+        $fine = EventFine::select(
+            'id',
+            'round_id',
+            'amount',
+            'issuer',
+            'issuer_job',
+            'target',
+            'reason',
+            'created_at'
+        )
+        ->where('id', $fine)
+        ->whereRelation('gameRound', 'ended_at', '!=', null)
+        ->whereRelation('gameRound.server', 'invisible', false)
+        ->firstOrFail();
+
         return Inertia::render('Events/Fines/Show', [
             'fine' => $fine,
         ]);

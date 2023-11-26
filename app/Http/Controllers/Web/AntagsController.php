@@ -18,6 +18,15 @@ class AntagsController extends Controller
             EventAntag::with([
                 'objectives:id,round_id,player_id,success',
             ])
+                ->select(
+                    'id',
+                    'round_id',
+                    'player_id',
+                    'mob_job',
+                    'mob_name',
+                    'success',
+                    'traitor_type'
+                )
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
@@ -32,9 +41,25 @@ class AntagsController extends Controller
         return $antags;
     }
 
-    public function show(Request $request, EventAntag $antag)
+    public function show(Request $request, int $antag)
     {
-        $antag->load(['objectives', 'itemPurchases']);
+        $antag = EventAntag::with([
+            'objectives:id,round_id,player_id,objective,success',
+            'itemPurchases:id,round_id,player_id,item',
+        ])
+            ->select(
+                'id',
+                'round_id',
+                'player_id',
+                'mob_job',
+                'mob_name',
+                'success',
+                'traitor_type'
+            )
+            ->where('id', $antag)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->whereRelation('gameRound.server', 'invisible', false)
+            ->firstOrFail();
 
         return Inertia::render('Events/Antags/Show', [
             'antag' => $antag,

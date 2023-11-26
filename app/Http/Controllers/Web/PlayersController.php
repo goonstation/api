@@ -90,10 +90,12 @@ class PlayersController extends Controller
     {
         $players = Player::with([
             'latestConnection' => function ($q) {
-                $q->whereRelation('gameRound', 'ended_at', '!=', null)
+                $q->select('id', 'player_id', 'round_id', 'created_at')
+                    ->whereRelation('gameRound', 'ended_at', '!=', null)
                     ->whereRelation('gameRound.server', 'invisible', '!=', true);
             },
         ])
+            ->select('id', 'ckey', 'key')
             ->filter($request->input('filters', []))
             ->orderBy(
                 $request->input('sort_by', 'id'),
@@ -119,15 +121,16 @@ class PlayersController extends Controller
                     ->whereRelation('gameRound.server', 'invisible', '!=', true);
             },
             'firstConnection:id,player_id,created_at',
-            'playtime',
+            'playtime:player_id,seconds_played',
         ])
+            ->select('id', 'ckey', 'key')
             ->withCount([
                 'participations',
                 'participationsRp',
                 'deaths',
             ])
             ->where('id', $player)
-            ->first();
+            ->firstOrFail();
 
         $favoriteJob = PlayerParticipation::select('job')
             ->selectRaw('count(id) as played_job')
@@ -140,6 +143,7 @@ class PlayersController extends Controller
         $latestRound = null;
         if ($player->latestConnection && $player->latestConnection->round_id) {
             $latestRound = GameRound::with(['latestStationName'])
+                ->select('id')
                 ->where('id', $player->latestConnection->round_id)
                 ->first();
         }

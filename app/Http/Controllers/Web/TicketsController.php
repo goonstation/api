@@ -15,7 +15,8 @@ class TicketsController extends Controller
     public function index(Request $request)
     {
         $tickets = $this->indexQuery(
-            EventTicket::whereRelation('gameRound', 'ended_at', '!=', null)
+            EventTicket::select('id', 'round_id', 'issuer', 'issuer_job', 'reason', 'target')
+                ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
@@ -29,8 +30,22 @@ class TicketsController extends Controller
         return $tickets;
     }
 
-    public function show(Request $request, EventTicket $ticket)
+    public function show(Request $request, int $ticket)
     {
+        $ticket = EventTicket::select(
+            'id',
+            'round_id',
+            'issuer',
+            'issuer_job',
+            'reason',
+            'target',
+            'created_at'
+        )
+        ->where('id', $ticket)
+        ->whereRelation('gameRound', 'ended_at', '!=', null)
+        ->whereRelation('gameRound.server', 'invisible', false)
+        ->firstOrFail();
+
         return Inertia::render('Events/Tickets/Show', [
             'ticket' => $ticket,
         ]);
