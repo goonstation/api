@@ -103,5 +103,5 @@ Route::controller(GameServersController::class)->prefix('/game-servers')->group(
     Route::get('/', 'index')->name('game-servers.index');
 });
 
-require_once __DIR__.'/admin.php';
-require_once __DIR__.'/jetstream.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/jetstream.php';
