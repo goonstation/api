@@ -96,7 +96,7 @@ trait ManagesBans
             $note->ckey = $ckey;
         }
         $note->game_admin_id = $gameAdmin->id;
-        $note->server_id = isset($request['server_id']) ? $request['server_id'] : null;
+        $note->server_id = $serverId;
         $note->round_id = isset($request['round_id']) ? $request['round_id'] : null;
         $note->note = sprintf(
             'Banned %s. Reason: %s',

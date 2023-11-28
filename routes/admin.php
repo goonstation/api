@@ -47,8 +47,8 @@ Route::middleware([
             Route::get('/', 'index')->name('admin.bans.index')->breadcrumb('Bans');
             Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')->breadcrumb('Bans');
             Route::get('/details', 'getDetails');
-            Route::get('/{ban}', 'show')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
             Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
+            Route::get('/{ban}', 'show')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
             Route::post('/', 'store')->name('admin.bans.store');
             Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
             Route::put('/{ban}', 'update')->name('admin.bans.update');

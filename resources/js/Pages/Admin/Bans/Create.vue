@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       fields: {
+        game_admin_id: this.$page.props.user.game_admin_id,
         ckey: null,
         comp_id: null,
         ip: null,
