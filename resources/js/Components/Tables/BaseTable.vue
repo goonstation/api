@@ -3,13 +3,15 @@
     <q-table
       ref="tableRef"
       v-bind="$attrs"
-      :rows="rows"
-      :columns="columns"
-      row-key="id"
       v-model:pagination="_pagination"
+      v-model:selected="selected"
+      :rows="rows"
+      :columns="_columns"
       :loading="loading"
       :rows-per-page-options="[3, 5, 7, 10, 15, 20, 25, 30, 50]"
       :visible-columns="visibleColumns"
+      :selection="selection"
+      row-key="id"
       separator="none"
       binary-state-sort
       @request="onRequest"
@@ -135,12 +137,16 @@
 
       <template v-slot:header="props">
         <q-tr :props="props">
+          <q-th v-if="canSelect">
+            <q-checkbox v-model="props.selected" dense />
+          </q-th>
           <q-th v-if="hasActions" class="q-table--col-auto-width" />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.label }}
           </q-th>
         </q-tr>
         <q-tr no-hover>
+          <q-th v-if="canSelect"></q-th>
           <q-th v-if="hasActions" class="q-table--col-auto-width" />
           <q-th v-for="col in props.cols" :key="col.name">
             <table-filter
@@ -154,7 +160,20 @@
         </q-tr>
       </template>
 
-      <template v-slot:body="props">
+      <!-- <template v-slot:header-cell="props">
+        <q-th :props="props">
+          {{ props.col.label }}
+          <table-filter
+            v-if="props.col.filterable !== false"
+            :model-value="filters[props.col.name]"
+            @update:modelValue="onFilterInput(props.col.name, $event)"
+            @clear="filters[props.col.name] = null"
+            :filter-type="props.col.filter?.type || 'text'"
+          />
+        </q-th>
+      </template> -->
+
+      <!-- <template v-slot:body="props">
         <slot name="body-prepend" :props="props" />
         <q-tr
           :props="props"
@@ -201,7 +220,13 @@
               :col="col"
             />
             <template v-else>
-              <template v-if="booleanColumns.includes(col.name)">
+              <template v-if="col.name === 'id'">
+                <Link v-if="routes.view" :href="getRoute(routes.view, props.row)">
+                  {{ col.value }}
+                </Link>
+                <template v-else>{{ col.value }}</template>
+              </template>
+              <template v-else-if="booleanColumns.includes(col.name)">
                 <q-icon
                   :name="col.value === 'true' || col.value === true ? ionCheckmark : ionClose"
                   size="xs"
@@ -214,6 +239,20 @@
           </q-td>
         </q-tr>
         <slot name="body-append" :props="props" />
+      </template> -->
+
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props"> actions </q-td>
+      </template>
+
+      <template v-slot:body-cell-id="props">
+        <q-td :props="props">
+          {{ props }}
+          <Link v-if="routes.view" :href="getRoute(routes.view, props.row)">
+            {{ props.col.value }}
+          </Link>
+          <template v-else>{{ props.col.value }}</template>
+        </q-td>
       </template>
     </q-table>
 
@@ -327,11 +366,16 @@ export default {
       type: String,
       default: 'Create',
     },
+    selection: {
+      type: String,
+      default: 'none',
+    },
   },
 
   data() {
     return {
       rows: [],
+      _columns: [],
       loading: false,
       _pagination: {
         sortBy: 'id',
@@ -347,6 +391,7 @@ export default {
       timestampColumns: ['created_at', 'updated_at'],
       confirmDelete: false,
       deletingItem: null,
+      selected: [],
     }
   },
 
@@ -410,6 +455,10 @@ export default {
         }
       }
       return ret
+    },
+
+    canSelect() {
+      return this.selection !== 'none'
     },
   },
 
@@ -579,15 +628,28 @@ export default {
         message: 'Item successfully deleted.',
         color: 'positive',
       })
-    }
+    },
   },
 
   watch: {
     columns: {
       deep: true,
       immediate: true,
-      handler() {
-        this.columns.forEach((column) => (this.filters[column.name] = null))
+      handler(newColumns) {
+        newColumns = Object.assign([], newColumns)
+        if (this.hasActions) {
+          newColumns.unshift({
+            name: 'actions',
+            label: '',
+            field: 'actions',
+            required: true,
+            headerClasses: 'q-table--col-auto-width',
+          })
+        }
+
+        newColumns.forEach((column) => (this.filters[column.name] = null))
+        this._columns = newColumns
+        console.log(this._columns)
       },
     },
 
@@ -608,6 +670,13 @@ export default {
       deep: true,
       handler(val) {
         this.filters = merge(this.filters, val)
+      },
+    },
+
+    selected: {
+      deep: true,
+      handler(val) {
+        console.log('selected', val)
       },
     },
   },

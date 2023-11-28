@@ -3,8 +3,8 @@
     v-bind="$attrs"
     :routes="routes"
     :columns="columns"
-    :hide-columns="['expires_at', 'deleted_at']"
     :pagination="{ rowsPerPage: 30 }"
+    selection="multiple"
     create-button-text="Add Ban"
     dense
     flat
@@ -24,11 +24,9 @@
       </q-btn>
     </template>
 
-    <template v-slot:cell-content-status="{ props }">
-      <q-badge v-if="props.row.deleted_at" color="negative"> Removed </q-badge>
-      <q-badge v-else-if="isBanExpired(props.row.expires_at)" color="warning" text-color="black">
-        Expired
-      </q-badge>
+    <template v-slot:cell-content-expires_at="{ props, col }">
+      <template v-if="col.value">{{ col.value }}</template>
+      <q-badge v-else color="negative">Permanent</q-badge>
     </template>
 
     <template v-slot:body-append="{ props }">
@@ -109,6 +107,14 @@ export default {
           style: 'white-space: normal; min-width: 300px;',
         },
         {
+          name: 'expires_at',
+          label: 'Expires At',
+          field: 'expires_at',
+          sortable: true,
+          format: this.$formats.dateWithTime,
+          filter: { type: 'DateRange' },
+        },
+        {
           name: 'details',
           label: 'Details',
           field: 'details_count',
@@ -130,28 +136,6 @@ export default {
           sortable: true,
           format: this.$formats.date,
           filter: { type: 'DateRange' },
-        },
-        {
-          name: 'expires_at',
-          label: 'Expired',
-          field: 'expires_at',
-          sortable: true,
-          format: this.$formats.date,
-          filter: { type: 'DateRange' },
-        },
-        {
-          name: 'deleted_at',
-          label: 'Deleted',
-          field: 'deleted_at',
-          sortable: true,
-          format: this.$formats.date,
-          filter: { type: 'DateRange' },
-        },
-        {
-          name: 'status',
-          label: '',
-          headerClasses: 'q-table--col-auto-width',
-          filterable: false,
         },
       ],
     }

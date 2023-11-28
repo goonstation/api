@@ -2,10 +2,7 @@
   <q-table :rows="bans" :columns="banHistoryColumns" flat dense>
     <template v-slot:body-cell-id="props">
       <q-td :props="props">
-        <template v-if="isBanExpiredOrRemoved(props.row)">
-          {{ props.row.id }}
-        </template>
-        <Link v-else :href="route('admin.bans.edit', props.row.id)">
+        <Link :href="route('admin.bans.show', props.row.id)">
           {{ props.row.id }}
         </Link>
       </q-td>
@@ -19,13 +16,7 @@
     </template>
     <template v-slot:body-cell-original_ban_ckey="props">
       <q-td :props="props">
-        <Link
-          :href="
-            route('admin.players.index', {
-              filters: { ckey: props.row.original_ban_detail.ckey },
-            })
-          "
-        >
+        <Link :href="route('admin.player.show-by-ckey', props.row.original_ban_detail.ckey)">
           {{ props.row.original_ban_detail.ckey }}
         </Link>
       </q-td>

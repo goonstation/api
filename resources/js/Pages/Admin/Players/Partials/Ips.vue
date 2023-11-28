@@ -17,9 +17,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(connections, ip) in ips">
-              <td>{{ ip }}</td>
-              <td>{{ connections }}</td>
+            <tr v-for="group in ips">
+              <td>{{ group.ip }}</td>
+              <td>{{ group.connections }}</td>
             </tr>
           </tbody>
         </q-markup-table>
@@ -50,15 +50,19 @@ export default {
 
   computed: {
     ips() {
-      const ips = {}
+      const groups = []
       for (const connection of this.connections) {
-        if (ips[connection.ip]) {
-          ips[connection.ip]++
+        const groupIdx = groups.findIndex((group) => group.ip === connection.ip)
+        if (groupIdx !== -1) {
+          groups[groupIdx].connections++
         } else {
-          ips[connection.ip] = 1
+          groups.push({
+            ip: connection.ip,
+            connections: 1
+          })
         }
       }
-      return ips
+      return groups.sort((a, b) => b.connections - a.connections)
     }
   }
 }

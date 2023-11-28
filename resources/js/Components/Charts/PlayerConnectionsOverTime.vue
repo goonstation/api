@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="relative">
     <apexchart
       ref="chart"
       v-if="series"
@@ -17,7 +17,6 @@
 
 <script>
 import dayjs from 'dayjs'
-import { createTrend } from 'trendline'
 
 export default {
   props: {
@@ -31,7 +30,7 @@ export default {
   setup() {
     return {
       series: null,
-      unixConnections: []
+      unixConnections: [],
     }
   },
 
@@ -64,8 +63,8 @@ export default {
             },
           },
           animations: {
-            enabled: false
-          }
+            enabled: false,
+          },
         },
         fill: {
           opacity: 1,
@@ -120,6 +119,9 @@ export default {
         colors: ['#ffd125', '#8f7b33'],
         tooltip: {
           theme: 'gh',
+          x: {
+            format: 'dd MMM yyyy',
+          },
           y: [
             {
               formatter: function (y) {
@@ -146,9 +148,51 @@ export default {
       const trendData = []
       this.unixConnections = []
 
+      let currentDate = dayjs(this.data[0].created_at).startOf('day')
+      const endDate = dayjs(this.data[this.data.length - 1].created_at).endOf('day')
+      let connectionIdx = 0
+      // let currentYear = currentDate.startOf('year')
+      let nextYear = currentDate.endOf('year')
+
+      const test = []
+      const trendTest = [[((currentDate.startOf('year').unix() + nextYear.unix()) / 2) * 1000, 0]]
+      while (currentDate <= endDate) {
+        const endOfDay = currentDate.endOf('day')
+
+        let connections = 0
+        let connection = this.data[connectionIdx]
+        let connectionCreated = dayjs(connection.created_at)
+        while (connection && connectionCreated <= endOfDay) {
+          connections++
+
+          connectionIdx++
+          connection = this.data[connectionIdx]
+          if (connection) {
+            connectionCreated = dayjs(connection.created_at)
+          }
+        }
+
+        const startOfDayMs = currentDate.unix() * 1000
+        test.push([startOfDayMs, connections])
+
+        if (currentDate <= nextYear) {
+          trendTest[trendTest.length - 1][1] += connections
+        } else {
+          nextYear = nextYear.add(1, 'year')
+          const startOfYear = currentDate.startOf('year').unix()
+          const endOfYear = nextYear.unix()
+          trendTest.push([((startOfYear + endOfYear) / 2) * 1000, connections])
+        }
+
+        currentDate = currentDate.add(1, 'day')
+      }
+      console.log(test)
+      console.log(trendTest)
+
       // Group connections by day
       this.data.forEach((connection, idx) => {
-        const unixMsCreatedAt = dayjs(connection.created_at).unix() * 1000
+        const connectionDate = dayjs(connection.created_at)
+        const unixMsCreatedAt = connectionDate.unix() * 1000
         this.unixConnections.push({
           ...connection,
           unix_created_at: unixMsCreatedAt,
@@ -157,34 +201,57 @@ export default {
         const prevConnection = connections[connections.length - 1]
         if (!prevConnection) {
           connections.push([unixMsCreatedAt, 1])
-          trendData.push({ x: idx, y: 1 })
         } else {
-          const diff = dayjs(connection.created_at).diff(dayjs(prevConnection[0]), 'd')
+          const diff = connectionDate.diff(dayjs(prevConnection[0]), 'd')
           if (diff) {
             connections.push([unixMsCreatedAt, 1])
-            trendData.push({ x: idx, y: 1 })
           } else {
             connections[connections.length - 1][1]++
-            trendData[trendData.length - 1].y++
+          }
+        }
+
+        const prevTrendItem = trendData[trendData.length - 1]
+        const trendConnectionFormat = connectionDate.format('YYYY')
+        if (prevTrendItem && prevTrendItem.format === trendConnectionFormat) {
+          trendData[trendData.length - 1].connections++
+        } else {
+          const startOfDate = connectionDate.startOf('year').unix()
+          const endOfDate = connectionDate.endOf('year').unix()
+          trendData.push({
+            format: trendConnectionFormat,
+            midPoint: ((startOfDate + endOfDate) / 2) * 1000,
+            connections: 1,
+            daysInMonth: connectionDate.daysInMonth(),
+          })
+
+          if (prevTrendItem) {
+            prevTrendItem.connections = prevTrendItem.connections / prevTrendItem.daysInMonth
           }
         }
       })
 
-      const trend = createTrend(trendData, 'x', 'y')
-      const trendSeries = connections.map((item, idx) => [item[0], trend.calcY(idx)])
+      const trendSeries = []
+      trendData[trendData.length - 1].connections =
+        trendData[trendData.length - 1].connections / trendData[trendData.length - 1].daysInMonth
+      for (const trendItem of trendData) {
+        trendSeries.push([trendItem.midPoint, trendItem.connections])
+      }
 
       this.series = [
         {
           name: 'Connections',
-          data: connections,
+          data: test,
           type: 'bar',
         },
-        {
-          name: 'Trend',
-          data: trendSeries,
-          type: 'line',
-        },
       ]
+
+      if (trendSeries.length > 1) {
+        this.series.push({
+          name: 'Yearly Average',
+          data: trendTest,
+          type: 'line',
+        })
+      }
 
       this.chartOptions.yaxis[0].labels.show = !!connections.length
     },

@@ -76,6 +76,10 @@
             <td>Hours Played</td>
             <td>{{ $formats.number(totalPlaytime) }}</td>
           </tr>
+          <tr v-if="player.byond_major && player.byond_minor">
+            <td>BYOND Version</td>
+            <td>{{ player.byond_major }}.{{ player.byond_minor }}</td>
+          </tr>
         </tbody>
       </q-markup-table>
     </q-card>

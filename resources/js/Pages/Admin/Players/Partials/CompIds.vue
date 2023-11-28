@@ -17,9 +17,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(connections, compId) in compIds">
-              <td>{{ compId }}</td>
-              <td>{{ connections }}</td>
+            <tr v-for="group in compIds">
+              <td>{{ group.comp_id }}</td>
+              <td>{{ group.connections }}</td>
             </tr>
           </tbody>
         </q-markup-table>
@@ -50,15 +50,19 @@ export default {
 
   computed: {
     compIds() {
-      const compIds = {}
+      const groups = []
       for (const connection of this.connections) {
-        if (compIds[connection.comp_id]) {
-          compIds[connection.comp_id]++
+        const groupIdx = groups.findIndex((group) => group.comp_id === connection.comp_id)
+        if (groupIdx !== -1) {
+          groups[groupIdx].connections++
         } else {
-          compIds[connection.comp_id] = 1
+          groups.push({
+            comp_id: connection.comp_id,
+            connections: 1
+          })
         }
       }
-      return compIds
+      return groups.sort((a, b) => b.connections - a.connections)
     }
   }
 }

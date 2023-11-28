@@ -1,4 +1,12 @@
 <template>
+  <div class="text-right q-mb-md">
+    <Link :href="route('admin.bans.edit', ban.id)">
+      <q-btn color="primary" outline>
+        Edit Ban
+      </q-btn>
+    </Link>
+  </div>
+
   <div class="row q-col-gutter-md">
     <div class="col-12 col-md-6">
       <q-card class="gh-card q-mb-md" flat>
@@ -139,6 +147,7 @@ tbody {
 <script>
 import dayjs from 'dayjs'
 import { date } from 'quasar'
+import { router } from '@inertiajs/vue3'
 import { ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
@@ -155,6 +164,7 @@ export default {
   setup() {
     return {
       dayjs,
+      router,
       ionInformationCircleOutline,
     }
   },
