@@ -120,4 +120,13 @@ class BansController extends Controller
             'ban' => $ban
         ]);
     }
+
+    public function destroy(Ban $ban)
+    {
+        $ban->deleted_by = Auth::user()->gameAdmin->id;
+        $ban->save();
+        $ban->delete();
+
+        return ['message' => 'Ban removed'];
+    }
 }

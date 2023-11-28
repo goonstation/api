@@ -52,6 +52,7 @@ Route::middleware([
             Route::post('/', 'store')->name('admin.bans.store');
             Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
             Route::put('/{ban}', 'update')->name('admin.bans.update');
+            Route::delete('/{ban}', 'destroy')->name('admin.bans.delete');
         });
 
         Route::controller(MapsController::class)->prefix('maps')->group(function () {

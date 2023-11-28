@@ -81,4 +81,12 @@ class Ban extends Model
     {
         return $this->hasMany(PlayerNote::class, 'ban_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function deletedByGameAdmin()
+    {
+        return $this->belongsTo(GameAdmin::class, 'deleted_by');
+    }
 }

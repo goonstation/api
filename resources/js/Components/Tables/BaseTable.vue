@@ -8,13 +8,14 @@
       :rows="rows"
       :columns="_columns"
       :loading="loading"
-      :rows-per-page-options="[3, 5, 7, 10, 15, 20, 25, 30, 50]"
+      :rows-per-page-options="rowsPerPageOptions"
       :visible-columns="visibleColumns"
       :selection="selection"
       row-key="id"
       separator="none"
       binary-state-sort
       @request="onRequest"
+      @selection="handleSelection"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
         <slot :name="name" v-bind="slotData" />
@@ -140,14 +141,12 @@
           <q-th v-if="canSelect">
             <q-checkbox v-model="props.selected" dense />
           </q-th>
-          <q-th v-if="hasActions" class="q-table--col-auto-width" />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.label }}
           </q-th>
         </q-tr>
         <q-tr no-hover>
-          <q-th v-if="canSelect"></q-th>
-          <q-th v-if="hasActions" class="q-table--col-auto-width" />
+          <q-th v-if="canSelect" />
           <q-th v-for="col in props.cols" :key="col.name">
             <table-filter
               v-if="col.filterable !== false"
@@ -160,57 +159,22 @@
         </q-tr>
       </template>
 
-      <!-- <template v-slot:header-cell="props">
-        <q-th :props="props">
-          {{ props.col.label }}
-          <table-filter
-            v-if="props.col.filterable !== false"
-            :model-value="filters[props.col.name]"
-            @update:modelValue="onFilterInput(props.col.name, $event)"
-            @clear="filters[props.col.name] = null"
-            :filter-type="props.col.filter?.type || 'text'"
-          />
-        </q-th>
-      </template> -->
-
-      <!-- <template v-slot:body="props">
+      <template v-slot:body="props">
         <slot name="body-prepend" :props="props" />
         <q-tr
           :props="props"
           :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
         >
-          <q-td v-if="hasActions">
-            <q-btn-dropdown menu-self="top middle" flat dense>
-              <q-list class="action-dropdown" dense>
-                <q-item
-                  v-if="routes.view"
-                  @click="router.visit(getRoute(routes.view, props.row))"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section avatar><q-icon :name="ionEye" /></q-item-section>
-                  <q-item-section>View</q-item-section>
-                </q-item>
-                <q-item
-                  v-if="routes.edit"
-                  @click="router.visit(getRoute(routes.edit, props.row))"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section avatar><q-icon :name="ionPencil" /></q-item-section>
-                  <q-item-section>Edit</q-item-section>
-                </q-item>
-                <q-item
-                  v-if="routes.delete"
-                  @click="openConfirmDelete(props.row)"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section avatar><q-icon :name="ionTrash" /></q-item-section>
-                  <q-item-section>Delete</q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
+          <q-td v-if="canSelect">
+            <q-checkbox
+              :model-value="props.selected"
+              @update:model-value="
+                (val, evt) => {
+                  Object.getOwnPropertyDescriptor(props, 'selected').set(val, evt)
+                }
+              "
+              dense
+            />
           </q-td>
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
             <slot
@@ -220,7 +184,40 @@
               :col="col"
             />
             <template v-else>
-              <template v-if="col.name === 'id'">
+              <template v-if="col.name === 'actions'">
+                <q-btn-dropdown menu-self="top middle" flat dense>
+                  <q-list class="action-dropdown" dense>
+                    <q-item
+                      v-if="routes.view"
+                      @click="router.visit(getRoute(routes.view, props.row))"
+                      clickable
+                      v-close-popup
+                    >
+                      <q-item-section avatar><q-icon :name="ionEye" /></q-item-section>
+                      <q-item-section>View</q-item-section>
+                    </q-item>
+                    <q-item
+                      v-if="routes.edit"
+                      @click="router.visit(getRoute(routes.edit, props.row))"
+                      clickable
+                      v-close-popup
+                    >
+                      <q-item-section avatar><q-icon :name="ionPencil" /></q-item-section>
+                      <q-item-section>Edit</q-item-section>
+                    </q-item>
+                    <q-item
+                      v-if="routes.delete"
+                      @click="openConfirmDelete(props.row)"
+                      clickable
+                      v-close-popup
+                    >
+                      <q-item-section avatar><q-icon :name="ionTrash" /></q-item-section>
+                      <q-item-section>Delete</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
+              </template>
+              <template v-else-if="col.name === 'id'">
                 <Link v-if="routes.view" :href="getRoute(routes.view, props.row)">
                   {{ col.value }}
                 </Link>
@@ -239,20 +236,36 @@
           </q-td>
         </q-tr>
         <slot name="body-append" :props="props" />
-      </template> -->
-
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props"> actions </q-td>
       </template>
 
-      <template v-slot:body-cell-id="props">
-        <q-td :props="props">
-          {{ props }}
-          <Link v-if="routes.view" :href="getRoute(routes.view, props.row)">
-            {{ props.col.value }}
-          </Link>
-          <template v-else>{{ props.col.value }}</template>
-        </q-td>
+      <template v-slot:bottom="props">
+        <q-space />
+        <div class="flex items-center">
+          <div class="flex items-center q-mr-sm">
+            Records per page:
+            <q-select
+              v-model="_pagination.rowsPerPage"
+              :options="rowsPerPageOptions"
+              @update:model-value="updateTable"
+              class="q-ml-sm"
+              borderless
+              dense
+              options-dense
+            />
+          </div>
+          <div>
+
+          </div>
+          <q-pagination
+            v-model="_pagination.page"
+            :max="props.pagesNumber"
+            @update:model-value="updateTable"
+            color="grey"
+            size="12px"
+            input
+            round
+          />
+        </div>
       </template>
     </q-table>
 
@@ -285,6 +298,7 @@
 </style>
 
 <script>
+import { toRaw } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { merge, isEmpty, isEqual } from 'lodash'
 import axios from 'axios'
@@ -346,6 +360,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    rowsPerPageOptions: {
+      type: Array,
+      default: () => [3, 5, 7, 10, 15, 20, 25, 30, 50],
+    },
     hideColumns: {
       type: Array,
       default: () => [],
@@ -392,6 +410,7 @@ export default {
       confirmDelete: false,
       deletingItem: null,
       selected: [],
+      storedSelectedRow: null,
     }
   },
 
@@ -573,7 +592,7 @@ export default {
     },
 
     onFiltersChange() {
-      this.$refs.tableRef.requestServerInteraction()
+      this.updateTable()
     },
 
     onFilterInput(col, val) {
@@ -587,7 +606,7 @@ export default {
       if (descending) {
         this._pagination.descending = descending
       }
-      this.$refs.tableRef.requestServerInteraction()
+      this.updateTable()
     },
 
     getRoute(goToRoute, row) {
@@ -610,7 +629,11 @@ export default {
     async deleteItem() {
       const deleteRoute = this.getRoute(this.routes.delete, this.deletingItem)
       try {
-        await axios.delete(deleteRoute)
+        const response = await axios.delete(deleteRoute)
+        this.$q.notify({
+          message: response.data.message || 'Item successfully deleted.',
+          color: 'positive',
+        })
       } catch {
         this.deletingItem = null
         this.confirmDelete = false
@@ -623,12 +646,54 @@ export default {
 
       this.deletingItem = null
       this.confirmDelete = false
-      this.$refs.tableRef.requestServerInteraction()
-      this.$q.notify({
-        message: 'Item successfully deleted.',
-        color: 'positive',
+      this.updateTable()
+    },
+
+    // Expands selection functionality to enable shift/ctrl modifiers for selecting ranges
+    handleSelection({ rows, added, evt }) {
+      // ignore selection change from header if not from a direct click event
+      if (rows.length !== 1 || evt === void 0) {
+        return
+      }
+
+      const oldSelectedRow = this.storedSelectedRow
+      const [newSelectedRow] = rows
+      const { ctrlKey, shiftKey } = evt
+
+      if (shiftKey !== true) {
+        this.storedSelectedRow = newSelectedRow
+      }
+
+      // wait for the default selection to be performed
+      this.$nextTick(() => {
+        if (shiftKey === true) {
+          const tableRows = this.$refs.tableRef.filteredSortedRows
+          let firstIndex = tableRows.indexOf(oldSelectedRow)
+          let lastIndex = tableRows.indexOf(newSelectedRow)
+
+          if (firstIndex < 0) {
+            firstIndex = 0
+          }
+
+          if (firstIndex > lastIndex) {
+            ;[firstIndex, lastIndex] = [lastIndex, firstIndex]
+          }
+
+          const rangeRows = tableRows.slice(firstIndex, lastIndex + 1)
+          // we need the original row object so we can match them against the rows in range
+          const selectedRows = this.selected.map(toRaw)
+
+          this.selected =
+            added === true
+              ? selectedRows.concat(rangeRows.filter((row) => selectedRows.includes(row) === false))
+              : selectedRows.filter((row) => rangeRows.includes(row) === false)
+        }
       })
     },
+
+    updateTable() {
+      this.$refs.tableRef.requestServerInteraction()
+    }
   },
 
   watch: {
@@ -644,12 +709,13 @@ export default {
             field: 'actions',
             required: true,
             headerClasses: 'q-table--col-auto-width',
+            filterable: false,
+            sortable: false,
           })
         }
 
         newColumns.forEach((column) => (this.filters[column.name] = null))
         this._columns = newColumns
-        console.log(this._columns)
       },
     },
 
@@ -670,13 +736,6 @@ export default {
       deep: true,
       handler(val) {
         this.filters = merge(this.filters, val)
-      },
-    },
-
-    selected: {
-      deep: true,
-      handler(val) {
-        console.log('selected', val)
       },
     },
   },

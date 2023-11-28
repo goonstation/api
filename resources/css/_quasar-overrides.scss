@@ -27,3 +27,8 @@
 .q-field__messages {
   line-height: 1.2;
 }
+
+// Default checkbox background is primary (yellow), so we need more contrast on the actual checkmark
+.q-checkbox__svg {
+  color: $dark;
+}

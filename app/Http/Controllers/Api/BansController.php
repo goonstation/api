@@ -9,6 +9,7 @@ use App\Http\Resources\BanDetailResource;
 use App\Http\Resources\BanResource;
 use App\Models\Ban;
 use App\Models\BanDetail;
+use App\Models\GameAdmin;
 use App\Models\Player;
 use App\Rules\DateRange;
 use App\Rules\Range;
@@ -177,8 +178,16 @@ class BansController extends Controller
      *
      * Delete an existing ban
      */
-    public function destroy(Ban $ban)
+    public function destroy(Request $request, Ban $ban)
     {
+        $data = $this->validate($request, [
+            'game_admin_ckey' => 'required|exists:game_admins,ckey',
+        ]);
+
+        $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
+
+        $ban->deleted_by = $gameAdmin->id;
+        $ban->save();
         $ban->delete();
 
         return ['message' => 'Ban removed'];
