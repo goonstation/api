@@ -27,7 +27,6 @@ export default {
           field: 'id',
           sortable: true,
           filterable: false,
-          format: this.$formats.number,
         },
         { name: 'ckey', label: 'Ckey', field: 'ckey', sortable: true },
         { name: 'key', label: 'Key', field: 'key', sortable: true },

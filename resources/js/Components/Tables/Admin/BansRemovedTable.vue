@@ -71,7 +71,6 @@ export default {
           field: 'id',
           sortable: true,
           filterable: false,
-          format: this.$formats.number,
         },
         { name: 'round_id', label: 'Round', field: 'round_id', sortable: true, filterable: false },
         {

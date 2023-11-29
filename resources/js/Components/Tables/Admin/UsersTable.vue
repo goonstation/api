@@ -48,7 +48,6 @@ export default {
           field: 'id',
           sortable: true,
           filterable: false,
-          format: this.$formats.number,
         },
         { name: 'profile_photo_url', label: 'Avatar', field: 'profile_photo_url' },
         { name: 'name', label: 'Name', field: 'name', sortable: true },

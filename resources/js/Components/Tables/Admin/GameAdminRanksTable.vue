@@ -26,7 +26,6 @@ export default {
           field: 'id',
           sortable: true,
           filterable: false,
-          format: this.$formats.number,
           headerClasses: 'q-table--col-auto-width',
         },
         { name: 'rank', label: 'Rank', field: 'rank', sortable: true },
