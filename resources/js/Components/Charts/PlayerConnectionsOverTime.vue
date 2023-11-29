@@ -186,6 +186,12 @@ export default {
 
         currentDate = currentDate.add(1, 'day')
       }
+
+      const today = dayjs()
+      if (endDate.isBefore(today)) {
+        test.push([today.unix() * 1000, 0])
+      }
+
       console.log(test)
       console.log(trendTest)
 
@@ -198,44 +204,44 @@ export default {
           unix_created_at: unixMsCreatedAt,
         })
 
-        const prevConnection = connections[connections.length - 1]
-        if (!prevConnection) {
-          connections.push([unixMsCreatedAt, 1])
-        } else {
-          const diff = connectionDate.diff(dayjs(prevConnection[0]), 'd')
-          if (diff) {
-            connections.push([unixMsCreatedAt, 1])
-          } else {
-            connections[connections.length - 1][1]++
-          }
-        }
+        // const prevConnection = connections[connections.length - 1]
+        // if (!prevConnection) {
+        //   connections.push([unixMsCreatedAt, 1])
+        // } else {
+        //   const diff = connectionDate.diff(dayjs(prevConnection[0]), 'd')
+        //   if (diff) {
+        //     connections.push([unixMsCreatedAt, 1])
+        //   } else {
+        //     connections[connections.length - 1][1]++
+        //   }
+        // }
 
-        const prevTrendItem = trendData[trendData.length - 1]
-        const trendConnectionFormat = connectionDate.format('YYYY')
-        if (prevTrendItem && prevTrendItem.format === trendConnectionFormat) {
-          trendData[trendData.length - 1].connections++
-        } else {
-          const startOfDate = connectionDate.startOf('year').unix()
-          const endOfDate = connectionDate.endOf('year').unix()
-          trendData.push({
-            format: trendConnectionFormat,
-            midPoint: ((startOfDate + endOfDate) / 2) * 1000,
-            connections: 1,
-            daysInMonth: connectionDate.daysInMonth(),
-          })
+        // const prevTrendItem = trendData[trendData.length - 1]
+        // const trendConnectionFormat = connectionDate.format('YYYY')
+        // if (prevTrendItem && prevTrendItem.format === trendConnectionFormat) {
+        //   trendData[trendData.length - 1].connections++
+        // } else {
+        //   const startOfDate = connectionDate.startOf('year').unix()
+        //   const endOfDate = connectionDate.endOf('year').unix()
+        //   trendData.push({
+        //     format: trendConnectionFormat,
+        //     midPoint: ((startOfDate + endOfDate) / 2) * 1000,
+        //     connections: 1,
+        //     daysInMonth: connectionDate.daysInMonth(),
+        //   })
 
-          if (prevTrendItem) {
-            prevTrendItem.connections = prevTrendItem.connections / prevTrendItem.daysInMonth
-          }
-        }
+        //   if (prevTrendItem) {
+        //     prevTrendItem.connections = prevTrendItem.connections / prevTrendItem.daysInMonth
+        //   }
+        // }
       })
 
-      const trendSeries = []
-      trendData[trendData.length - 1].connections =
-        trendData[trendData.length - 1].connections / trendData[trendData.length - 1].daysInMonth
-      for (const trendItem of trendData) {
-        trendSeries.push([trendItem.midPoint, trendItem.connections])
-      }
+      // const trendSeries = []
+      // trendData[trendData.length - 1].connections =
+      //   trendData[trendData.length - 1].connections / trendData[trendData.length - 1].daysInMonth
+      // for (const trendItem of trendData) {
+      //   trendSeries.push([trendItem.midPoint, trendItem.connections])
+      // }
 
       this.series = [
         {
@@ -245,7 +251,7 @@ export default {
         },
       ]
 
-      if (trendSeries.length > 1) {
+      if (trendTest.length > 1) {
         this.series.push({
           name: 'Yearly Average',
           data: trendTest,
