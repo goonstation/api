@@ -35,7 +35,7 @@
                 </td>
               </tr>
               <tr>
-                <td><strong>Computed ID</strong></td>
+                <td><strong>Computer ID</strong></td>
                 <td>{{ ban.original_ban_detail.comp_id }}</td>
               </tr>
               <tr>
@@ -71,15 +71,26 @@
                 <td><strong>Reason</strong></td>
                 <td>{{ ban.reason }}</td>
               </tr>
-              <tr v-if="isDeleted">
-                <td><strong>Removed At</strong></td>
-                <td>
-                  {{ humanDeletedAt }}
-                  <span class="text-caption opacity-80 q-ml-xs">
-                    ({{ dayjs(ban.deleted_at).fromNow() }})
-                  </span>
-                </td>
-              </tr>
+              <template v-if="isDeleted">
+                <tr>
+                  <td><strong>Removed At</strong></td>
+                  <td>
+                    {{ humanDeletedAt }}
+                    <span class="text-caption opacity-80 q-ml-xs">
+                      ({{ dayjs(ban.deleted_at).fromNow() }})
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Removed By</strong></td>
+                  <td>
+                    <template v-if="ban.deleted_by_game_admin">
+                      {{ ban.deleted_by_game_admin.name || ban.deleted_by_game_admin.ckey }}
+                    </template>
+                    <template v-else>Unknown</template>
+                  </td>
+                </tr>
+              </template>
               <tr v-else>
                 <td><strong>Expires At</strong></td>
                 <td>

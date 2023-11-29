@@ -64,7 +64,8 @@ export default {
         view: '/admin/bans/_id',
         create: '/admin/bans/create',
         edit: '/admin/bans/edit/_id',
-        delete: '/admin/bans/_id'
+        delete: '/admin/bans/_id',
+        deleteMulti: '/admin/bans',
       },
       columns: [
         {

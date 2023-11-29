@@ -239,6 +239,15 @@
       </template>
 
       <template v-slot:bottom="props">
+        <slot name="bottom-left" :props="props" />
+        <q-btn
+          v-if="hasMultiDelete && selected.length"
+          @click="confirmMultiDelete = true"
+          color="negative"
+          outline
+        >
+          Delete {{ selected.length }} item<template v-if="selected.length !== 1">s</template>
+        </q-btn>
         <q-space />
         <div class="flex items-center">
           <div class="flex items-center q-mr-sm">
@@ -253,9 +262,6 @@
               options-dense
             />
           </div>
-          <div>
-
-          </div>
           <q-pagination
             v-model="_pagination.page"
             :max="props.pagesNumber"
@@ -269,7 +275,7 @@
       </template>
     </q-table>
 
-    <q-dialog v-model="confirmDelete">
+    <q-dialog v-if="routes.delete" v-model="confirmDelete">
       <q-card flat bordered>
         <q-card-section class="row items-center no-wrap">
           <q-avatar :icon="ionInformationCircleOutline" color="negative" text-color="dark" />
@@ -279,6 +285,23 @@
         <q-card-actions align="right">
           <q-btn flat label="Cancel" v-close-popup />
           <q-btn flat label="Confirm" color="negative" @click="deleteItem" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-if="hasMultiDelete" v-model="confirmMultiDelete">
+      <q-card flat bordered>
+        <q-card-section class="row items-center no-wrap">
+          <q-avatar :icon="ionInformationCircleOutline" color="negative" text-color="dark" />
+          <span class="q-ml-sm">
+            Are you sure you want to delete {{ selected.length }}
+            item<template v-if="selected.length !== 1">s</template>
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Confirm" color="negative" @click="deleteMultiItems" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -408,6 +431,7 @@ export default {
       showTimestamps: false,
       timestampColumns: ['created_at', 'updated_at'],
       confirmDelete: false,
+      confirmMultiDelete: false,
       deletingItem: null,
       selected: [],
       storedSelectedRow: null,
@@ -478,6 +502,10 @@ export default {
 
     canSelect() {
       return this.selection !== 'none'
+    },
+
+    hasMultiDelete() {
+      return !!this.routes.deleteMulti
     },
   },
 
@@ -649,6 +677,30 @@ export default {
       this.updateTable()
     },
 
+    async deleteMultiItems() {
+      const deleteRoute = this.getRoute(this.routes.deleteMulti)
+      try {
+        const response = await axios.delete(deleteRoute, { data: {
+          ids: this.selected.map((item) => item.id)
+        }})
+        this.$q.notify({
+          message: response.data.message || 'Items successfully deleted.',
+          color: 'positive',
+        })
+      } catch {
+        this.confirmMultiDelete = false
+        this.$q.notify({
+          message: 'Failed to delete items, please try again.',
+          color: 'negative',
+        })
+        return
+      }
+
+      this.selected = []
+      this.confirmMultiDelete = false
+      this.updateTable()
+    },
+
     // Expands selection functionality to enable shift/ctrl modifiers for selecting ranges
     handleSelection({ rows, added, evt }) {
       // ignore selection change from header if not from a direct click event
@@ -693,7 +745,7 @@ export default {
 
     updateTable() {
       this.$refs.tableRef.requestServerInteraction()
-    }
+    },
   },
 
   watch: {

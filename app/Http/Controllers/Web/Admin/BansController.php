@@ -108,6 +108,7 @@ class BansController extends Controller
             ->with([
                 'originalBanDetail',
                 'gameAdmin',
+                'deletedByGameAdmin',
                 'gameServer',
                 'details' => function($q) {
                     $q->where('deleted_at', null)
@@ -128,5 +129,18 @@ class BansController extends Controller
         $ban->delete();
 
         return ['message' => 'Ban removed'];
+    }
+
+    public function destroyMulti(Request $request)
+    {
+        $data = $this->validate($request, [
+            'ids' => 'required|array'
+        ]);
+
+        $bans = Ban::whereIn('id', $data['ids']);
+        $bans->update(['deleted_by' => Auth::user()->gameAdmin->id]);
+        $bans->delete();
+
+        return ['message' => 'Bans removed'];
     }
 }
