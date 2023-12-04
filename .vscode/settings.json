@@ -1,8 +1,9 @@
 {
-    "artisan.docker.enabled": true,
-    "artisan.docker.command": "./vendor/bin/sail",
-    "editor.rulers": [
-        100
-    ],
-    "thunder-client.defaultUrl": "/api"
+  "artisan.docker.enabled": true,
+  "artisan.docker.command": "./vendor/bin/sail",
+  "editor.rulers": [100],
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+},
+"php-cs-fixer.allowRisky": true
 }
