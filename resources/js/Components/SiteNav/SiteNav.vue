@@ -13,7 +13,6 @@
               {
                 'site-nav__item-parent--active': menuItem.expandedActive,
               },
-              `site-nav__item-${index}`,
             ]"
             :expand-icon="ionChevronDown"
             dense-toggle

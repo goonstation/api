@@ -157,17 +157,22 @@ export default {
       if (!!this.user.game_admin_id) {
         items.push(
           {
-            label: 'Admin Ranks',
-            href: route('admin.game-admin-ranks.index'),
-          },
-          {
             label: 'Admins',
-            href: route('admin.game-admins.index'),
+            match: route('admin.game-admins.index'),
+            children: [
+              {
+                label: 'Admins',
+                href: route('admin.game-admins.index'),
+              },
+              {
+                label: 'Ranks',
+                href: route('admin.game-admin-ranks.index'),
+              },
+            ],
           },
           {
             label: 'Maps',
             href: route('admin.maps.index'),
-            separator: true,
           },
           {
             label: 'Players',

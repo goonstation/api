@@ -84,7 +84,7 @@ Route::prefix('/events')->group(function () {
 
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/', 'index')->name('maps.index')->breadcrumb('Maps');
-    Route::get('/{map}', 'show')->whereAlphaNumeric('map')->name('maps.show')->breadcrumb('', 'maps.index');
+    Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
 });
 
 Route::controller(RedirectController::class)->prefix('/r')->group(function () {

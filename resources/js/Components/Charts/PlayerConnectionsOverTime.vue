@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative full-height">
     <apexchart
       ref="chart"
       v-if="series"
@@ -144,6 +144,7 @@ export default {
 
   methods: {
     buildGraphData() {
+      if (!this.data.length) return
       this.unixConnections = []
 
       let currentDate = dayjs(this.data[0].created_at).startOf('day')
