@@ -87,6 +87,10 @@
   &--map-donut3 &__map {
     margin-top: -10px;
   }
+  &--map-donut2 &__map {
+    margin-top: -25px;
+    margin-right: -40px;
+  }
 
   &:after {
     content: '';
