@@ -56,14 +56,6 @@ class BansController extends Controller
         }
     }
 
-    public function getDetails(Request $request)
-    {
-        return BanDetail::withTrashed()
-            ->where('ban_id', $request->input('ban_id'))
-            ->orderBy('id', 'desc')
-            ->get();
-    }
-
     public function create()
     {
         return Inertia::render('Admin/Bans/Create');
@@ -110,7 +102,7 @@ class BansController extends Controller
                 'gameAdmin',
                 'deletedByGameAdmin',
                 'gameServer',
-                'details' => function($q) {
+                'details' => function ($q) {
                     $q->where('deleted_at', null)
                         ->orderBy('id', 'desc');
                 },
@@ -118,7 +110,7 @@ class BansController extends Controller
             ->findOrFail($ban);
 
         return Inertia::render('Admin/Bans/Show', [
-            'ban' => $ban
+            'ban' => $ban,
         ]);
     }
 
@@ -134,7 +126,7 @@ class BansController extends Controller
     public function destroyMulti(Request $request)
     {
         $data = $this->validate($request, [
-            'ids' => 'required|array'
+            'ids' => 'required|array',
         ]);
 
         $bans = Ban::whereIn('id', $data['ids']);
@@ -142,5 +134,37 @@ class BansController extends Controller
         $bans->delete();
 
         return ['message' => 'Bans removed'];
+    }
+
+    public function getDetails(Request $request)
+    {
+        return BanDetail::withTrashed()
+            ->where('ban_id', $request->input('ban_id'))
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public function storeDetail(Request $request, Ban $ban)
+    {
+        $data = $this->validate($request, [
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
+        ]);
+
+        $banDetail = new BanDetail();
+        $banDetail->ckey = isset($data['ckey']) ? $data['ckey'] : null;
+        $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
+        $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
+        $ban->details()->save($banDetail);
+
+        return ['data' => $banDetail];
+    }
+
+    public function destroyDetail(BanDetail $banDetail)
+    {
+        $banDetail->delete();
+
+        return ['message' => 'Ban detail removed'];
     }
 }

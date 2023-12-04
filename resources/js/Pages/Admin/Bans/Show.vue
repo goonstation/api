@@ -113,36 +113,7 @@
     </div>
 
     <div class="col-12 col-md-6">
-      <q-card class="gh-card q-mb-md" flat>
-        <div class="gh-card__header q-pa-md bordered">
-          <span>Connection Details</span>
-        </div>
-        <q-card-section class="q-pa-none">
-          <q-banner class="bg-grey-10 q-ma-sm">
-            <template v-slot:avatar>
-              <q-icon
-                :name="ionInformationCircleOutline"
-                color="primary"
-                size="md"
-                class="q-mt-xs"
-              />
-            </template>
-            This ban applies to any players who connect with the following details.
-          </q-banner>
-          <q-table :rows="ban.details" :columns="banDetailsColumns" flat dense>
-            <template v-slot:body-cell-ckey="props">
-              <q-td :props="props">
-                <Link
-                  v-if="props.row.ckey"
-                  :href="route('admin.player.show-by-ckey', props.row.ckey)"
-                >
-                  {{ props.row.ckey }}
-                </Link>
-              </q-td>
-            </template>
-          </q-table>
-        </q-card-section>
-      </q-card>
+      <ban-details :model-value="ban" />
     </div>
   </div>
 </template>
@@ -159,10 +130,14 @@ tbody {
 import dayjs from 'dayjs'
 import { date } from 'quasar'
 import { router } from '@inertiajs/vue3'
-import { ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import BanDetails from './Partials/BanDetails.vue'
 
 export default {
+  components: {
+    BanDetails
+  },
+
   layout: (h, page) =>
     h(
       AdminLayout,
@@ -176,37 +151,11 @@ export default {
     return {
       dayjs,
       router,
-      ionInformationCircleOutline,
     }
   },
 
   props: {
     ban: Object,
-  },
-
-  data() {
-    return {
-      banDetailsColumns: [
-        {
-          name: 'ckey',
-          field: 'ckey',
-          label: 'Ckey',
-          sortable: true,
-        },
-        {
-          name: 'comp_id',
-          field: 'comp_id',
-          label: 'Computer ID',
-          sortable: true,
-        },
-        {
-          name: 'ip',
-          field: 'ip',
-          label: 'IP',
-          sortable: true,
-        },
-      ],
-    }
   },
 
   computed: {

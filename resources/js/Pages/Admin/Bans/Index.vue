@@ -3,33 +3,43 @@
     <q-card-section class="q-pa-none">
       <q-tabs indicator-color="transparent" align="left">
         <q-tab class="text-primary">Active Bans</q-tab>
-        <q-tab @click.prevent="router.visit('/admin/bans/removed')">Inactive Bans</q-tab>
+        <q-tab>
+          <Link :href="route('admin.bans.index-removed')" class="text-white">Inactive Bans</Link>
+        </q-tab>
       </q-tabs>
     </q-card-section>
   </q-card>
-  <bans-table :initial="bans" />
+  <search-bans v-model="search" />
+  <bans-table :initial="bans" :search="search" @loaded="onTableLoaded" />
 </template>
 
 <script>
-import { router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import BansTable from '@/Components/Tables/Admin/BansTable.vue'
+import SearchBans from './Partials/Search.vue'
 
 export default {
   components: {
     BansTable,
+    SearchBans,
   },
 
   layout: (h, page) => h(AdminLayout, { title: 'Bans' }, () => page),
 
-  setup() {
-    return {
-      router,
-    }
-  },
-
   props: {
     bans: Object,
   },
+
+  data() {
+    return {
+      search: null
+    }
+  },
+
+  methods: {
+    onTableLoaded({ filters }) {
+      this.search = filters
+    }
+  }
 }
 </script>

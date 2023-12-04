@@ -48,6 +48,27 @@ class BanFilter extends ModelFilter
         });
     }
 
+    public function ckey($val)
+    {
+        return $this->related('details', function ($query) use ($val) {
+            return $query->where('ckey', 'ILIKE', '%'.$val.'%');
+        });
+    }
+
+    public function compId($val)
+    {
+        return $this->related('details', function ($query) use ($val) {
+            return $query->where('comp_id', 'ILIKE', '%'.$val.'%');
+        });
+    }
+
+    public function ip($val)
+    {
+        return $this->related('details', function ($query) use ($val) {
+            return $query->where('ip', 'ILIKE', '%'.$val.'%');
+        });
+    }
+
     public function requiresAppeal($val)
     {
         return $this->where('requires_appeal', '=', $val);
