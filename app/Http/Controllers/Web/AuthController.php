@@ -17,8 +17,13 @@ class AuthController extends Controller
 
     public function callback()
     {
-        $discordUser = Socialite::driver('discord')->user();
-        $user = User::where('discord_id', $discordUser->id)->first();
+        $user = null;
+        try {
+            $discordUser = Socialite::driver('discord')->user();
+            $user = User::where('discord_id', $discordUser->id)->first();
+        } catch (\Exception $e) {
+            // pass
+        }
 
         if ($user) {
             Auth::login($user);
