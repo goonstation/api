@@ -23,7 +23,7 @@ Route::middleware([
         Route::controller(UsersController::class)->prefix('users')->group(function () {
             Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
             Route::get('/edit/{user}', 'edit')->name('admin.users.edit')->breadcrumb('', 'admin.users.index');
-            Route::put('/{user}', 'update')->name('admin.users.update');
+            Route::put('/{user}', 'update')->whereNumber('user')->name('admin.users.update');
         });
 
         Route::controller(GameAdminRanksController::class)->prefix('game-admin-ranks')->group(function () {
@@ -34,25 +34,35 @@ Route::middleware([
 
         Route::controller(GameAdminsController::class)->prefix('game-admins')->group(function () {
             Route::get('/', 'index')->name('admin.game-admins.index')->breadcrumb('Admins');
-            Route::get('/{gameAdmin}', 'show')->name('admin.game-admins.show')->breadcrumb('', 'admin.game-admins.index');
+            Route::get('/{gameAdmin}', 'show')
+                ->whereNumber('gameAdmin')
+                ->name('admin.game-admins.show')
+                ->breadcrumb('', 'admin.game-admins.index');
         });
 
         Route::controller(PlayersController::class)->prefix('players')->group(function () {
             Route::get('/', 'index')->name('admin.players.index')->breadcrumb('Players');
-            Route::get('/{player}', 'show')->where('player', '[0-9]+')->name('admin.players.show')->breadcrumb('', 'admin.players.index');
-            Route::get('/{ckey}', 'showByCkey')->name('admin.player.show-by-ckey');
+            Route::get('/{player}', 'show')
+                ->whereNumber('player')
+                ->name('admin.players.show')
+                ->breadcrumb('', 'admin.players.index');
+            Route::get('/{ckey}', 'showByCkey')
+                ->whereAlphaNumeric('ckey')
+                ->name('admin.player.show-by-ckey');
         });
 
         Route::controller(BansController::class)->prefix('bans')->group(function () {
             Route::get('/', 'index')->name('admin.bans.index')->breadcrumb('Bans');
             Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')->breadcrumb('Bans');
-            Route::get('/details', 'getDetails');
+            Route::get('/details', 'getDetails')->name('admin.bans.get-details');
+            Route::post('/details/{ban}', 'storeDetail')->whereNumber('ban')->name('admin.bans.store-detail');
+            Route::delete('/details/{banDetail}', 'destroyDetail')->whereNumber('banDetail')->name('admin.bans.destroy-detail');
             Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
-            Route::get('/{ban}', 'show')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
+            Route::get('/{ban}', 'show')->whereNumber('ban')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
             Route::post('/', 'store')->name('admin.bans.store');
-            Route::get('/edit/{ban}', 'edit')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
-            Route::put('/{ban}', 'update')->name('admin.bans.update');
-            Route::delete('/{ban}', 'destroy')->name('admin.bans.delete');
+            Route::get('/edit/{ban}', 'edit')->whereNumber('ban')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
+            Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
+            Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
         });
 
@@ -63,9 +73,9 @@ Route::middleware([
             Route::post('/upload-file', 'uploadFile')->name('admin.maps.upload-file');
             Route::get('/create', 'create')->name('admin.maps.create')->breadcrumb('', 'admin.maps.index');
             Route::post('/', 'store')->name('admin.maps.store');
-            Route::get('/edit/{map}', 'edit')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
-            Route::put('/{map}', 'update')->name('admin.maps.update');
-            Route::delete('/{map}', 'destroy')->name('admin.maps.delete');
+            Route::get('/edit/{map}', 'edit')->whereNumber('map')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
+            Route::put('/{map}', 'update')->whereNumber('map')->name('admin.maps.update');
+            Route::delete('/{map}', 'destroy')->whereNumber('map')->name('admin.maps.delete');
         });
     });
 });
