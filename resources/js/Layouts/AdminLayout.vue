@@ -1,89 +1,9 @@
-<script setup>
-import { ref, computed } from 'vue'
-import { Head, router, usePage } from '@inertiajs/vue3'
-import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
-import PageBack from '@/Components/PageBack.vue'
-
-const page = usePage()
-const user = computed(() => page.props.user)
-
-defineProps({
-  title: String,
-})
-
-const leftDrawerOpen = ref(true)
-const menuList = [
-  {
-    label: 'Test',
-    href: '/test',
-    separator: false,
-  },
-  {
-    label: 'Admin Ranks',
-    href: '/admin/game-admin-ranks',
-    separator: false,
-    isGameAdmin: true,
-  },
-  {
-    label: 'Admins',
-    href: '/admin/game-admins',
-    separator: false,
-    isGameAdmin: true,
-  },
-  {
-    label: 'Maps',
-    href: '/admin/maps',
-    separator: true,
-    isGameAdmin: true,
-  },
-  {
-    label: 'Players',
-    href: '/admin/players',
-    separator: false,
-    isGameAdmin: true,
-  },
-  {
-    label: 'Bans',
-    href: '/admin/bans',
-    separator: false,
-    isGameAdmin: true,
-  },
-]
-
-const showMenuItem = (menuItem) => {
-  if (menuItem.isGameAdmin) {
-    return user.value.is_admin || user.value.game_admin_id
-  }
-  return true
-}
-
-const switchToTeam = (team) => {
-  router.put(
-    route('current-team.update'),
-    {
-      team_id: team.id,
-    },
-    {
-      preserveState: false,
-    }
-  )
-}
-
-const toggleLeftDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
-const logout = () => {
-  router.post(route('logout'))
-}
-</script>
-
 <template>
   <Head :title="title" />
   <q-layout view="lhh LpR fff">
     <q-header class="bg-transparent">
       <q-toolbar class="q-pt-md">
-        <q-btn dense flat round :icon="ionMenu" @click="toggleLeftDrawer" />
+        <q-btn dense flat round :icon="ionMenu" @click="siteNavOpen = !siteNavOpen" />
         <q-toolbar-title>
           <page-back class="q-mr-sm" />
           <slot v-if="$slots.header" name="header" />
@@ -137,9 +57,7 @@ const logout = () => {
           </q-btn>
 
           <q-btn round flat>
-            <q-avatar>
-              <img :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name" />
-            </q-avatar>
+            <user-avatar :user="$page.props.user" />
             <q-menu>
               <q-list style="min-width: 150px">
                 <q-item clickable @click="router.visit(route('profile.show'))" v-close-popup>
@@ -159,11 +77,7 @@ const logout = () => {
                 <template v-if="user.is_admin">
                   <q-item-label header>Admin Tools</q-item-label>
 
-                  <q-item
-                    clickable
-                    @click="router.visit(route('admin.users.index'))"
-                    v-close-popup
-                  >
+                  <q-item clickable @click="router.visit(route('admin.users.index'))" v-close-popup>
                     <q-item-section>Users</q-item-section>
                   </q-item>
 
@@ -180,34 +94,7 @@ const logout = () => {
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="200" :breakpoint="600">
-      <q-scroll-area class="fit">
-        <q-list>
-          <a
-            class="block q-mt-lg q-mb-md logo"
-            @click.prevent="router.visit('/dashboard')"
-            href="/"
-          >
-            <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
-          </a>
-          <template v-for="(menuItem, index) in menuList" :key="index">
-            <template v-if="showMenuItem(menuItem)">
-              <q-item
-                clickable
-                @click="router.visit(menuItem.href)"
-                :active="$page.url.startsWith(menuItem.href)"
-                v-ripple
-              >
-                <q-item-section>
-                  {{ menuItem.label }}
-                </q-item-section>
-              </q-item>
-              <q-separator :key="'sep' + index" v-if="menuItem.separator" />
-            </template>
-          </template>
-        </q-list>
-      </q-scroll-area>
-    </q-drawer>
+    <site-nav :home="route('dashboard')" :items="siteNavItems" :is-open="siteNavOpen" />
 
     <q-page-container>
       <q-page class="row column no-wrap q-pa-md page-wrapper">
@@ -218,3 +105,93 @@ const logout = () => {
     </q-page-container>
   </q-layout>
 </template>
+
+<script>
+import { Head, router } from '@inertiajs/vue3'
+import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
+import SiteNav from '@/Components/SiteNav/SiteNav.vue'
+import PageBack from '@/Components/PageBack.vue'
+import UserAvatar from '@/Components/UserAvatar.vue'
+
+export default {
+  components: {
+    Head,
+    SiteNav,
+    PageBack,
+    UserAvatar,
+  },
+
+  props: {
+    title: String,
+  },
+
+  setup() {
+    return {
+      router,
+      ionMenu,
+      ionChevronDown,
+      ionCheckmarkCircleOutline,
+    }
+  },
+
+  data() {
+    return {
+      siteNavOpen: true,
+    }
+  },
+
+  computed: {
+    user() {
+      return this.$page.props.user
+    },
+
+    siteNavItems() {
+      const items = [
+        {
+          label: 'Dashboard',
+          href: route('dashboard'),
+          separator: true,
+        },
+      ]
+
+      if (!!this.user.game_admin_id) {
+        items.push(
+          {
+            label: 'Admin Ranks',
+            href: route('admin.game-admin-ranks.index'),
+          },
+          {
+            label: 'Admins',
+            href: route('admin.game-admins.index'),
+          },
+          {
+            label: 'Maps',
+            href: route('admin.maps.index'),
+            separator: true,
+          },
+          {
+            label: 'Players',
+            href: route('admin.players.index'),
+          },
+          {
+            label: 'Bans',
+            href: route('admin.bans.index'),
+          }
+        )
+      }
+
+      return items
+    },
+  },
+
+  methods: {
+    switchToTeam(team) {
+      router.put(route('current-team.update'), { team_id: team.id }, { preserveState: false })
+    },
+
+    logout() {
+      router.post(route('logout'))
+    },
+  },
+}
+</script>
