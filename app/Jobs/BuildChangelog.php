@@ -36,6 +36,10 @@ class BuildChangelog implements ShouldQueue
         ])
             ->get('https://api.github.com/repos/goonstation/goonstation/contents/strings/changelog.txt');
 
+        if (is_null($res) || !isset($res['content'])) {
+            return null;
+        }
+
         return base64_decode($res['content']);
     }
 
@@ -68,6 +72,7 @@ class BuildChangelog implements ShouldQueue
     public function handle()
     {
         $changelog = $this->getChangelogFromRepo();
+        if (!$changelog) return;
         $lines = preg_split('/\r\n|\r|\n/', $changelog);
 
         $entry = [];
