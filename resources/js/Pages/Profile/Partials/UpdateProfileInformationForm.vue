@@ -9,7 +9,7 @@
 
           <!-- Current Profile Photo -->
           <div v-show="!photoPreview" class="q-mt-sm">
-            <img :src="user.profile_photo_url" :alt="user.name" class="photo" />
+            <user-avatar :user="user" />
           </div>
 
           <!-- New Profile Photo Preview -->
@@ -17,7 +17,13 @@
             <span class="photo block" :style="'background-image: url(\'' + photoPreview + '\');'" />
           </div>
 
-          <q-btn type="button" class="q-mt-sm q-mr-sm" @click="selectNewPhoto" color="grey-4" outline>
+          <q-btn
+            type="button"
+            class="q-mt-sm q-mr-sm"
+            @click="selectNewPhoto"
+            color="grey-4"
+            outline
+          >
             Select A New Photo
           </q-btn>
 
@@ -69,16 +75,17 @@
             </Link>
           </p>
 
-          <div v-show="verificationLinkSent" class="q-mt-sm text-weight-medium text-sm text-positive">
+          <div
+            v-show="verificationLinkSent"
+            class="q-mt-sm text-weight-medium text-sm text-positive"
+          >
             A new verification link has been sent to your email address.
           </div>
         </div>
 
         <div class="flex items-center q-mt-md">
           <q-space />
-          <ActionMessage :on="form.recentlySuccessful" class="q-mr-sm">
-              Saved.
-          </ActionMessage>
+          <ActionMessage :on="form.recentlySuccessful" class="q-mr-sm"> Saved. </ActionMessage>
           <q-btn
             label="Save"
             type="submit"
@@ -92,25 +99,15 @@
   </q-card>
 </template>
 
-<style lang="scss" scoped>
-.photo {
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  object-fit: cover;
-}
-</style>
-
 <script>
 import { router, useForm } from '@inertiajs/vue3'
 import ActionMessage from '@/Components/ActionMessage.vue'
+import UserAvatar from '@/Components/UserAvatar.vue'
 
 export default {
   components: {
-    ActionMessage
+    ActionMessage,
+    UserAvatar,
   },
 
   props: {

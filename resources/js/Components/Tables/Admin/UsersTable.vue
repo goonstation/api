@@ -8,7 +8,7 @@
     flat
   >
     <template v-slot:cell-content-profile_photo_url="{ props }">
-      <img :src="props.row.profile_photo_url" alt="" class="photo" />
+      <user-avatar :user="props.row" />
     </template>
     <template v-slot:cell-content-all_teams="{ props }">
       <q-chip v-for="team in props.row.all_teams" color="grey-9" class="text-sm">
@@ -18,28 +18,17 @@
   </base-table>
 </template>
 
-<style lang="scss" scoped>
-.photo {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  object-fit: cover;
-}
-</style>
-
 <script>
+import UserAvatar from '@/Components/UserAvatar.vue'
 import BaseTable from '../BaseTable.vue'
 
 export default {
-  components: { BaseTable },
+  components: { BaseTable, UserAvatar },
   data() {
     return {
       routes: {
         fetch: '/admin/users',
-        edit: '/admin/users/edit/_id'
+        edit: '/admin/users/edit/_id',
       },
       columns: [
         {
