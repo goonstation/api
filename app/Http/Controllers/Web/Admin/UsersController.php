@@ -40,7 +40,7 @@ class UsersController extends Controller
                 'profile_photo_url',
                 'is_admin',
                 'discord_id',
-                'game_admin_id'
+                'game_admin_id',
             ]),
         ]);
     }
@@ -62,7 +62,7 @@ class UsersController extends Controller
         $user->discord_id = isset($data['discord_id']) ? $data['discord_id'] : null;
         $user->game_admin_id = isset($data['game_admin_id']) ? $data['game_admin_id'] : null;
 
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);
         }
 

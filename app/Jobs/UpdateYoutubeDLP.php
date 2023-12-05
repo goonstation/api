@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,6 +31,6 @@ class UpdateYoutubeDLP implements ShouldQueue
     {
         $output = null;
         exec('yt-dlp -U', $output);
-        echo implode(PHP_EOL, $output) . PHP_EOL;
+        echo implode(PHP_EOL, $output).PHP_EOL;
     }
 }

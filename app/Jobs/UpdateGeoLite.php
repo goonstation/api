@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -42,11 +41,11 @@ class UpdateGeoLite implements ShouldQueue
         $errors = $client->errors();
         if (count($errors)) {
             foreach ($errors as $error) {
-                echo $error . PHP_EOL;
+                echo $error.PHP_EOL;
             }
         } else {
             foreach ($client->updated() as $message) {
-                echo $message . PHP_EOL;
+                echo $message.PHP_EOL;
             }
         }
     }

@@ -93,7 +93,7 @@ class PlayerMedalsController extends Controller
             // If we don't have a player_id, we are likely requested via the "Copy Medals" ingame verb
             // which doesn't require a logged in target player
             $player = Player::firstOrCreate([
-                'ckey' => $data['ckey']
+                'ckey' => $data['ckey'],
             ]);
             $playerId = $player->id;
         }

@@ -41,10 +41,10 @@ class TicketsController extends Controller
             'target',
             'created_at'
         )
-        ->where('id', $ticket)
-        ->whereRelation('gameRound', 'ended_at', '!=', null)
-        ->whereRelation('gameRound.server', 'invisible', false)
-        ->firstOrFail();
+            ->where('id', $ticket)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->whereRelation('gameRound.server', 'invisible', false)
+            ->firstOrFail();
 
         return Inertia::render('Events/Tickets/Show', [
             'ticket' => $ticket,

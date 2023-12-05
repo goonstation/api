@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
@@ -94,12 +93,12 @@ class ImportMedalsFromByond implements ShouldQueue
             // $medal->save();
 
             $medal = Medal::updateOrCreate(
-                    ['title' => $medalData['title']],
-                    [
-                        'description' => $medalData['description'],
-                        'hidden' => $medalData['hidden'],
-                    ]
-                );
+                ['title' => $medalData['title']],
+                [
+                    'description' => $medalData['description'],
+                    'hidden' => $medalData['hidden'],
+                ]
+            );
 
             if ($medalData['image']) {
                 $imageName = $medal->id;

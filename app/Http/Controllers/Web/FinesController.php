@@ -42,10 +42,10 @@ class FinesController extends Controller
             'reason',
             'created_at'
         )
-        ->where('id', $fine)
-        ->whereRelation('gameRound', 'ended_at', '!=', null)
-        ->whereRelation('gameRound.server', 'invisible', false)
-        ->firstOrFail();
+            ->where('id', $fine)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->whereRelation('gameRound.server', 'invisible', false)
+            ->firstOrFail();
 
         return Inertia::render('Events/Fines/Show', [
             'fine' => $fine,

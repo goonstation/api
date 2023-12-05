@@ -16,17 +16,17 @@ class DeathsController extends Controller
     {
         $deaths = $this->indexQuery(
             EventDeath::select(
-                    'id',
-                    'round_id',
-                    'bruteloss',
-                    'fireloss',
-                    'gibbed',
-                    'last_words',
-                    'mob_job',
-                    'mob_name',
-                    'oxyloss',
-                    'toxloss'
-                )
+                'id',
+                'round_id',
+                'bruteloss',
+                'fireloss',
+                'gibbed',
+                'last_words',
+                'mob_job',
+                'mob_name',
+                'oxyloss',
+                'toxloss'
+            )
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
@@ -55,13 +55,13 @@ class DeathsController extends Controller
             'oxyloss',
             'toxloss'
         )
-        ->where('id', $death)
-        ->whereRelation('gameRound', 'ended_at', '!=', null)
-        ->whereRelation('gameRound.server', 'invisible', false)
-        ->firstOrFail();
+            ->where('id', $death)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->whereRelation('gameRound.server', 'invisible', false)
+            ->firstOrFail();
 
         return Inertia::render('Events/Deaths/Show', [
-            'death' => $death
+            'death' => $death,
         ]);
     }
 }

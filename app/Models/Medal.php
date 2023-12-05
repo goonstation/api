@@ -12,7 +12,7 @@ class Medal extends Model
     protected $fillable = [
         'title',
         'description',
-        'hidden'
+        'hidden',
     ];
 
     /**
