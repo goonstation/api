@@ -5,10 +5,11 @@
         <Link class="block q-mt-lg q-mb-md logo" :href="home">
           <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
         </Link>
-        <template v-for="(menuItem, index) in items" :key="index">
+        <template v-for="(menuItem, index) in items">
           <q-expansion-item
             v-if="menuItem.children"
             class="site-nav__item site-nav__item-parent"
+            :key="`exp${index}`"
             :class="[
               {
                 'site-nav__item-parent--active': menuItem.expandedActive,
@@ -27,10 +28,11 @@
               </q-item-section>
             </template>
 
-            <div class="site-nav__exp-content q-pl-sm">
+            <div class="site-nav__exp-content">
               <template v-for="(childItem, childIndex) in menuItem.children">
                 <template v-if="canShowItem(childItem)">
                   <site-nav-item
+                    :key="`child${childIndex}`"
                     :item="childItem"
                     @onNavItemEnter="onNavItemEnter"
                     @onNavItemLeave="onNavItemLeave"
@@ -43,6 +45,7 @@
 
           <template v-else-if="canShowItem(menuItem)">
             <site-nav-item
+              :key="`item${index}`"
               :item="menuItem"
               @onNavItemEnter="onNavItemEnter"
               @onNavItemLeave="onNavItemLeave"
@@ -246,7 +249,9 @@ export default {
       menuItems.forEach((item) => {
         item.active = false
         item.expandedActive = false
-        if (this.isActive(item)) activeItem = item
+        if (this.isActive(item)) {
+          activeItem = item
+        }
         if (item.children) {
           const activeChildItem = this.checkItems(item.children)
           if (activeChildItem) {
@@ -268,8 +273,14 @@ export default {
 
     isActive(menuItem) {
       const currentUrl = this.getCurrentUrl()
-      const href = menuItem.match ? menuItem.match : menuItem.href
-      return currentUrl.startsWith(href)
+      if (menuItem.match && Array.isArray(menuItem.match)) {
+        for (const matchItem of menuItem.match) {
+          if (currentUrl.startsWith(matchItem)) return true
+        }
+      } else {
+        const href = menuItem.match ? menuItem.match : menuItem.href
+        return currentUrl.startsWith(href)
+      }
     },
 
     canShowItem(menuItem) {

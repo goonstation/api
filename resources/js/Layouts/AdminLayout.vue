@@ -137,6 +137,7 @@ export default {
   data() {
     return {
       siteNavOpen: true,
+      siteNavItems: [],
     }
   },
 
@@ -144,8 +145,22 @@ export default {
     user() {
       return this.$page.props.user
     },
+  },
 
-    siteNavItems() {
+  created() {
+    this.siteNavItems = this.buildSiteNavItems()
+  },
+
+  methods: {
+    switchToTeam(team) {
+      router.put(route('current-team.update'), { team_id: team.id }, { preserveState: false })
+    },
+
+    logout() {
+      router.post(route('logout'))
+    },
+
+    buildSiteNavItems() {
       const items = [
         {
           label: 'Dashboard',
@@ -158,10 +173,10 @@ export default {
         items.push(
           {
             label: 'Admins',
-            match: route('admin.game-admins.index'),
+            match: [route('admin.game-admins.index'), route('admin.game-admin-ranks.index')],
             children: [
               {
-                label: 'Admins',
+                label: 'Admin List',
                 href: route('admin.game-admins.index'),
               },
               {
@@ -186,16 +201,6 @@ export default {
       }
 
       return items
-    },
-  },
-
-  methods: {
-    switchToTeam(team) {
-      router.put(route('current-team.update'), { team_id: team.id }, { preserveState: false })
-    },
-
-    logout() {
-      router.post(route('logout'))
     },
   },
 }
