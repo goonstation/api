@@ -42,6 +42,9 @@ class BansController extends Controller
             'filters.admin_ckey' => 'string',
             'filters.reason' => 'string',
             'filters.original_ban_ckey' => 'string',
+            'filters.ckey' => 'string',
+            'filters.comp_id' => 'string',
+            'filters.ip' => 'string',
             'filters.requires_appeal' => 'boolean',
             /**
              * A value, comparison, or range
