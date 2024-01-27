@@ -23,15 +23,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new BuildChangelog)->everyFiveMinutes()->sentryMonitor('build-changelog');
-        $schedule->job(new GetPlayerCounts)->everyFiveMinutes()->sentryMonitor('get-player-counts');
-        $schedule->job(new GenerateNumbersStationPass)->hourly()->sentryMonitor('generate-numbers-station-pass');
-        $schedule->job(new ClearOldDectalks)->dailyAt('03:03')->sentryMonitor('clear-old-dectalks');
-        $schedule->job(new ClearOldAudio)->dailyAt('03:07')->sentryMonitor('clear-old-audio');
-        $schedule->job(new GenerateGlobalPlayerStats)->daily()->sentryMonitor('generate-global-player-stats');
+        $schedule->job(new BuildChangelog)->everyFiveMinutes();
+        $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
+        $schedule->job(new GenerateNumbersStationPass)->hourly();
+        $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
+        $schedule->job(new ClearOldAudio)->dailyAt('03:07');
+        $schedule->job(new GenerateGlobalPlayerStats)->daily();
 
-        $schedule->job(new UpdateGeoLite)->weekly()->sentryMonitor('update-geo-lite');
-        $schedule->job(new UpdateYoutubeDLP)->weekly()->sentryMonitor('update-youtube-dlp');
+        $schedule->job(new UpdateGeoLite)->weekly();
+        $schedule->job(new UpdateYoutubeDLP)->weekly();
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
