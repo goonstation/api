@@ -196,6 +196,10 @@ export default {
           {
             label: 'Bans',
             href: route('admin.bans.index'),
+          },
+          {
+            label: 'Events',
+            href: route('admin.events.index'),
           }
         )
       }

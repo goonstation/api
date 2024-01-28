@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController;
+use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
 use App\Http\Controllers\Web\Admin\MapsController;
@@ -76,6 +77,10 @@ Route::middleware([
             Route::get('/edit/{map}', 'edit')->whereNumber('map')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
             Route::put('/{map}', 'update')->whereNumber('map')->name('admin.maps.update');
             Route::delete('/{map}', 'destroy')->whereNumber('map')->name('admin.maps.delete');
+        });
+
+        Route::controller(EventsController::class)->prefix('events')->group(function () {
+            Route::get('/', 'index')->name('admin.events.index')->breadcrumb('Events');
         });
     });
 });

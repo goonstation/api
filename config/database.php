@@ -146,6 +146,16 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
+        'events' => [
+            'url' => env('EVENT_REDIS_URL'),
+            'host' => env('EVENT_REDIS_HOST', '127.0.0.1'),
+            'username' => env('EVENT_REDIS_USERNAME'),
+            'password' => env('EVENT_REDIS_PASSWORD'),
+            'port' => env('EVENT_REDIS_PORT', '6379'),
+            'database' => env('EVENT_REDIS_DB', '0'),
+            'prefix' => '',
+        ],
+
     ],
 
 ];
