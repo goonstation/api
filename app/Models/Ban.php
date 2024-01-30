@@ -22,7 +22,7 @@ class Ban extends Model
         'expires_at',
     ];
 
-    protected $appends = ['duration'];
+    protected $appends = ['duration', 'duration_human'];
 
     public function getDurationAttribute()
     {
@@ -32,6 +32,12 @@ class Ban extends Model
         }
 
         return $now->diffInSeconds($this->expires_at);
+    }
+
+    public function getDurationHumanAttribute()
+    {
+        if (!$this->expires_at) return null;
+        return $this->expires_at->longAbsoluteDiffForHumans(99);
     }
 
     /**
