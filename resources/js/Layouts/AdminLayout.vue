@@ -186,16 +186,30 @@ export default {
             ],
           },
           {
+            label: 'Players',
+            match: [
+              route('admin.players.index'),
+              route('admin.bans.index'),
+              route('admin.notes.index'),
+            ],
+            children: [
+              {
+                label: 'Player List',
+                href: route('admin.players.index'),
+              },
+              {
+                label: 'Bans',
+                href: route('admin.bans.index'),
+              },
+              {
+                label: 'Notes',
+                href: route('admin.notes.index'),
+              },
+            ],
+          },
+          {
             label: 'Maps',
             href: route('admin.maps.index'),
-          },
-          {
-            label: 'Players',
-            href: route('admin.players.index'),
-          },
-          {
-            label: 'Bans',
-            href: route('admin.bans.index'),
           },
           {
             label: 'Events',

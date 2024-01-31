@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayersController;
+use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
@@ -68,6 +69,10 @@ Route::middleware([
             Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
             Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
+        });
+
+        Route::controller(PlayerNotesController::class)->prefix('notes')->group(function () {
+            Route::get('/', 'index')->name('admin.notes.index')->breadcrumb('Notes');
         });
 
         Route::controller(MapsController::class)->prefix('maps')->group(function () {
