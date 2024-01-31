@@ -1,5 +1,13 @@
 <template>
   <div class="events">
+    <q-card v-if="_connectionError" class="gh-card q-mb-md bg-negative" flat>
+      <q-card-section>
+        <q-icon :name="ionWarningOutline" size="sm" class="q-mr-sm" />
+        <strong>Unable to connect to event queue</strong><br>
+        {{ _connectionError }}
+      </q-card-section>
+    </q-card>
+
     <q-card class="gh-card q-mb-md" flat>
       <q-card-section>
         <q-icon :name="ionInformationCircleOutline" size="sm" class="q-mr-sm" />
@@ -38,7 +46,7 @@
 <script>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Event from './Partials/Event.vue'
-import { ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
+import { ionInformationCircleOutline, ionWarningOutline } from '@quasar/extras/ionicons-v6'
 
 export default {
   components: {
@@ -48,32 +56,41 @@ export default {
   layout: (h, page) => h(AdminLayout, { title: 'Events' }, () => page),
 
   props: {
-    events: Object,
+    events: Array,
+    connectionError: null,
   },
 
   setup() {
     return {
-      ionInformationCircleOutline
+      ionInformationCircleOutline,
+      ionWarningOutline,
     }
   },
 
   data() {
     return {
-      _events: {},
+      _events: [],
+      _connectionError: null,
       loading: false,
     }
   },
 
   created() {
     this._events = this.events
+    this._connectionError = this.connectionError
   },
 
   methods: {
     async refresh() {
       if (this.loading) return
+      this._connectionError = null
       this.loading = true
       const response = await axios.get('/admin/events')
-      this._events = response.data
+      if (response.data.connectionError) {
+        this._connectionError = response.data.connectionError
+      } else {
+        this._events = response.data.events
+      }
       this.loading = false
     },
   },
