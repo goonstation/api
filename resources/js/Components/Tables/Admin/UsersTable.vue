@@ -28,6 +28,7 @@ export default {
     return {
       routes: {
         fetch: '/admin/users',
+        create: '/admin/users/create',
         edit: '/admin/users/edit/_id',
       },
       columns: [

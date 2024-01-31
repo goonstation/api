@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Admin\GameAdminsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\UsersController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,8 +22,10 @@ Route::middleware([
     })->name('dashboard');
 
     Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
-        Route::controller(UsersController::class)->prefix('users')->group(function () {
+        Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
             Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
+            Route::get('/create', 'create')->name('admin.users.create')->breadcrumb('', 'admin.users.index');
+            Route::post('/', 'store')->name('admin.users.store');
             Route::get('/edit/{user}', 'edit')->name('admin.users.edit')->breadcrumb('', 'admin.users.index');
             Route::put('/{user}', 'update')->whereNumber('user')->name('admin.users.update');
         });

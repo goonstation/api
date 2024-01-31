@@ -30,6 +30,40 @@ class UsersController extends Controller
         }
     }
 
+    public function create()
+    {
+        return Inertia::render('Admin/Users/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'confirm_password' => 'required|same:password',
+            'discord_id' => 'nullable',
+            'game_admin_id' => 'nullable',
+            'is_admin' => 'boolean',
+        ]);
+
+        $user = new User();
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->discord_id = isset($data['discord_id']) ? $data['discord_id'] : null;
+        $user->game_admin_id = isset($data['game_admin_id']) ? $data['game_admin_id'] : null;
+        $user->password = Hash::make($data['password']);
+
+        // Only current admins can modify other admin status
+        if (Auth::user()->is_admin) {
+            $user->is_admin = $data['is_admin'];
+        }
+
+        $user->save();
+
+        return to_route('admin.users.index');
+    }
+
     public function edit(User $user)
     {
         return Inertia::render('Admin/Users/Edit', [
