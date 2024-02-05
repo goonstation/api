@@ -5,7 +5,19 @@
       <page-header :title="niceTitle" @onToggleLeftDrawer="siteNavOpen = !siteNavOpen" />
     </KeepAlive>
 
-    <site-nav :items="siteNavItems" :is-open="siteNavOpen" />
+    <site-nav :items="siteNavItems" :is-open="siteNavOpen">
+      <template #bottom>
+        <q-separator />
+        <div class="site-nav__item">
+          <Link :href="route('dashboard')" class="dashboard-login site-nav__item q-pa-sm">
+            <div class="site-nav__label">
+              <q-icon :name="ionLogInOutline" size="2em" />
+              Admin Login
+            </div>
+          </Link>
+        </div>
+      </template>
+    </site-nav>
 
     <q-page-container>
       <q-page class="row column no-wrap q-pa-md page-wrapper">
@@ -31,10 +43,23 @@
     max-width: 1500px;
   }
 }
+
+.dashboard-login {
+  font-size: 0.8em;
+  opacity: 0.8;
+
+  .site-nav__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+  }
+}
 </style>
 
 <script>
 import { Head } from '@inertiajs/vue3'
+import { ionLogInOutline } from '@quasar/extras/ionicons-v6'
 import PageHeader from '@/Components/PageHeader.vue'
 import SiteNav from '@/Components/SiteNav/SiteNav.vue'
 
@@ -47,6 +72,12 @@ export default {
 
   props: {
     title: String,
+  },
+
+  setup() {
+    return {
+      ionLogInOutline,
+    }
   },
 
   data() {

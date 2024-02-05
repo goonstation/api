@@ -1,60 +1,66 @@
 <template>
   <q-drawer show-if-above :model-value="isOpen" side="left" :width="175" :breakpoint="600">
-    <q-scroll-area class="fit">
-      <q-list class="site-nav" ref="siteNav">
-        <Link class="block q-mt-lg q-mb-md logo" :href="home">
-          <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
-        </Link>
-        <template v-for="(menuItem, index) in items">
-          <q-expansion-item
-            v-if="menuItem.children"
-            class="site-nav__item site-nav__item-parent"
-            :key="`exp${index}`"
-            :class="[
-              {
-                'site-nav__item-parent--active': menuItem.expandedActive,
-              },
-            ]"
-            :expand-icon="ionChevronDown"
-            dense-toggle
-            v-model="menuItem.active"
-            @focusin.native="onNavItemEnter"
-            @focusout.native="onNavItemLeave"
-            @after-hide="onNavItemLeave"
-          >
-            <template #header>
-              <q-item-section class="site-nav__label q-pl-sm">
-                {{ menuItem.label }}
-              </q-item-section>
-            </template>
-
-            <div class="site-nav__exp-content">
-              <template v-for="(childItem, childIndex) in menuItem.children">
-                <template v-if="canShowItem(childItem)">
-                  <site-nav-item
-                    :key="`child${childIndex}`"
-                    :item="childItem"
-                    @onNavItemEnter="onNavItemEnter"
-                    @onNavItemLeave="onNavItemLeave"
-                  />
-                  <q-separator :key="'sep' + childIndex" v-if="childItem.separator" />
-                </template>
+    <q-scroll-area class="fit" :content-style="scrollContentStyles">
+      <div class="site-nav__wrap">
+        <q-list class="site-nav" ref="siteNav">
+          <Link class="block q-mt-lg q-mb-md logo" :href="home">
+            <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
+          </Link>
+          <template v-for="(menuItem, index) in items">
+            <q-expansion-item
+              v-if="menuItem.children"
+              class="site-nav__item site-nav__item-parent"
+              :key="`exp${index}`"
+              :class="[
+                {
+                  'site-nav__item-parent--active': menuItem.expandedActive,
+                },
+              ]"
+              :expand-icon="ionChevronDown"
+              dense-toggle
+              v-model="menuItem.active"
+              @focusin.native="onNavItemEnter"
+              @focusout.native="onNavItemLeave"
+              @after-hide="onNavItemLeave"
+            >
+              <template #header>
+                <q-item-section class="site-nav__label q-pl-sm">
+                  {{ menuItem.label }}
+                </q-item-section>
               </template>
-            </div>
-          </q-expansion-item>
 
-          <template v-else-if="canShowItem(menuItem)">
-            <site-nav-item
-              :key="`item${index}`"
-              :item="menuItem"
-              @onNavItemEnter="onNavItemEnter"
-              @onNavItemLeave="onNavItemLeave"
-            />
-            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+              <div class="site-nav__exp-content">
+                <template v-for="(childItem, childIndex) in menuItem.children">
+                  <template v-if="canShowItem(childItem)">
+                    <site-nav-item
+                      :key="`child${childIndex}`"
+                      :item="childItem"
+                      @onNavItemEnter="onNavItemEnter"
+                      @onNavItemLeave="onNavItemLeave"
+                    />
+                    <q-separator :key="'sep' + childIndex" v-if="childItem.separator" />
+                  </template>
+                </template>
+              </div>
+            </q-expansion-item>
+
+            <template v-else-if="canShowItem(menuItem)">
+              <site-nav-item
+                :key="`item${index}`"
+                :item="menuItem"
+                @onNavItemEnter="onNavItemEnter"
+                @onNavItemLeave="onNavItemLeave"
+              />
+              <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+            </template>
           </template>
-        </template>
-        <div class="site-nav__bar" :class="[animateNavBar && 'active']" ref="navSlider"></div>
-      </q-list>
+          <div class="site-nav__bar" :class="[animateNavBar && 'active']" ref="navSlider"></div>
+        </q-list>
+
+        <div class="site-nav__bottom">
+          <slot name="bottom" />
+        </div>
+      </div>
     </q-scroll-area>
   </q-drawer>
 </template>
@@ -63,6 +69,14 @@
 .site-nav {
   $self: &;
   position: relative;
+
+  &__wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+  }
 
   .logo {
     position: relative;
@@ -154,6 +168,10 @@
       }
     }
   }
+
+  &__bottom {
+    margin-top: auto;
+  }
 }
 </style>
 
@@ -187,6 +205,10 @@ export default {
       pageLoading: false,
       navSlider: null,
       animateNavBar: false,
+      scrollContentStyles: {
+        display: 'flex',
+        'flex-direction': 'column'
+      }
     }
   },
 
