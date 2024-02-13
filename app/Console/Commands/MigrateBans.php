@@ -145,7 +145,12 @@ class MigrateBans extends Command
             $banDetail['comp_id'] = $record['comp_id'] === 'N/A' ? null : $record['comp_id'];
             $banDetail['created_at'] = $record['created_at'];
             $banDetail['updated_at'] = $record['updated_at'];
-            $banDetail['deleted_at'] = $deletedAt;
+            $banDetailDeletedAt = null;
+            if ($deletedAt) $banDetailDeletedAt = $deletedAt;
+            if ($record['removed']) {
+                $banDetailDeletedAt = $record['updated_at'];
+            }
+            $banDetail['deleted_at'] = $banDetailDeletedAt;
             $banDetailsToInsert[] = $banDetail;
 
             $bar->advance();
