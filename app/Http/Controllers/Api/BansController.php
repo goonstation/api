@@ -122,6 +122,8 @@ class BansController extends Controller
                     ->orWhere('expires_at', '>', Carbon::now()->toDateTimeString());
             })
             ->whereHas('details', function (Builder $query) use ($ckey, $compId, $ip) {
+                $query->whereNull('deleted_at');
+
                 // Check any of the ban details match the provided player details
                 if ($ckey) {
                     $query->where('ckey', $ckey);
