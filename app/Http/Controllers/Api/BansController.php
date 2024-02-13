@@ -123,26 +123,27 @@ class BansController extends Controller
             })
             ->whereHas('details', function (Builder $query) use ($ckey, $compId, $ip) {
                 $query->whereNull('deleted_at');
+                $query->where(function (Builder $query) use ($ckey, $compId, $ip) {
+                    // Check any of the ban details match the provided player details
+                    if ($ckey) {
+                        $query->where('ckey', $ckey);
+                    } elseif (! $ckey && $compId) {
+                        $query->where('comp_id', $compId);
+                    } elseif (! $ckey && ! $compId && $ip) {
+                        $query->where('ip', $ip);
+                    }
 
-                // Check any of the ban details match the provided player details
-                if ($ckey) {
-                    $query->where('ckey', $ckey);
-                } elseif (! $ckey && $compId) {
-                    $query->where('comp_id', $compId);
-                } elseif (! $ckey && ! $compId && $ip) {
-                    $query->where('ip', $ip);
-                }
+                    if ($ckey && $compId) {
+                        $query->orWhere('comp_id', $compId);
+                    }
+                    if ($ckey && $ip) {
+                        $query->orWhere('ip', $ip);
+                    }
 
-                if ($ckey && $compId) {
-                    $query->orWhere('comp_id', $compId);
-                }
-                if ($ckey && $ip) {
-                    $query->orWhere('ip', $ip);
-                }
-
-                if ($compId && $ip) {
-                    $query->orWhere('ip', $ip);
-                }
+                    if ($compId && $ip) {
+                        $query->orWhere('ip', $ip);
+                    }
+                });
             })
             ->orderBy('id', 'desc')
             ->first();
