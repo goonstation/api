@@ -16,10 +16,10 @@ class PlayerParticipationResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'player_id' => $this->ckey,
-            'round_id' => $this->key,
+            'player_id' => $this->player_id,
+            'round_id' => $this->round_id,
             'job' => $this->job,
-            'legacy_data' => $this->byond_join_date,
+            'legacy_data' => $this->legacy_data,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
