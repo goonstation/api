@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MapSwitchResource;
 use App\Models\GameAdmin;
+use App\Models\GameRound;
 use App\Models\MapSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -44,6 +45,12 @@ class MapSwitchesController extends Controller
         $mapSwitch->votes = isset($data['votes']) ? $data['votes'] : 0;
         $mapSwitch->save();
 
+        $serverId = $mapSwitch->server_id;
+        if (!$serverId) {
+            $gameRound = GameRound::where('round_id', $mapSwitch->round_id)->first();
+            $serverId = $gameRound->server_id;
+        }
+
         $res = Http::withHeaders([
             'Api-Key' => config('goonhub.ci_api_key'),
             'Content-Type' => 'application/json',
@@ -52,7 +59,7 @@ class MapSwitchesController extends Controller
                 config('goonhub.ci_url').'/switch-map',
                 [
                     'map' => $mapSwitch->map,
-                    'server' => $mapSwitch->server_id,
+                    'server' => $serverId,
                 ]
             );
 
