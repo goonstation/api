@@ -47,7 +47,7 @@ class PlayerSavesController extends Controller
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
             'key' => 'required|string',
-            'value' => 'required',
+            'value' => 'required|nullable',
         ]);
 
         PlayerData::where([
@@ -74,7 +74,7 @@ class PlayerSavesController extends Controller
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
             'name' => 'required|string',
-            'data' => 'required|string',
+            'data' => 'required|nullable',
         ]);
 
         if (strlen($data['data']) >= 51200) {
