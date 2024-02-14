@@ -64,7 +64,7 @@ class PlayersController extends Controller
             'created_at'
         )
             ->groupBy('created_at')
-            ->orderBy('total_online', 'desc')
+            ->orderByRaw('total_online DESC NULLS LAST')
             ->first();
         $mostPlayersOnline = $mostPlayersOnline ? $mostPlayersOnline->total_online : 0;
 
