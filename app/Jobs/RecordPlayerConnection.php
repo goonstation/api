@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use TypeError;
 
 class RecordPlayerConnection implements ShouldQueue
 {
@@ -40,7 +41,7 @@ class RecordPlayerConnection implements ShouldQueue
         $geoRecord = null;
         try {
             $geoRecord = $geoReader->country($this->data['ip']);
-        } catch (\Exception $e) {
+        } catch (\Exception|TypeError $e) {
             // pass
         }
 
