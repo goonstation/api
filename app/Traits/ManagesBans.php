@@ -61,10 +61,10 @@ trait ManagesBans
             }
         }
 
-        $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
+        $gameAdmin = GameAdmin::where('ckey', ckey($request['game_admin_ckey']))->first();
 
         $player = null;
-        $ckey = isset($request['ckey']) ? $request['ckey'] : null;
+        $ckey = isset($request['ckey']) ? ckey($request['ckey']) : null;
         if ($ckey) {
             $player = Player::where('ckey', $ckey)->first();
         }
@@ -122,9 +122,9 @@ trait ManagesBans
             throw new Exception('This ban has already expired.');
         }
 
-        $gameAdmin = GameAdmin::where('ckey', $request['game_admin_ckey'])->first();
+        $gameAdmin = GameAdmin::where('ckey', ckey($request['game_admin_ckey']))->first();
         $player = null;
-        $ckey = isset($request['ckey']) ? $request['ckey'] : null;
+        $ckey = isset($request['ckey']) ? ckey($request['ckey']) : null;
         if ($ckey) {
             $player = Player::where('ckey', $ckey)->first();
         }
