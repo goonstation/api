@@ -47,7 +47,7 @@ class MapSwitchesController extends Controller
 
         $serverId = $mapSwitch->server_id;
         if (!$serverId) {
-            $gameRound = GameRound::where('round_id', $mapSwitch->round_id)->first();
+            $gameRound = GameRound::where('id', $mapSwitch->round_id)->first();
             $serverId = $gameRound->server_id;
         }
 
