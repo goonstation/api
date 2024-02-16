@@ -116,11 +116,11 @@ class MigrateNotes extends Command
             }
 
             $serverId = strtolower($record['server_id']);
-            if ($serverId === "\n" || $serverId === 'discord') {
+            if ($serverId === '\n' || $serverId === 'discord') {
                 $serverId = null;
             }
 
-            $note['server_id'] = strtolower($record['server_id']);
+            $note['server_id'] = $serverId;
             $note['note'] = urldecode(stripslashes($record['note']));
             $note['legacy_data'] = json_encode($legacyData);
             $note['created_at'] = $record['created_at'];
