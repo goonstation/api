@@ -38,7 +38,8 @@ export default {
       server_id: this.ban.server_id || 'all',
       reason: this.ban.reason,
       duration: this.ban.duration,
-      expires_at: this.ban.expires_at
+      expires_at: this.ban.expires_at,
+      requires_appeal: this.ban.requires_appeal,
     }
   }
 }

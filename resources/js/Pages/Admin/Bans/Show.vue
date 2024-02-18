@@ -17,6 +17,7 @@
         <q-card-section class="q-pa-sm">
           <q-chip v-if="!isExpired && !isDeleted" color="positive" square> Active Ban </q-chip>
           <q-chip v-else color="negative" square> Inactive Ban </q-chip>
+          <q-chip v-if="ban.requires_appeal" color="info" square> Requires Appeal </q-chip>
         </q-card-section>
       </q-card>
 
