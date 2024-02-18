@@ -100,7 +100,7 @@ trait ManagesBans
         $note->round_id = isset($request['round_id']) ? $request['round_id'] : null;
         $note->note = sprintf(
             'Banned %s. Reason: %s',
-            isset($request['duration'])
+            isset($request['duration']) && (int) $request['duration'] > 0
                 ? 'for '.CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
                 : 'permanently',
             $request['reason']
