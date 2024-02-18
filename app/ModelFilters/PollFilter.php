@@ -58,7 +58,11 @@ class PollFilter extends ModelFilter
         } elseif (is_array($val)) {
             $q = $this;
             foreach ($val as $server) {
-                $q = $q->orWhereJsonContains('servers', $server);
+                if (is_null($server) || $server === 'all') {
+                    $q = $q->orWhereNull('servers');
+                } else {
+                    $q = $q->orWhereJsonContains('servers', $server);
+                }
             }
 
             return $q;
