@@ -30,8 +30,8 @@ class PlayerNoteFilter extends ModelFilter
     public function ckey($val)
     {
         return $this->whereHas('player', function ($query) use ($val) {
-            return $query->whereLike('ckey', $val);
-        })->whereLike('ckey', $val, 'or');
+            return $query->where('ckey', $val);
+        })->where('ckey', $val, 'or');
     }
 
     public function gameAdmin($val)
