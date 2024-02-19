@@ -121,6 +121,7 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
+            if (!$item->player_id) continue;
             $dataToUpset[] = [
                 'player_id' => $item->player_id,
                 'key' => $item->key,
