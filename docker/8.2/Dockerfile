@@ -66,7 +66,7 @@ RUN cd /home/sail && \
         ln -s /home/sail/dectalk/dist/say /usr/local/bin/dectalk
 
 # Chrome
-RUN curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -- output chrome.deb && \
+RUN curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output chrome.deb && \
         apt-get install -y ./chrome.deb && \
         rm chrome.deb
 
