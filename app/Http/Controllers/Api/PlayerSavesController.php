@@ -57,16 +57,12 @@ class PlayerSavesController extends Controller
             $playerId = $player->id;
         }
 
-        PlayerData::where([
+        $cdata = PlayerData::updateOrCreate([
             'player_id' => $playerId,
             'key' => $data['key'],
-        ])->delete();
-
-        $cdata = new PlayerData();
-        $cdata->player_id = $playerId;
-        $cdata->key = $data['key'];
-        $cdata->value = $data['value'];
-        $cdata->save();
+        ], [
+            'value' => $data['value']
+        ]);
 
         return new PlayerDataResource($cdata);
     }
@@ -81,7 +77,7 @@ class PlayerSavesController extends Controller
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
             'name' => 'required|string',
-            'data' => 'required|nullable',
+            'data' => 'nullable',
         ]);
 
         if (strlen($data['data']) >= 51200) {
@@ -93,16 +89,12 @@ class PlayerSavesController extends Controller
             return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
         }
 
-        PlayerSave::where([
+        $save = PlayerSave::updateOrCreate([
             'player_id' => $data['player_id'],
             'name' => $data['name'],
-        ])->delete();
-
-        $save = new PlayerSave();
-        $save->player_id = $data['player_id'];
-        $save->name = $data['name'];
-        $save->data = $data['data'];
-        $save->save();
+        ], [
+            'data' => $data['data'],
+        ]);
 
         return [
             'data' => new PlayerSaveResource($save),
@@ -128,6 +120,7 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
+            if (!$item->player_id || !$item->key) continue;
             $dataToUpset[] = [
                 'player_id' => $item->player_id,
                 'key' => $item->key,
