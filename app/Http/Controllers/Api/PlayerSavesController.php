@@ -10,6 +10,8 @@ use App\Models\PlayerData;
 use App\Models\PlayerSave;
 use Illuminate\Http\Request;
 
+use function Sentry\captureMessage;
+
 /**
  * @tags Player Saves
  */
@@ -120,7 +122,10 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
-            if (!$item->player_id || !$item->key) continue;
+            if (!$item->player_id || !$item->key) {
+                captureMessage('Invalid data during storeDataBulk', null, $item);
+                continue;
+            }
             $dataToUpset[] = [
                 'player_id' => $item->player_id,
                 'key' => $item->key,
