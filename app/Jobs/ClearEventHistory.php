@@ -30,7 +30,11 @@ class ClearEventHistory implements ShouldQueue
      */
     public function handle()
     {
-        $redis = Redis::connection('events');
-        $redis->command('del', ['event_history']);
+        try {
+            $redis = Redis::connection('events');
+            $redis->command('del', ['event_history']);
+        } catch (\Throwable $e) {
+            $this->fail($e);
+        }
     }
 }
