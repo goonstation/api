@@ -39,10 +39,7 @@ RUN apt-get update \
     && apt-get install -y yarn \
     && apt-get install -y mysql-client \
     && apt-get install -y postgresql-client-$POSTGRES_VERSION \
-    && apt-get install -y ffmpeg build-essential libasound2-dev libpulse-dev lame \
-    && apt-get -y autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && apt-get install -y ffmpeg build-essential libasound2-dev libpulse-dev lame
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.2
 
@@ -69,7 +66,7 @@ RUN cd /home/sail && \
         ln -s /home/sail/dectalk/dist/say /usr/local/bin/dectalk
 
 # Chrome
-RUN curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -- output chrome.deb && \
+RUN curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output chrome.deb && \
         apt-get install -y ./chrome.deb && \
         rm chrome.deb
 
@@ -79,6 +76,11 @@ RUN curl -L https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.60
         rm chromedriver-linux64.zip && \
         chmod +x chromedriver-linux64/chromedriver && \
         mv chromedriver-linux64/chromedriver /usr/local/bin
+
+# Clean up apt cache
+RUN apt-get -y autoremove && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
