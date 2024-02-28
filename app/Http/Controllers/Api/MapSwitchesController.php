@@ -25,7 +25,7 @@ class MapSwitchesController extends Controller
         $data = $this->validate($request, [
             'game_admin_ckey' => 'nullable|string',
             'server_id' => 'nullable|string',
-            'round_id' => 'required|integer',
+            'round_id' => 'required|integer|exists:game_rounds,id',
             'map' => 'required|string',
             'votes' => 'nullable|integer',
         ]);
