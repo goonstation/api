@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\VpnCheckResource;
 use App\Models\VpnCheck;
 use App\Models\VpnWhitelist;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -54,17 +55,23 @@ class VpnChecksController extends Controller
             return new VpnCheckResource($checked);
         }
 
-        $res = Http::get(
-            'https://ipqualityscore.com/api/json/ip/'
-                .config('goonhub.ipquality_pass')
-                .'/'.$ip,
-            [
-                'allow_public_access_points' => 'true',
-                'fast' => 'true',
-                'lighter_penalties' => 'true',
-                'strictness' => 0,
-            ]
-        );
+        $res = null;
+
+        try {
+            $res = Http::get(
+                'https://ipqualityscore.com/api/json/ip/'
+                    .config('goonhub.ipquality_pass')
+                    .'/'.$ip,
+                [
+                    'allow_public_access_points' => 'true',
+                    'fast' => 'true',
+                    'lighter_penalties' => 'true',
+                    'strictness' => 0,
+                ]
+            );
+        } catch (ConnectionException $e) {
+            return response()->json(['message' => 'Unable to query external VPN check service'], 400);
+        }
 
         $jsonRes = $res->getBody();
         $res = json_decode($jsonRes);
