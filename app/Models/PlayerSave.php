@@ -11,6 +11,8 @@ class PlayerSave extends Model
 
     protected $fillable = [
         'player_id',
+        'name',
+        'data',
     ];
 
     /**
