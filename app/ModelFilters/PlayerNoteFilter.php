@@ -31,7 +31,7 @@ class PlayerNoteFilter extends ModelFilter
     {
         return $this->whereHas('player', function ($query) use ($val) {
             return $query->where('ckey', $val);
-        })->where('ckey', $val, 'or');
+        })->orWhere('ckey', $val);
     }
 
     public function gameAdmin($val)
