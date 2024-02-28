@@ -43,13 +43,14 @@ class PlayerParticipationsController extends Controller
     {
         $data = $request->validate([
             'players' => 'required|array',
-            'players.*.player_id' => 'required|integer|exists:players,id',
+            'players.*.player_id' => 'sometimes|nullable|integer',
             'players.*.job' => 'sometimes|nullable|string',
             'round_id' => 'required|integer|exists:game_rounds,id',
         ]);
 
         $insertData = [];
         foreach ($data['players'] as $player) {
+            if (!$player['player_id']) continue;
             $insertData[] = [
                 'player_id' => $player['player_id'],
                 'round_id' => $data['round_id'],
