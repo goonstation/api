@@ -45,18 +45,25 @@ class PlayerSavesController extends Controller
     public function storeData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required|string',
-            'value' => 'required|nullable',
+            'value' => 'nullable',
         ]);
 
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
+
         PlayerData::where([
-            'player_id' => $data['player_id'],
+            'player_id' => $playerId,
             'key' => $data['key'],
         ])->delete();
 
         $cdata = new PlayerData();
-        $cdata->player_id = $data['player_id'];
+        $cdata->player_id = $playerId;
         $cdata->key = $data['key'];
         $cdata->value = $data['value'];
         $cdata->save();
