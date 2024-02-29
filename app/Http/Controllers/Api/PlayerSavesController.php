@@ -123,7 +123,7 @@ class PlayerSavesController extends Controller
         $dataToUpset = [];
         foreach ($bulkData as $item) {
             if (!$item->player_id || !$item->key) {
-                captureMessage('Invalid data during storeDataBulk', null, $item);
+                captureMessage('Invalid data during player saves storeDataBulk', null, $item);
                 continue;
             }
             $dataToUpset[] = [
