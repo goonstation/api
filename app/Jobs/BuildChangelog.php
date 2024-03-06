@@ -62,7 +62,12 @@ class BuildChangelog implements ShouldQueue
     private function parseDate($dumbDate)
     {
         $dateParts = explode(' ', $dumbDate);
-        $dayOfWeek = $dateParts[0]; // yeah let's just...let the view layer handle that
+
+        if (count($dateParts) < 4) {
+            return 'Invalid Date';
+        }
+
+        // $dayOfWeek = $dateParts[0]; // yeah let's just...let the view layer handle that
         $month = $dateParts[1];
         $day = $dateParts[2];
         $year = $dateParts[3];
