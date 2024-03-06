@@ -6,6 +6,7 @@ use App\Models\Player;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -52,7 +53,13 @@ class RecordByondJoinDate implements ShouldQueue
      */
     private function getByondJoinDate(string $ckey)
     {
-        $response = Http::get("https://secure.byond.com/members/$ckey?format=text");
+        $response = null;
+        try {
+            $response = Http::get("https://secure.byond.com/members/$ckey?format=text");
+        } catch (ConnectionException $e) {
+            return null;
+        }
+
         if ($response->failed()) {
             return null;
         }
