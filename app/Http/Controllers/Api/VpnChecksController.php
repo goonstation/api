@@ -75,6 +75,11 @@ class VpnChecksController extends Controller
 
         $jsonRes = $res->getBody();
         $res = json_decode($jsonRes);
+
+        if (is_null($res)) {
+            return response()->json(['message' => 'Unable to query external VPN check service'], 400);
+        }
+
         $vpnCheck = VpnCheck::updateOrCreate(
             ['ip' => $ip],
             [
