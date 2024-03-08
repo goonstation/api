@@ -55,7 +55,7 @@ class PlayerParticipationsController extends Controller
             if (!$player['player_id']) {
                 captureMessage('Invalid data during player participations storeBulk', null, $player);
                 continue;
-            };
+            }
             $insertData[] = [
                 'player_id' => $player['player_id'],
                 'round_id' => $data['round_id'],
