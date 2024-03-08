@@ -73,7 +73,7 @@ export default {
           label: 'ID',
           field: 'id',
           sortable: true,
-          filterable: false,
+          filterable: true,
         },
         { name: 'round_id', label: 'Round', field: 'round_id', sortable: true, filterable: false },
         {

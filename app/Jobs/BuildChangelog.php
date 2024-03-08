@@ -6,6 +6,7 @@ use App\Models\Changelog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -28,13 +29,18 @@ class BuildChangelog implements ShouldQueue
 
     private function getChangelogFromRepo()
     {
-        $res = Http::withHeaders([
-            'Accept: application/vnd.github+json',
-            'Authorization: Bearer '.config('github.user_token'),
-            'X-Github-Api-Version: 2022-11-28',
-            'User-Agent: Goonhub',
-        ])
-            ->get('https://api.github.com/repos/goonstation/goonstation/contents/strings/changelog.txt');
+        $res = null;
+        try {
+            $res = Http::withHeaders([
+                'Accept: application/vnd.github+json',
+                'Authorization: Bearer '.config('github.user_token'),
+                'X-Github-Api-Version: 2022-11-28',
+                'User-Agent: Goonhub',
+            ])
+                ->get('https://api.github.com/repos/goonstation/goonstation/contents/strings/changelog.txt');
+        } catch (ConnectionException $e) {
+            return null;
+        }
 
         if (is_null($res) || ! isset($res['content'])) {
             return null;
@@ -56,7 +62,12 @@ class BuildChangelog implements ShouldQueue
     private function parseDate($dumbDate)
     {
         $dateParts = explode(' ', $dumbDate);
-        $dayOfWeek = $dateParts[0]; // yeah let's just...let the view layer handle that
+
+        if (count($dateParts) < 4) {
+            return 'Invalid Date';
+        }
+
+        // $dayOfWeek = $dateParts[0]; // yeah let's just...let the view layer handle that
         $month = $dateParts[1];
         $day = $dateParts[2];
         $year = $dateParts[3];

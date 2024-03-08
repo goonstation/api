@@ -7,6 +7,8 @@ use App\Http\Resources\PlayerParticipationResource;
 use App\Models\PlayerParticipation;
 use Illuminate\Http\Request;
 
+use function Sentry\captureMessage;
+
 /**
  * @tags Player Participations
  */
@@ -43,13 +45,17 @@ class PlayerParticipationsController extends Controller
     {
         $data = $request->validate([
             'players' => 'required|array',
-            'players.*.player_id' => 'required|integer|exists:players,id',
+            'players.*.player_id' => 'sometimes|nullable|integer',
             'players.*.job' => 'sometimes|nullable|string',
             'round_id' => 'required|integer|exists:game_rounds,id',
         ]);
 
         $insertData = [];
         foreach ($data['players'] as $player) {
+            if (!$player['player_id']) {
+                captureMessage('Invalid data during player participations storeBulk', null, $player);
+                continue;
+            };
             $insertData[] = [
                 'player_id' => $player['player_id'],
                 'round_id' => $data['round_id'],

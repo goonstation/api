@@ -12,7 +12,6 @@
               label="Ckey"
               filled
               lazy-rules
-              required
               dense
               :error="!!form.errors.ckey"
               :error-message="form.errors.ckey"
@@ -22,7 +21,6 @@
               label="Computer ID"
               filled
               lazy-rules
-              required
               dense
               :error="!!form.errors.comp_id"
               :error-message="form.errors.comp_id"
@@ -32,7 +30,6 @@
               label="IP Address"
               filled
               lazy-rules
-              required
               dense
               :error="!!form.errors.ip"
               :error-message="form.errors.ip"
@@ -185,6 +182,20 @@
                   This ban will expire {{ getExpiresAtFromDuration(form.duration) }}
                 </q-banner>
               </template>
+            </div>
+            <q-toggle
+              v-model="form.requires_appeal"
+              class="q-mt-md"
+              label="Requires Appeal"
+              filled
+              lazy-rules
+              dense
+              :error="!!form.errors.requires_appeal"
+              :error-message="form.errors.requires_appeal"
+            />
+            <div class="text-caption q-mt-sm">
+              Indicate to the user that this ban requires an appeal on the forums before it will be
+              lifted.
             </div>
           </q-card-section>
         </q-card>

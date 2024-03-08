@@ -135,10 +135,14 @@ class GenerateNumbersStationPass implements ShouldQueue
             // Send new numbers to all active servers
             $servers = GameServer::where('active', true)->get();
             foreach ($servers as $server) {
-                GameBridge::relay($server['server_id'], [
-                    'type' => 'numbersStation',
-                    'numbers' => $numbers,
-                ]);
+                try {
+                    GameBridge::relay($server['server_id'], [
+                        'type' => 'numbersStation',
+                        'numbers' => $numbers,
+                    ]);
+                } catch (\Throwable $e) {
+                    // Ignore inability to reach a server for this
+                }
             }
         }
     }

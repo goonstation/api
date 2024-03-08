@@ -10,6 +10,8 @@ use App\Models\PlayerData;
 use App\Models\PlayerSave;
 use Illuminate\Http\Request;
 
+use function Sentry\captureMessage;
+
 /**
  * @tags Player Saves
  */
@@ -45,21 +47,24 @@ class PlayerSavesController extends Controller
     public function storeData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required|string',
-            'value' => 'required|nullable',
+            'value' => 'nullable',
         ]);
 
-        PlayerData::where([
-            'player_id' => $data['player_id'],
-            'key' => $data['key'],
-        ])->delete();
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
 
-        $cdata = new PlayerData();
-        $cdata->player_id = $data['player_id'];
-        $cdata->key = $data['key'];
-        $cdata->value = $data['value'];
-        $cdata->save();
+        $cdata = PlayerData::updateOrCreate([
+            'player_id' => $playerId,
+            'key' => $data['key'],
+        ], [
+            'value' => $data['value']
+        ]);
 
         return new PlayerDataResource($cdata);
     }
@@ -74,7 +79,7 @@ class PlayerSavesController extends Controller
         $data = $request->validate([
             'player_id' => 'required|integer|exists:players,id',
             'name' => 'required|string',
-            'data' => 'required|nullable',
+            'data' => 'nullable',
         ]);
 
         if (strlen($data['data']) >= 51200) {
@@ -86,16 +91,12 @@ class PlayerSavesController extends Controller
             return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
         }
 
-        PlayerSave::where([
+        $save = PlayerSave::updateOrCreate([
             'player_id' => $data['player_id'],
             'name' => $data['name'],
-        ])->delete();
-
-        $save = new PlayerSave();
-        $save->player_id = $data['player_id'];
-        $save->name = $data['name'];
-        $save->data = $data['data'];
-        $save->save();
+        ], [
+            'data' => $data['data'],
+        ]);
 
         return [
             'data' => new PlayerSaveResource($save),
@@ -121,7 +122,10 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
-            if (!$item->player_id) continue;
+            if (!$item->player_id || !$item->key) {
+                captureMessage('Invalid data during player saves storeDataBulk', null, $item);
+                continue;
+            }
             $dataToUpset[] = [
                 'player_id' => $item->player_id,
                 'key' => $item->key,

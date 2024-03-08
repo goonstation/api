@@ -27,6 +27,7 @@ export default {
         server_id: 'all',
         reason: null,
         duration: null,
+        requires_appeal: false,
       },
     }
   }
