@@ -265,7 +265,7 @@
           <q-pagination
             v-model="_pagination.page"
             :max="props.pagesNumber"
-            @update:model-value="updateTable"
+            @update:model-value="onPageChange"
             color="grey"
             size="12px"
             input
@@ -435,6 +435,7 @@ export default {
       deletingItem: null,
       selected: [],
       storedSelectedRow: null,
+      scrollToTop: false,
     }
   },
 
@@ -564,6 +565,12 @@ export default {
       this._pagination.descending = descending
       this._pagination.rowsNumber = res.data.total
       this.setUrlParams()
+
+      if (this.scrollToTop) {
+        this.$refs.tableRef.$el.scrollIntoView({ behavior: 'smooth' })
+        this.scrollToTop = false
+      }
+
       this.loading = false
       this.$emit('fetch-end')
     },
@@ -634,6 +641,11 @@ export default {
       if (descending) {
         this._pagination.descending = descending
       }
+      this.updateTable()
+    },
+
+    onPageChange() {
+      this.scrollToTop = true
       this.updateTable()
     },
 
