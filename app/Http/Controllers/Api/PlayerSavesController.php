@@ -8,6 +8,7 @@ use App\Http\Resources\PlayerSaveResource;
 use App\Models\Player;
 use App\Models\PlayerData;
 use App\Models\PlayerSave;
+use App\Rules\PlayerIdWithCkey;
 use Illuminate\Http\Request;
 
 use function Sentry\captureMessage;
@@ -25,11 +26,18 @@ class PlayerSavesController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
+            'ckey' => 'required_without:player_id|alpha_num',
         ]);
 
-        $cdata = PlayerData::where('player_id', $data['player_id'])->get();
-        $saves = PlayerSave::where('player_id', $data['player_id'])->get();
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
+
+        $cdata = PlayerData::where('player_id', $playerId)->get();
+        $saves = PlayerSave::where('player_id', $playerId)->get();
 
         return [
             'data' => [
@@ -47,7 +55,7 @@ class PlayerSavesController extends Controller
     public function storeData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
             'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required|string',
             'value' => 'nullable',
@@ -77,7 +85,8 @@ class PlayerSavesController extends Controller
     public function storeFile(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
+            'ckey' => 'required_without:player_id|alpha_num',
             'name' => 'required|string',
             'data' => 'nullable',
         ]);
@@ -86,13 +95,19 @@ class PlayerSavesController extends Controller
             return response()->json(['message' => 'Savefile exceeds 51200 bytes.'], 413);
         }
 
-        $currentSaves = PlayerSave::where('player_id', $data['player_id'])->count();
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
+
+        $currentSaves = PlayerSave::where('player_id', $playerId)->count();
         if ($currentSaves >= 15) {
             return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
         }
 
         $save = PlayerSave::updateOrCreate([
-            'player_id' => $data['player_id'],
+            'player_id' => $playerId,
             'name' => $data['name'],
         ], [
             'data' => $data['data'],
@@ -122,12 +137,23 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
-            if (!$item->player_id || !$item->key) {
+            if ((!$item->player_id && !$item->ckey) || !$item->key) {
                 captureMessage('Invalid data during player saves storeDataBulk', null, $item);
                 continue;
             }
+
+            $playerId = $item->player_id;
+            if (!$playerId && $item->ckey) {
+                $player = Player::where('ckey', $item->ckey)->first();
+                if (!$player) {
+                    captureMessage('Invalid ckey during player saves storeDataBulk', null, $item);
+                    continue;
+                }
+                $playerId = $player->id;
+            }
+
             $dataToUpset[] = [
-                'player_id' => $item->player_id,
+                'player_id' => $playerId,
                 'key' => $item->key,
                 'value' => $item->value,
             ];
@@ -187,11 +213,18 @@ class PlayerSavesController extends Controller
     public function destroyData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
+            'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required',
         ]);
 
-        PlayerData::where('player_id', $data['player_id'])
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
+
+        PlayerData::where('player_id', $playerId)
             ->where('key', $data['key'])
             ->delete();
 
@@ -206,11 +239,18 @@ class PlayerSavesController extends Controller
     public function destroyFile(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
+            'ckey' => 'required_without:player_id|alpha_num',
             'name' => 'required',
         ]);
 
-        PlayerSave::where('player_id', $data['player_id'])
+        $playerId = isset($data['player_id']) ? $data['player_id'] : null;
+        if (!$playerId) {
+            $player = Player::where('ckey', $data['ckey'])->firstOrFail();
+            $playerId = $player->id;
+        }
+
+        PlayerSave::where('player_id', $playerId)
             ->where('name', $data['name'])
             ->delete();
 
