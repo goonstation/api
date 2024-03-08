@@ -55,7 +55,7 @@ class PlayerSavesController extends Controller
     public function storeData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
             'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required|string',
             'value' => 'nullable',
@@ -85,7 +85,7 @@ class PlayerSavesController extends Controller
     public function storeFile(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
             'ckey' => 'required_without:player_id|alpha_num',
             'name' => 'required|string',
             'data' => 'nullable',
@@ -213,7 +213,7 @@ class PlayerSavesController extends Controller
     public function destroyData(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
             'ckey' => 'required_without:player_id|alpha_num',
             'key' => 'required',
         ]);
@@ -239,7 +239,7 @@ class PlayerSavesController extends Controller
     public function destroyFile(Request $request)
     {
         $data = $request->validate([
-            'player_id' => 'required_without:ckey|integer|exists:players,id',
+            'player_id' => new PlayerIdWithCkey,
             'ckey' => 'required_without:player_id|alpha_num',
             'name' => 'required',
         ]);
