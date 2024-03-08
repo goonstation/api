@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CursedCompId;
 use App\Models\GameRound;
 use App\Models\Player;
 use App\Traits\IndexableQuery;
@@ -68,6 +69,10 @@ class PlayersController extends Controller
 
         $ips = $player->connections->pluck('ip')->unique()->values();
         $compIds = $player->connections->pluck('comp_id')->unique()->values();
+
+        // Remove any cursed computer IDs (those that are known to belong to shared/common computers)
+        $cursedCompIds = CursedCompId::all()->pluck('comp_id')->values();
+        $compIds = $compIds->diff($cursedCompIds);
 
         $otherAccounts = Player::with(['latestConnection'])
             ->whereHas('connections', function ($query) use ($ips, $compIds) {
