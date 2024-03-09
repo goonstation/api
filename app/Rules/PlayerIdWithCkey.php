@@ -24,7 +24,7 @@ class PlayerIdWithCkey implements InvokableRule, DataAwareRule
     public function setData($data)
     {
         $this->data = $data;
- 
+
         return $this;
     }
 
@@ -42,7 +42,7 @@ class PlayerIdWithCkey implements InvokableRule, DataAwareRule
             return $fail('The :attribute is required when ckey is empty');
         }
 
-        if ($value !== '0') {
+        if ((int) $value !== 0) {
             $playerExists = Player::where('id', $value)->exists();
             if (!$playerExists) {
                 return $fail('The selected player ID is invalid');
