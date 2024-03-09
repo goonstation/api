@@ -48,7 +48,11 @@
             <td>Last Seen Computer ID</td>
             <td>
               {{ latestConnection.comp_id }}
-              <comp-ids :connections="player.connections" class="q-ml-sm" />
+              <comp-ids
+                :connections="player.connections"
+                :cursed-comp-ids="cursedCompIds"
+                class="q-ml-sm"
+              />
             </td>
           </tr>
           <tr v-if="latestRound">
@@ -226,6 +230,7 @@ export default {
     latestRound: Object,
     banHistory: Object,
     otherAccounts: Object,
+    cursedCompIds: Object,
   },
 
   data() {

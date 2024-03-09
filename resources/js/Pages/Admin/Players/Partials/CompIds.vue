@@ -14,12 +14,27 @@
             <tr>
               <th>Computer ID</th>
               <th>Connections</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="group in compIds">
               <td>{{ group.comp_id }}</td>
               <td>{{ group.connections }}</td>
+              <td>
+                <q-chip
+                  v-if="getCursedCompId(group.comp_id)"
+                  color="negative"
+                  text-color="dark"
+                  class="text-weight-bold"
+                  square
+                >
+                  Cursed
+                  <q-tooltip>
+                    {{ getCursedCompId(group.comp_id).reason }}
+                  </q-tooltip>
+                </q-chip>
+              </td>
             </tr>
           </tbody>
         </q-markup-table>
@@ -34,6 +49,7 @@ import { ionClose } from '@quasar/extras/ionicons-v6'
 export default {
   props: {
     connections: Object,
+    cursedCompIds: Object,
   },
 
   setup() {
@@ -58,12 +74,20 @@ export default {
         } else {
           groups.push({
             comp_id: connection.comp_id,
-            connections: 1
+            connections: 1,
           })
         }
       }
       return groups.sort((a, b) => b.connections - a.connections)
-    }
-  }
+    },
+  },
+
+  methods: {
+    getCursedCompId(compId) {
+      return this.cursedCompIds.find((cursedCompId) => {
+        return cursedCompId.comp_id === compId
+      })
+    },
+  },
 }
 </script>
