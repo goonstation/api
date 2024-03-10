@@ -15,7 +15,7 @@
           <span>Note Details</span>
         </div>
         <q-card-section>
-          <q-markup-table flat bordered>
+          <q-markup-table flat bordered wrap-cells>
             <tbody>
               <tr>
                 <td><strong>Player</strong></td>
