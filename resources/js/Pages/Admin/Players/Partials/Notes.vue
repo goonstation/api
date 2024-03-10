@@ -1,15 +1,12 @@
 <template>
   <q-table :rows="notes" :columns="notesColumns" flat dense>
-    <!-- <template v-slot:body-cell-id="props">
+    <template v-slot:body-cell-id="props">
       <q-td :props="props">
-        <template v-if="isBanExpiredOrRemoved(props.row)">
-          {{ props.row.id }}
-        </template>
-        <Link v-else :href="route('admin.bans.edit', props.row.id)">
+        <Link :href="route('admin.notes.show', props.row.id)">
           {{ props.row.id }}
         </Link>
       </q-td>
-    </template> -->
+    </template>
     <template v-slot:body-cell-admin_ckey="props">
       <q-td :props="props">
         <Link v-if="props.row.game_admin" :href="route('admin.game-admins.show', props.row.game_admin.id)">

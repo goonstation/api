@@ -10,6 +10,7 @@ use App\Models\Player;
 use App\Models\PlayerNote;
 use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
+use App\Traits\ManagesPlayerNotes;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,7 +20,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class PlayerNotesController extends Controller
 {
-    use IndexableQuery;
+    use IndexableQuery, ManagesPlayerNotes;
 
     /**
      * List
@@ -63,34 +64,7 @@ class PlayerNotesController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validate($request, [
-            'game_admin_ckey' => 'exists:game_admins,ckey',
-            'round_id' => 'nullable|integer',
-            'server_id' => 'nullable|string',
-            'ckey' => 'required',
-            'note' => 'required',
-        ]);
-
-        $gameAdmin = null;
-        if (isset($data['game_admin_ckey'])) {
-            $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
-        }
-
-        $player = Player::where('ckey', $data['ckey'])->first();
-
-        $note = new PlayerNote();
-        $note->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
-        $note->round_id = isset($data['round_id']) ? $data['round_id'] : null;
-        $note->server_id = isset($data['server_id']) ? $data['server_id'] : null;
-        if ($player) {
-            $note->player_id = $player->id;
-        } else {
-            $note->ckey = $data['ckey'];
-        }
-        $note->note = $data['note'];
-        $note->save();
-
-        return new PlayerNoteResource($note);
+        return $this->addNote($request);
     }
 
     /**
@@ -100,33 +74,7 @@ class PlayerNotesController extends Controller
      */
     public function update(Request $request, PlayerNote $note)
     {
-        $data = $this->validate($request, [
-            'game_admin_ckey' => 'exists:game_admins,ckey',
-            'server_id' => 'nullable|string',
-            'ckey' => 'required',
-            'note' => 'required',
-        ]);
-
-        $updateData = [];
-        if (isset($data['game_admin_ckey'])) {
-            $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
-            if ($gameAdmin) {
-                $updateData['game_admin_id'] = $gameAdmin->id;
-            }
-        }
-
-        $player = Player::where('ckey', $data['ckey'])->first();
-        if ($player) {
-            $updateData['player_id'] = $player->id;
-        } else {
-            $updateData['ckey'] = $data['ckey'];
-        }
-
-        $updateData['server_id'] = $data['server_id'];
-        $updateData['note'] = $data['note'];
-        $note->update($updateData);
-
-        return new PlayerNoteResource($note);
+        return $this->updateNote($request, $note);
     }
 
     /**

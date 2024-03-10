@@ -73,6 +73,13 @@ Route::middleware([
 
         Route::controller(PlayerNotesController::class)->prefix('notes')->group(function () {
             Route::get('/', 'index')->name('admin.notes.index')->breadcrumb('Notes');
+            Route::get('/create', 'create')->name('admin.notes.create')->breadcrumb('', 'admin.notes.index');
+            Route::get('/{note}', 'show')->whereNumber('note')->name('admin.notes.show')->breadcrumb('', 'admin.notes.index');
+            Route::post('/', 'store')->name('admin.notes.store');
+            Route::get('/edit/{note}', 'edit')->whereNumber('note')->name('admin.notes.edit')->breadcrumb('', 'admin.notes.index');
+            Route::put('/{note}', 'update')->whereNumber('note')->name('admin.notes.update');
+            Route::delete('/{note}', 'destroy')->whereNumber('note')->name('admin.notes.delete');
+            Route::delete('/', 'destroyMulti')->name('admin.notes.delete-multi');
         });
 
         Route::controller(MapsController::class)->prefix('maps')->group(function () {
