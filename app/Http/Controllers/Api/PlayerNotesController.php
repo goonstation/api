@@ -38,6 +38,8 @@ class PlayerNotesController extends Controller
             'filters.server' => 'string',
             'filters.round' => 'int',
             'filters.note' => 'string',
+            /** Enable exact matching on the ckey filter */
+            'filters.exact' => 'boolean',
             /**
              * A date or date range
              *
