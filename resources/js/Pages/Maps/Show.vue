@@ -77,6 +77,11 @@ export default {
       required: true,
       default: () => ({}),
     },
+    debris: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
   },
 
   setup() {
@@ -142,10 +147,11 @@ export default {
 
     buildLayerStation() {
       const mapUri = this.map.map_id.toLowerCase()
+      const version = this.map.updated_at ? encodeURI(this.map.updated_at) : ''
       L.TileLayer.Station = L.TileLayer.extend({
         options: layerOptions,
         getTileUrl: (coords) => {
-          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png`
+          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png?v=${version}`
         },
       })
       L.tileLayer.station = function (opts) {
@@ -155,10 +161,11 @@ export default {
     },
 
     buildLayerDebris() {
+      const version = this.debris.updated_at ? encodeURI(this.debris.updated_at) : ''
       L.TileLayer.Debris = L.TileLayer.extend({
         options: layerOptions,
         getTileUrl: (coords) => {
-          return `/storage/maps/debris/${coords.x},${coords.y}.png`
+          return `/storage/maps/debris/${coords.x},${coords.y}.png?v=${version}`
         },
       })
       L.tileLayer.debris = function (opts) {
