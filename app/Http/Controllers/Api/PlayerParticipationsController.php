@@ -52,8 +52,9 @@ class PlayerParticipationsController extends Controller
 
         $insertData = [];
         foreach ($data['players'] as $player) {
-            if (!$player['player_id']) {
+            if (! $player['player_id']) {
                 captureMessage('Invalid data during player participations storeBulk', null, $player);
+
                 continue;
             }
             $insertData[] = [

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\PlayerNoteResource;
-use App\Models\GameAdmin;
 use App\Models\Player;
 use App\Models\PlayerNote;
 use App\Rules\DateRange;

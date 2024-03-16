@@ -18,12 +18,12 @@ class PlayerNotesController extends Controller
     public function index(Request $request)
     {
         $playerNotes = $this->indexQuery(
-          PlayerNote::with([
-            'player:id,ckey',
-            'gameAdmin:id,name,ckey',
-            'gameServer:id,server_id,short_name'
-          ]),
-          perPage: 30);
+            PlayerNote::with([
+                'player:id,ckey',
+                'gameAdmin:id,name,ckey',
+                'gameServer:id,server_id,short_name',
+            ]),
+            perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/PlayerNotes/Index', [
@@ -60,6 +60,7 @@ class PlayerNotesController extends Controller
     public function edit(PlayerNote $note)
     {
         $note->load('player');
+
         return Inertia::render('Admin/PlayerNotes/Edit', [
             'note' => $note,
         ]);
@@ -82,10 +83,10 @@ class PlayerNotesController extends Controller
     public function show(int $note)
     {
         $note = PlayerNote::with([
-                'player:id,ckey',
-                'gameAdmin:id,name,ckey',
-                'gameServer:id,server_id,short_name'
-            ])
+            'player:id,ckey',
+            'gameAdmin:id,name,ckey',
+            'gameServer:id,server_id,short_name',
+        ])
             ->findOrFail($note);
 
         return Inertia::render('Admin/PlayerNotes/Show', [

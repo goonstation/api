@@ -21,9 +21,9 @@ class EventsController extends Controller
             $model = new $modelName;
             $tableName = $model->getTable();
             $eventTypes[] = $tableName;
-            if (!$request->input('type') && !$filteringEvent) {
+            if (! $request->input('type') && ! $filteringEvent) {
                 $filteringEvent = $model;
-            } else if ($tableName === $request->input('type')) {
+            } elseif ($tableName === $request->input('type')) {
                 $filteringEvent = $model;
             }
         }

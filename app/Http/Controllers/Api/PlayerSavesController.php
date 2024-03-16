@@ -31,7 +31,7 @@ class PlayerSavesController extends Controller
         ]);
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId) {
+        if (! $playerId) {
             $player = Player::where('ckey', $data['ckey'])->firstOrFail();
             $playerId = $player->id;
         }
@@ -62,7 +62,7 @@ class PlayerSavesController extends Controller
         ]);
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId) {
+        if (! $playerId) {
             $player = Player::where('ckey', $data['ckey'])->firstOrFail();
             $playerId = $player->id;
         }
@@ -71,7 +71,7 @@ class PlayerSavesController extends Controller
             'player_id' => $playerId,
             'key' => $data['key'],
         ], [
-            'value' => $data['value']
+            'value' => $data['value'],
         ]);
 
         return new PlayerDataResource($cdata);
@@ -96,7 +96,7 @@ class PlayerSavesController extends Controller
         }
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId) {
+        if (! $playerId) {
             $player = Player::where('ckey', $data['ckey'])->firstOrFail();
             $playerId = $player->id;
         }
@@ -137,16 +137,18 @@ class PlayerSavesController extends Controller
         $bulkData = json_decode($data['data']);
         $dataToUpset = [];
         foreach ($bulkData as $item) {
-            if ((!$item->player_id && !$item->ckey) || !$item->key) {
+            if ((! $item->player_id && ! $item->ckey) || ! $item->key) {
                 captureMessage('Invalid data during player saves storeDataBulk', null, $item);
+
                 continue;
             }
 
             $playerId = $item->player_id;
-            if (!$playerId && $item->ckey) {
+            if (! $playerId && $item->ckey) {
                 $player = Player::where('ckey', $item->ckey)->first();
-                if (!$player) {
+                if (! $player) {
                     captureMessage('Invalid ckey during player saves storeDataBulk', null, $item);
+
                     continue;
                 }
                 $playerId = $player->id;
@@ -219,7 +221,7 @@ class PlayerSavesController extends Controller
         ]);
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId) {
+        if (! $playerId) {
             $player = Player::where('ckey', $data['ckey'])->firstOrFail();
             $playerId = $player->id;
         }
@@ -245,7 +247,7 @@ class PlayerSavesController extends Controller
         ]);
 
         $playerId = isset($data['player_id']) ? $data['player_id'] : null;
-        if (!$playerId) {
+        if (! $playerId) {
             $player = Player::where('ckey', $data['ckey'])->firstOrFail();
             $playerId = $player->id;
         }

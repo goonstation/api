@@ -66,7 +66,9 @@ trait ManagesPlayerNotes
             $updateData['ckey'] = $data['ckey'];
         }
 
-        if (isset($data['server_id'])) $updateData['server_id'] = $data['server_id'];
+        if (isset($data['server_id'])) {
+            $updateData['server_id'] = $data['server_id'];
+        }
         $updateData['note'] = $data['note'];
         $note->update($updateData);
 

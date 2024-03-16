@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 
 class ModelHelper
 {
-    public static function getModels(String $namespace = ''): Collection
+    public static function getModels(string $namespace = ''): Collection
     {
         $models = collect(File::allFiles(app_path()))
             ->map(function ($item) {
@@ -26,7 +26,7 @@ class ModelHelper
                 if (class_exists($class)) {
                     $reflection = new \ReflectionClass($class);
                     $valid = $reflection->isSubclassOf(Model::class) &&
-                        !$reflection->isAbstract();
+                        ! $reflection->isAbstract();
 
                     if ($valid && $namespace) {
                         $valid = $reflection->getNamespaceName() === $namespace;

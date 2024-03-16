@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventGauntletHighScore extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'events_gauntlet_high_scores';
 

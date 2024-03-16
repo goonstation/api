@@ -36,7 +36,10 @@ class Ban extends Model
 
     public function getDurationHumanAttribute()
     {
-        if (!$this->expires_at) return null;
+        if (! $this->expires_at) {
+            return null;
+        }
+
         return $this->expires_at->longAbsoluteDiffForHumans(99);
     }
 

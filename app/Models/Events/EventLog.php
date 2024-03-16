@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventLog extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'events_logs';
 

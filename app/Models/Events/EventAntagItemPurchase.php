@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventAntagItemPurchase extends Model
 {
-    use Compoships, HasFactory, Filterable;
+    use Compoships, Filterable, HasFactory;
 
     protected $table = 'events_antag_item_purchases';
 

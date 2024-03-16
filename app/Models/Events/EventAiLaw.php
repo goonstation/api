@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventAiLaw extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $table = 'events_ai_laws';
 
