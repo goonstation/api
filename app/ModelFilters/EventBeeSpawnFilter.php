@@ -5,7 +5,7 @@ namespace App\ModelFilters;
 use App\ModelFilters\Common\HasTimestampFilters;
 use EloquentFilter\ModelFilter;
 
-class EventTicketFilter extends ModelFilter
+class EventBeeSpawnFilter extends ModelFilter
 {
     use HasTimestampFilters;
 
@@ -25,20 +25,5 @@ class EventTicketFilter extends ModelFilter
     public function round($val)
     {
         return $this->where('round_id', $val);
-    }
-
-    public function target($val)
-    {
-        return $this->where('target', 'ILIKE', '%'.$val.'%');
-    }
-
-    public function reason($val)
-    {
-        return $this->where('reason', 'ILIKE', '%'.$val.'%');
-    }
-
-    public function issuer($val)
-    {
-        return $this->where('issuer', 'ILIKE', '%'.$val.'%');
     }
 }

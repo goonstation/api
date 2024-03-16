@@ -23,6 +23,8 @@
 
       <template v-slot:top v-if="gridTopHasContent">
         <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
+          <slot name="top-left" />
+
           <div v-if="showGridFilters" class="gh-grid-filters flex items-start gap-xs-sm">
             <!-- sort button/menu -->
             <q-btn color="grey-9" class="text-sm" padding="xs sm" dense no-caps unelevated>
@@ -411,6 +413,10 @@ export default {
       type: String,
       default: 'none',
     },
+    extraParams: {
+      type: Object,
+      default: () => ({})
+    }
   },
 
   data() {
@@ -541,6 +547,7 @@ export default {
           sort_by: sortBy,
           descending,
           filters: this.filters,
+          ...this.extraParams,
         },
       })
     },
@@ -606,6 +613,10 @@ export default {
         urlSearch.append('descending', this._pagination.descending)
       if (this._pagination.rowsPerPage !== this.defaultPagination.rowsPerPage)
         urlSearch.append('per_page', this._pagination.rowsPerPage)
+
+      for (const p in this.extraParams) {
+        urlSearch.append(p, this.extraParams[p])
+      }
 
       for (const p in this.filters) {
         const filter = this.filters[p]
@@ -800,6 +811,13 @@ export default {
       deep: true,
       handler(val) {
         this.filters = merge(this.filters, val)
+      },
+    },
+
+    extraParams: {
+      deep: true,
+      handler(val) {
+        this.updateTable()
       },
     },
   },

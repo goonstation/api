@@ -3,12 +3,13 @@
 namespace App\Models\Events;
 
 use App\Models\GameRound;
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class EventStationName extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $table = 'events_station_names';
 
