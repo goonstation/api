@@ -10,6 +10,7 @@ use App\Models\Events\EventBeeSpawn;
 use App\Models\Events\EventDeath;
 use App\Models\Events\EventFine;
 use App\Models\Events\EventGauntletHighScore;
+use App\Models\Events\EventLog;
 use App\Models\Events\EventStationName;
 use App\Models\Events\EventTicket;
 use EloquentFilter\Filterable;
@@ -119,5 +120,10 @@ class GameRound extends Model
     public function latestStationName()
     {
         return $this->hasOne(EventStationName::class, 'round_id')->latest();
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(EventLog::class, 'round_id');
     }
 }

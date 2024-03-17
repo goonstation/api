@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\BansController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
+use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
@@ -96,6 +97,14 @@ Route::middleware([
 
         Route::controller(EventsController::class)->prefix('events')->group(function () {
             Route::get('/', 'index')->name('admin.events.index')->breadcrumb('Events');
+        });
+
+        Route::controller(LogsController::class)->prefix('logs')->group(function () {
+            Route::get('/', 'index')->name('admin.logs.index')->breadcrumb('Logs');
+            Route::get('/{gameRound}', 'show')
+                ->whereNumber('gameRound')
+                ->name('admin.logs.show')
+                ->breadcrumb('', 'admin.logs.index');
         });
     });
 });

@@ -98,9 +98,7 @@
 
     <q-page-container>
       <q-page class="row column no-wrap q-pa-md page-wrapper">
-        <div>
-          <slot />
-        </div>
+        <slot />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -214,6 +212,10 @@ export default {
           {
             label: 'Events',
             href: route('admin.events.index'),
+          },
+          {
+            label: 'Logs',
+            href: route('admin.logs.index'),
           }
         )
       }
