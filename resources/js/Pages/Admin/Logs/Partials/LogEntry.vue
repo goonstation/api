@@ -102,7 +102,9 @@ export default {
     },
 
     message() {
-      let message = this.log.source + ' ' + this.log.message
+      let message = this.log.source || ''
+      if (message) message += ' '
+      message += this.log.message || ''
 
       const poptsRegex =
         /<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=.*?' title='Player Options'>(.*?)<\/a>/g
