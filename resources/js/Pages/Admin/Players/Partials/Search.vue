@@ -3,9 +3,6 @@
     <q-card-section>
       <form @submit.prevent="search" class="row q-col-gutter-md">
         <div class="col-xs-12 col-md-auto">
-          <q-input v-model="fields.ckey" label="Ckey" dense filled clearable />
-        </div>
-        <div class="col-xs-12 col-md-auto">
           <q-input v-model="fields.compId" label="Computer ID" dense filled clearable />
         </div>
         <div class="col-xs-12 col-md-auto">
@@ -29,7 +26,6 @@ export default {
   data() {
     return {
       fields: {
-        ckey: null,
         compId: null,
         ip: null,
       },
