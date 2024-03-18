@@ -105,6 +105,9 @@ Route::middleware([
                 ->whereNumber('gameRound')
                 ->name('admin.logs.show')
                 ->breadcrumb('', 'admin.logs.index');
+            Route::get('/get-logs/{gameRound}', 'getLogs')
+                ->whereNumber('gameRound')
+                ->name('admin.logs.get-logs');
         });
     });
 });

@@ -82,6 +82,13 @@
                 <th>Log</th>
               </tr>
             </thead>
+            <tbody v-if="loading">
+              <tr>
+                <td colspan="100%" class="text-center">
+                  <div class="q-pa-md">Loading logs...</div>
+                </td>
+              </tr>
+            </tbody>
           </template>
 
           <template v-slot="{ item: row, index }">
@@ -211,6 +218,7 @@
 </style>
 
 <script>
+import axios from 'axios'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import LogEntry from './Partials/LogEntry.vue'
 import { ionExpand } from '@quasar/extras/ionicons-v6'
@@ -234,6 +242,8 @@ export default {
 
   data() {
     return {
+      allLogs: [],
+      loading: true,
       logs: [],
       searchInput: '',
       searchFilters: [],
@@ -262,21 +272,34 @@ export default {
   },
 
   created() {
-    const logTypes = [...new Set(this.round.logs.map((log) => log.type))].sort()
-    this.logTypes = logTypes.map((logType) => {
-      return {
-        label: logType,
-        value: logType,
-      }
-    })
-    this.logTypesToShow = logTypes
-
-    this.filterLogs()
+    this.getLogs()
   },
 
   methods: {
+    async getLogs() {
+      try {
+        const response = await axios.get(route('admin.logs.get-logs', { gameRound: this.round.id }))
+        this.allLogs = response.data
+
+        const logTypes = [...new Set(this.allLogs.map((log) => log.type))].sort()
+        this.logTypes = logTypes.map((logType) => {
+          return {
+            label: logType,
+            value: logType,
+          }
+        })
+        this.logTypesToShow = logTypes
+
+        this.filterLogs()
+      } catch (e) {
+        console.log(e)
+      }
+
+      this.loading = false
+    },
+
     filterLogs() {
-      this.logs = this.round.logs.filter((log) => {
+      this.logs = this.allLogs.filter((log) => {
         let valid = this.logTypesToShow.includes(log.type)
         if (valid && this.searchFilters.length) {
           const logMessage = (log.source + ' ' + log.message).toLowerCase()

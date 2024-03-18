@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Events\EventLog;
 use App\Models\GameRound;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -32,14 +33,13 @@ class LogsController extends Controller
 
     public function show(Request $request, GameRound $gameRound)
     {
-        $gameRound->load([
-            'logs' => function($q) {
-                $q->orderBy('created_at', 'asc');
-            }
-        ]);
-
         return Inertia::render('Admin/Logs/Show', [
             'round' => $gameRound,
         ]);
+    }
+
+    public function getLogs(GameRound $gameRound)
+    {
+        return EventLog::where('round_id', $gameRound->id)->orderBy('created_at', 'asc')->get();
     }
 }
