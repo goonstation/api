@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\BansController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
+use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
@@ -70,6 +71,17 @@ Route::middleware([
             Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
             Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
+        });
+
+        Route::controller(JobBansController::class)->prefix('job-bans')->group(function () {
+            Route::get('/', 'index')->name('admin.job-bans.index')->breadcrumb('Job Bans');
+            Route::get('/create', 'create')->name('admin.job-bans.create')->breadcrumb('', 'admin.job-bans.index');
+            Route::get('/{jobBan}', 'show')->whereNumber('jobBan')->name('admin.job-bans.show')->breadcrumb('', 'admin.job-bans.index');
+            Route::post('/', 'store')->name('admin.job-bans.store');
+            Route::get('/edit/{jobBan}', 'edit')->whereNumber('jobBan')->name('admin.job-bans.edit')->breadcrumb('', 'admin.job-bans.index');
+            Route::put('/{jobBan}', 'update')->whereNumber('jobBan')->name('admin.job-bans.update');
+            Route::delete('/{jobBan}', 'destroy')->whereNumber('jobBan')->name('admin.job-bans.delete');
+            Route::delete('/', 'destroyMulti')->name('admin.job-bans.delete-multi');
         });
 
         Route::controller(PlayerNotesController::class)->prefix('notes')->group(function () {

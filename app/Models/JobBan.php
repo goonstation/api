@@ -22,6 +22,27 @@ class JobBan extends Model
         'expires_at',
     ];
 
+    protected $appends = ['duration', 'duration_human'];
+
+    public function getDurationAttribute()
+    {
+        $now = Carbon::now();
+        if ($now->isAfter($this->expires_at)) {
+            return 0;
+        }
+
+        return $now->diffInSeconds($this->expires_at);
+    }
+
+    public function getDurationHumanAttribute()
+    {
+        if (! $this->expires_at) {
+            return null;
+        }
+
+        return $this->expires_at->longAbsoluteDiffForHumans(99);
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -44,6 +65,14 @@ class JobBan extends Model
     public function gameServer()
     {
         return $this->belongsTo(GameServer::class, 'server_id', 'server_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function deletedByGameAdmin()
+    {
+        return $this->belongsTo(GameAdmin::class, 'deleted_by');
     }
 
     /**

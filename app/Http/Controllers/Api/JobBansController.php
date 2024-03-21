@@ -9,6 +9,7 @@ use App\Models\GameAdmin;
 use App\Models\JobBan;
 use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
+use App\Traits\ManagesJobBans;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class JobBansController extends Controller
 {
-    use IndexableQuery;
+    use IndexableQuery, ManagesJobBans;
 
     /**
      * List
@@ -127,42 +128,11 @@ class JobBansController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validate($request, [
-            'game_admin_ckey' => 'exists:game_admins,ckey',
-            'round_id' => 'nullable|integer',
-            'server_id' => 'nullable|string',
-            'ckey' => 'required',
-            'job' => 'required',
-            'reason' => 'nullable|string',
-            'duration' => 'nullable|integer',
-        ]);
-
-        $serverId = isset($data['server_id']) ? $data['server_id'] : null;
-
-        // Check a ban doesn't already exist for the provided ckey and job
-        $existingJobBan = JobBan::getValidJobBans($data['ckey'], $data['job'], $serverId)->first();
-        if (! empty($existingJobBan)) {
-            return response()->json(['message' => 'The player is already banned from that job on this server.'], 400);
+        try {
+            return $this->addJobBan($request);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        $expiresAt = null;
-        if (isset($data['duration'])) {
-            $expiresAt = Carbon::now()->addSeconds($data['duration'])->toDateTimeString();
-        }
-
-        $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
-
-        $jobBan = new JobBan();
-        $jobBan->game_admin_id = $gameAdmin->id;
-        $jobBan->round_id = isset($data['round_id']) ? $data['round_id'] : null;
-        $jobBan->server_id = $serverId;
-        $jobBan->ckey = $data['ckey'];
-        $jobBan->banned_from_job = $data['job'];
-        $jobBan->reason = $data['reason'];
-        $jobBan->expires_at = $expiresAt;
-        $jobBan->save();
-
-        return new JobBanResource($jobBan);
     }
 
     /**
@@ -172,50 +142,11 @@ class JobBansController extends Controller
      */
     public function update(Request $request, JobBan $jobBan)
     {
-        $data = $this->validate($request, [
-            'server_id' => 'nullable|string',
-            'job' => 'required',
-            'reason' => 'nullable|string',
-            'duration' => 'nullable|integer',
-        ]);
-
-        $serverId = isset($data['server_id']) ? $data['server_id'] : null;
-
-        // Check another ban doesn't already exist for the provided job
-        $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
-        if (! empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
-            return response()->json(['message' => 'The player is already banned from that job on this server.'], 400);
+        try {
+            return $this->updateJobBan($request, $jobBan);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        $newBanDetails = $request->only(['server_id', 'reason']);
-        $newBanDetails['banned_from_job'] = $data['job'];
-
-        // Ensure the server ID is nulled out if we're being told about it, and it's falsey
-        if (isset($data['server_id'])) {
-            $newBanDetails['server_id'] = $serverId;
-        }
-
-        if (isset($data['duration'])) {
-            // A falsey duration means it's essentially "unset", and thus now a permanent ban
-            // Otherwise, the admin is altering how long the ban lasts
-            if (! $data['duration']) {
-                $newBanDetails['expires_at'] = null;
-            } else {
-                // Ban is temporary, the duration starts from when the ban was first created
-                $newExpiresAt = $jobBan->created_at->addSeconds($data['duration']);
-
-                // Bans can't expire in the past
-                if ($newExpiresAt->lte(Carbon::now())) {
-                    return response()->json(['message' => 'The ban cannot expire in the past, please increase the duration.'], 400);
-                }
-
-                $newBanDetails['expires_at'] = $newExpiresAt->toDateTimeString();
-            }
-        }
-
-        $jobBan->update($newBanDetails);
-
-        return new JobBanResource($jobBan);
     }
 
     /**
@@ -226,10 +157,13 @@ class JobBansController extends Controller
     public function destroy(Request $request)
     {
         $data = $this->validate($request, [
+            'game_admin_ckey' => 'required|exists:game_admins,ckey',
             'server_id' => 'nullable|string',
             'ckey' => 'required',
             'job' => 'required',
         ]);
+
+        $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
 
         $jobBans = JobBan::where('ckey', $data['ckey'])
             ->where('banned_from_job', $data['job']);
@@ -238,7 +172,13 @@ class JobBansController extends Controller
             $jobBans->where('server_id', $data['server_id']);
         }
 
-        $jobBans->delete();
+        $jobBans = $jobBans->get();
+
+        foreach ($jobBans as $jobBan) {
+            $jobBan->deleted_by = $gameAdmin->id;
+            $jobBan->save();
+            $jobBan->delete();
+        }
 
         return ['message' => 'Job bans removed'];
     }

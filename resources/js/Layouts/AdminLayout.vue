@@ -188,6 +188,7 @@ export default {
             match: [
               route('admin.players.index'),
               route('admin.bans.index'),
+              route('admin.job-bans.index'),
               route('admin.notes.index'),
             ],
             children: [
@@ -198,6 +199,10 @@ export default {
               {
                 label: 'Bans',
                 href: route('admin.bans.index'),
+              },
+              {
+                label: 'Job Bans',
+                href: route('admin.job-bans.index'),
               },
               {
                 label: 'Notes',
