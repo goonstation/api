@@ -33,6 +33,12 @@ class LogsController extends Controller
 
     public function show(Request $request, GameRound $gameRound)
     {
+        $gameRound->load([
+            'server:server_id,name',
+            'latestStationName:id,round_id,name',
+            'mapRecord:id,map_id,name',
+        ]);
+
         return Inertia::render('Admin/Logs/Show', [
             'round' => $gameRound,
         ]);

@@ -8,7 +8,12 @@
     flat
     dense
     no-timestamp-toggle
-  />
+  >
+    <template v-slot:cell-content-ended_at="{ props, col }">
+      <template v-if="col.value">{{ col.value }}</template>
+      <q-badge v-else color="warning" text-color="dark">Round in progress</q-badge>
+    </template>
+  </base-table>
 </template>
 
 <script>
@@ -44,17 +49,19 @@ export default {
         },
         {
           name: 'created_at',
-          label: 'Started At',
+          label: 'Round Started At',
           field: 'created_at',
           sortable: true,
           format: this.$formats.dateWithTime,
+          filter: { type: 'DateRange' },
         },
         {
           name: 'ended_at',
-          label: 'Ended At',
+          label: 'Round Ended At',
           field: 'ended_at',
           sortable: true,
           format: this.$formats.dateWithTime,
+          filter: { type: 'DateRange' },
         },
       ],
     }

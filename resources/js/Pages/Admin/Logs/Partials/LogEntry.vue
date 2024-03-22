@@ -83,22 +83,25 @@
 </style>
 
 <script>
+import { date } from 'quasar'
+
 export default {
   props: {
     log: Object,
+    relativeTimestamps: Boolean,
+    roundStartedAt: String,
   },
 
   computed: {
     createdAt() {
-      const opts = {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+      let dateToFormat
+      if (this.relativeTimestamps) {
+        const msDiff = new Date(this.log.created_at) - new Date(this.roundStartedAt)
+        dateToFormat = date.addToDate(new Date('2000-01-1'), { milliseconds: msDiff })
+      } else {
+        dateToFormat = new Date(this.log.created_at)
       }
-      return new Date(this.log.created_at).toLocaleDateString('en-GB', opts)
+      return date.formatDate(dateToFormat, 'HH:mm:ss.SSS')
     },
 
     message() {

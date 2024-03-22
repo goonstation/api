@@ -1,5 +1,56 @@
 <template>
   <div class="flex-grow flex column">
+    <q-card class="gh-card gh-card--small q-mb-sm" flat>
+      <q-card-section>
+        <div v-if="round.server" class="text-caption opacity-60 q-mb-xs">
+          {{ round.server.name }}
+        </div>
+        <div class="text-weight-bold ellipsis gh-link-card__title">
+          {{ latestStationName }}
+        </div>
+        <div class="gh-details-list gh-details-list--small q-mt-sm">
+          <div>
+            <div>{{ started }}</div>
+            <div>Started</div>
+          </div>
+          <div v-if="duration">
+            <div>{{ duration }} minutes</div>
+            <div>
+              Duration
+              <q-icon :name="ionInformationCircle" />
+            </div>
+            <q-tooltip :offset="[0, 5]" class="text-sm"> Ended {{ endedFromNow }} </q-tooltip>
+          </div>
+          <div v-if="round.map_record || round.map">
+            <div>
+              <template v-if="round.map_record">
+                {{ round.map_record.name }}
+              </template>
+              <template v-else>
+                {{ round.map }}
+              </template>
+            </div>
+            <div>Map</div>
+          </div>
+          <div v-if="round.game_type">
+            <div>{{ round.game_type }}</div>
+            <div>Game Type</div>
+          </div>
+        </div>
+      </q-card-section>
+      <div class="badges">
+        <q-badge v-if="!round.ended_at" color="primary" text-color="dark" class="text-weight-bold"
+          >In Progress</q-badge
+        >
+        <q-badge v-if="round.rp_mode" color="info" text-color="dark" class="text-weight-bold"
+          >Roleplay</q-badge
+        >
+        <q-badge v-if="round.crashed" color="negative" text-color="dark" class="text-weight-bold"
+          >Crashed</q-badge
+        >
+      </div>
+    </q-card>
+
     <div class="flex-grow flex column" :class="{ 'table-full': fullscreen }">
       <div class="table-top flex">
         <q-btn-dropdown
@@ -18,13 +69,13 @@
                     v-model="searchInput"
                     class="q-mb-xs"
                     type="textarea"
-                    placeholder="Term: Match must include&#10;-Term: Match must not include"
+                    placeholder="Term: Match must match any&#10;!Term: Match must include&#10;-Term: Match must not include"
                     filled
                     dense
                   />
                   <div class="flex">
                     <q-btn
-                      v-if="searchFilters.length"
+                      v-if="hasSearchFilters"
                       @click="clearSearch"
                       color="grey"
                       text-color="dark"
@@ -55,6 +106,8 @@
                     </div>
                   </template>
                 </div>
+                <hr class="q-mt-md" style="border-color: grey" />
+                <q-checkbox v-model="relativeTimestamps" label="Relative Timestamps" />
               </div>
             </div>
           </div>
@@ -78,7 +131,7 @@
             <thead class="thead-sticky text-left">
               <tr>
                 <th style="width: 0">Time</th>
-                <th style="width: 0">Type</th>
+                <th style="width: 89px">Type</th>
                 <th>Log</th>
               </tr>
             </thead>
@@ -92,7 +145,12 @@
           </template>
 
           <template v-slot="{ item: row, index }">
-            <log-entry :key="index" :log="row" />
+            <log-entry
+              :key="index"
+              :log="row"
+              :relative-timestamps="relativeTimestamps"
+              :round-started-at="round.created_at"
+            />
           </template>
         </q-virtual-scroll>
       </div>
@@ -101,6 +159,14 @@
 </template>
 
 <style lang="scss" scoped>
+.badges {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+
 .table-full {
   position: fixed;
   top: 0;
@@ -219,9 +285,10 @@
 
 <script>
 import axios from 'axios'
+import dayjs from 'dayjs'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import LogEntry from './Partials/LogEntry.vue'
-import { ionExpand } from '@quasar/extras/ionicons-v6'
+import { ionExpand, ionInformationCircle } from '@quasar/extras/ionicons-v6'
 
 export default {
   components: {
@@ -233,6 +300,7 @@ export default {
   setup() {
     return {
       ionExpand,
+      ionInformationCircle,
     }
   },
 
@@ -246,14 +314,39 @@ export default {
       loading: true,
       logs: [],
       searchInput: '',
-      searchFilters: [],
+      searchFilters: {
+        and: [],
+        or: [],
+        not: [],
+      },
       logTypesToShow: [],
       logTypes: [],
+      relativeTimestamps: false,
       fullscreen: false,
     }
   },
 
   computed: {
+    latestStationName() {
+      if (!this.round.latest_station_name) return 'Space Station 13'
+      return this.round.latest_station_name.name
+    },
+
+    started() {
+      if (!this.round.created_at) return 'Unknown'
+      return dayjs(this.round.created_at).format('YYYY-MM-DD [at] h:mma')
+    },
+
+    duration() {
+      if (!this.round.ended_at) return
+      return dayjs(this.round.ended_at).diff(dayjs(this.round.created_at), 'm')
+    },
+
+    endedFromNow() {
+      if (!this.round.ended_at) return
+      return dayjs(this.round.ended_at).fromNow()
+    },
+
     logTypesAll: {
       get() {
         return this.logTypes.length === this.logTypesToShow.length
@@ -268,6 +361,14 @@ export default {
         this.logTypesToShow = newLogTypes
         this.filterLogs()
       },
+    },
+
+    hasSearchFilters() {
+      return (
+        this.searchFilters.and.length ||
+        this.searchFilters.or.length ||
+        this.searchFilters.not.length
+      )
     },
   },
 
@@ -301,16 +402,25 @@ export default {
     filterLogs() {
       this.logs = this.allLogs.filter((log) => {
         let valid = this.logTypesToShow.includes(log.type)
-        if (valid && this.searchFilters.length) {
+        if (valid && this.hasSearchFilters) {
           const logMessage = (log.source + ' ' + log.message).toLowerCase()
-          for (const filter of this.searchFilters) {
-            if (filter.negative && logMessage.includes(filter.term)) {
-              valid = false
-              break
-            }
-            if (!filter.negative && !logMessage.includes(filter.term)) {
-              valid = false
-            }
+
+          if (this.searchFilters.not.length) {
+            valid = this.searchFilters.not.every((notFilter) => {
+              return !logMessage.includes(notFilter)
+            })
+          }
+
+          if (valid && this.searchFilters.and.length) {
+            valid = this.searchFilters.and.every((andFilter) => {
+              return logMessage.includes(andFilter)
+            })
+          }
+
+          if (valid && this.searchFilters.or.length) {
+            valid = this.searchFilters.or.some((orFilter) => {
+              return logMessage.includes(orFilter)
+            })
           }
         }
         return valid
@@ -319,18 +429,18 @@ export default {
 
     search() {
       const terms = this.searchInput.split('\n')
-      const filters = []
+      const filters = { and: [], or: [], not: [] }
       for (let term of terms) {
-        let negative = false
-        if (term.startsWith('-')) {
-          term = term.substring(1)
-          negative = true
-        }
         if (term.length < 3) continue
-        filters.push({
-          term: term.toLowerCase(),
-          negative,
-        })
+
+        term = term.toLowerCase()
+        if (term.startsWith('-')) {
+          filters.not.push(term.substring(1))
+        } else if (term.startsWith('!')) {
+          filters.and.push(term.substring(1))
+        } else {
+          filters.or.push(term)
+        }
       }
       this.searchFilters = filters
       this.filterLogs()
@@ -338,7 +448,7 @@ export default {
 
     clearSearch() {
       this.searchInput = ''
-      this.searchFilters = []
+      this.searchFilters = { and: [], or: [], not: [] }
       this.filterLogs()
     },
   },
