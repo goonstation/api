@@ -85,6 +85,11 @@
 :deep(.dmg-brute) {
   background: deeppink;
 }
+
+:deep(.log-message-highlight) {
+  background: yellow;
+  color: black;
+}
 </style>
 
 <script>
@@ -95,6 +100,7 @@ export default {
     log: Object,
     relativeTimestamps: Boolean,
     roundStartedAt: String,
+    searchTerms: Array,
   },
 
   computed: {
@@ -140,7 +146,42 @@ export default {
       </span>`
       )
 
+      if (this.searchTerms.length) {
+        const searchRegex = new RegExp(
+          this.searchTerms.map((term) => `(${this.escapeRegExp(term)})`).join('|'),
+          'gim'
+        )
+
+        const renderer = document.createElement('div')
+        renderer.innerHTML = message
+        this.iterateTextNodes(renderer, (node) => {
+          const newContent = node.nodeValue.replace(
+            searchRegex,
+            '<span class="log-message-highlight">$&</span>'
+          )
+          node.replaceWith(document.createRange().createContextualFragment(newContent))
+        })
+
+        return renderer.innerHTML
+      }
+
       return message
+    },
+  },
+
+  methods: {
+    escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    },
+
+    iterateTextNodes(container, callback) {
+      Array.from(container.childNodes).forEach((node) => {
+        if (node.nodeType === node.TEXT_NODE) {
+          callback(node)
+        } else {
+          this.iterateTextNodes(node, callback)
+        }
+      })
     },
   },
 }

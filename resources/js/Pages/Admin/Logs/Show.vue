@@ -127,6 +127,7 @@
               :log="row"
               :relative-timestamps="filters.relativeTimestamps"
               :round-started-at="allLogs[0].created_at"
+              :search-terms="logEntrySearchTerms"
             />
           </template>
         </q-virtual-scroll>
@@ -270,6 +271,8 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import LogFilters from './Partials/Filters.vue'
 import LogEntry from './Partials/LogEntry.vue'
 
+const logMessageRenderer = document.createElement('div')
+
 export default {
   components: {
     LogFilters,
@@ -338,6 +341,11 @@ export default {
         this.searchFilters.not.length
       )
     },
+
+    logEntrySearchTerms() {
+      if (!this.hasSearchFilters) return []
+      return this.searchFilters.and.concat(this.searchFilters.or)
+    }
   },
 
   created() {
@@ -372,7 +380,8 @@ export default {
       this.logs = this.allLogs.filter((log) => {
         let valid = this.filters.logTypesToShow.includes(log.type)
         if (valid && this.hasSearchFilters) {
-          const logMessage = (log.source + ' ' + log.message).toLowerCase()
+          logMessageRenderer.innerHTML = (log.source + ' ' + log.message).toLowerCase()
+          const logMessage = logMessageRenderer.textContent
 
           if (this.searchFilters.not.length) {
             valid = this.searchFilters.not.every((notFilter) => {
