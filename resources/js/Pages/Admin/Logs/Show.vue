@@ -54,6 +54,7 @@
     <div class="relative flex-grow flex column" :class="{ 'table-full': fullscreen }">
       <div class="table-top flex">
         <q-btn-dropdown
+          v-if="!sidebarEnabled"
           class="q-ml-sm"
           label="Filters"
           menu-anchor="bottom start"
@@ -73,9 +74,16 @@
         </q-btn-dropdown>
         <div class="flex items-center q-ml-md">Showing {{ $formats.number(logs.length) }} logs</div>
         <q-space />
-        <q-btn square dense @click="fullscreen = !fullscreen" :icon="ionExpand" />
+        <q-btn square dense size="sm" class="q-mr-sm" @click="toggleSidebar">
+          <template v-if="sidebarEnabled">Hide</template>
+          <template v-else>Show</template>
+          Sidebar
+        </q-btn>
+        <q-btn square dense @click="fullscreen = !fullscreen" :icon="ionExpand">
+          <q-tooltip>Toggle Fullscreen</q-tooltip>
+        </q-btn>
       </div>
-      <div class="log-filters-sidebar-wrap q-pa-sm bg-dark rounded-borders">
+      <div v-if="sidebarEnabled" class="log-filters-sidebar-wrap q-pa-sm bg-dark rounded-borders">
         <log-filters
           :modelValue="filters"
           :log-types="logTypes"
@@ -118,7 +126,7 @@
               :key="index"
               :log="row"
               :relative-timestamps="filters.relativeTimestamps"
-              :round-started-at="round.created_at"
+              :round-started-at="allLogs[0].created_at"
             />
           </template>
         </q-virtual-scroll>
@@ -156,6 +164,8 @@
   top: 50px;
   right: 10px;
   border: 1px solid #616161;
+  overflow: auto;
+  max-height: calc(100% - 50px);
 }
 
 .thead-sticky tr > * {
@@ -296,6 +306,7 @@ export default {
         relativeTimestamps: false,
       },
       fullscreen: false,
+      sidebarEnabled: false,
     }
   },
 
@@ -330,6 +341,7 @@ export default {
   },
 
   created() {
+    this.sidebarEnabled = !!localStorage.getItem('log-viewer-sidebar')
     this.getLogs()
   },
 
@@ -392,6 +404,16 @@ export default {
     clearSearch() {
       this.searchFilters = { and: [], or: [], not: [] }
       this.filterLogs()
+    },
+
+    toggleSidebar() {
+      this.sidebarEnabled = !this.sidebarEnabled
+
+      if (this.sidebarEnabled) {
+        localStorage.setItem('log-viewer-sidebar', true)
+      } else {
+        localStorage.removeItem('log-viewer-sidebar')
+      }
     },
   },
 

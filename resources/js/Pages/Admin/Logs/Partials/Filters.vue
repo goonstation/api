@@ -3,97 +3,70 @@
     class="row q-col-gutter-md"
     :class="{
       'log-filters-sidebar': sidebar,
-      'log-filters-sidebar--showing': sidebarShowing,
-      'log-filters-sidebar--hiding': !sidebarShowing,
     }"
   >
-    <div v-if="sidebar" class="toggle-sidebar full-width">
-      <q-btn
-        @click="sidebarShowing = !sidebarShowing"
-        class="full-width q-px-xs"
-        size="sm"
-        align="right"
-      >
-        <template v-if="sidebarShowing"
-          >Hide Filters <q-icon :name="ionArrowForward" class="q-ml-sm"
-        /></template>
-        <template v-else>Show Filters <q-icon :name="ionArrowBack" class="q-ml-sm" /></template>
-      </q-btn>
-    </div>
-    <template v-if="showContent">
-      <div :class="[sidebar ? 'col-12' : 'col']">
-        <q-form @submit="search">
-          <q-input
-            v-model="modelValue.searchInput"
-            class="q-mb-xs"
-            :class="{ 'text-sm': sidebar }"
-            type="textarea"
-            placeholder="One term per line&#10;Term: Match must match any&#10;!Term: Match must include&#10;-Term: Match must not include"
-            filled
-            dense
-          />
-          <div class="flex gap-xs-xs">
-            <q-btn
-              v-if="hasSearchFilters"
-              @click="clearSearch"
-              :class="{ 'full-width': sidebar }"
-              color="grey"
-              text-color="dark"
-              size="sm"
-              >Clear Filters</q-btn
-            >
-            <q-space />
-            <q-btn
-              :class="{ 'full-width': sidebar }"
-              type="submit"
-              color="primary"
-              text-color="dark"
-              size="sm"
-              >Apply Filters</q-btn
-            >
-          </div>
-        </q-form>
-      </div>
-      <div :class="[sidebar ? 'col-12' : 'col']">
-        <div class="flex flex-wrap gap-xs-xs">
-          <div class="log-type-filter">
-            <q-checkbox v-model="logTypesAll" val="all" label="All" dense />
-          </div>
-          <template v-for="logType in logTypes">
-            <div class="log-type-filter" :class="`log-type-${logType.value}`">
-              <q-checkbox
-                v-model="modelValue.logTypesToShow"
-                :val="logType.value"
-                :label="logType.label"
-                dense
-              />
-            </div>
-          </template>
-        </div>
-        <hr class="q-mt-md" style="border-color: grey" />
-        <q-checkbox
-          v-model="modelValue.relativeTimestamps"
-          label="Relative Timestamps"
-          :dense="sidebar"
+    <div :class="[sidebar ? 'col-12' : 'col']">
+      <q-form @submit="search">
+        <q-input
+          v-model="modelValue.searchInput"
+          class="q-mb-xs"
+          :class="{ 'text-sm': sidebar }"
+          type="textarea"
+          placeholder="One term per line&#10;Term: Match must match any&#10;!Term: Match must include&#10;-Term: Match must not include"
+          filled
+          dense
         />
+        <div class="flex gap-xs-xs">
+          <q-btn
+            v-if="hasSearchFilters"
+            @click="clearSearch"
+            :class="{ 'full-width': sidebar }"
+            color="grey"
+            text-color="dark"
+            size="sm"
+            >Clear Filters</q-btn
+          >
+          <q-space />
+          <q-btn
+            :class="{ 'full-width': sidebar }"
+            type="submit"
+            color="primary"
+            text-color="dark"
+            size="sm"
+            >Apply Filters</q-btn
+          >
+        </div>
+      </q-form>
+    </div>
+    <div :class="[sidebar ? 'col-12' : 'col']">
+      <div class="flex flex-wrap gap-xs-xs">
+        <div class="log-type-filter">
+          <q-checkbox v-model="logTypesAll" val="all" label="All" dense />
+        </div>
+        <template v-for="logType in logTypes">
+          <div class="log-type-filter" :class="`log-type-${logType.value}`">
+            <q-checkbox
+              v-model="modelValue.logTypesToShow"
+              :val="logType.value"
+              :label="logType.label"
+              dense
+            />
+          </div>
+        </template>
       </div>
-    </template>
+      <hr class="q-mt-md" style="border-color: grey" />
+      <q-checkbox
+        v-model="modelValue.relativeTimestamps"
+        label="Relative Timestamps"
+        :dense="sidebar"
+      />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .log-filters-sidebar {
-  &.log-filters-sidebar--showing {
-    width: 200px;
-
-    .toggle-sidebar {
-      margin-bottom: -10px;
-    }
-  }
-
-  &.log-filters-sidebar--hiding {
-    width: auto;
-  }
+  width: 200px;
 }
 
 .log-type-filter {
@@ -106,8 +79,6 @@
 </style>
 
 <script>
-import { ionArrowForward, ionArrowBack } from '@quasar/extras/ionicons-v6'
-
 export default {
   props: {
     modelValue: Object,
@@ -116,24 +87,7 @@ export default {
     hasSearchFilters: Boolean,
   },
 
-  setup() {
-    return {
-      ionArrowForward,
-      ionArrowBack,
-    }
-  },
-
-  data() {
-    return {
-      sidebarShowing: true,
-    }
-  },
-
   computed: {
-    showContent() {
-      return !this.sidebar || (this.sidebar && this.sidebarShowing)
-    },
-
     logTypesAll: {
       get() {
         return this.logTypes.length === this.modelValue.logTypesToShow.length
