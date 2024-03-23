@@ -63,6 +63,15 @@ export default {
           format: this.$formats.dateWithTime,
           filter: { type: 'DateRange' },
         },
+        {
+          name: 'logs_count',
+          label: 'Log Entries',
+          field: 'logs_count',
+          sortable: true,
+          format: this.$formats.number,
+          filterable: false,
+          headerClasses: 'q-table--col-auto-width',
+        },
       ],
     }
   },

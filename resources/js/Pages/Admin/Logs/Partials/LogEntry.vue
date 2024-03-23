@@ -23,6 +23,11 @@
   }
 }
 
+.log-type-row td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 :deep(a) {
   display: inline-block;
   white-space: normal;

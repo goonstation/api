@@ -18,7 +18,9 @@ class LogsController extends Controller
         $rounds = $this->indexQuery(
             GameRound::with([
                 'server:server_id,name,short_name',
-            ])->has('logs'),
+            ])
+                ->withCount('logs')
+                ->has('logs'),
             perPage: 30
         );
 

@@ -21,7 +21,7 @@
         <slot :name="name" v-bind="slotData" />
       </template>
 
-      <template v-slot:top v-if="gridTopHasContent">
+      <template v-slot:top v-if="!hideTop">
         <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
           <slot name="top-left" />
 
@@ -416,7 +416,11 @@ export default {
     extraParams: {
       type: Object,
       default: () => ({})
-    }
+    },
+    hideTop: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -489,10 +493,6 @@ export default {
       if (!this.currentSortColumn) return
       const dir = this._pagination.descending ? 'descending' : 'ascending'
       return `Sorted by ${this.currentSortColumn.label.toLowerCase()} ${dir}`
-    },
-
-    gridTopHasContent() {
-      return this.showGridFilters || (this.hasTimestamps && !this.noTimestampToggle)
     },
 
     hasActions() {

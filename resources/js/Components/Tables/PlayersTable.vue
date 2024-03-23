@@ -5,6 +5,7 @@
     :columns="columns"
     loading-label=""
     hide-no-data
+    hide-top
     no-timestamp-toggle
     no-filters
     grid

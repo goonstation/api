@@ -51,7 +51,7 @@
       </div>
     </q-card>
 
-    <div class="flex-grow flex column" :class="{ 'table-full': fullscreen }">
+    <div class="relative flex-grow flex column" :class="{ 'table-full': fullscreen }">
       <div class="table-top flex">
         <q-btn-dropdown
           class="q-ml-sm"
@@ -62,59 +62,28 @@
           dense
         >
           <div class="q-pa-md">
-            <div class="row q-col-gutter-md">
-              <div class="col">
-                <q-form @submit="search">
-                  <q-input
-                    v-model="searchInput"
-                    class="q-mb-xs"
-                    type="textarea"
-                    placeholder="Term: Match must match any&#10;!Term: Match must include&#10;-Term: Match must not include"
-                    filled
-                    dense
-                  />
-                  <div class="flex">
-                    <q-btn
-                      v-if="hasSearchFilters"
-                      @click="clearSearch"
-                      color="grey"
-                      text-color="dark"
-                      size="sm"
-                      >Clear Filters</q-btn
-                    >
-                    <q-space />
-                    <q-btn type="submit" color="primary" text-color="dark" size="sm"
-                      >Apply Filters</q-btn
-                    >
-                  </div>
-                </q-form>
-              </div>
-              <div class="col">
-                <div class="flex flex-wrap gap-xs-xs">
-                  <div class="log-type-filter">
-                    <q-checkbox v-model="logTypesAll" val="all" label="All" dense />
-                  </div>
-                  <template v-for="logType in logTypes">
-                    <div class="log-type-filter" :class="`log-type-${logType.value}`">
-                      <q-checkbox
-                        v-model="logTypesToShow"
-                        @update:model-value="filterLogs"
-                        :val="logType.value"
-                        :label="logType.label"
-                        dense
-                      />
-                    </div>
-                  </template>
-                </div>
-                <hr class="q-mt-md" style="border-color: grey" />
-                <q-checkbox v-model="relativeTimestamps" label="Relative Timestamps" />
-              </div>
-            </div>
+            <log-filters
+              :modelValue="filters"
+              :log-types="logTypes"
+              :has-search-filters="hasSearchFilters"
+              @search="search"
+              @clear-search="clearSearch"
+            />
           </div>
         </q-btn-dropdown>
         <div class="flex items-center q-ml-md">Showing {{ $formats.number(logs.length) }} logs</div>
         <q-space />
         <q-btn square dense @click="fullscreen = !fullscreen" :icon="ionExpand" />
+      </div>
+      <div class="log-filters-sidebar-wrap q-pa-sm bg-dark rounded-borders">
+        <log-filters
+          :modelValue="filters"
+          :log-types="logTypes"
+          :has-search-filters="hasSearchFilters"
+          @search="search"
+          @clear-search="clearSearch"
+          sidebar
+        />
       </div>
       <div class="relative flex-grow">
         <q-virtual-scroll
@@ -148,7 +117,7 @@
             <log-entry
               :key="index"
               :log="row"
-              :relative-timestamps="relativeTimestamps"
+              :relative-timestamps="filters.relativeTimestamps"
               :round-started-at="round.created_at"
             />
           </template>
@@ -181,12 +150,12 @@
   padding: 5px;
 }
 
-.log-type-filter {
-  display: inline-block;
-  background: grey;
-  border-radius: 3px;
-  padding: 3px 5px;
-  line-height: 1;
+.log-filters-sidebar-wrap {
+  position: absolute;
+  z-index: 2;
+  top: 50px;
+  right: 10px;
+  border: 1px solid #616161;
 }
 
 .thead-sticky tr > * {
@@ -286,12 +255,14 @@
 <script>
 import axios from 'axios'
 import dayjs from 'dayjs'
-import AdminLayout from '@/Layouts/AdminLayout.vue'
-import LogEntry from './Partials/LogEntry.vue'
 import { ionExpand, ionInformationCircle } from '@quasar/extras/ionicons-v6'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import LogFilters from './Partials/Filters.vue'
+import LogEntry from './Partials/LogEntry.vue'
 
 export default {
   components: {
+    LogFilters,
     LogEntry,
   },
 
@@ -313,15 +284,17 @@ export default {
       allLogs: [],
       loading: true,
       logs: [],
-      searchInput: '',
       searchFilters: {
         and: [],
         or: [],
         not: [],
       },
-      logTypesToShow: [],
       logTypes: [],
-      relativeTimestamps: false,
+      filters: {
+        searchInput: '',
+        logTypesToShow: [],
+        relativeTimestamps: false,
+      },
       fullscreen: false,
     }
   },
@@ -347,24 +320,8 @@ export default {
       return dayjs(this.round.ended_at).fromNow()
     },
 
-    logTypesAll: {
-      get() {
-        return this.logTypes.length === this.logTypesToShow.length
-      },
-      set(val) {
-        const newLogTypes = []
-        if (val) {
-          for (const logType of this.logTypes) {
-            newLogTypes.push(logType.value)
-          }
-        }
-        this.logTypesToShow = newLogTypes
-        this.filterLogs()
-      },
-    },
-
     hasSearchFilters() {
-      return (
+      return !!(
         this.searchFilters.and.length ||
         this.searchFilters.or.length ||
         this.searchFilters.not.length
@@ -389,7 +346,7 @@ export default {
             value: logType,
           }
         })
-        this.logTypesToShow = logTypes
+        this.filters.logTypesToShow = logTypes
 
         this.filterLogs()
       } catch (e) {
@@ -401,7 +358,7 @@ export default {
 
     filterLogs() {
       this.logs = this.allLogs.filter((log) => {
-        let valid = this.logTypesToShow.includes(log.type)
+        let valid = this.filters.logTypesToShow.includes(log.type)
         if (valid && this.hasSearchFilters) {
           const logMessage = (log.source + ' ' + log.message).toLowerCase()
 
@@ -427,29 +384,22 @@ export default {
       })
     },
 
-    search() {
-      const terms = this.searchInput.split('\n')
-      const filters = { and: [], or: [], not: [] }
-      for (let term of terms) {
-        if (term.length < 3) continue
-
-        term = term.toLowerCase()
-        if (term.startsWith('-')) {
-          filters.not.push(term.substring(1))
-        } else if (term.startsWith('!')) {
-          filters.and.push(term.substring(1))
-        } else {
-          filters.or.push(term)
-        }
-      }
+    search(filters) {
       this.searchFilters = filters
       this.filterLogs()
     },
 
     clearSearch() {
-      this.searchInput = ''
       this.searchFilters = { and: [], or: [], not: [] }
       this.filterLogs()
+    },
+  },
+
+  watch: {
+    'filters.logTypesToShow': {
+      handler() {
+        this.filterLogs()
+      },
     },
   },
 }
