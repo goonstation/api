@@ -73,6 +73,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { ionArrowBack } from '@quasar/extras/ionicons-v6'
 import { Head, Link } from '@inertiajs/vue3'
+import { copyToClipboard } from 'quasar'
 
 let map
 let bounds
@@ -105,6 +106,8 @@ export default {
     return {
       loading: true,
       layer: this.map.map_id,
+      selecting: null,
+      removingCoordMarker: false,
     }
   },
 
@@ -133,7 +136,6 @@ export default {
     map.addLayer(tileLayers[this.map.map_id]).setView(bounds.getCenter(), -2)
 
     this.loadUrlParams()
-    window.map = map
   },
 
   methods: {
@@ -153,7 +155,7 @@ export default {
       }
 
       L.CRS.myCRS = L.extend({}, L.CRS.Simple, {})
-      map = L.map('map', { crs: L.CRS.myCRS })
+      map = L.map('map', { crs: L.CRS.myCRS, attributionControl: false })
 
       const southWest = map.unproject([0, mapSizeHeight], 0)
       const northEast = map.unproject([mapSizeWidth, 0], 0)
@@ -213,22 +215,25 @@ export default {
       const centerCoords = map.project(center, 0)
       const x = Math.floor(centerCoords.x / 32) + 1
       const y = Math.floor((mapDimensions.mapSizeHeight - centerCoords.y) / 32) + 1
-      const layer = this.layers.findIndex((layer) => layer.value === this.layer)
+      const layerIndex = this.layers.findIndex((layer) => layer.value === this.layer)
 
       const url = new URL(window.location.origin + window.location.pathname)
       const urlSearch = new URLSearchParams(url.search)
       urlSearch.append('x', x)
       urlSearch.append('y', y)
       urlSearch.append('zoom', zoomLevel)
-      urlSearch.append('layer', layer)
+      if (layerIndex === 0) urlSearch.delete('layer')
+      else urlSearch.append('layer', this.layer.toLowerCase())
+      if (this.selecting) {
+        urlSearch.append('sx', this.selecting.x)
+        urlSearch.append('sy', this.selecting.y)
+      }
 
       const newParams = decodeURI(urlSearch.toString())
       let newUrl = window.location.pathname
       if (newParams) newUrl += `?${newParams}`
       history.replaceState(null, '', newUrl)
       this.$inertia.page.url = newUrl
-
-      console.log(x, y, zoomLevel, layer)
     },
 
     loadUrlParams() {
@@ -236,25 +241,46 @@ export default {
       const urlSearch = new URLSearchParams(url.search)
 
       const coords = { x: 0, y: 0 }
+      const selectCoords = { x: 0, y: 0 }
       urlSearch.forEach((param, key) => {
         if (key === 'x') coords.x = parseInt(param)
         else if (key === 'y') coords.y = parseInt(param)
         else if (key === 'zoom') map.setZoom(parseInt(param), { animate: false })
-        else if (key === 'layer') this.layers.findIndex((layer) => layer.value === this.layer)
+        else if (key === 'layer') {
+          const layerMapId = param.toUpperCase()
+          if (!this.layers.find((layer) => layer.value === layerMapId)) return
+          this.layer = layerMapId
+          this.changeLayer(layerMapId)
+        } else if (key === 'sx') selectCoords.x = parseInt(param)
+        else if (key === 'sy') selectCoords.y = parseInt(param)
       })
 
-      this.moveToCoords(coords)
+      if (selectCoords.x && selectCoords.y) {
+        this.markCoords(selectCoords)
+        this.moveToCoords(selectCoords)
+      } else if (coords.x || coords.y) this.moveToCoords(coords)
       this.loading = false
     },
 
     moveToCoords(coords) {
-      const x = ((coords.x - 1) * 32) + 16
-      const y = ((mapDimensions.mapSizeHeight - ((coords.y) * 32))) + 16
+      const x = (coords.x - 1) * 32 + 16
+      const y = mapDimensions.mapSizeHeight - coords.y * 32 + 16
       const latlng = map.unproject([x, y], 0)
       map.panTo(latlng, { animate: false })
     },
 
+    markCoords(coords) {
+      const x = (coords.x - 1) * 32 + 16
+      const y = mapDimensions.mapSizeHeight - coords.y * 32 + 16
+      const latlng = map.unproject([x, y], 0)
+      this.markTile(latlng)
+    },
+
     markTile(latlng) {
+      if (this.removingCoordMarker) {
+        this.removingCoordMarker = false
+        return
+      }
       if (!layerOptions.bounds.contains(latlng)) return
       if (coordMarker) map.removeLayer(coordMarker)
 
@@ -275,16 +301,35 @@ export default {
       const topMiddle = map.unproject([leftEdge + 16, topEdge], 0)
       const displayX = x + 1
       const displayY = Math.floor((mapDimensions.mapSizeHeight - coords.y) / 32) + 1
+      const coordText = `(x: ${displayX}, y: ${displayY})`
       const marker = L.marker(topMiddle, {
         icon: L.divIcon({
-          html: `<div>(x: ${displayX}, y: ${displayY})</div>`,
+          html: `<div>${coordText}</div>`,
           className: 'coord-marker',
           iconSize: [1, 1],
         }),
       })
 
+      this.selecting = { x: displayX, y: displayY }
       coordMarker = L.layerGroup([rect, marker])
       coordMarker.addTo(map)
+      this.setUrlParams()
+
+      marker.on('click', () => {
+        copyToClipboard(coordText).then(() => {
+          this.$q.notify({
+            message: 'Copied text',
+            color: 'positive',
+          })
+        })
+      })
+
+      rect.on('click', () => {
+        this.selecting = null
+        this.removingCoordMarker = true
+        map.removeLayer(coordMarker)
+        this.setUrlParams()
+      })
     },
   },
 }
