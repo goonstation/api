@@ -30,20 +30,32 @@
               :error="!!form.errors.name"
               :error-message="form.errors.name"
             />
-            <q-toggle
-              v-model="form.active"
-              label="Active"
-            />
-            <div class="text-caption q-px-sm">
-              If active, this map will be publicly visible.
-            </div>
-            <q-toggle
-              v-model="form.is_layer"
-              label="Layer"
-            />
+            <q-toggle v-model="form.active" label="Active" />
+            <div class="text-caption q-px-sm">If active, this map will be publicly visible.</div>
+            <q-toggle v-model="form.is_layer" label="Layer" />
             <div class="text-caption q-px-sm q-mb-md">
               If a layer, this map will only be viewable as an extra layer on other maps.
             </div>
+            <q-select
+              v-if="!form.is_layer"
+              v-model="form.layers"
+              :options="mapLayers"
+              class="q-mb-md"
+              label="Layers"
+              hint="Maps that show as an extra layer to this map"
+              option-value="id"
+              option-label="name"
+              multiple
+              filled
+              emit-value
+              map-options
+              hide-bottom-space
+              lazy-rules
+              dense
+              clearable
+              :error="!!form.errors.layers"
+              :error-message="form.errors.layers"
+            />
             <q-input
               v-model="form.tile_width"
               type="number"
@@ -95,5 +107,9 @@ import BaseForm from './BaseForm.vue'
 
 export default {
   extends: BaseForm,
+
+  props: {
+    mapLayers: Object,
+  },
 }
 </script>

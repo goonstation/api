@@ -30,10 +30,11 @@ class MapsController extends Controller
 
     public function show(string $map)
     {
-        $map = Map::select('map_id', 'name', 'tile_width', 'tile_height', 'screenshot_tiles')
+        $map = Map::select('id', 'map_id', 'name', 'tile_width', 'tile_height', 'screenshot_tiles', 'updated_at')
             ->where('map_id', Str::upper($map))
             ->where('active', true)
             ->where('is_layer', false)
+            ->with('layers')
             ->firstOrFail();
 
         return Inertia::render('Maps/Show', [

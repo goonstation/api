@@ -21,4 +21,9 @@ class Map extends Model
     {
         return $this->belongsTo(GameAdmin::class, 'last_built_by');
     }
+
+    public function layers()
+    {
+        return $this->hasManyThrough(Map::class, MapLayer::class, 'map_id', 'id', 'id', 'layer_id');
+    }
 }

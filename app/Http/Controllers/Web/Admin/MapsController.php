@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Jobs\BuildMap;
 use App\Models\Map;
+use App\Models\MapLayer;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
 use Illuminate\Http\File;
@@ -20,6 +21,24 @@ use ZipArchive;
 class MapsController extends Controller
 {
     use IndexableQuery, ManagesFileUploads;
+
+    private function associateMapLayers(Map $map, Array|null $layers)
+    {
+        if (!$map->is_layer && is_array($layers) && count($layers)) {
+            MapLayer::where('map_id', $map->id)
+                ->whereNotIn('layer_id', $layers)
+                ->delete();
+
+            foreach ($layers as $layerId) {
+                MapLayer::create([
+                    'map_id' => $map->id,
+                    'layer_id' => $layerId,
+                ]);
+            }
+        } else {
+            MapLayer::where('map_id', $map->id)->delete();
+        }
+    }
 
     public function index(Request $request)
     {
@@ -118,7 +137,11 @@ class MapsController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/Maps/Create');
+        $layers = Map::where('is_layer', true)->get();
+
+        return Inertia::render('Admin/Maps/Create', [
+            'layers' => $layers,
+        ]);
     }
 
     public function store(Request $request)
@@ -130,6 +153,7 @@ class MapsController extends Controller
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
+            'layers' => 'nullable|array'
         ]);
 
         $map = new Map();
@@ -142,13 +166,19 @@ class MapsController extends Controller
         $map->screenshot_tiles = $data['tile_width'] / 10;
         $map->save();
 
+        $this->associateMapLayers($map, $data['layers']);
+
         return to_route('admin.maps.index');
     }
 
     public function edit(Map $map)
     {
+        $map->load('layers');
+        $layers = Map::where('is_layer', true)->get();
+
         return Inertia::render('Admin/Maps/Edit', [
             'map' => $map,
+            'layers' => $layers,
         ]);
     }
 
@@ -161,6 +191,7 @@ class MapsController extends Controller
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
+            'layers' => 'nullable|array'
         ]);
 
         $map->map_id = $data['map_id'];
@@ -171,6 +202,8 @@ class MapsController extends Controller
         $map->tile_height = $data['tile_height'];
         $map->screenshot_tiles = $data['tile_width'] / 10;
         $map->save();
+
+        $this->associateMapLayers($map, $data['layers']);
 
         return to_route('admin.maps.index');
     }
