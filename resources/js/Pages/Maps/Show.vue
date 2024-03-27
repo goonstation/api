@@ -76,8 +76,10 @@ import { Head, Link } from '@inertiajs/vue3'
 
 let map
 let bounds
+let mapDimensions
 let layerOptions
 let tileLayers = []
+let coordMarker = null
 
 export default {
   components: {
@@ -101,6 +103,7 @@ export default {
 
   data() {
     return {
+      loading: true,
       layer: this.map.map_id,
     }
   },
@@ -129,24 +132,8 @@ export default {
 
     map.addLayer(tileLayers[this.map.map_id]).setView(bounds.getCenter(), -2)
 
-    // L.GridLayer.GridDebug = L.GridLayer.extend({
-    //   createTile: function (coords) {
-    //     const tile = document.createElement('div')
-    //     tile.style.width = '32px'
-    //     tile.style.height = '32px'
-    //     tile.style.outline = '1px solid green'
-    //     tile.style.fontWeight = 'bold'
-    //     tile.style.fontSize = '14pt'
-    //     tile.innerHTML = [coords.z, coords.x, coords.y].join('/')
-    //     return tile
-    //   },
-    // })
-
-    // L.gridLayer.gridDebug = function (opts) {
-    //   return new L.GridLayer.GridDebug(opts)
-    // }
-
-    // map.addLayer(L.gridLayer.gridDebug())
+    this.loadUrlParams()
+    window.map = map
   },
 
   methods: {
@@ -157,33 +144,20 @@ export default {
       const mapSizeWidth = tilesPerRow * tileSize
       const mapSizeHeight = tilesPerColumn * tileSize
 
-      const factorX = tilesPerRow / mapSizeWidth
-      const factorY = tilesPerColumn / mapSizeHeight
-
-      console.log({
+      mapDimensions = {
         tileSize,
         tilesPerRow,
         tilesPerColumn,
         mapSizeWidth,
         mapSizeHeight,
-        factorX,
-        factorY
-      })
+      }
 
-      L.CRS.myCRS = L.extend({}, L.CRS.Simple, {
-        // transformation: new L.Transformation(factorX, 0, factorY, 0),
-      })
+      L.CRS.myCRS = L.extend({}, L.CRS.Simple, {})
       map = L.map('map', { crs: L.CRS.myCRS })
 
       const southWest = map.unproject([0, mapSizeHeight], 0)
       const northEast = map.unproject([mapSizeWidth, 0], 0)
       bounds = L.latLngBounds(southWest, northEast)
-
-      console.log({
-        southWest,
-        northEast,
-        bounds
-      })
 
       layerOptions = {
         tileSize,
@@ -198,31 +172,11 @@ export default {
       map.setMaxBounds(bounds)
 
       map.on('click', (e) => {
-        const coords = map.project(map.mouseEventToLatLng(e.originalEvent), 0)
-        console.log(coords)
+        this.markTile(map.mouseEventToLatLng(e.originalEvent))
+      })
 
-        const x = Math.floor(coords.x / 32)
-        const y = Math.floor(coords.y / 32)
-
-        const leftEdge = x * 32
-        const topEdge = y * 32
-        const topLeft = map.unproject([leftEdge - 1, topEdge - 1], 0)
-        const bottomRight = map.unproject([leftEdge + 32, topEdge + 32], 0)
-        const bounds = [
-          [topLeft.lat, topLeft.lng],
-          [bottomRight.lat, bottomRight.lng],
-        ]
-        L.rectangle(bounds, { color: '#ff7800', weight: 1 })
-          .addTo(map)
-
-        const topMiddle = map.unproject([leftEdge + 16, topEdge], 0)
-        L.marker(topMiddle, {
-          icon: L.divIcon({
-            html: `<div>(x: ${x}, y: ${y})</div>`,
-            className: 'coord-marker',
-            iconSize: [1, 1],
-          }),
-        }).addTo(map)
+      map.on('moveend', () => {
+        this.setUrlParams()
       })
     },
 
@@ -241,11 +195,96 @@ export default {
       tileLayers[map.map_id] = L.tileLayer[map.map_id]()
     },
 
+    changeLayer(mapId) {
+      map.eachLayer((layer) => map.removeLayer(layer))
+      map.addLayer(tileLayers[mapId])
+    },
+
     onLayerChange() {
-      map.eachLayer(function (layer) {
-        map.removeLayer(layer)
+      this.changeLayer(this.layer)
+      map.setView(bounds.getCenter(), -2)
+    },
+
+    setUrlParams() {
+      if (this.loading) return
+
+      const zoomLevel = map.getZoom()
+      const center = map.getCenter()
+      const centerCoords = map.project(center, 0)
+      const x = Math.floor(centerCoords.x / 32) + 1
+      const y = Math.floor((mapDimensions.mapSizeHeight - centerCoords.y) / 32) + 1
+      const layer = this.layers.findIndex((layer) => layer.value === this.layer)
+
+      const url = new URL(window.location.origin + window.location.pathname)
+      const urlSearch = new URLSearchParams(url.search)
+      urlSearch.append('x', x)
+      urlSearch.append('y', y)
+      urlSearch.append('zoom', zoomLevel)
+      urlSearch.append('layer', layer)
+
+      const newParams = decodeURI(urlSearch.toString())
+      let newUrl = window.location.pathname
+      if (newParams) newUrl += `?${newParams}`
+      history.replaceState(null, '', newUrl)
+      this.$inertia.page.url = newUrl
+
+      console.log(x, y, zoomLevel, layer)
+    },
+
+    loadUrlParams() {
+      const url = new URL(window.location.href)
+      const urlSearch = new URLSearchParams(url.search)
+
+      const coords = { x: 0, y: 0 }
+      urlSearch.forEach((param, key) => {
+        if (key === 'x') coords.x = parseInt(param)
+        else if (key === 'y') coords.y = parseInt(param)
+        else if (key === 'zoom') map.setZoom(parseInt(param), { animate: false })
+        else if (key === 'layer') this.layers.findIndex((layer) => layer.value === this.layer)
       })
-      map.addLayer(tileLayers[this.layer]).setView(bounds.getCenter(), -2)
+
+      this.moveToCoords(coords)
+      this.loading = false
+    },
+
+    moveToCoords(coords) {
+      const x = ((coords.x - 1) * 32) + 16
+      const y = ((mapDimensions.mapSizeHeight - ((coords.y) * 32))) + 16
+      const latlng = map.unproject([x, y], 0)
+      map.panTo(latlng, { animate: false })
+    },
+
+    markTile(latlng) {
+      if (!layerOptions.bounds.contains(latlng)) return
+      if (coordMarker) map.removeLayer(coordMarker)
+
+      const coords = map.project(latlng, 0)
+      const x = Math.floor(coords.x / 32)
+      const y = Math.floor(coords.y / 32)
+
+      const leftEdge = x * 32
+      const topEdge = y * 32
+      const topLeft = map.unproject([leftEdge - 1, topEdge - 1], 0)
+      const bottomRight = map.unproject([leftEdge + 32, topEdge + 32], 0)
+      const bounds = [
+        [topLeft.lat, topLeft.lng],
+        [bottomRight.lat, bottomRight.lng],
+      ]
+      const rect = L.rectangle(bounds, { color: '#ff7800', weight: 1 })
+
+      const topMiddle = map.unproject([leftEdge + 16, topEdge], 0)
+      const displayX = x + 1
+      const displayY = Math.floor((mapDimensions.mapSizeHeight - coords.y) / 32) + 1
+      const marker = L.marker(topMiddle, {
+        icon: L.divIcon({
+          html: `<div>(x: ${displayX}, y: ${displayY})</div>`,
+          className: 'coord-marker',
+          iconSize: [1, 1],
+        }),
+      })
+
+      coordMarker = L.layerGroup([rect, marker])
+      coordMarker.addTo(map)
     },
   },
 }
