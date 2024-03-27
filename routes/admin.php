@@ -4,9 +4,11 @@ use App\Http\Controllers\Web\Admin\BansController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
+use App\Http\Controllers\Web\Admin\JobBansController;
+use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
-use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
+use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
@@ -71,8 +73,26 @@ Route::middleware([
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
         });
 
+        Route::controller(JobBansController::class)->prefix('job-bans')->group(function () {
+            Route::get('/', 'index')->name('admin.job-bans.index')->breadcrumb('Job Bans');
+            Route::get('/create', 'create')->name('admin.job-bans.create')->breadcrumb('', 'admin.job-bans.index');
+            Route::get('/{jobBan}', 'show')->whereNumber('jobBan')->name('admin.job-bans.show')->breadcrumb('', 'admin.job-bans.index');
+            Route::post('/', 'store')->name('admin.job-bans.store');
+            Route::get('/edit/{jobBan}', 'edit')->whereNumber('jobBan')->name('admin.job-bans.edit')->breadcrumb('', 'admin.job-bans.index');
+            Route::put('/{jobBan}', 'update')->whereNumber('jobBan')->name('admin.job-bans.update');
+            Route::delete('/{jobBan}', 'destroy')->whereNumber('jobBan')->name('admin.job-bans.delete');
+            Route::delete('/', 'destroyMulti')->name('admin.job-bans.delete-multi');
+        });
+
         Route::controller(PlayerNotesController::class)->prefix('notes')->group(function () {
             Route::get('/', 'index')->name('admin.notes.index')->breadcrumb('Notes');
+            Route::get('/create', 'create')->name('admin.notes.create')->breadcrumb('', 'admin.notes.index');
+            Route::get('/{note}', 'show')->whereNumber('note')->name('admin.notes.show')->breadcrumb('', 'admin.notes.index');
+            Route::post('/', 'store')->name('admin.notes.store');
+            Route::get('/edit/{note}', 'edit')->whereNumber('note')->name('admin.notes.edit')->breadcrumb('', 'admin.notes.index');
+            Route::put('/{note}', 'update')->whereNumber('note')->name('admin.notes.update');
+            Route::delete('/{note}', 'destroy')->whereNumber('note')->name('admin.notes.delete');
+            Route::delete('/', 'destroyMulti')->name('admin.notes.delete-multi');
         });
 
         Route::controller(MapsController::class)->prefix('maps')->group(function () {
@@ -89,6 +109,17 @@ Route::middleware([
 
         Route::controller(EventsController::class)->prefix('events')->group(function () {
             Route::get('/', 'index')->name('admin.events.index')->breadcrumb('Events');
+        });
+
+        Route::controller(LogsController::class)->prefix('logs')->group(function () {
+            Route::get('/', 'index')->name('admin.logs.index')->breadcrumb('Logs');
+            Route::get('/{gameRound}', 'show')
+                ->whereNumber('gameRound')
+                ->name('admin.logs.show')
+                ->breadcrumb('', 'admin.logs.index');
+            Route::get('/get-logs/{gameRound}', 'getLogs')
+                ->whereNumber('gameRound')
+                ->name('admin.logs.get-logs');
         });
     });
 });

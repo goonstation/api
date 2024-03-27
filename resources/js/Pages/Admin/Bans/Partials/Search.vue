@@ -21,15 +21,7 @@
 </template>
 
 <script>
-import { ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
-
 export default {
-  setup() {
-    return {
-      ionInformationCircleOutline,
-    }
-  },
-
   props: {
     modelValue: Object,
   },

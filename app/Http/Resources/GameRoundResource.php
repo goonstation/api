@@ -20,6 +20,7 @@ class GameRoundResource extends JsonResource
             'map' => $this->map,
             'game_type' => $this->game_type,
             'rp_mode' => $this->rp_mode,
+            'test_merges' => $this->test_merges,
             'crashed' => $this->crashed,
             'ended_at' => $this->ended_at,
             'created_at' => $this->created_at,

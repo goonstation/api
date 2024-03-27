@@ -60,4 +60,18 @@ class PlayerFilter extends ModelFilter
 
         return $query;
     }
+
+    public function compId($val)
+    {
+        return $this->related('connections', function ($query) use ($val) {
+            return $query->where('comp_id', $val);
+        });
+    }
+
+    public function ip($val)
+    {
+        return $this->related('connections', function ($query) use ($val) {
+            return $query->where('ip', $val);
+        });
+    }
 }

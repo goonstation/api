@@ -4,6 +4,8 @@
     :routes="routes"
     :columns="columns"
     :pagination="{ rowsPerPage: 30 }"
+    create-button-text="Add Note"
+    selection="multiple"
     flat
     dense
   />
@@ -18,6 +20,11 @@ export default {
     return {
       routes: {
         fetch: '/admin/notes',
+        view: '/admin/notes/_id',
+        create: '/admin/notes/create',
+        edit: '/admin/notes/edit/_id',
+        delete: '/admin/notes/_id',
+        deleteMulti: '/admin/notes',
       },
       columns: [
         {
@@ -25,8 +32,7 @@ export default {
           label: 'ID',
           field: 'id',
           sortable: true,
-          filterable: false,
-          headerClasses: 'q-table--col-auto-width',
+          filterable: true,
         },
         {
           name: 'server_id',
@@ -40,13 +46,13 @@ export default {
           filter: { type: 'SelectServers' },
         },
         {
-          name: 'admin_ckey',
+          name: 'game_admin',
           label: 'Admin',
-          field: (row) => row.game_admin.name || row.game_admin.ckey,
+          field: (row) => row.game_admin?.name || row.game_admin?.ckey,
           sortable: true,
         },
         {
-          name: 'player',
+          name: 'ckey',
           label: 'Player',
           field: (row) => row.player?.ckey || row.ckey,
           sortable: true,

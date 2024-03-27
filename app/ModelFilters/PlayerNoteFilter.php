@@ -29,15 +29,21 @@ class PlayerNoteFilter extends ModelFilter
 
     public function ckey($val)
     {
-        return $this->whereHas('player', function ($query) use ($val) {
-            return $query->where('ckey', $val);
-        })->orWhere('ckey', $val);
+        if ($this->input('exact')) {
+            return $this->whereHas('player', function ($query) use ($val) {
+                return $query->where('ckey', $val);
+            })->orWhere('ckey', $val);
+        } else {
+            return $this->whereHas('player', function ($query) use ($val) {
+                return $query->where('ckey', 'ILIKE', '%'.$val.'%');
+            })->orWhere('ckey', 'ILIKE', '%'.$val.'%');
+        }
     }
 
     public function gameAdmin($val)
     {
-        return $this->related('game_admins', function ($query) use ($val) {
-            return $query->whereLike('ckey', $val);
+        return $this->related('gameAdmin', function ($query) use ($val) {
+            return $query->where('ckey', 'ILIKE', '%'.$val.'%');
         });
     }
 

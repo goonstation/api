@@ -146,7 +146,9 @@ class MigrateBans extends Command
             $banDetail['created_at'] = $record['created_at'];
             $banDetail['updated_at'] = $record['updated_at'];
             $banDetailDeletedAt = null;
-            if ($deletedAt) $banDetailDeletedAt = $deletedAt;
+            if ($deletedAt) {
+                $banDetailDeletedAt = $deletedAt;
+            }
             if ($record['removed']) {
                 $banDetailDeletedAt = $record['updated_at'];
             }

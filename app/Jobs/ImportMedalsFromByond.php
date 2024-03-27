@@ -34,6 +34,8 @@ class ImportMedalsFromByond implements ShouldQueue
      */
     public function handle()
     {
+        echo "Starting medal import\n";
+        echo "Creating chrome client\n";
         $client = Client::createChromeClient('/usr/local/bin/chromedriver', [
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36',
             '--window-size=1200,1100',
@@ -45,15 +47,18 @@ class ImportMedalsFromByond implements ShouldQueue
             '--no-sandbox',
         ]);
 
+        echo "Logging into Byond\n";
         $client->request('GET', 'https://secure.byond.com/login.cgi');
         $client->submitForm('Login', [
             'key' => config('goonhub.byond_user'),
             'password' => config('goonhub.byond_pass'),
         ]);
 
+        echo "Navigating to medals page\n";
         $client->request('GET', 'https://secure.byond.com/members/?command=edit_hub_entry&hub=77041#tab=medals');
         $crawler = $client->waitFor('#all_medals');
 
+        echo "Iterating over medal elements\n";
         $medals = [];
         $elements = $crawler->filter('#all_medals > div');
         $elements->each(function (Crawler $element) use (&$medals) {
@@ -72,6 +77,8 @@ class ImportMedalsFromByond implements ShouldQueue
             $hidden = $element->filter("#medal_spoiler_$medalId")->attr('checked');
             $hidden = $hidden === 'true';
 
+            echo "Found medal $title\n";
+
             $medals[] = [
                 'title' => $title,
                 'description' => $description,
@@ -81,17 +88,8 @@ class ImportMedalsFromByond implements ShouldQueue
             ];
         });
 
+        echo "Inserting medal data into database\n";
         foreach ($medals as $medalData) {
-            // if (Medal::where('title', $medalData['title'])->exists()) {
-            //     continue;
-            // }
-
-            // $medal = new Medal();
-            // $medal->title = $medalData['title'];
-            // $medal->description = $medalData['description'];
-            // $medal->hidden = $medalData['hidden'];
-            // $medal->save();
-
             $medal = Medal::updateOrCreate(
                 ['title' => $medalData['title']],
                 [
@@ -107,5 +105,7 @@ class ImportMedalsFromByond implements ShouldQueue
                 Storage::disk('public')->put($imagePath, $response->body());
             }
         }
+
+        echo "Done!\n";
     }
 }

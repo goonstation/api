@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\Jobs\BuildChangelog;
-use App\Jobs\ClearEventHistory;
 use App\Jobs\ClearOldAudio;
 use App\Jobs\ClearOldDectalks;
 use App\Jobs\GenerateGlobalPlayerStats;
@@ -30,7 +29,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
         $schedule->job(new ClearOldAudio)->dailyAt('03:07');
         $schedule->job(new GenerateGlobalPlayerStats)->daily();
-        $schedule->job(new ClearEventHistory)->daily();
 
         $schedule->job(new UpdateGeoLite)->weekly();
         $schedule->job(new UpdateYoutubeDLP)->weekly();

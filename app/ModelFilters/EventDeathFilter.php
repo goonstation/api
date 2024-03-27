@@ -18,6 +18,16 @@ class EventDeathFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
+    public function round($val)
+    {
+        return $this->where('round_id', $val);
+    }
+
     public function mobName($val)
     {
         return $this->where('mob_name', 'ILIKE', '%'.$val.'%');

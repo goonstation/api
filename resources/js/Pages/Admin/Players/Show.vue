@@ -48,7 +48,11 @@
             <td>Last Seen Computer ID</td>
             <td>
               {{ latestConnection.comp_id }}
-              <comp-ids :connections="player.connections" class="q-ml-sm" />
+              <comp-ids
+                :connections="player.connections"
+                :cursed-comp-ids="cursedCompIds"
+                class="q-ml-sm"
+              />
             </td>
           </tr>
           <tr v-if="latestRound">
@@ -125,9 +129,11 @@
     </q-card>
 
     <q-card class="gh-card gh-card--small q-mb-md" flat>
-      <div class="gh-card__header">
+      <div class="gh-card__header flex">
         <q-icon :name="ionPencil" size="22px" />
         <span>Notes ({{ player.notes.length }})</span>
+        <q-space />
+        <add-player-note-dialog :player="player" @success="onNoteAdded" size="sm" />
       </div>
       <q-card-section class="q-pa-none">
         <notes :notes="player.notes" />
@@ -180,6 +186,7 @@ import {
 import { Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
+import AddPlayerNoteDialog from '@/Components/AddPlayerNoteDialog.vue'
 import Ips from './Partials/Ips.vue'
 import CompIds from './Partials/CompIds.vue'
 import Connections from './Partials/Connections.vue'
@@ -201,6 +208,7 @@ export default {
   components: {
     Link,
     PlayerAvatar,
+    AddPlayerNoteDialog,
     Ips,
     CompIds,
     Connections,
@@ -226,6 +234,7 @@ export default {
     latestRound: Object,
     banHistory: Object,
     otherAccounts: Object,
+    cursedCompIds: Object,
   },
 
   data() {
@@ -273,6 +282,10 @@ export default {
     isBanExpiredOrRemoved(ban) {
       return ban.deleted_at || this.isBanExpired(ban.expires_at)
     },
+
+    onNoteAdded(note) {
+      this.player.notes.unshift(note)
+    }
   },
 }
 </script>

@@ -6,7 +6,7 @@ use App\Models\Player;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\InvokableRule;
 
-class PlayerIdWithCkey implements InvokableRule, DataAwareRule
+class PlayerIdWithCkey implements DataAwareRule, InvokableRule
 {
     /**
      * All of the data under validation.
@@ -24,7 +24,7 @@ class PlayerIdWithCkey implements InvokableRule, DataAwareRule
     public function setData($data)
     {
         $this->data = $data;
- 
+
         return $this;
     }
 
@@ -38,13 +38,13 @@ class PlayerIdWithCkey implements InvokableRule, DataAwareRule
      */
     public function __invoke($attribute, $value, $fail)
     {
-        if ((!array_key_exists('ckey', $this->data) || !$this->data['ckey']) && !$value) {
+        if ((! array_key_exists('ckey', $this->data) || ! $this->data['ckey']) && ! $value) {
             return $fail('The :attribute is required when ckey is empty');
         }
 
-        if ($value !== '0') {
+        if ((int) $value !== 0) {
             $playerExists = Player::where('id', $value)->exists();
-            if (!$playerExists) {
+            if (! $playerExists) {
                 return $fail('The selected player ID is invalid');
             }
         }

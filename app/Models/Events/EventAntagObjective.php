@@ -5,12 +5,13 @@ namespace App\Models\Events;
 use App\Models\GameRound;
 use App\Models\Player;
 use Awobaz\Compoships\Compoships;
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class EventAntagObjective extends Model
 {
-    use Compoships, HasFactory;
+    use Compoships, Filterable, HasFactory;
 
     protected $table = 'events_antag_objectives';
 

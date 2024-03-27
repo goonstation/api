@@ -232,7 +232,7 @@ export default {
       const layerBuilder = L.TileLayer.extend({
         options: layerOptions,
         getTileUrl: (coords) => {
-          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png`
+          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png?v=${version}`
         },
       })
       L.tileLayer[map.map_id] = (opts) => {

@@ -30,6 +30,7 @@ export default {
     optionLabel: String,
     fieldLabel: String,
     defaultItems: Array,
+    searchKey: String,
   },
 
   computed: {
@@ -67,12 +68,14 @@ export default {
       loading: false,
       firstLoad: true,
       loadedDefaultItem: false,
+      search: '',
     }
   },
 
   created() {
     // Handle an existing item being selected
     if (this.model) {
+      if (this.searchKey) this.search = this.model
       this.filters[this.optionValue] = this.model
       this.load().then(() => {
         // Reset state so future calls can correctly query the rest of the resources
@@ -83,26 +86,26 @@ export default {
         this.loadedDefaultItem = true
       })
     }
-
-    if (this.defaultItems?.length) {
-      this.options = this.options.concat(this.defaultItems)
-    }
   },
 
   methods: {
-    async load() {
+    async load(newSearch = false) {
       if (this.pagination.currentPage >= this.pagination.lastPage) return
 
       this.loading = true
+      let filters = this.filters
+      if (this.search && this.searchKey) {
+        filters = { ...filters, [this.searchKey]: this.search }
+      }
       const response = await axios.get(this.loadRoute, {
         params: {
           page: this.pagination.currentPage + 1,
           per_page: this.pagination.perPage,
-          filters: this.filters,
+          filters,
         },
       })
 
-      const newOptions = response.data.data
+      let newOptions = response.data.data
 
       // Ensure we don't have duplicate items if we already loaded a default item
       for (const option of this.options) {
@@ -114,7 +117,11 @@ export default {
         }
       }
 
-      this.options = this.options.concat(newOptions)
+      if (newSearch && this.defaultItems.length) {
+        newOptions = [...this.defaultItems, ...newOptions]
+      }
+
+      this.options = newSearch ? newOptions : this.options.concat(newOptions)
       this.$refs.select.refresh()
 
       this.pagination.currentPage = response.data.current_page
@@ -135,6 +142,17 @@ export default {
     },
 
     filterFn(val, update, abort) {
+      if (this.searchKey && val !== this.search) {
+        // new search
+        this.search = val
+        this.pagination.currentPage = 0
+        this.pagination.lastPage = 1
+        update(() => {
+          this.load(true)
+        })
+        return
+      }
+
       if (!this.firstLoad) {
         // already loaded
         update()
@@ -144,6 +162,25 @@ export default {
       update(() => {
         this.load()
       })
+    },
+  },
+
+  watch: {
+    defaultItems: {
+      immediate: true,
+      deep: true,
+      handler(val) {
+        if (!val) return
+        for (const defaultOption of val) {
+          if (
+            !this.options.find(
+              (option) => defaultOption[this.optionValue] === option[this.optionValue]
+            )
+          ) {
+            this.options.unshift(defaultOption)
+          }
+        }
+      },
     },
   },
 }

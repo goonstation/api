@@ -18,6 +18,16 @@ class EventFineFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
+    public function round($val)
+    {
+        return $this->where('round_id', $val);
+    }
+
     public function target($val)
     {
         return $this->where('target', 'ILIKE', '%'.$val.'%');

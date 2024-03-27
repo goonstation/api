@@ -24,12 +24,15 @@ class GameRoundsController extends Controller
             'server_id' => 'required|string',
             'map' => 'required|string',
             'rp_mode' => 'nullable|boolean',
+            'test_merges' => 'nullable|array',
+            'test_merges.*' => 'sometimes|required|numeric',
         ]);
 
         $gameRound = new GameRound;
         $gameRound->server_id = $data['server_id'];
         $gameRound->map = $data['map'];
         $gameRound->rp_mode = empty($data['rp_mode']) ? false : $data['rp_mode'];
+        $gameRound->test_merges = isset($data['test_merges']) ? json_encode($data['test_merges']) : null;
         $gameRound->save();
 
         return new GameRoundResource($gameRound);

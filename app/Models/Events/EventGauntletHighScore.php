@@ -3,12 +3,13 @@
 namespace App\Models\Events;
 
 use App\Models\GameRound;
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class EventGauntletHighScore extends Model
 {
-    use HasFactory;
+    use Filterable, HasFactory;
 
     protected $table = 'events_gauntlet_high_scores';
 

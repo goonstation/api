@@ -71,8 +71,8 @@ class PlayersController extends Controller
         $compIds = $player->connections->pluck('comp_id')->unique()->values();
 
         // Remove any cursed computer IDs (those that are known to belong to shared/common computers)
-        $cursedCompIds = CursedCompId::all()->pluck('comp_id')->values();
-        $compIds = $compIds->diff($cursedCompIds);
+        $cursedCompIds = CursedCompId::all();
+        $compIds = $compIds->diff($cursedCompIds->pluck('comp_id')->values());
 
         $otherAccounts = Player::with(['latestConnection'])
             ->whereHas('connections', function ($query) use ($ips, $compIds) {
@@ -88,6 +88,7 @@ class PlayersController extends Controller
             'latestRound' => $latestRound,
             'banHistory' => $banHistory,
             'otherAccounts' => $otherAccounts,
+            'cursedCompIds' => $cursedCompIds,
         ]);
     }
 

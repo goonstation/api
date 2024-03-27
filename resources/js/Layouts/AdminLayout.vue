@@ -98,9 +98,7 @@
 
     <q-page-container>
       <q-page class="row column no-wrap q-pa-md page-wrapper">
-        <div>
-          <slot />
-        </div>
+        <slot />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -190,6 +188,7 @@ export default {
             match: [
               route('admin.players.index'),
               route('admin.bans.index'),
+              route('admin.job-bans.index'),
               route('admin.notes.index'),
             ],
             children: [
@@ -200,6 +199,10 @@ export default {
               {
                 label: 'Bans',
                 href: route('admin.bans.index'),
+              },
+              {
+                label: 'Job Bans',
+                href: route('admin.job-bans.index'),
               },
               {
                 label: 'Notes',
@@ -214,6 +217,10 @@ export default {
           {
             label: 'Events',
             href: route('admin.events.index'),
+          },
+          {
+            label: 'Logs',
+            href: route('admin.logs.index'),
           }
         )
       }

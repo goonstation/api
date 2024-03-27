@@ -51,21 +51,24 @@ class BanFilter extends ModelFilter
     public function ckey($val)
     {
         return $this->related('details', function ($query) use ($val) {
-            return $query->where('ckey', 'ILIKE', '%'.$val.'%');
+            return $query->where('ckey', 'ILIKE', '%'.$val.'%')
+                ->where('deleted_at', null);
         });
     }
 
     public function compId($val)
     {
         return $this->related('details', function ($query) use ($val) {
-            return $query->where('comp_id', 'ILIKE', '%'.$val.'%');
+            return $query->where('comp_id', 'ILIKE', '%'.$val.'%')
+                ->where('deleted_at', null);
         });
     }
 
     public function ip($val)
     {
         return $this->related('details', function ($query) use ($val) {
-            return $query->where('ip', 'ILIKE', '%'.$val.'%');
+            return $query->where('ip', 'ILIKE', '%'.$val.'%')
+                ->where('deleted_at', null);
         });
     }
 
