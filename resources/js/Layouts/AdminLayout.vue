@@ -94,7 +94,19 @@
       </q-toolbar>
     </q-header>
 
-    <site-nav :home="route('dashboard')" :items="siteNavItems" :is-open="siteNavOpen" />
+    <site-nav :home="route('dashboard')" :items="siteNavItems" :is-open="siteNavOpen">
+      <template #bottom>
+        <q-separator />
+        <div class="site-nav__item">
+          <Link :href="route('home')" class="back-to-site site-nav__item q-pa-sm">
+            <div class="site-nav__label">
+              <q-icon :name="ionArrowBackCircleOutline" size="2em" />
+              Back To Site
+            </div>
+          </Link>
+        </div>
+      </template>
+    </site-nav>
 
     <q-page-container>
       <q-page class="row column no-wrap q-pa-md page-wrapper">
@@ -104,9 +116,28 @@
   </q-layout>
 </template>
 
+<style lang="scss" scoped>
+.back-to-site {
+  font-size: 0.8em;
+  opacity: 0.8;
+
+  .site-nav__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+  }
+}
+</style>
+
 <script>
 import { Head, router } from '@inertiajs/vue3'
-import { ionMenu, ionChevronDown, ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v6'
+import {
+  ionMenu,
+  ionChevronDown,
+  ionCheckmarkCircleOutline,
+  ionArrowBackCircleOutline,
+} from '@quasar/extras/ionicons-v6'
 import SiteNav from '@/Components/SiteNav/SiteNav.vue'
 import PageBack from '@/Components/PageBack.vue'
 import UserAvatar from '@/Components/UserAvatar.vue'
@@ -129,6 +160,7 @@ export default {
       ionMenu,
       ionChevronDown,
       ionCheckmarkCircleOutline,
+      ionArrowBackCircleOutline,
     }
   },
 
