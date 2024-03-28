@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="`/storage/maps/${map.map_id.toLowerCase()}/thumb.png`"
+    :src="srcUrl"
     :alt="map.name"
     class="q-mr-md gh-sprite"
     width="75"
@@ -32,6 +32,13 @@ img {
 export default {
   props: {
     map: Object
+  },
+
+  computed: {
+    srcUrl() {
+      if (this.map.admin_only) return `/maps/private/${this.map.map_id.toLowerCase()}/thumb.png`
+      return `/storage/maps/${this.map.map_id.toLowerCase()}/thumb.png` 
+    }
   }
 }
 </script>
