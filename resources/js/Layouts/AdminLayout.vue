@@ -243,16 +243,36 @@ export default {
             ],
           },
           {
-            label: 'Maps',
-            href: route('admin.maps.index'),
+            label: 'Game',
+            match: [
+              route('admin.maps.index'),
+              route('admin.events.index'),
+              route('admin.logs.index'),
+            ],
+            children: [
+              {
+                label: 'Events',
+                href: route('admin.events.index'),
+              },
+              {
+                label: 'Logs',
+                href: route('admin.logs.index'),
+              },
+              {
+                label: 'Maps',
+                href: route('admin.maps.index'),
+              },
+            ],
           },
           {
-            label: 'Events',
-            href: route('admin.events.index'),
-          },
-          {
-            label: 'Logs',
-            href: route('admin.logs.index'),
+            label: 'Site',
+            match: [route('admin.redirects.index')],
+            children: [
+              {
+                label: 'Redirects',
+                href: route('admin.redirects.index'),
+              },
+            ],
           }
         )
       }

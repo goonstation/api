@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
+use App\Http\Controllers\Web\Admin\RedirectsController;
 use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
@@ -120,6 +121,15 @@ Route::middleware([
             Route::get('/get-logs/{gameRound}', 'getLogs')
                 ->whereNumber('gameRound')
                 ->name('admin.logs.get-logs');
+        });
+
+        Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {
+            Route::get('/', 'index')->name('admin.redirects.index')->breadcrumb('Redirects');
+            Route::get('/create', 'create')->name('admin.redirects.create')->breadcrumb('', 'admin.redirects.index');
+            Route::post('/', 'store')->name('admin.redirects.store');
+            Route::get('/edit/{redirect}', 'edit')->whereNumber('redirect')->name('admin.redirects.edit')->breadcrumb('', 'admin.redirects.index');
+            Route::put('/{redirect}', 'update')->whereNumber('redirect')->name('admin.redirects.update');
+            Route::delete('/{redirect}', 'destroy')->whereNumber('redirect')->name('admin.redirects.delete');
         });
     });
 });
