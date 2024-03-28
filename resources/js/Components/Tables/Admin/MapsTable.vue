@@ -25,6 +25,7 @@
         <q-badge v-if="props.row.active" color="positive" text-color="black"> Active </q-badge>
         <q-badge v-else color="negative" text-color="black"> Inactive </q-badge>
         <q-badge v-if="props.row.is_layer" color="primary" text-color="black"> Layer </q-badge>
+        <q-badge v-if="props.row.admin_only" color="negative" text-color="black"> Admin Only </q-badge>
       </div>
     </template>
   </base-table>
