@@ -188,7 +188,11 @@ export default {
       const layerBuilder = L.TileLayer.extend({
         options: layerOptions,
         getTileUrl: (coords) => {
-          return `/storage/maps/${mapUri}/${coords.x},${coords.y}.png?v=${version}`
+          const tileUri = `${mapUri}/${coords.x},${coords.y}.png?v=${version}`
+          if (map.admin_only) {
+            return `/maps/private/${tileUri}`
+          }
+          return `/storage/maps/${tileUri}`
         },
       })
       L.tileLayer[map.map_id] = (opts) => {

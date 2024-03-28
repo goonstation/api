@@ -31,6 +31,7 @@ export default {
         map_id: this.map.map_id,
         name: this.map.name,
         active: this.map.active,
+        admin_only: this.map.admin_only,
         is_layer: this.map.is_layer,
         tile_width: this.map.tile_width,
         tile_height: this.map.tile_height,

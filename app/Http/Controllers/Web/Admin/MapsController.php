@@ -25,9 +25,7 @@ class MapsController extends Controller
     private function associateMapLayers(Map $map, Array|null $layers)
     {
         if (!$map->is_layer && is_array($layers) && count($layers)) {
-            MapLayer::where('map_id', $map->id)
-                ->whereNotIn('layer_id', $layers)
-                ->delete();
+            MapLayer::where('map_id', $map->id)->delete();
 
             foreach ($layers as $layerId) {
                 MapLayer::create([
@@ -150,6 +148,7 @@ class MapsController extends Controller
             'map_id' => 'required|string|uppercase',
             'name' => 'required',
             'active' => 'required|boolean',
+            'admin_only' => 'required|boolean',
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
@@ -160,6 +159,7 @@ class MapsController extends Controller
         $map->map_id = $data['map_id'];
         $map->name = $data['name'];
         $map->active = $data['active'];
+        $map->admin_only = $data['admin_only'];
         $map->is_layer = $data['is_layer'];
         $map->tile_width = $data['tile_width'];
         $map->tile_height = $data['tile_height'];
@@ -188,6 +188,7 @@ class MapsController extends Controller
             'map_id' => 'required|string|uppercase',
             'name' => 'required',
             'active' => 'required|boolean',
+            'admin_only' => 'required|boolean',
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
@@ -197,6 +198,7 @@ class MapsController extends Controller
         $map->map_id = $data['map_id'];
         $map->name = $data['name'];
         $map->active = $data['active'];
+        $map->admin_only = $data['admin_only'];
         $map->is_layer = $data['is_layer'];
         $map->tile_width = $data['tile_width'];
         $map->tile_height = $data['tile_height'];

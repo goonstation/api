@@ -24,7 +24,7 @@ class BuildMap implements ShouldQueue
 
     public static $workPath = 'app/map-processing';
 
-    public static $publicMapsPath = 'app/public/maps';
+    private $publicMapsPath;
 
     private $map = null;
 
@@ -46,6 +46,7 @@ class BuildMap implements ShouldQueue
         $this->zipPath = $zipPath;
         $this->gameAdminId = $gameAdminId;
         $this->workDir = self::$workPath.'/'.Str::random(10);
+        $this->publicMapsPath = $this->map->admin_only ? 'app/private-maps' : 'app/public/maps';
     }
 
     public static function moveUploadedFile(UploadedFile|File $file)
@@ -144,7 +145,7 @@ class BuildMap implements ShouldQueue
 
         // Make sure public output directory exists
         $mapUri = Str::lower($this->map->map_id);
-        $outputPublic = self::$publicMapsPath."/$mapUri";
+        $outputPublic = $this->publicMapsPath."/$mapUri";
         if (! is_dir(storage_path($outputPublic))) {
             mkdir(storage_path($outputPublic));
         }

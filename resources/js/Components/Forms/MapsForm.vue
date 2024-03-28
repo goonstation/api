@@ -31,7 +31,9 @@
               :error-message="form.errors.name"
             />
             <q-toggle v-model="form.active" label="Active" />
-            <div class="text-caption q-px-sm">If active, this map will be publicly visible.</div>
+            <div class="text-caption q-px-sm">If active, this map will be visible in the web map viewer.</div>
+            <q-toggle v-model="form.admin_only" label="Admin Only" />
+            <div class="text-caption q-px-sm">Only display this map to admins.</div>
             <q-toggle v-model="form.is_layer" label="Layer" />
             <div class="text-caption q-px-sm q-mb-md">
               If a layer, this map will only be viewable as an extra layer on other maps.

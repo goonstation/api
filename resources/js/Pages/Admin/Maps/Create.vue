@@ -28,6 +28,7 @@ export default {
         map_id: null,
         name: null,
         active: false,
+        admin_only: false,
         is_layer: false,
         tile_width: 300,
         tile_height: 300,
