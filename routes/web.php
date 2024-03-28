@@ -63,7 +63,7 @@ Route::prefix('/events')->group(function () {
 
     Route::controller(DeathsController::class)->prefix('/deaths')->group(function () {
         Route::get('/', 'index')->name('deaths.index')->breadcrumb('Deaths');
-        Route::get('/{death}', 'show')->name('deaths.show')->breadcrumb('', 'deaths.index');
+        Route::get('/{death}', 'show')->whereNumber('death')->name('deaths.show')->breadcrumb('', 'deaths.index');
     });
 
     Route::controller(TicketsController::class)->prefix('/tickets')->group(function () {
