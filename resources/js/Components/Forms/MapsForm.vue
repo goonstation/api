@@ -31,7 +31,9 @@
               :error-message="form.errors.name"
             />
             <q-toggle v-model="form.active" label="Active" />
-            <div class="text-caption q-px-sm">If active, this map will be visible in the web map viewer.</div>
+            <div class="text-caption q-px-sm">
+              If active, this map will be visible in the web map viewer.
+            </div>
             <q-toggle v-model="form.admin_only" label="Admin Only" />
             <div class="text-caption q-px-sm">Only display this map to admins.</div>
             <q-toggle v-model="form.is_layer" label="Layer" />
@@ -89,6 +91,24 @@
           </q-card-section>
         </q-card>
 
+        <q-card v-if="form.is_layer" class="gh-card q-mb-md" flat>
+          <q-card-section>
+            <div class="q-mb-md">Layer Maps</div>
+            <select
+              v-model="form.base_maps"
+              class="layer-base-map-select full-width rounded-borders text-white"
+              multiple
+              :size="baseMaps.length + 1"
+            >
+              <option :value="0">All</option>
+              <option v-for="map in baseMaps" :value="map.id">{{ map.name }}</option>
+            </select>
+            <div class="text-caption q-px-sm q-mt-sm">
+              The maps that this layer will show on.
+            </div>
+          </q-card-section>
+        </q-card>
+
         <div class="flex">
           <q-space />
           <q-btn
@@ -104,6 +124,16 @@
   </div>
 </template>
 
+<style lang="scss" scoped>
+.layer-base-map-select {
+  background: rgba(255, 255, 255, 0.07);
+
+  option {
+    padding: 5px;
+  }
+}
+</style>
+
 <script>
 import BaseForm from './BaseForm.vue'
 
@@ -111,7 +141,33 @@ export default {
   extends: BaseForm,
 
   props: {
-    mapLayers: Object,
+    maps: Object,
   },
+
+  computed: {
+    mapLayers() {
+      return this.maps.filter((map) => !!map.is_layer)
+    },
+
+    baseMaps() {
+      return this.maps.filter((map) => !map.is_layer)
+    },
+  },
+
+  methods: {
+    onBaseMapsInput(selectedBaseMaps) {
+      if (selectedBaseMaps.includes(0)) {
+        this.form.base_maps = this.baseMaps.map((map) => map.id)
+      }
+    }
+  },
+
+  watch: {
+    'form.base_maps': {
+      handler(val) {
+        this.onBaseMapsInput(val)
+      }
+    }
+  }
 }
 </script>

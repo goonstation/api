@@ -2,7 +2,7 @@
   <maps-form
     :fields="fields"
     :submit-route="route('admin.maps.store')"
-    :map-layers="layers"
+    :maps="maps"
     success-message="Map added"
   />
 </template>
@@ -19,7 +19,7 @@ export default {
   layout: (h, page) => h(AdminLayout, { title: 'Add Map' }, () => page),
 
   props: {
-    layers: Object,
+    maps: Object,
   },
 
   data() {
@@ -33,6 +33,7 @@ export default {
         tile_width: 300,
         tile_height: 300,
         layers: [],
+        base_maps: [],
       },
     }
   }
