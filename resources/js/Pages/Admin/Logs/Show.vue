@@ -1,55 +1,6 @@
 <template>
   <div class="flex-grow flex column">
-    <q-card class="gh-card gh-card--small q-mb-sm" flat>
-      <q-card-section>
-        <div v-if="round.server" class="text-caption opacity-60 q-mb-xs">
-          {{ round.server.name }}
-        </div>
-        <div class="text-weight-bold ellipsis gh-link-card__title">
-          {{ latestStationName }}
-        </div>
-        <div class="gh-details-list gh-details-list--small q-mt-sm">
-          <div>
-            <div>{{ started }}</div>
-            <div>Started</div>
-          </div>
-          <div v-if="duration">
-            <div>{{ duration }} minutes</div>
-            <div>
-              Duration
-              <q-icon :name="ionInformationCircle" />
-            </div>
-            <q-tooltip :offset="[0, 5]" class="text-sm"> Ended {{ endedFromNow }} </q-tooltip>
-          </div>
-          <div v-if="round.map_record || round.map">
-            <div>
-              <template v-if="round.map_record">
-                {{ round.map_record.name }}
-              </template>
-              <template v-else>
-                {{ round.map }}
-              </template>
-            </div>
-            <div>Map</div>
-          </div>
-          <div v-if="round.game_type">
-            <div>{{ round.game_type }}</div>
-            <div>Game Type</div>
-          </div>
-        </div>
-      </q-card-section>
-      <div class="badges">
-        <q-badge v-if="!round.ended_at" color="primary" text-color="dark" class="text-weight-bold"
-          >In Progress</q-badge
-        >
-        <q-badge v-if="round.rp_mode" color="info" text-color="dark" class="text-weight-bold"
-          >Roleplay</q-badge
-        >
-        <q-badge v-if="round.crashed" color="negative" text-color="dark" class="text-weight-bold"
-          >Crashed</q-badge
-        >
-      </div>
-    </q-card>
+    <round-summary class="q-mb-sm" :round="round" dense />
 
     <div class="relative flex-grow flex column" :class="{ 'table-full': fullscreen }">
       <div class="table-top flex">
@@ -137,14 +88,6 @@
 </template>
 
 <style lang="scss" scoped>
-.badges {
-  display: flex;
-  gap: 5px;
-  position: absolute;
-  top: -2px;
-  right: -2px;
-}
-
 .table-full {
   position: fixed;
   top: 0;
@@ -265,9 +208,9 @@
 
 <script>
 import axios from 'axios'
-import dayjs from 'dayjs'
-import { ionExpand, ionInformationCircle } from '@quasar/extras/ionicons-v6'
+import { ionExpand } from '@quasar/extras/ionicons-v6'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import RoundSummary from '@/Components/RoundSummary.vue'
 import LogFilters from './Partials/Filters.vue'
 import LogEntry from './Partials/LogEntry.vue'
 
@@ -275,6 +218,7 @@ const logMessageRenderer = document.createElement('div')
 
 export default {
   components: {
+    RoundSummary,
     LogFilters,
     LogEntry,
   },
@@ -284,7 +228,6 @@ export default {
   setup() {
     return {
       ionExpand,
-      ionInformationCircle,
     }
   },
 
@@ -314,26 +257,6 @@ export default {
   },
 
   computed: {
-    latestStationName() {
-      if (!this.round.latest_station_name) return 'Space Station 13'
-      return this.round.latest_station_name.name
-    },
-
-    started() {
-      if (!this.round.created_at) return 'Unknown'
-      return dayjs(this.round.created_at).format('YYYY-MM-DD [at] h:mma')
-    },
-
-    duration() {
-      if (!this.round.ended_at) return
-      return dayjs(this.round.ended_at).diff(dayjs(this.round.created_at), 'm')
-    },
-
-    endedFromNow() {
-      if (!this.round.ended_at) return
-      return dayjs(this.round.ended_at).fromNow()
-    },
-
     hasSearchFilters() {
       return !!(
         this.searchFilters.and.length ||
