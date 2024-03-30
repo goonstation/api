@@ -45,7 +45,7 @@ export default {
             if (!val) return 'All'
             return row.server.short_name
           },
-          filter: { type: 'SelectServers' },
+          filter: { type: 'SelectServersWithInvisible' },
         },
         {
           name: 'created_at',
