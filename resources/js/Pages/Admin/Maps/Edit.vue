@@ -3,7 +3,7 @@
     state="edit"
     :fields="fields"
     :submit-route="route('admin.maps.update', { map: map.id })"
-    :map-layers="layers"
+    :maps="maps"
     submit-method="put"
     success-message="Map updated"
   />
@@ -22,7 +22,8 @@ export default {
 
   props: {
     map: Object,
-    layers: Object,
+    maps: Object,
+    baseMaps: Array,
   },
 
   data() {
@@ -36,6 +37,7 @@ export default {
         tile_width: this.map.tile_width,
         tile_height: this.map.tile_height,
         layers: this.map.layers ? this.map.layers.map((layer) => layer.id) : [],
+        base_maps: this.baseMaps,
       },
     }
   },

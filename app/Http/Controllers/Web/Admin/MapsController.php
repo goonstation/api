@@ -38,6 +38,22 @@ class MapsController extends Controller
         }
     }
 
+    private function associateBaseMaps(Map $map, Array|null $baseMaps)
+    {
+        if ($map->is_layer && is_array($baseMaps) && count($baseMaps)) {
+            MapLayer::where('layer_id', $map->id)->delete();
+
+            foreach ($baseMaps as $baseMapId) {
+                MapLayer::create([
+                    'map_id' => $baseMapId,
+                    'layer_id' => $map->id,
+                ]);
+            }
+        } else {
+            MapLayer::where('layer_id', $map->id)->delete();
+        }
+    }
+
     public function index(Request $request)
     {
         $maps = $this->indexQuery(
@@ -135,10 +151,8 @@ class MapsController extends Controller
 
     public function create()
     {
-        $layers = Map::where('is_layer', true)->get();
-
         return Inertia::render('Admin/Maps/Create', [
-            'layers' => $layers,
+            'maps' => Map::orderBy('name')->get(),
         ]);
     }
 
@@ -152,7 +166,8 @@ class MapsController extends Controller
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
-            'layers' => 'nullable|array'
+            'layers' => 'nullable|array',
+            'base_maps' => 'nullable|array'
         ]);
 
         $map = new Map();
@@ -167,6 +182,7 @@ class MapsController extends Controller
         $map->save();
 
         $this->associateMapLayers($map, $data['layers']);
+        $this->associateBaseMaps($map, $data['base_maps']);
 
         return to_route('admin.maps.index');
     }
@@ -174,11 +190,18 @@ class MapsController extends Controller
     public function edit(Map $map)
     {
         $map->load('layers');
-        $layers = Map::where('is_layer', true)->get();
+
+        $baseMaps = [];
+        if ($map->is_layer) {
+            $baseMaps = Map::whereHas('layers', function ($q) use ($map) {
+                return $q->where('map_layers.layer_id', $map->id);
+            })->pluck('id')->toArray();
+        }
 
         return Inertia::render('Admin/Maps/Edit', [
             'map' => $map,
-            'layers' => $layers,
+            'maps' => Map::orderBy('name')->get(),
+            'baseMaps' => $baseMaps,
         ]);
     }
 
@@ -192,7 +215,8 @@ class MapsController extends Controller
             'is_layer' => 'required|boolean',
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
-            'layers' => 'nullable|array'
+            'layers' => 'nullable|array',
+            'base_maps' => 'nullable|array'
         ]);
 
         $map->map_id = $data['map_id'];
@@ -206,6 +230,7 @@ class MapsController extends Controller
         $map->save();
 
         $this->associateMapLayers($map, $data['layers']);
+        $this->associateBaseMaps($map, $data['base_maps']);
 
         return to_route('admin.maps.index');
     }
