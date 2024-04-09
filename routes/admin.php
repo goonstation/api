@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
+use App\Http\Controllers\Web\Admin\RoundsController;
 use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsGameAdmin;
@@ -46,6 +47,14 @@ Route::middleware([
                 ->whereNumber('gameAdmin')
                 ->name('admin.game-admins.show')
                 ->breadcrumb('', 'admin.game-admins.index');
+        });
+
+        Route::controller(RoundsController::class)->prefix('rounds')->group(function () {
+            Route::get('/', 'index')->name('admin.rounds.index')->breadcrumb('Rounds');
+            Route::get('/{round}', 'show')
+                ->whereNumber('round')
+                ->name('admin.rounds.show')
+                ->breadcrumb('', 'admin.rounds.index');
         });
 
         Route::controller(PlayersController::class)->prefix('players')->group(function () {
