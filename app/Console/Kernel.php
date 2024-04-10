@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new BuildChangelog)->everyFiveMinutes();
         $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
-        $schedule->job(new IndexSearchableEvents)->everyFiveMinutes();
+        // $schedule->job(new IndexSearchableEvents)->everyFiveMinutes();
         $schedule->job(new GenerateNumbersStationPass)->hourly();
         $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
         $schedule->job(new ClearOldAudio)->dailyAt('03:07');
