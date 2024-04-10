@@ -125,7 +125,7 @@ export default {
       message = message.replaceAll(poptsRegex, '<span class="log-player">$1</span>')
 
       const locRegex =
-        /\(<a href='\?src=%admin_ref%;action=jumptocoords;.*title='Jump to Coords'>(.*)<\/a> in (.*?)(\)?)\)/g
+        /\(<a href='\?src=%admin_ref%;action=jumptocoords;.*?title='Jump to Coords'>(.*?)<\/a> in (.*?)(\)?)\)/g
       message = message.replaceAll(
         locRegex,
         '<span class="log-loc"><span class="log-loc-name">$2$3</span> ($1)</span>'
