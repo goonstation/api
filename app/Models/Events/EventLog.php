@@ -19,6 +19,15 @@ class EventLog extends Model
         return 'events_logs';
     }
 
+    public function toSearchableArray()
+    {
+        return [
+            'id' => (int) $this->id,
+            'source' => $this->source,
+            'message' => $this->message,
+        ];
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

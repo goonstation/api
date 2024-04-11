@@ -19,6 +19,18 @@ class EventError extends Model
         return 'events_errors';
     }
 
+    public function toSearchableArray()
+    {
+        return [
+            'id' => (int) $this->id,
+            'name' => $this->name,
+            'file' => $this->file,
+            'desc' => $this->desc,
+            'user' => $this->user,
+            'user_ckey' => $this->user_ckey,
+        ];
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
