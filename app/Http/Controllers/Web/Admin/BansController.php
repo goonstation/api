@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
+use App\Libraries\DiscordBot;
+use App\Libraries\GameBridge;
 use App\Models\Ban;
 use App\Models\BanDetail;
 use App\Traits\IndexableQuery;
@@ -66,7 +68,52 @@ class BansController extends Controller
         $request->merge([
             'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
         ]);
-        $this->addBan($request);
+        $ban = $this->addBan($request);
+
+        dispatch(function () use ($ban) {
+            try {
+                $byondEpochStart = Carbon::parse('2000-01-01 00:00:00'); // byond epoch start
+                DiscordBot::export('ban', [
+                    'key' => $ban->gameAdmin->ckey,
+                    'key2' => "{$ban->originalBanDetail->ckey} (IP: {$ban->originalBanDetail->ip}, CompID: {$ban->originalBanDetail->comp_id})",
+                    'msg' => $ban->reason,
+                    'time' => $ban->expires_at ? $ban->duration_human : 'permanent',
+                    'timestamp' => $ban->expires_at ? $ban->expires_at->diffInMinutes($byondEpochStart) : 0,
+                ]);
+            } catch (\Throwable $e) {
+                // ignore
+            }
+
+            if ($ban->server_id) {
+                try {
+                    GameBridge::relay($ban->server_id, [
+                        'type' => 'ban_added',
+                        'admin_ckey' => $ban->gameAdmin->ckey,
+                        'server_id' => $ban->server_id,
+                        'ckey' => $ban->originalBanDetail->ckey,
+                        'comp_id' => $ban->originalBanDetail->comp_id,
+                        'ip' => $ban->originalBanDetail->ip,
+                        'reason' => $ban->reason,
+                        'duration' => $ban->duration,
+                        'requires_appeal' => $ban->requires_appeal ? 1 : 0,
+                    ]);
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+            } else {
+                GameBridge::relayAll([
+                    'type' => 'ban_added',
+                    'admin_ckey' => $ban->gameAdmin->ckey,
+                    'server_id' => $ban->server_id,
+                    'ckey' => $ban->originalBanDetail->ckey,
+                    'comp_id' => $ban->originalBanDetail->comp_id,
+                    'ip' => $ban->originalBanDetail->ip,
+                    'reason' => $ban->reason,
+                    'duration' => $ban->duration,
+                    'requires_appeal' => $ban->requires_appeal ? 1 : 0,
+                ]);
+            }
+        });
 
         return to_route('admin.bans.index');
     }

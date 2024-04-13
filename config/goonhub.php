@@ -16,4 +16,7 @@ return [
     'byond_pass' => env('BYOND_PASS', null),
 
     'maxmind_license_key' => env('MAXMIND_LICENSE_KEY', null),
+
+    'discord_bot_url' => env('DISCORD_BOT_URL', null),
+    'discord_bot_key' => env('DISCORD_BOT_KEY', null),
 ];
