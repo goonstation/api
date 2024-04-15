@@ -77,7 +77,7 @@ export default {
     return {
       links: [
         {
-          href: 'https://discord.gg/goonstation',
+          href: 'https://discord.gg/zd8t6pY',
           icon: ionLogoDiscord,
           label: 'Discord',
         },
