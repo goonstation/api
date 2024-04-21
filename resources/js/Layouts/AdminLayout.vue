@@ -94,7 +94,7 @@
       </q-toolbar>
     </q-header>
 
-    <site-nav :home="route('dashboard')" :items="siteNavItems" :is-open="siteNavOpen">
+    <site-nav v-model:open="siteNavOpen" :home="route('dashboard')" :items="siteNavItems">
       <template #bottom>
         <q-separator />
         <div class="site-nav__item">
