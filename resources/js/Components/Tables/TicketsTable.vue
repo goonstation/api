@@ -20,6 +20,13 @@
           <div>
             "{{ props.row.reason }}"
           </div>
+          <vote-control
+            class="q-mt-xs"
+            v-model:votes="props.row.votes"
+            v-model:userVotes="props.row.user_votes"
+            voteable-type="ticket"
+            :voteable-id="props.row.id"
+          />
         </Link>
       </div>
     </template>
@@ -40,9 +47,10 @@
 import { Link } from '@inertiajs/vue3'
 import BaseTable from './BaseTable.vue'
 import RoundsTableItem from './Partials/RoundsTableItem.vue'
+import VoteControl from '@/Components/VoteControl.vue'
 
 export default {
-  components: { Link, BaseTable, RoundsTableItem },
+  components: { Link, BaseTable, RoundsTableItem, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/tickets' },
@@ -67,6 +75,13 @@ export default {
           label: 'Issuer',
           field: 'issuer',
           sortable: true,
+        },
+        {
+          name: 'votes',
+          label: 'Votes',
+          field: 'votes',
+          sortable: true,
+          filterable: false,
         },
         // {
         //   name: 'issuer_job',

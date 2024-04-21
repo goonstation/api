@@ -19,9 +19,14 @@
             <span class="opacity-60 text-sm">for</span>
             {{ $formats.currency(props.row.amount) }}
           </div>
-          <div>
-            "{{ props.row.reason }}"
-          </div>
+          <div>"{{ props.row.reason }}"</div>
+          <vote-control
+            class="q-mt-xs"
+            v-model:votes="props.row.votes"
+            v-model:userVotes="props.row.user_votes"
+            voteable-type="fine"
+            :voteable-id="props.row.id"
+          />
         </Link>
       </div>
     </template>
@@ -42,9 +47,10 @@
 import { Link } from '@inertiajs/vue3'
 import BaseTable from './BaseTable.vue'
 import RoundsTableItem from './Partials/RoundsTableItem.vue'
+import VoteControl from '@/Components/VoteControl.vue'
 
 export default {
-  components: { Link, BaseTable, RoundsTableItem },
+  components: { Link, BaseTable, RoundsTableItem, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/fines' },
@@ -75,7 +81,14 @@ export default {
           label: 'Amount',
           field: 'amount',
           sortable: true,
-          filter: { type: 'Range' }
+          filter: { type: 'Range' },
+        },
+        {
+          name: 'votes',
+          label: 'Votes',
+          field: 'votes',
+          sortable: true,
+          filterable: false,
         },
         // {
         //   name: 'issuer_job',

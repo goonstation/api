@@ -14,6 +14,7 @@ use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TerminalController;
 use App\Http\Controllers\Web\TicketsController;
+use App\Http\Controllers\Web\VotesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,6 +102,11 @@ Route::controller(TerminalController::class)->prefix('/secret')->group(function 
 
 Route::controller(GameServersController::class)->prefix('/game-servers')->group(function () {
     Route::get('/', 'index')->name('game-servers.index');
+});
+
+Route::controller(VotesController::class)->prefix('/votes')->group(function () {
+    Route::post('/up', 'upVote')->name('votes.up');
+    Route::post('/down', 'downVote')->name('votes.down');
 });
 
 require __DIR__.'/admin.php';

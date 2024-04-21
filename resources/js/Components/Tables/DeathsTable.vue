@@ -14,42 +14,56 @@
         <Link :href="`/events/deaths/${props.row.id}`" class="gh-link-card">
           <div class="row items-center q-col-gutter-md">
             <div class="col">
-              <span>{{ props.row.mob_name }}</span>
-              <span v-if="props.row.mob_job" class="opacity-60 text-sm q-ml-sm"
-                >&nbsp;the {{ props.row.mob_job }}</span
-              >
-              <div v-if="props.row.last_words" class="text-sm text-italic opacity-60 ellipsis">
-                "{{ props.row.last_words }}"
+              <div>
+                <span>{{ props.row.mob_name }}</span>
+                <span v-if="props.row.mob_job" class="opacity-60 text-sm q-ml-sm"
+                  >&nbsp;the {{ props.row.mob_job }}</span
+                >
+                <div v-if="props.row.last_words" class="text-sm text-italic opacity-60 ellipsis">
+                  "{{ props.row.last_words }}"
+                </div>
               </div>
+              <vote-control
+                class="q-mt-xs"
+                v-model:votes="props.row.votes"
+                v-model:userVotes="props.row.user_votes"
+                voteable-type="death"
+                :voteable-id="props.row.id"
+              />
             </div>
-            <div class="col-xs-12 col-md-auto flex items-center q-ml-auto gap-xs-sm gap-md-md">
-              <q-chip
-                v-if="props.row.gibbed"
-                class="q-mx-none text-weight-bold"
-                size="sm"
-                color="red"
-                square
-                outline
-              >
-                Gibbed
-              </q-chip>
-              <div class="text-xs opacity-60">Died from</div>
-              <div class="gh-details-list gh-details-list--non-collapsible gh-details-list--small">
-                <div>
-                  <div class="bruteloss">{{ $formats.number(props.row.bruteloss) }}</div>
-                  <div>Brute</div>
-                </div>
-                <div>
-                  <div class="fireloss">{{ $formats.number(props.row.fireloss) }}</div>
-                  <div>Fire</div>
-                </div>
-                <div>
-                  <div class="toxloss">{{ $formats.number(props.row.toxloss) }}</div>
-                  <div>Toxin</div>
-                </div>
-                <div>
-                  <div class="oxyloss">{{ $formats.number(props.row.oxyloss) }}</div>
-                  <div>Oxygen</div>
+            <div class="col-xs-12 col-md-auto q-ml-auto">
+              <div class="text-xs opacity-60 q-mb-xs">
+                <div class="gt-sm text-right">Died from</div>
+                <div class="lt-md">Dies from</div>
+              </div>
+              <div class="flex items-center gap-xs-sm gap-md-md">
+                <q-chip
+                  v-if="props.row.gibbed"
+                  class="q-mx-none text-weight-bold"
+                  size="sm"
+                  color="red"
+                  square
+                  outline
+                >
+                  Gibbed
+                </q-chip>
+                <div class="gh-details-list gh-details-list--non-collapsible gh-details-list--small">
+                  <div>
+                    <div class="bruteloss">{{ $formats.number(props.row.bruteloss) }}</div>
+                    <div>Brute</div>
+                  </div>
+                  <div>
+                    <div class="fireloss">{{ $formats.number(props.row.fireloss) }}</div>
+                    <div>Fire</div>
+                  </div>
+                  <div>
+                    <div class="toxloss">{{ $formats.number(props.row.toxloss) }}</div>
+                    <div>Toxin</div>
+                  </div>
+                  <div>
+                    <div class="oxyloss">{{ $formats.number(props.row.oxyloss) }}</div>
+                    <div>Oxygen</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -67,15 +81,20 @@
 
 .gh-details-list {
   line-height: 1.2;
+
+  > div > div {
+    text-align: center;
+  }
 }
 </style>
 
 <script>
 import { Link } from '@inertiajs/vue3'
 import BaseTable from './BaseTable.vue'
+import VoteControl from '@/Components/VoteControl.vue'
 
 export default {
-  components: { Link, BaseTable },
+  components: { Link, BaseTable, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/deaths' },
@@ -143,6 +162,13 @@ export default {
           label: 'Last Words',
           field: 'last_words',
           sortable: true,
+        },
+        {
+          name: 'votes',
+          label: 'Votes',
+          field: 'votes',
+          sortable: true,
+          filterable: false,
         },
         // {
         //   name: 'created_at',
