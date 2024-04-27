@@ -138,11 +138,15 @@ return [
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
             EventLog::class => [
-                'filterableAttributes' => ['id', 'source', 'message'],
+                'filterableAttributes' => ['round_id', 'type', 'created_at'],
+                'sortableAttributes' => ['created_at'],
+                'rankingRules' => ['sort', 'words', 'proximity', 'attribute', 'exactness', 'typo'],
             ],
             EventError::class => [
-                'filterableAttributes' => ['id', 'name', 'file', 'desc', 'user', 'user_ckey'],
-            ]
+                'filterableAttributes' => ['round_id', 'name', 'file', 'desc', 'user', 'user_ckey', 'created_at'],
+                'sortableAttributes' => ['created_at'],
+                'rankingRules' => ['sort', 'words', 'typo', 'proximity', 'attribute', 'exactness'],
+            ],
         ],
     ],
 

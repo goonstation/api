@@ -14,20 +14,17 @@ class EventError extends Model
 
     protected $table = 'events_errors';
 
-    public function searchableAs(): string
-    {
-        return 'events_errors';
-    }
-
     public function toSearchableArray()
     {
         return [
             'id' => (int) $this->id,
+            'round_id' => (int) $this->round_id,
             'name' => $this->name,
             'file' => $this->file,
             'desc' => $this->desc,
             'user' => $this->user,
             'user_ckey' => $this->user_ckey,
+            'created_at' => (int) $this->created_at->getTimestampMs(),
         ];
     }
 

@@ -14,17 +14,15 @@ class EventLog extends Model
 
     protected $table = 'events_logs';
 
-    public function searchableAs(): string
-    {
-        return 'events_logs';
-    }
-
     public function toSearchableArray()
     {
         return [
             'id' => (int) $this->id,
+            'round_id'=> (int) $this->round_id,
+            'type' => $this->type,
             'source' => $this->source,
             'message' => $this->message,
+            'created_at' => (int) $this->created_at->getTimestampMs(),
         ];
     }
 
