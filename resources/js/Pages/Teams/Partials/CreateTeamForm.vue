@@ -28,14 +28,14 @@ const createTeam = () => {
             <div class="flex items-center q-mt-sm q-mb-md">
               <img
                 style="width: 50px; border-radius: 50%"
-                :src="$page.props.user.profile_photo_url"
-                :alt="$page.props.user.name"
+                :src="$page.props.auth.user.profile_photo_url"
+                :alt="$page.props.auth.user.name"
               />
 
               <div class="q-ml-md">
-                <div>{{ $page.props.user.name }}</div>
+                <div>{{ $page.props.auth.user.name }}</div>
                 <div class="text-grey-6 text-sm">
-                  {{ $page.props.user.email }}
+                  {{ $page.props.auth.user.email }}
                 </div>
               </div>
             </div>

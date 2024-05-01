@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('events_errors', function (Blueprint $table) {
-            $table->text('line')->change();
+            $table->text('line')->nullable()->change();
         });
     }
 };

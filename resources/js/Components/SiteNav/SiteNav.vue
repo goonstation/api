@@ -312,7 +312,7 @@ export default {
 
     canShowItem(menuItem) {
       if (!menuItem.hasOwnProperty('canShow')) return true
-      if (this.$page.props.user?.is_admin) return true // admins can access everything
+      if (this.$page.props.auth.user?.is_admin) return true // admins can access everything
       if (typeof menuItem.canShow === 'function') {
         return menuItem.canShow()
       }

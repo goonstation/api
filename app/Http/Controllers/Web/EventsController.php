@@ -14,11 +14,11 @@ class EventsController extends Controller
 {
     public function index(Request $request)
     {
-        $deaths = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_deaths\';'));
-        $tickets = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_tickets\';'));
-        $fines = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_fines\';'));
-        $bees = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_bee_spawns\';'));
-        $antags = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_antags\';'));
+        $deaths = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_deaths\';')->getValue(DB::connection()->getQueryGrammar()));
+        $tickets = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_tickets\';')->getValue(DB::connection()->getQueryGrammar()));
+        $fines = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_fines\';')->getValue(DB::connection()->getQueryGrammar()));
+        $bees = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_bee_spawns\';')->getValue(DB::connection()->getQueryGrammar()));
+        $antags = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'events_antags\';')->getValue(DB::connection()->getQueryGrammar()));
 
         // Total of all event types:
         // SELECT sum(reltuples) as estimate FROM pg_class where relname like 'events_%' and relkind = 'r';

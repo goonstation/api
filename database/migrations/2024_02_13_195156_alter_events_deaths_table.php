@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('events_deaths', function (Blueprint $table) {
-            $table->float('bruteloss')->change();
-            $table->float('fireloss')->change();
-            $table->float('toxloss')->change();
-            $table->float('oxyloss')->change();
+            $table->float('bruteloss')->nullable()->change();
+            $table->float('fireloss')->nullable()->change();
+            $table->float('toxloss')->nullable()->change();
+            $table->float('oxyloss')->nullable()->change();
         });
     }
 
@@ -29,10 +29,10 @@ return new class extends Migration
     public function down()
     {
         Schema::table('events_deaths', function (Blueprint $table) {
-            $table->integer('bruteloss')->change();
-            $table->integer('fireloss')->change();
-            $table->integer('toxloss')->change();
-            $table->integer('oxyloss')->change();
+            $table->integer('bruteloss')->nullable()->change();
+            $table->integer('fireloss')->nullable()->change();
+            $table->integer('toxloss')->nullable()->change();
+            $table->integer('oxyloss')->nullable()->change();
         });
     }
 };

@@ -57,7 +57,7 @@ class PlayersController extends Controller
         $playersByCountry = GlobalStat::where('key', 'players_by_country')->first();
         $playersByCountry = $playersByCountry ? json_decode($playersByCountry->stats, true) : [];
 
-        $playerCount = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'players\';'));
+        $playerCount = DB::selectOne(DB::raw('SELECT reltuples AS estimate FROM pg_class where relname = \'players\';')->getValue(DB::connection()->getQueryGrammar()));
 
         $mostPlayersOnline = PlayersOnline::select(
             DB::raw('sum(online) as total_online'),
