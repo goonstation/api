@@ -29,7 +29,7 @@ class Ban extends Model
     public function getDurationAttribute()
     {
         $now = Carbon::now();
-        if ($now->isAfter($this->expires_at)) {
+        if (!$this->expires_at || $now->isAfter($this->expires_at)) {
             return 0;
         }
 

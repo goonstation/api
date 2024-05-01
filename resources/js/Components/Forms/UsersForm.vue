@@ -118,8 +118,8 @@ export default {
   computed: {
     canSetIsAdmin() {
       // Can't edit own is_admin
-      if (this.form.id === this.$page.props.user.id) return false
-      return this.$page.props.user.is_admin
+      if (this.form.id === this.$page.props.auth.user.id) return false
+      return this.$page.props.auth.user.is_admin
     }
   }
 }
