@@ -8,7 +8,6 @@ use App\Jobs\ClearOldDectalks;
 use App\Jobs\GenerateGlobalPlayerStats;
 use App\Jobs\GenerateNumbersStationPass;
 use App\Jobs\GetPlayerCounts;
-use App\Jobs\IndexSearchableEvents;
 use App\Jobs\UpdateGeoLite;
 use App\Jobs\UpdateYoutubeDLP;
 use Illuminate\Console\Scheduling\Schedule;
@@ -26,7 +25,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new BuildChangelog)->everyFiveMinutes();
         $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
-        // $schedule->job(new IndexSearchableEvents)->everyFiveMinutes();
         $schedule->job(new GenerateNumbersStationPass)->hourly();
         $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
         $schedule->job(new ClearOldAudio)->dailyAt('03:07');
