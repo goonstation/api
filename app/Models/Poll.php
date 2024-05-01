@@ -10,7 +10,9 @@ class Poll extends Model
 {
     use Filterable, HasFactory;
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

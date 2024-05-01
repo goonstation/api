@@ -21,7 +21,9 @@ class GameRound extends Model
 {
     use Filterable, HasFactory;
 
-    protected $dates = ['ended_at'];
+    protected $casts = [
+        'ended_at' => 'datetime',
+    ];
 
     protected $fillable = [
         'id',

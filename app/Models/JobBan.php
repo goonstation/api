@@ -13,7 +13,9 @@ class JobBan extends Model
 {
     use Filterable, HasFactory, SoftDeletes;
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     protected $fillable = [
         'server_id',

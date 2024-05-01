@@ -12,7 +12,9 @@ class Ban extends Model
 {
     use Filterable, HasFactory, SoftDeletes;
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     protected $fillable = [
         'round_id',
