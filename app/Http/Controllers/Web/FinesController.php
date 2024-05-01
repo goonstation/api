@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Events\EventFine;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class FinesController extends Controller
@@ -16,6 +17,12 @@ class FinesController extends Controller
     {
         $fines = $this->indexQuery(
             EventFine::select('id', 'round_id', 'amount', 'issuer', 'issuer_job', 'target', 'reason')
+                ->withSum([
+                    'votes as votes' => function ($query) {
+                        $query->select(DB::raw('COALESCE(SUM(value), 0)'));
+                    }
+                ], 'value')
+                ->with('userVotes:voteable_id,value')
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
@@ -43,6 +50,12 @@ class FinesController extends Controller
             'created_at'
         )
             ->where('id', $fine)
+            ->withSum([
+                'votes as votes' => function ($query) {
+                    $query->select(DB::raw('COALESCE(SUM(value), 0)'));
+                }
+            ], 'value')
+            ->with('userVotes:voteable_id,value')
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();

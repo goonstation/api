@@ -27,6 +27,14 @@
         <span class="opacity-60 text-sm">Fined on</span>
         {{ dayjs(fine.created_at).format('YYYY-MM-DD [at] h:mma') }}
       </div>
+
+      <vote-control
+        class="q-mt-md"
+        v-model:votes="fine.votes"
+        v-model:userVotes="fine.user_votes"
+        voteable-type="fine"
+        :voteable-id="fine.id"
+      />
     </q-card-section>
   </q-card>
 </template>
@@ -35,6 +43,7 @@
 import dayjs from 'dayjs';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import LinkGameRound from '@/Components/LinkGameRound.vue'
+import VoteControl from '@/Components/VoteControl.vue'
 
 export default {
   layout: (h, page) =>
@@ -48,6 +57,7 @@ export default {
 
   components: {
     LinkGameRound,
+    VoteControl,
   },
 
   setup() {

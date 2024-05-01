@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use App\Models\GameServer;
 use Illuminate\Support\Facades\Http;
 
 class GameBridge
@@ -59,5 +60,23 @@ class GameBridge
             ->get("$url/wiz/relay/?server=$server&data=$data");
 
         return $response->throw()->json()['response'];
+    }
+
+    /**
+     * Query all active game servers
+     *
+     * @param  mixed  $data
+     * @return void
+     */
+    public static function relayAll($data = '')
+    {
+        $servers = GameServer::where('active', true)->get()->pluck('server_id');
+        foreach ($servers as $server) {
+            try {
+                GameBridge::relay($server, $data);
+            } catch (\Throwable $e) {
+                // ignore
+            }
+        }
     }
 }
