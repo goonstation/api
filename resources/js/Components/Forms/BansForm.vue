@@ -339,7 +339,7 @@ export default {
       const userTz = new Date()
         .toLocaleDateString(undefined, { day: '2-digit', timeZoneName: 'short' })
         .substring(4)
-      return 'on ' + expiresAtDate.toLocaleString('en-GB') + ' ' + userTz
+        return 'on ' + expiresAtDate.toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + userTz
     },
 
     getExpiresAtFromDuration(duration) {
@@ -349,7 +349,7 @@ export default {
         .toLocaleDateString(undefined, { day: '2-digit', timeZoneName: 'short' })
         .substring(4)
 
-      return 'on ' + expiresAtDate.toLocaleString('en-GB') + ' ' + userTz
+      return 'on ' + expiresAtDate.toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + userTz
     },
   },
 }
