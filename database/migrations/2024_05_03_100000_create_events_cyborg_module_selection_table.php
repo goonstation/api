@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('round_id');
 
-            $table->text('player_id')->nullable();
+            $table->integer('player_id')->nullable();
             $table->text('module')->nullable();
             $table->text('borg_type')->nullable();
 
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->foreign('player_id')->references('id')->on('players');
 
             $table->index('round_id');
+            $table->index('player_id');
         });
     }
 
