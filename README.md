@@ -4,13 +4,19 @@
 
 Uses docker via Laravel Sail. https://laravel.com/docs/9.x/installation#laravel-and-docker
 
-For initial setup follow instructions here: https://laravel.com/docs/9.x/sail#installing-composer-dependencies-for-existing-projects
-
 On Windows, I highly suggest doing all development on WSL 2, using VSCode with the remote development extension.
 
 Automatically generated docs will be available at `http://localhost/docs/api`, and the Laravel development assistance thing will be at `http://localhost/telescope`.
 
 ### Initial setup
+
+Create a shared docker network:
+
+```bash
+docker network create sail
+```
+
+Follow instructions here: https://laravel.com/docs/9.x/sail#installing-composer-dependencies-for-existing-projects
 
 From the repo root directory:
 
