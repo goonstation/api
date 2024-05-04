@@ -48,9 +48,11 @@
         <q-virtual-scroll
           type="table"
           style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
-          :virtual-scroll-item-size="48"
-          :virtual-scroll-sticky-size-start="0"
-          :virtual-scroll-sticky-size-end="32"
+          :virtual-scroll-item-size="24"
+          :virtual-scroll-sticky-size-start="28"
+          :virtual-scroll-slice-size="60"
+          :virtual-scroll-slice-ratio-before="10"
+          :virtual-scroll-slice-ratio-after="10"
           :items="logs"
           flat
           dense
