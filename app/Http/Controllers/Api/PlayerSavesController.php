@@ -156,7 +156,7 @@ class PlayerSavesController extends Controller
 
             $dataToUpset[] = [
                 'player_id' => $playerId,
-                'key' => $item->key,
+                'key' => trim($item->key),
                 'value' => $item->value,
             ];
         }
