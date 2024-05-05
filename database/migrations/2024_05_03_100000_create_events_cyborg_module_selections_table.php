@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('events_cyborg_module_selection', function (Blueprint $table) {
+        Schema::create('events_cyborg_module_selections', function (Blueprint $table) {
             $table->id();
             $table->integer('round_id');
 
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('events_cyborg_module_selection');
+        Schema::dropIfExists('events_cyborg_module_selections');
     }
 };

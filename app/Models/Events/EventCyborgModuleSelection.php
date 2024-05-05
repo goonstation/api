@@ -12,7 +12,7 @@ class EventCyborgModuleSelection extends Model
 {
     use Filterable, HasFactory;
 
-    protected $table = 'events_cyborg_module_selection';
+    protected $table = 'events_cyborg_module_selections';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
