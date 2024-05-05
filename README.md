@@ -29,6 +29,8 @@ cp .env.example .env
 ./vendor/bin/sail artisan create-api-token <user-id>
 ```
 
+If you just created a user, its ID will be `1`.
+
 The above will initialize the database, guide you through creating a user, and then guide you through creating an API token.
 
 ### Limitations
