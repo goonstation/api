@@ -199,7 +199,7 @@ export default {
         },
       ]
 
-      if (!!this.user.game_admin_id) {
+      if (!!this.user.game_admin_id || !!this.user.is_admin) {
         items.push(
           {
             label: 'Admins',

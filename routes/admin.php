@@ -13,8 +13,8 @@ use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
 use App\Http\Controllers\Web\Admin\RoundsController;
 use App\Http\Controllers\Web\Admin\UsersController;
+use App\Http\Middleware\CanAccessAdminRoutes;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,7 +27,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
+    Route::prefix('/admin')->middleware([CanAccessAdminRoutes::class])->group(function () {
         Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
             Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
             Route::get('/create', 'create')->name('admin.users.create')->breadcrumb('', 'admin.users.index');

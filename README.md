@@ -2,7 +2,7 @@
 
 ## Development
 
-Uses docker via Laravel Sail. https://laravel.com/docs/9.x/installation#laravel-and-docker
+Uses docker via Laravel Sail. https://laravel.com/docs/11.x/installation#laravel-and-docker
 
 On Windows, I highly suggest doing all development on WSL 2, using VSCode with the remote development extension.
 
@@ -10,28 +10,50 @@ Automatically generated docs will be available at `http://localhost/docs/api`, a
 
 ### Initial setup
 
-Create a shared docker network:
+- Navigate to your project root
+- Create a shared docker network:
 
 ```bash
 docker network create sail
 ```
 
-Follow instructions here: https://laravel.com/docs/9.x/sail#installing-composer-dependencies-for-existing-projects
-
-From the repo root directory:
+- Install dependencies:
 
 ```bash
-cp .env.example .env
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate
-./vendor/bin/sail artisan create-user
-./vendor/bin/sail artisan create-api-token <user-id>
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php83-composer:latest \
+    composer install --ignore-platform-reqs
 ```
 
-If you just created a user, its ID will be `1`.
+- Prepare your environment:
+
+```bash
+echo -e "\nalias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'" >> ~/.bashrc
+source ~/.bashrc
+```
+
+- Bootstrap your application:
+  
+  This might take a while as it builds the docker containers.
+
+```bash
+sail up -d
+sail artisan initial-setup
+```
 
 The above will initialize the database, guide you through creating a user, and then guide you through creating an API token.
+
+- Start the frontend
+
+```bash
+sail npm i
+sail npm run dev
+```
+
+The above will install the frontend packages and start the dev server, allowing you to access the web UI at `http://localhost`.
 
 ### Limitations
 

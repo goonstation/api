@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('viewPulse', function (User $user) {
-            return !!$user->game_admin_id;
+            return !!$user->game_admin_id || !!$user->is_admin;
         });
     }
 
