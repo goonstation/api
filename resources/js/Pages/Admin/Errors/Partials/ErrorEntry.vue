@@ -2,6 +2,15 @@
   <tr>
     <td>{{ createdAt }}</td>
     <td class="error-message">
+      <div class="error-card">
+        <div class="error-card__content"
+          >This error has occurred <strong>{{ $formats.number(errorCount) }}</strong> time<template
+            v-if="errorCount !== 1"
+            >s</template
+          >
+          this round.
+        </div>
+      </div>
       <div v-html="message"></div>
     </td>
   </tr>
@@ -61,6 +70,7 @@ export default {
     relativeTimestamps: Boolean,
     roundStartedAt: String,
     searchTerms: Array,
+    errorCount: Number,
   },
 
   computed: {

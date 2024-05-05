@@ -81,6 +81,7 @@
               :relative-timestamps="filters.relativeTimestamps"
               :round-started-at="allErrors[0].created_at"
               :search-terms="errorEntrySearchTerms"
+              :error-count="getErrorCount(row)"
             />
           </template>
         </q-virtual-scroll>
@@ -162,6 +163,7 @@ export default {
       allErrors: [],
       loading: true,
       errors: [],
+      errorCounts: {},
       searchFilters: {
         and: [],
         or: [],
@@ -203,6 +205,15 @@ export default {
           route('admin.errors.get-errors', { gameRound: this.round.id })
         )
         this.allErrors = response.data
+
+        for (const error of this.allErrors) {
+          const key = `${error.file}${error.line}${error.name}`
+          if (this.errorCounts.hasOwnProperty(key)) {
+            this.errorCounts[key]++
+          } else {
+            this.errorCounts[key] = 1
+          }
+        }
 
         this.filterErrors()
       } catch (e) {
@@ -260,6 +271,10 @@ export default {
         localStorage.removeItem('error-viewer-sidebar')
       }
     },
+
+    getErrorCount(error) {
+      return this.errorCounts[`${error.file}${error.line}${error.name}`]
+    }
   },
 }
 </script>
