@@ -32,9 +32,11 @@ class InitialSetup extends Command
     {
         $this->call('key:generate');
 
+        $this->call('migrate');
+
         $this->call('db:seed');
 
-        $this->call('migrate');
+        $this->call('storage:link');
 
         // User creation
 
