@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController;
+use App\Http\Controllers\Web\Admin\ErrorsController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
@@ -130,6 +131,17 @@ Route::middleware([
             Route::get('/get-logs/{gameRound}', 'getLogs')
                 ->whereNumber('gameRound')
                 ->name('admin.logs.get-logs');
+        });
+
+        Route::controller(ErrorsController::class)->prefix('errors')->group(function () {
+            Route::get('/', 'index')->name('admin.errors.index')->breadcrumb('Errors');
+            Route::get('/{gameRound}', 'show')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.show')
+                ->breadcrumb('', 'admin.errors.index');
+            Route::get('/get-errors/{gameRound}', 'getErrors')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.get-errors');
         });
 
         Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {

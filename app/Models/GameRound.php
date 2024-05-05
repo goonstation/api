@@ -8,6 +8,7 @@ use App\Models\Events\EventAntagItemPurchase;
 use App\Models\Events\EventAntagObjective;
 use App\Models\Events\EventBeeSpawn;
 use App\Models\Events\EventDeath;
+use App\Models\Events\EventError;
 use App\Models\Events\EventFine;
 use App\Models\Events\EventGauntletHighScore;
 use App\Models\Events\EventLog;
@@ -127,5 +128,10 @@ class GameRound extends Model
     public function logs()
     {
         return $this->hasMany(EventLog::class, 'round_id');
+    }
+
+    public function errors()
+    {
+        return $this->hasMany(EventError::class, 'round_id');
     }
 }
