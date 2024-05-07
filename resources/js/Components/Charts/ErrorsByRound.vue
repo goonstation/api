@@ -1,5 +1,12 @@
 <template>
-  <apexchart v-if="series" ref="chart" width="100%" :height="200" :options="chartOptions" :series="series" />
+  <apexchart
+    v-if="series"
+    ref="chart"
+    width="100%"
+    :height="200"
+    :options="chartOptions"
+    :series="series"
+  />
   <div v-if="!series[0].data.length" class="chart-no-data">No data found</div>
 </template>
 
@@ -30,6 +37,11 @@ export default {
             show: false,
           },
         },
+        plotOptions: {
+          bar: {
+            distributed: true,
+          },
+        },
         dataLabels: {
           enabled: false,
         },
@@ -47,6 +59,9 @@ export default {
           tooltip: {
             enabled: false,
           },
+          labels: {
+            hideOverlappingLabels: true,
+          },
         },
         yaxis: {
           min: 0,
@@ -56,6 +71,9 @@ export default {
               return val.toFixed(0)
             },
           },
+        },
+        legend: {
+          show: false,
         },
         stroke: {
           curve: 'smooth',
@@ -72,21 +90,21 @@ export default {
           padding: {
             top: -15,
             bottom: 0,
-          }
+          },
         },
         tooltip: {
           theme: 'gh',
           x: {
-            formatter: (value, { seriesIndex, dataPointIndex, w })  => {
+            formatter: (value, { seriesIndex, dataPointIndex, w }) => {
               const serverName = w.config.series[seriesIndex]._meta[dataPointIndex]
               return serverName + '<br>Round #' + value
-            }
+            },
           },
           y: {
             formatter: (value) => {
               return value
-            }
-          }
+            },
+          },
         },
       },
     }
@@ -110,11 +128,12 @@ export default {
 
       this.chartOptions.colors = colors
       this.chartOptions.xaxis.categories = roundIds
+
       this.series = [
         {
           name: 'Errors',
           data: errors,
-          _meta: meta
+          _meta: meta,
         },
       ]
 
@@ -124,13 +143,13 @@ export default {
         this.$refs.chart.updateOptions({
           colors,
           xaxis: {
-            categories: roundIds
+            categories: roundIds,
           },
           yaxis: {
             labels: {
-              show: !!errors.length
-            }
-          }
+              show: !!errors.length,
+            },
+          },
         })
       }
     },
