@@ -26,6 +26,22 @@ export default {
           !isNaN(parseFloat(val)) // ...and ensure strings of whitespace fail
         )
       },
+
+      getChartColorForServer(serverId) {
+        if (serverId === 'main1') {
+          return '#ffd125'
+        } else if (serverId === 'main2') {
+          return '#ffd125'
+        } else if (serverId === 'main3') {
+          return '#24c024'
+        } else if (serverId === 'main4') {
+          return '#e33434'
+        } else if (serverId === 'main5') {
+          return '#5490ff'
+        } else {
+          return '#ffd125'
+        }
+      }
     }
   },
 }

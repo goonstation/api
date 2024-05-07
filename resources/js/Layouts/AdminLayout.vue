@@ -248,10 +248,10 @@ export default {
               route('admin.maps.index'),
               route('admin.events.index'),
               route('admin.logs.index'),
-              route('admin.errors.index')
+              route('admin.errors.index'),
             ],
             children: [
-            {
+              {
                 label: 'Errors',
                 href: route('admin.errors.index'),
               },

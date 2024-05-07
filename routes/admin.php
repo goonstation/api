@@ -135,6 +135,7 @@ Route::middleware([
 
         Route::controller(ErrorsController::class)->prefix('errors')->group(function () {
             Route::get('/', 'index')->name('admin.errors.index')->breadcrumb('Errors');
+            Route::get('/summary', 'summary')->name('admin.errors.summary')->breadcrumb('Errors');
             Route::get('/{gameRound}', 'show')
                 ->whereNumber('gameRound')
                 ->name('admin.errors.show')

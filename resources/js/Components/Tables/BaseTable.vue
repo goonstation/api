@@ -136,6 +136,8 @@
             </q-menu>
           </q-btn>
         </div>
+
+        <slot name="header-bottom" />
       </template>
 
       <template v-slot:header="props">
@@ -143,7 +145,7 @@
           <q-th v-if="canSelect">
             <q-checkbox v-model="props.selected" dense />
           </q-th>
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+          <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-no-wrap">
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -436,6 +438,7 @@ export default {
         rowsNumber: 0,
       },
       defaultPagination: {},
+      defaultFilters: {},
       filters: {},
       settingFiltersFromUrl: false,
       showTimestamps: false,
@@ -529,6 +532,7 @@ export default {
       mergedPagination.rowsNumber = this.initial.total
     }
 
+    this.defaultFilters = Object.assign({}, this.search)
     this.defaultPagination = Object.assign({}, mergedPagination)
     this._pagination = mergedPagination
   },
@@ -579,7 +583,7 @@ export default {
       }
 
       this.loading = false
-      this.$emit('fetch-end')
+      this.$emit('fetch-end', res.data)
     },
 
     loadUrlParams() {
@@ -667,9 +671,10 @@ export default {
 
     reset() {
       if (!isEmpty(this.filters)) {
-        this.filters = {}
+        this.filters = Object.assign({}, this.defaultFilters)
       }
       this._pagination = Object.assign({}, this.defaultPagination)
+      this.$emit('reset', { filters: this.filters })
     },
 
     openConfirmDelete(item) {

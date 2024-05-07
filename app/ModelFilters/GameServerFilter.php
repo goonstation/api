@@ -16,6 +16,7 @@ class GameServerFilter extends ModelFilter
 
     public function server($val)
     {
+        if ($val === 'all') return;
         return $this->where('server_id', $val);
     }
 }

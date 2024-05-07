@@ -9,6 +9,17 @@
     dense
     no-timestamp-toggle
   >
+    <template #top-left>
+      <q-btn
+        :href="route('admin.errors.summary')"
+        type="a"
+        color="primary"
+        outline
+      >
+        Error Summary
+      </q-btn>
+    </template>
+
     <template v-slot:cell-content-ended_at="{ props, col }">
       <template v-if="col.value">{{ col.value }}</template>
       <q-badge v-else color="warning" text-color="dark">Round in progress</q-badge>

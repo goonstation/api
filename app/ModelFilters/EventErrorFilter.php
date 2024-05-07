@@ -2,12 +2,13 @@
 
 namespace App\ModelFilters;
 
+use App\ModelFilters\Common\HasRangeFilters;
 use App\ModelFilters\Common\HasTimestampFilters;
 use EloquentFilter\ModelFilter;
 
 class EventErrorFilter extends ModelFilter
 {
-    use HasTimestampFilters;
+    use HasRangeFilters, HasTimestampFilters;
 
     /**
      * Related Models that have ModelFilters as well as the method on the ModelFilter
@@ -25,5 +26,30 @@ class EventErrorFilter extends ModelFilter
     public function round($val)
     {
         return $this->where('round_id', $val);
+    }
+
+    public function count($val)
+    {
+        return $this->filterRange('count', $val);
+    }
+
+    public function roundCount($val)
+    {
+        return $this->filterRange('round_count', $val);
+    }
+
+    public function name($val)
+    {
+        return $this->where('name', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function file($val)
+    {
+        return $this->where('file', 'ILIKE', '%'.$val.'%');
+    }
+
+    public function line($val)
+    {
+        return $this->where('line', $val);
     }
 }
