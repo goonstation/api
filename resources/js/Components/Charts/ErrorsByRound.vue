@@ -100,10 +100,12 @@ export default {
       const colors = []
 
       this.data.forEach((round) => {
-        roundIds.push(round.id)
-        errors.push(round.errors_count)
-        meta.push(this.$helpers.serverIdToFriendlyName(round.serverId, true))
-        colors.push(this.$helpers.getChartColorForServer(round.serverId))
+        if (round.errors_count > 0) {
+          roundIds.push(round.id)
+          errors.push(round.errors_count)
+          meta.push(this.$helpers.serverIdToFriendlyName(round.serverId, true))
+          colors.push(this.$helpers.getChartColorForServer(round.serverId))
+        }
       })
 
       this.chartOptions.colors = colors

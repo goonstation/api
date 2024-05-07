@@ -150,10 +150,9 @@ export default {
       ],
       search: {
         server: 'all',
-        time_range: '1month',
+        time_range: '1week',
       },
       timeRangeOptions: [
-        { label: 'Last Month', value: '1month' },
         { label: 'Last Week', value: '1week' },
         { label: 'Last 3 Days', value: '3days' },
         { label: 'Last Day', value: '1day' },

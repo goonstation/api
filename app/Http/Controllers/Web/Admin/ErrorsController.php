@@ -59,9 +59,6 @@ class ErrorsController extends Controller
 
         $timeRange = isset($filters['time_range']) ? $filters['time_range'] : null;
         switch ($timeRange) {
-            case '1month':
-                $dateStart = Carbon::now()->subMonth();
-                break;
             case '1week':
                 $dateStart = Carbon::now()->subWeek();
                 break;
@@ -72,7 +69,7 @@ class ErrorsController extends Controller
                 $dateStart = Carbon::now()->subDay();
                 break;
             default:
-                $dateStart = Carbon::now()->subMonth();
+                $dateStart = Carbon::now()->subWeek();
                 break;
         }
         $dateStart = $dateStart->startOfDay();
