@@ -103,8 +103,8 @@ export default {
         if (round.errors_count > 0) {
           roundIds.push(round.id)
           errors.push(round.errors_count)
-          meta.push(this.$helpers.serverIdToFriendlyName(round.serverId, true))
-          colors.push(this.$helpers.getChartColorForServer(round.serverId))
+          meta.push(this.$helpers.serverIdToFriendlyName(round.server_id, true))
+          colors.push(this.$helpers.getChartColorForServer(round.server_id))
         }
       })
 
