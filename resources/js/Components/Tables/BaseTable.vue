@@ -253,7 +253,7 @@
           Delete {{ selected.length }} item<template v-if="selected.length !== 1">s</template>
         </q-btn>
         <q-space />
-        <div class="flex items-center">
+        <div v-if="!hidePagination" class="flex items-center">
           <div class="flex items-center q-mr-sm">
             Records per page:
             <q-select
@@ -422,6 +422,10 @@ export default {
     hideTop: {
       type: Boolean,
       default: false,
+    },
+    hidePagination: {
+      type: Boolean,
+      default: true,
     },
   },
 

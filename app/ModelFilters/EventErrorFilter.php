@@ -33,9 +33,18 @@ class EventErrorFilter extends ModelFilter
         return $this->filterRange('count', $val);
     }
 
+    public function overviewCount($val)
+    {
+        return $this->filterRangeHaving('sum', 'count', $val);
+    }
+
     public function roundCount($val)
     {
         return $this->filterRange('round_count', $val);
+    }
+
+    public function overviewRoundCount($val) {
+        return $this->filterRangeHaving('sum', 'round_count', $val);
     }
 
     public function name($val)

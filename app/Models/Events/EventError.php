@@ -25,6 +25,8 @@ class EventError extends Model
             'round_ids' => 'array',
             'server_ids' => 'array',
             'round_error_counts' => 'array',
+            'overview_count' => 'int',
+            'overview_round_count' => 'int',
         ];
     }
 

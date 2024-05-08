@@ -76,11 +76,11 @@ class ErrorsController extends Controller
 
         $errors = $this->indexQuery(
             EventError::select([
-                DB::raw('sum(count) as count'),
-                DB::raw('sum(round_count) as round_count'),
+                DB::raw('sum(count) as overview_count'),
+                DB::raw('sum(round_count) as overview_round_count'),
                 // DB::raw('array_to_json(round_ids) as round_ids'),
                 // DB::raw('array_to_json(server_ids) as server_ids'),
-                DB::raw('jsonb_object_agg(u_round_ids, count) as round_error_counts'),
+                DB::raw("jsonb_object_agg(u_round_ids, jsonb_build_object('count', count, 'server_id', u_server_ids)) as round_error_counts"),
                 'name',
                 'file',
                 'line'
@@ -90,7 +90,7 @@ class ErrorsController extends Controller
                     DB::raw('count(name) as count'),
                     DB::raw('count(distinct round_id) as round_count'),
                     DB::raw('array_agg(distinct round_id) as round_ids'),
-                    // DB::raw('array_agg(distinct game_rounds.server_id) as server_ids'),
+                    DB::raw('array_agg(distinct game_rounds.server_id) as server_ids'),
                     'name',
                     'file',
                     'line',
@@ -106,42 +106,24 @@ class ErrorsController extends Controller
                 if (isset($filters['server']) && $filters['server'] !== 'all') {
                     $query->where('game_rounds.server_id', $filters['server']);
                 }
+
+                if (isset($filters['overview_round_id'])) {
+                    $query->where('round_id', $filters['overview_round_id']);
+                }
             }, 't')
             ->crossJoin(
-                DB::raw('lateral unnest(round_ids) as u_round_ids')
+                DB::raw('lateral unnest(round_ids) as u_round_ids, unnest(server_ids) as u_server_ids')
             )
             ->groupBy([
                 'name',
                 'file',
                 'line',
             ]),
-            sortBy: 'count',
-            perPage: 30,
+            sortBy: 'overview_count',
+            paginate: false
         );
 
-        $rounds = GameRound::
-            select(['id', 'server_id'])
-            ->where('created_at', '>=', $dateStart)
-            ->withCount([
-                'errors as errors_count' => function($query) use ($filters) {
-                    if (isset($filters['name']))
-                        $query->where('name', 'ILIKE', '%'.$filters['name'].'%');
-                    if (isset($filters['file']))
-                        $query->where('file', 'ILIKE', '%'.$filters['file'].'%');
-                    if (isset($filters['line']))
-                        $query->where('line', $filters['line']);
-                }
-            ]);
-
-        if (isset($filters['server']) && $filters['server'] !== 'all') {
-            $rounds = $rounds->where('server_id', $filters['server']);
-        }
-
-        $rounds = $rounds->get();
-
-        if ($errors->first()) {
-            $errors->first()->rounds = $rounds;
-        }
+        $errors = $errors->simplePaginateFilter(987654321);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Errors/Summary', [

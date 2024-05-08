@@ -6,12 +6,15 @@
     :height="200"
     :options="chartOptions"
     :series="series"
+    @markerClick="onSelect"
   />
   <div v-if="!series[0].data.length" class="chart-no-data">No data found</div>
 </template>
 
 <script>
 export default {
+  emits: ['on-round-select'],
+
   props: {
     data: {
       type: Array,
@@ -60,7 +63,7 @@ export default {
             enabled: false,
           },
           labels: {
-            hideOverlappingLabels: true,
+            show: false,
           },
         },
         yaxis: {
@@ -94,9 +97,11 @@ export default {
         },
         tooltip: {
           theme: 'gh',
+          shared: true,
+          intersect: false,
           x: {
-            formatter: (value, { seriesIndex, dataPointIndex, w }) => {
-              const serverName = w.config.series[seriesIndex]._meta[dataPointIndex]
+            formatter: (value, { dataPointIndex, w }) => {
+              const serverName = w.config._serverNames[dataPointIndex]
               return serverName + '<br>Round #' + value
             },
           },
@@ -106,42 +111,68 @@ export default {
             },
           },
         },
+        _serverNames: [],
       },
     }
   },
 
   methods: {
     buildGraphData() {
+      let groups = {}
+      for (const error of this.data) {
+        for (const roundId in error.round_error_counts) {
+          const roundError = error.round_error_counts[roundId]
+
+          let group = groups[roundId]
+          if (!group) {
+            group = {
+              count: 0,
+              name: this.$helpers.serverIdToFriendlyName(roundError.server_id, true),
+              color: this.$helpers.getChartColorForServer(roundError.server_id),
+            }
+          }
+
+          group.count += roundError.count
+          groups[roundId] = group
+        }
+      }
+
+      groups = Object.keys(groups)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = groups[key]
+          return obj
+        }, {})
+
       const roundIds = []
       const errors = []
       const meta = []
       const colors = []
 
-      this.data.forEach((round) => {
-        if (round.errors_count > 0) {
-          roundIds.push(round.id)
-          errors.push(round.errors_count)
-          meta.push(this.$helpers.serverIdToFriendlyName(round.server_id, true))
-          colors.push(this.$helpers.getChartColorForServer(round.server_id))
-        }
-      })
+      for (const roundId in groups) {
+        const round = groups[roundId]
+        roundIds.push(roundId)
+        errors.push(round.count)
+        meta.push(round.name)
+        colors.push(round.color)
+      }
 
       this.chartOptions.colors = colors
       this.chartOptions.xaxis.categories = roundIds
+      this.chartOptions.yaxis.labels.show = !!errors.length
+      this.chartOptions._serverNames = meta
 
       this.series = [
         {
           name: 'Errors',
           data: errors,
-          _meta: meta,
         },
       ]
-
-      this.chartOptions.yaxis.labels.show = !!errors.length
 
       if (this.$refs.chart) {
         this.$refs.chart.updateOptions({
           colors,
+          _serverNames: meta,
           xaxis: {
             categories: roundIds,
           },
@@ -152,6 +183,10 @@ export default {
           },
         })
       }
+    },
+
+    onSelect(event, chartContext, { dataPointIndex }) {
+      this.$emit('on-round-select', chartContext.w.config.xaxis.categories[dataPointIndex])
     },
   },
 
