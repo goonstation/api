@@ -20,10 +20,10 @@ trait HasRangeFilters
         if ($operator === 'between') {
             $amount = explode('-', $amount);
 
-            return $this->has($key, '>', $amount[0])->has($key, '<', $amount[1]);
+            return $this->has($key, '>', (int) $amount[0])->has($key, '<', (int) $amount[1]);
         }
 
-        return $this->has($key, $operator, $amount);
+        return $this->has($key, $operator, (int) $amount);
     }
 
     private function filterRange($key, $val)
@@ -40,10 +40,10 @@ trait HasRangeFilters
         if ($operator === 'between') {
             $amount = explode('-', $amount);
 
-            return $this->where($key, '>', $amount[0])->where($key, '<', $amount[1]);
+            return $this->where($key, '>', (int) $amount[0])->where($key, '<', (int) $amount[1]);
         }
 
-        return $this->where($key, $operator, $amount);
+        return $this->where($key, $operator, (int) $amount);
     }
 
     private function filterRangeHaving($agg, $key, $val)
@@ -61,10 +61,10 @@ trait HasRangeFilters
         if ($operator === 'between') {
             $amount = explode('-', $amount);
 
-            return $this->having($keyCol, '>', $amount[0])
-                ->having($keyCol, '<', $amount[1]);
+            return $this->having($keyCol, '>', (int) $amount[0])
+                ->having($keyCol, '<', (int) $amount[1]);
         }
 
-        return $this->having($keyCol, $operator, $amount);
+        return $this->having($keyCol, $operator, (int) $amount);
     }
 }

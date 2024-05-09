@@ -78,23 +78,22 @@ class ErrorsController extends Controller
             EventError::select([
                 DB::raw('sum(count) as overview_count'),
                 DB::raw('sum(round_count) as overview_round_count'),
-                // DB::raw('array_to_json(round_ids) as round_ids'),
-                // DB::raw('array_to_json(server_ids) as server_ids'),
-                DB::raw("jsonb_object_agg(u_round_ids, jsonb_build_object('count', count, 'server_id', u_server_ids)) as round_error_counts"),
+                DB::raw("jsonb_object_agg(round_id, jsonb_build_object('count', count, 'server_id', server_id)) as round_error_counts"),
                 'name',
                 'file',
                 'line'
             ])
             ->fromSub(function ($query) use ($dateStart, $filters) {
                 $query->select([
-                    DB::raw('count(name) as count'),
+                    DB::raw('count(*) as count'),
                     DB::raw('count(distinct round_id) as round_count'),
-                    DB::raw('array_agg(distinct round_id) as round_ids'),
-                    DB::raw('array_agg(distinct game_rounds.server_id) as server_ids'),
+                    'round_id',
+                    'server_id',
                     'name',
                     'file',
                     'line',
                 ])->groupBy([
+                    'server_id',
                     'round_id',
                     'name',
                     'file',
@@ -111,9 +110,6 @@ class ErrorsController extends Controller
                     $query->where('round_id', $filters['overview_round_id']);
                 }
             }, 't')
-            ->crossJoin(
-                DB::raw('lateral unnest(round_ids) as u_round_ids, unnest(server_ids) as u_server_ids')
-            )
             ->groupBy([
                 'name',
                 'file',

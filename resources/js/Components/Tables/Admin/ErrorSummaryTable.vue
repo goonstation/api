@@ -6,14 +6,22 @@
       :columns="columns"
       :pagination="{ sortBy: 'overview_count', rowsPerPage: 987654321 }"
       :search="search"
+      :virtual-scroll-sticky-size-start="48"
+      :virtual-scroll-slice-size="100"
+      :virtual-scroll-slice-ratio-before="10"
+      :virtual-scroll-slice-ratio-after="10"
+      :virtual-scroll-item-size="28"
       @loaded="onTableLoaded"
       @reset="onTableReset"
       @fetch-end="onTableFetch"
+      class="error-summary-table"
+      style="max-height: 1000px;"
       flat
       dense
       wrap-cells
       no-timestamp-toggle
       hide-pagination
+      virtual-scroll
     >
       <template #top-left>
         <div class="flex gap-xs-md items-center">
@@ -108,6 +116,29 @@
     </q-dialog>
   </div>
 </template>
+
+<style lang="scss" scoped>
+:deep(.error-summary-table) {
+  thead {
+    tr {
+      th {
+        background: var(--q-dark);
+        position: sticky;
+        z-index: 1;
+        top: 0;
+      }
+
+      &:last-child th {
+        top: 28px;
+      }
+    }
+  }
+
+  tbody {
+    scroll-margin-top: 48px;
+  }
+}
+</style>
 
 <script>
 import { ionCloseOutline } from '@quasar/extras/ionicons-v6'
