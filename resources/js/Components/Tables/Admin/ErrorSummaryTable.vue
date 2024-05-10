@@ -180,9 +180,9 @@ export default {
           headerClasses: 'q-table--col-auto-width',
         },
         {
-          name: 'name',
+          name: 'overview_name',
           label: 'Name',
-          field: 'name',
+          field: 'overview_name',
           sortable: true,
           align: 'left',
           style: 'word-break: break-all; min-width: 300px;',

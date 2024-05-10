@@ -79,7 +79,7 @@ class ErrorsController extends Controller
                 DB::raw('sum(count) as overview_count'),
                 DB::raw('sum(round_count) as overview_round_count'),
                 DB::raw("jsonb_object_agg(round_id, jsonb_build_object('count', count, 'server_id', server_id)) as round_error_counts"),
-                'name',
+                DB::raw('(array_agg(names[1]))[1] as overview_name'),
                 'file',
                 'line'
             ])
@@ -89,13 +89,12 @@ class ErrorsController extends Controller
                     DB::raw('count(distinct round_id) as round_count'),
                     'round_id',
                     'server_id',
-                    'name',
+                    DB::raw('array_agg(name) as names'),
                     'file',
                     'line',
                 ])->groupBy([
                     'server_id',
                     'round_id',
-                    'name',
                     'file',
                     'line',
                 ])->from('events_errors', 'er')
@@ -109,9 +108,12 @@ class ErrorsController extends Controller
                 if (isset($filters['overview_round_id'])) {
                     $query->where('round_id', $filters['overview_round_id']);
                 }
+
+                if (isset($filters['overview_name'])) {
+                    $query->where('name', 'ILIKE', '%'.$filters['overview_name'].'%');
+                }
             }, 't')
             ->groupBy([
-                'name',
                 'file',
                 'line',
             ]),

@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('CREATE INDEX events_errors_grouped_signature_index ON events_errors (round_id, name, file, line);');
+        DB::statement('CREATE INDEX events_errors_created_at_index ON events_errors USING brin(created_at);');
     }
 
     /**
@@ -20,6 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP INDEX events_errors_grouped_signature_index;');
+        DB::statement('DROP INDEX events_errors_created_at_index;');
     }
 };
