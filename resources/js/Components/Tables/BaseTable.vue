@@ -425,7 +425,7 @@ export default {
     },
     hidePagination: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
 
