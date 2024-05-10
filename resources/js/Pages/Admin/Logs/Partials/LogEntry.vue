@@ -128,8 +128,11 @@ export default {
       message += this.log.message || ''
 
       const poptsRegex =
-        /<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=.*?' title='Player Options'>(.*?)<\/a>/g
-      message = message.replaceAll(poptsRegex, '<span class="log-player">$1</span>')
+        /<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=.*?' title='Player Options'>(.*?) \((.*?)\)<\/a>/g
+      message = message.replaceAll(
+        poptsRegex,
+        '<span class="log-player">$1 (<a href="/admin/players/$2" target="_blank">$2</a>)</span>'
+      )
 
       const locRegex =
         /\(<a href='\?src=%admin_ref%;action=jumptocoords;.*?title='Jump to Coords'>(.*?)<\/a> in (.*?)(\)?)\)/g
