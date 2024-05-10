@@ -37,7 +37,8 @@ class GameRoundsController extends Controller
 
         $previousRound = GameRound::where('server_id', $data['server_id'])
             ->where('id', '!=', $gameRound->id)
-            ->latest();
+            ->latest()
+            ->first();
         if ($previousRound && !$previousRound->ended_at) {
             // Previous round didn't tell the API that it ended
             // (maybe crashed, or restarted outside of game functions)
