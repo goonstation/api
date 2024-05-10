@@ -35,6 +35,17 @@ class GameRoundsController extends Controller
         $gameRound->test_merges = isset($data['test_merges']) ? json_encode($data['test_merges']) : null;
         $gameRound->save();
 
+        $previousRound = GameRound::where('server_id', $data['server_id'])
+            ->where('id', '!=', $gameRound->id)
+            ->latest();
+        if (!$previousRound->ended_at) {
+            // Previous round didn't tell the API that it ended
+            // (maybe crashed, or restarted outside of game functions)
+            $previousRound->ended_at = Carbon::now();
+            $previousRound->crashed = true;
+            $previousRound->update();
+        }
+
         return new GameRoundResource($gameRound);
     }
 
