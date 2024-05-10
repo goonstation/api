@@ -74,15 +74,15 @@
         </div>
       </template>
 
-      <template #cell-content-name="{ props }">
-        <a href="" @click.prevent="openRoundErrors(props.row)">{{ props.row.name }}</a>
+      <template #cell-content-overview_name="{ props }">
+        <a href="" @click.prevent="openRoundErrors(props.row)">{{ props.row.overview_name }}</a>
       </template>
     </base-table>
 
     <q-dialog v-model="roundErrorsDialog">
       <q-card flat bordered>
         <q-card-section>
-          {{ viewingError.name }}
+          {{ viewingError.overview_name }}
           <br /><br />
           {{ viewingError.file }}:{{ viewingError.line }}
           <q-markup-table flat bordered class="q-mt-md">
