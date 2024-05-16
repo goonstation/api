@@ -1,5 +1,5 @@
 <template>
-  <q-drawer show-if-above :model-value="isOpen" side="left" :width="175" :breakpoint="600">
+  <q-drawer show-if-above :model-value="open" side="left" :width="175" :breakpoint="breakpoint">
     <q-scroll-area class="fit" :content-style="scrollContentStyles">
       <div class="site-nav__wrap">
         <q-list class="site-nav" ref="siteNav">
@@ -191,7 +191,7 @@ export default {
       default: route('home'),
     },
     items: Array,
-    isOpen: Boolean,
+    open: Boolean,
   },
 
   setup() {
@@ -202,6 +202,7 @@ export default {
 
   data() {
     return {
+      breakpoint: 600,
       pageLoading: false,
       navSlider: null,
       animateNavBar: false,
@@ -222,6 +223,10 @@ export default {
   },
 
   mounted() {
+    if (window.innerWidth <= this.breakpoint) {
+      this.$emit('update:open', false)
+    }
+
     this.onNavItemLeave()
     this.animateNavBar = true
 
@@ -307,7 +312,7 @@ export default {
 
     canShowItem(menuItem) {
       if (!menuItem.hasOwnProperty('canShow')) return true
-      if (this.$page.props.user?.is_admin) return true // admins can access everything
+      if (this.$page.props.auth.user?.is_admin) return true // admins can access everything
       if (typeof menuItem.canShow === 'function') {
         return menuItem.canShow()
       }

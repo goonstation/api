@@ -4,7 +4,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 <template>
   <AdminLayout title="Dashboard">
-    <q-card class="gh-card" flat style="width: 100%; max-width: 500px">
+    <q-card class="gh-card q-mb-md" flat>
       <div class="gh-card__header q-pa-md bordered">
         <span>Hello</span>
       </div>
@@ -14,5 +14,11 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
         feature request.
       </q-card-section>
     </q-card>
+
+    <iframe
+      src="/pulse"
+      class="full-width flex-grow no-border rounded-borders"
+      style="min-height: 500px"
+    ></iframe>
   </AdminLayout>
 </template>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController;
+use App\Http\Controllers\Web\Admin\ErrorsController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
@@ -10,9 +11,10 @@ use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
+use App\Http\Controllers\Web\Admin\RoundsController;
 use App\Http\Controllers\Web\Admin\UsersController;
+use App\Http\Middleware\CanAccessAdminRoutes;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,7 +27,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
+    Route::prefix('/admin')->middleware([CanAccessAdminRoutes::class])->group(function () {
         Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
             Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
             Route::get('/create', 'create')->name('admin.users.create')->breadcrumb('', 'admin.users.index');
@@ -46,6 +48,14 @@ Route::middleware([
                 ->whereNumber('gameAdmin')
                 ->name('admin.game-admins.show')
                 ->breadcrumb('', 'admin.game-admins.index');
+        });
+
+        Route::controller(RoundsController::class)->prefix('rounds')->group(function () {
+            Route::get('/', 'index')->name('admin.rounds.index')->breadcrumb('Rounds');
+            Route::get('/{round}', 'show')
+                ->whereNumber('round')
+                ->name('admin.rounds.show')
+                ->breadcrumb('', 'admin.rounds.index');
         });
 
         Route::controller(PlayersController::class)->prefix('players')->group(function () {
@@ -121,6 +131,18 @@ Route::middleware([
             Route::get('/get-logs/{gameRound}', 'getLogs')
                 ->whereNumber('gameRound')
                 ->name('admin.logs.get-logs');
+        });
+
+        Route::controller(ErrorsController::class)->prefix('errors')->group(function () {
+            Route::get('/', 'index')->name('admin.errors.index')->breadcrumb('Errors');
+            Route::get('/summary', 'summary')->name('admin.errors.summary')->breadcrumb('Errors');
+            Route::get('/{gameRound}', 'show')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.show')
+                ->breadcrumb('', 'admin.errors.index');
+            Route::get('/get-errors/{gameRound}', 'getErrors')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.get-errors');
         });
 
         Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {

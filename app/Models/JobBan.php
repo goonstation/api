@@ -13,7 +13,9 @@ class JobBan extends Model
 {
     use Filterable, HasFactory, SoftDeletes;
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     protected $fillable = [
         'server_id',
@@ -27,7 +29,7 @@ class JobBan extends Model
     public function getDurationAttribute()
     {
         $now = Carbon::now();
-        if ($now->isAfter($this->expires_at)) {
+        if (!$this->expires_at || $now->isAfter($this->expires_at)) {
             return 0;
         }
 

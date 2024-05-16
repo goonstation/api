@@ -5,7 +5,7 @@
       <page-header :title="niceTitle" @onToggleLeftDrawer="siteNavOpen = !siteNavOpen" />
     </KeepAlive>
 
-    <site-nav :items="siteNavItems" :is-open="siteNavOpen">
+    <site-nav v-model:open="siteNavOpen" :items="siteNavItems">
       <template #bottom>
         <q-separator />
         <div class="site-nav__item">

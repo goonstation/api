@@ -10,7 +10,9 @@ class Map extends Model
 {
     use Filterable, HasFactory;
 
-    protected $dates = ['last_updated_at'];
+    protected $casts = [
+        'last_updated_at' => 'datetime',
+    ];
 
     public function latestGameRound()
     {

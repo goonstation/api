@@ -11,6 +11,7 @@ use App\Models\Ban;
 use App\Models\BanDetail;
 use App\Models\GameAdmin;
 use App\Models\Player;
+use App\Models\PlayerNote;
 use App\Rules\DateRange;
 use App\Rules\Range;
 use App\Traits\IndexableQuery;
@@ -207,9 +208,12 @@ class BansController extends Controller
     public function addDetails(Request $request, Ban $ban)
     {
         $data = $this->validate($request, [
+            'game_admin_ckey' => 'nullable|exists:game_admins,ckey',
+            'round_id' => 'nullable|integer|exists:game_rounds,id',
             'ckey' => 'required_without_all:comp_id,ip|nullable',
             'comp_id' => 'required_without_all:ckey,ip|nullable',
             'ip' => 'required_without_all:ckey,comp_id|ip|nullable',
+            'evasion' => 'nullable|boolean',
         ]);
 
         $banDetail = new BanDetail();
@@ -217,6 +221,33 @@ class BansController extends Controller
         $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
         $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
         $ban->details()->save($banDetail);
+
+        if (isset($data['evasion']) && $data['evasion']) {
+            $gameAdmin = GameAdmin::where('ckey', ckey($data['game_admin_ckey']))->first();
+            $player = null;
+            $ckey = isset($data['ckey']) ? ckey($data['ckey']) : null;
+            if ($ckey) {
+                $player = Player::where('ckey', $ckey)->first();
+            }
+
+            $note = new PlayerNote();
+            if ($player) {
+                $note->player_id = $player->id;
+            } else {
+                $note->ckey = $ckey;
+            }
+            $note->game_admin_id = $gameAdmin->id;
+            $note->server_id = $ban->server_id;
+            $note->round_id = isset($data['round_id']) ? $data['round_id'] : null;
+            $note->note = sprintf(
+                'Ban evasion attempt detected, added connection details (IP: %s, CompID: %s) to ban. Original ban ckey: %s. Reason: %s',
+                $banDetail->ip,
+                $banDetail->comp_id,
+                $ban->originalBanDetail->ckey,
+                $ban->reason
+            );
+            $note->save();
+        }
 
         return new BanDetailResource($banDetail);
     }

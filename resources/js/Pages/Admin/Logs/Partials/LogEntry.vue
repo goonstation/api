@@ -90,6 +90,13 @@
   background: yellow;
   color: black;
 }
+
+:deep(.traitor-marker) {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 5px;
+  background: red;
+}
 </style>
 
 <script>
@@ -121,11 +128,14 @@ export default {
       message += this.log.message || ''
 
       const poptsRegex =
-        /<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=.*?' title='Player Options'>(.*?)<\/a>/g
-      message = message.replaceAll(poptsRegex, '<span class="log-player">$1</span>')
+        /<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=.*?' title='Player Options'>(.*?) \((.*?)\)<\/a>/g
+      message = message.replaceAll(
+        poptsRegex,
+        '<span class="log-player">$1 (<a href="/admin/players/$2" target="_blank">$2</a>)</span>'
+      )
 
       const locRegex =
-        /\(<a href='\?src=%admin_ref%;action=jumptocoords;.*title='Jump to Coords'>(.*)<\/a> in (.*?)(\)?)\)/g
+        /\(<a href='\?src=%admin_ref%;action=jumptocoords;.*?title='Jump to Coords'>(.*?)<\/a> in (.*?)(\)?)\)/g
       message = message.replaceAll(
         locRegex,
         '<span class="log-loc"><span class="log-loc-name">$2$3</span> ($1)</span>'
@@ -145,6 +155,9 @@ export default {
         <span class="dmg-brute" title="Burn">$5</span>
       </span>`
       )
+
+      const traitorRegex = /\[<span class='traitorTag'>T<\/span>\]/g
+      message = message.replaceAll(traitorRegex, '<span class="traitor-marker">T</span>')
 
       if (this.searchTerms.length) {
         const searchRegex = new RegExp(

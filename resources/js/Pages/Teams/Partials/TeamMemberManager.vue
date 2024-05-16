@@ -58,7 +58,7 @@ const confirmLeavingTeam = () => {
 }
 
 const leaveTeam = () => {
-  leaveTeamForm.delete(route('team-members.destroy', [props.team, usePage().props.user]))
+  leaveTeamForm.delete(route('team-members.destroy', [props.team, usePage().props.auth.user]))
 }
 
 const confirmTeamMemberRemoval = (teamMember) => {
@@ -232,7 +232,7 @@ const displayableRole = (role) => {
                   />
 
                   <q-btn
-                    v-if="$page.props.user.id === user.id"
+                    v-if="$page.props.auth.user.id === user.id"
                     label="Leave"
                     class="q-ml-xs"
                     color="negative"

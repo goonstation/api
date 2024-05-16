@@ -70,7 +70,7 @@ export default {
             bottom: 10
           }
         },
-        colors: ['#ffd125', '#24c024', '#e33434', '#5490ff'],
+        colors: [],
         tooltip: {
           theme: 'gh',
         },
@@ -96,6 +96,12 @@ export default {
         series.push(seriesItem)
       }
 
+      this.chartOptions.colors = [
+        this.$helpers.getChartColorForServer('main1'),
+        this.$helpers.getChartColorForServer('main3'),
+        this.$helpers.getChartColorForServer('main4'),
+        this.$helpers.getChartColorForServer('main5'),
+      ]
       this.series = series
       this.chartOptions.yaxis.labels.show = !!series.length
     },

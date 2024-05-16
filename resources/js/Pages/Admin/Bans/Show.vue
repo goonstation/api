@@ -3,9 +3,7 @@
     <Link :href="route('admin.bans.edit', ban.id)">
       <q-btn color="primary" outline> Edit Ban </q-btn>
     </Link>
-    <q-btn @click="openConfirmDelete" color="negative" class="q-ml-md" outline>
-      Delete Ban
-    </q-btn>
+    <q-btn @click="openConfirmDelete" color="negative" class="q-ml-md" outline> Delete Ban </q-btn>
   </div>
 
   <div class="row q-col-gutter-md">
@@ -72,6 +70,15 @@
               <tr>
                 <td><strong>Reason</strong></td>
                 <td>{{ ban.reason }}</td>
+              </tr>
+              <tr>
+                <td><strong>Added At</strong></td>
+                <td>
+                  {{ humanAddedAt }}
+                  <span class="text-caption opacity-80 q-ml-xs">
+                    ({{ dayjs(ban.created_at).fromNow() }})
+                  </span>
+                </td>
               </tr>
               <template v-if="isDeleted">
                 <tr>
@@ -187,6 +194,11 @@ export default {
     isExpired() {
       if (!this.ban.expires_at) return false
       return new Date(this.ban.expires_at) <= new Date()
+    },
+
+    humanAddedAt() {
+      const addedAt = new Date(this.ban.created_at)
+      return date.formatDate(addedAt, 'YYYY/MM/DD HH:mm')
     },
 
     humanExpiresAt() {

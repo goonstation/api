@@ -48,6 +48,14 @@
           Gibbed
         </q-chip>
       </div>
+
+      <vote-control
+        class="q-mt-md"
+        v-model:votes="death.votes"
+        v-model:userVotes="death.user_votes"
+        voteable-type="death"
+        :voteable-id="death.id"
+      />
     </q-card-section>
   </q-card>
 </template>
@@ -70,6 +78,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import LinkGameRound from '@/Components/LinkGameRound.vue'
+import VoteControl from '@/Components/VoteControl.vue'
 
 export default {
   layout: (h, page) =>
@@ -83,6 +92,7 @@ export default {
 
   components: {
     LinkGameRound,
+    VoteControl,
   },
 
   props: {

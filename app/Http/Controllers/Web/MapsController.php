@@ -67,6 +67,6 @@ class MapsController extends Controller
         }
 
         $file = storage_path('app/private-maps/' . $path);
-        return response()->download($file);
+        return response()->file($file);
     }
 }

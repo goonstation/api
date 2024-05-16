@@ -11,8 +11,8 @@
         </q-toolbar-title>
         <div>
           <q-btn
-            v-if="$page.props.jetstream.hasTeamFeatures && $page.props.user.current_team"
-            :label="$page.props.user.current_team.name"
+            v-if="$page.props.jetstream.hasTeamFeatures && $page.props.auth.user.current_team"
+            :label="$page.props.auth.user.current_team.name"
             class="q-px-sm q-mr-md"
             :icon-right="ionChevronDown"
             flat
@@ -23,7 +23,7 @@
                 <q-item-label header>Manage Team</q-item-label>
                 <q-item
                   clickable
-                  @click="router.visit(route('teams.show', $page.props.user.current_team))"
+                  @click="router.visit(route('teams.show', $page.props.auth.user.current_team))"
                   v-close-popup
                 >
                   <q-item-section>Team Settings</q-item-section>
@@ -40,12 +40,12 @@
                 <q-separator />
 
                 <q-item-label header>Switch Teams</q-item-label>
-                <template v-for="team in $page.props.user.all_teams" :key="team.id">
+                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
                   <q-item clickable @click="switchToTeam(team)">
                     <q-item-section>{{ team.name }}</q-item-section>
                     <q-item-section avatar style="padding-left: 0; min-width: 35px">
                       <q-icon
-                        v-if="team.id == $page.props.user.current_team_id"
+                        v-if="team.id == $page.props.auth.user.current_team_id"
                         :name="ionCheckmarkCircleOutline"
                         color="accent"
                       />
@@ -57,7 +57,7 @@
           </q-btn>
 
           <q-btn round flat>
-            <user-avatar :user="$page.props.user" />
+            <user-avatar :user="$page.props.auth.user" />
             <q-menu>
               <q-list style="min-width: 150px">
                 <q-item clickable @click="router.visit(route('profile.show'))" v-close-popup>
@@ -94,7 +94,7 @@
       </q-toolbar>
     </q-header>
 
-    <site-nav :home="route('dashboard')" :items="siteNavItems" :is-open="siteNavOpen">
+    <site-nav v-model:open="siteNavOpen" :home="route('dashboard')" :items="siteNavItems">
       <template #bottom>
         <q-separator />
         <div class="site-nav__item">
@@ -173,7 +173,7 @@ export default {
 
   computed: {
     user() {
-      return this.$page.props.user
+      return this.$page.props.auth.user
     },
   },
 
@@ -199,7 +199,7 @@ export default {
         },
       ]
 
-      if (!!this.user.game_admin_id) {
+      if (!!this.user.game_admin_id || !!this.user.is_admin) {
         items.push(
           {
             label: 'Admins',
@@ -248,8 +248,13 @@ export default {
               route('admin.maps.index'),
               route('admin.events.index'),
               route('admin.logs.index'),
+              route('admin.errors.index'),
             ],
             children: [
+              {
+                label: 'Errors',
+                href: route('admin.errors.index'),
+              },
               {
                 label: 'Events',
                 href: route('admin.events.index'),

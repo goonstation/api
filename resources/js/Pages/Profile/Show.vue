@@ -7,7 +7,7 @@
           <div class="q-mb-md">Update your account's profile information and email address.</div>
         </div>
         <div class="col-12 col-md-8">
-          <UpdateProfileInformationForm :user="$page.props.user" />
+          <UpdateProfileInformationForm :user="$page.props.auth.user" />
         </div>
       </div>
     </div>

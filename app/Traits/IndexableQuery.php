@@ -12,7 +12,7 @@ trait IndexableQuery
      * @param  mixed  $model A model class FQDN, or a query builder for one
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    private function indexQuery($model, $filter = null, $sortBy = 'id', $desc = 'true', $perPage = 15, $simple = false)
+    private function indexQuery($model, $filter = null, $sortBy = 'id', $desc = 'true', $perPage = 15, $paginate = true)
     {
         $request = request();
         if (! is_a($model, Builder::class)) {
@@ -33,9 +33,8 @@ trait IndexableQuery
                 $desc === 'true' || $desc === '1' ? 'desc' : 'asc'
             );
 
-        if ($simple) {
-            $query = $query->simplePaginateFilter(min((int) $request->input('per_page', $perPage), 100));
-        } else {
+        if ($paginate) {
+            // $query = $query->simplePaginateFilter(min((int) $request->input('per_page', $perPage), 100));
             $query = $query->paginateFilter(min((int) $request->input('per_page', $perPage), 100));
         }
 

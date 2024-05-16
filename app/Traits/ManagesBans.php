@@ -99,7 +99,8 @@ trait ManagesBans
         $note->server_id = $serverId;
         $note->round_id = isset($request['round_id']) ? $request['round_id'] : null;
         $note->note = sprintf(
-            'Banned %s. Reason: %s',
+            'Banned from %s %s. Reason: %s',
+            is_null($serverId) ? 'all servers' : $serverId,
             isset($request['duration']) && (int) $request['duration'] > 0
                 ? 'for '.CarbonInterval::seconds($request['duration'])->cascade()->forHumans()
                 : 'permanently',
@@ -171,7 +172,8 @@ trait ManagesBans
         $note->server_id = $ban->server_id;
         $note->round_id = $ban->round_id;
         $note->note = sprintf(
-            'Edited ban. Duration: %s. Reason: %s. Computer ID: %s. IP: %s',
+            'Edited ban. Server: %s. Duration: %s. Reason: %s. Computer ID: %s. IP: %s',
+            is_null($ban->server_id) ? 'all servers' : $ban->server_id,
             $ban->expires_at
                 ? $ban->expires_at->longAbsoluteDiffForHumans()
                 : 'permanent',

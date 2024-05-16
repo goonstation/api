@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Events\EventTicket;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class TicketsController extends Controller
@@ -16,6 +17,12 @@ class TicketsController extends Controller
     {
         $tickets = $this->indexQuery(
             EventTicket::select('id', 'round_id', 'issuer', 'issuer_job', 'reason', 'target')
+                ->withSum([
+                    'votes as votes' => function ($query) {
+                        $query->select(DB::raw('COALESCE(SUM(value), 0)'));
+                    }
+                ], 'value')
+                ->with('userVotes:voteable_id,value')
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
@@ -42,6 +49,12 @@ class TicketsController extends Controller
             'created_at'
         )
             ->where('id', $ticket)
+            ->withSum([
+                'votes as votes' => function ($query) {
+                    $query->select(DB::raw('COALESCE(SUM(value), 0)'));
+                }
+            ], 'value')
+            ->with('userVotes:voteable_id,value')
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();
