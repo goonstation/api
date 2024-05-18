@@ -5,6 +5,9 @@
         <q-list class="site-nav" ref="siteNav">
           <Link class="block q-mt-lg q-mb-md logo" :href="home">
             <img src="@img/logo.png" alt="Logo" class="block q-mx-auto" width="100" height="97" />
+            <svg viewBox="0 0 450 50">
+              <text x="50%">Nightshade</text>
+            </svg>
           </Link>
           <template v-for="(menuItem, index) in items">
             <q-expansion-item
@@ -101,6 +104,24 @@
       position: relative;
       max-width: 100%;
       height: auto;
+    }
+
+    svg {
+      position: absolute;
+      bottom: -20px;
+      font: bold 50px 'Comic Sans MS', Arial;
+      width: 100%;
+      height: 50px;
+
+      text {
+        fill: red;
+        stroke: black;
+        stroke-width: 10px;
+        stroke-linejoin: round;
+        text-anchor: middle;
+        dominant-baseline: text-before-edge;
+        paint-order: stroke;
+      }
     }
 
     &:hover,
@@ -208,8 +229,8 @@ export default {
       animateNavBar: false,
       scrollContentStyles: {
         display: 'flex',
-        'flex-direction': 'column'
-      }
+        'flex-direction': 'column',
+      },
     }
   },
 
