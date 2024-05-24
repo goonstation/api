@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
+use App\Http\Controllers\Web\GameAuthController;
 use App\Http\Controllers\Web\GameServersController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
@@ -39,6 +40,11 @@ Route::controller(HomeController::class)->prefix('/')->group(function () {
 Route::controller(AuthController::class)->prefix('/auth')->group(function () {
     Route::get('/redirect', 'redirect')->name('auth.redirect');
     Route::get('/callback', 'callback')->name('auth.callback');
+});
+
+Route::controller(GameAuthController::class)->prefix('/game-auth')->group(function () {
+    Route::get('/', 'show')->name('game-auth.show');
+    Route::post('/', 'login')->name('game-auth.login');
 });
 
 Route::controller(ChangelogController::class)->prefix('/changelog')->group(function () {
