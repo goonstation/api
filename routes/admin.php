@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController;
+use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\ErrorsController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
+use App\Http\Controllers\Web\Admin\GameAuthCallbackController;
 use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
@@ -16,16 +18,15 @@ use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\CanAccessAdminRoutes;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
+        Route::get('/', 'index')->name('dashboard');
+    });
 
     Route::prefix('/admin')->middleware([CanAccessAdminRoutes::class])->group(function () {
         Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
@@ -152,6 +153,10 @@ Route::middleware([
             Route::get('/edit/{redirect}', 'edit')->whereNumber('redirect')->name('admin.redirects.edit')->breadcrumb('', 'admin.redirects.index');
             Route::put('/{redirect}', 'update')->whereNumber('redirect')->name('admin.redirects.update');
             Route::delete('/{redirect}', 'destroy')->whereNumber('redirect')->name('admin.redirects.delete');
+        });
+
+        Route::controller(GameAuthCallbackController::class)->prefix('game-auth-callback')->group(function () {
+            Route::post('/', 'informGame')->name('admin.game-auth-callback');
         });
     });
 });

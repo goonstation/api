@@ -12,7 +12,7 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         $prev = $request->input('prev', false);
-        $home = $prev ? redirect($prev) : config('fortify.dashboard');
+        $home = $prev ? redirect($prev) : redirect(config('fortify.home'));
 
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])

@@ -115,5 +115,6 @@ Route::controller(VotesController::class)->prefix('/votes')->group(function () {
     Route::post('/down', 'downVote')->name('votes.down');
 });
 
+require __DIR__.'/fortify.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/jetstream.php';
