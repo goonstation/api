@@ -23,7 +23,7 @@
     </template>
     <template v-slot:body-cell-status="props">
       <q-td :props="props">
-        <q-badge v-if="props.row.deleted_at" color="negative"> Removed </q-badge>
+        <q-badge v-if="isBanRemoved(props.row)" color="negative"> Removed </q-badge>
         <q-badge v-else-if="isBanExpired(props.row.expires_at)" color="warning" text-color="black">
           Expired
         </q-badge>
@@ -36,6 +36,9 @@
 export default {
   props: {
     bans: Object,
+    ckey: String,
+    ips: Object,
+    compIds: Object,
   },
 
   data() {
@@ -104,8 +107,26 @@ export default {
       return new Date(expiresAt) <= new Date()
     },
 
-    isBanExpiredOrRemoved(ban) {
-      return ban.deleted_at || this.isBanExpired(ban.expires_at)
+    isBanRemoved(ban) {
+      console.log(ban)
+      let banRemovedForPlayer = !!ban.deleted_at
+
+      if (!banRemovedForPlayer) {
+        let foundInActiveDetails = false
+        for (const detail of ban.details) {
+          if (detail.ckey === this.ckey || this.ips.includes(detail.ip) || this.compIds.includes(detail.comp_id)) {
+            // active ban for this player
+            console.log('found active details', detail)
+            if (this.ips.includes(detail.ip)) console.log('ip match')
+            foundInActiveDetails = true
+            break
+          }
+        }
+
+        if (!foundInActiveDetails) banRemovedForPlayer = true
+      }
+
+      return banRemovedForPlayer
     },
   },
 }

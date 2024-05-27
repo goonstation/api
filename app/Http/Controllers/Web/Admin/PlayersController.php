@@ -89,6 +89,8 @@ class PlayersController extends Controller
             'banHistory' => $banHistory,
             'otherAccounts' => $otherAccounts,
             'cursedCompIds' => $cursedCompIds,
+            'uniqueIps' => $ips,
+            'uniqueCompIds' => $compIds,
         ]);
     }
 

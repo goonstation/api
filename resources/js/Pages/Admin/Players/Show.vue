@@ -119,7 +119,7 @@
       <q-card-section class="q-pa-none">
         <q-tab-panels v-model="banTab" animated>
           <q-tab-panel name="Ban History" class="q-pa-none">
-            <ban-history :bans="banHistory" />
+            <ban-history :bans="banHistory" :ckey="player.ckey" :ips="uniqueIps" :comp-ids="uniqueCompIds" />
           </q-tab-panel>
           <q-tab-panel name="Job Ban History" class="q-pa-none">
             <job-ban-history :bans="player.job_bans" />
@@ -235,6 +235,8 @@ export default {
     banHistory: Object,
     otherAccounts: Object,
     cursedCompIds: Object,
+    uniqueIps: Object,
+    uniqueCompIds: Object,
   },
 
   data() {

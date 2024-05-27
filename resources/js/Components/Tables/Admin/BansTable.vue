@@ -98,6 +98,7 @@ export default {
           label: 'Player',
           field: (row) => row.original_ban_detail.ckey,
           sortable: true,
+          filterable: false,
         },
         {
           name: 'reason',

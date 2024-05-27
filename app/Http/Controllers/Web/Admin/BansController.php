@@ -185,8 +185,7 @@ class BansController extends Controller
 
     public function getDetails(Request $request)
     {
-        return BanDetail::withTrashed()
-            ->where('ban_id', $request->input('ban_id'))
+        return BanDetail::where('ban_id', $request->input('ban_id'))
             ->orderBy('id', 'desc')
             ->get();
     }

@@ -74,7 +74,15 @@ class Ban extends Model
      */
     public function details()
     {
-        return $this->hasMany(BanDetail::class, 'ban_id')->withTrashed();
+        return $this->hasMany(BanDetail::class, 'ban_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inactiveDetails()
+    {
+        return $this->hasMany(BanDetail::class, 'ban_id')->withTrashed()->whereNotNull('deleted_at');
     }
 
     /**
@@ -82,7 +90,7 @@ class Ban extends Model
      */
     public function originalBanDetail()
     {
-        return $this->hasOne(BanDetail::class, 'ban_id')->withTrashed()->oldest();
+        return $this->hasOne(BanDetail::class, 'ban_id')->oldest();
     }
 
     /**

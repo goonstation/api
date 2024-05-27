@@ -22,6 +22,7 @@ trait ManagesBans
             'gameServer',
             'originalBanDetail',
             'details',
+            'inactiveDetails',
             'gameRound',
         ])
             ->withTrashed()
