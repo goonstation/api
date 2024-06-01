@@ -64,6 +64,9 @@ class ErrorsController extends Controller
                 ->join('game_rounds', 'round_id', '=', 'game_rounds.id')
                 ->where('er.created_at', '>=', $dateStart);
 
+                // Temp patch for errors with null file and line columns
+                $query->whereRaw('(file is not null and line is not null)');
+
                 // Non-admins can't view errors within secret module files
                 if (! Auth::user()?->game_admin_id) {
                     $query->whereRaw('starts_with(file, \'code_secret\') = false');
