@@ -24,6 +24,9 @@ class BanResource extends JsonResource
             'game_admin_id' => $this->game_admin_id,
             'server_id' => $this->server_id,
             'reason' => $this->reason,
+            /** @var bool */
+            'active' => $this->active,
+            /** @var int */
             'duration' => $this->duration,
             'duration_human' => $this->duration_human,
             'expires_at' => $this->expires_at,

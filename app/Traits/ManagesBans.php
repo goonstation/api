@@ -22,11 +22,11 @@ trait ManagesBans
             'gameServer',
             'originalBanDetail',
             'details',
-            'inactiveDetails',
             'gameRound',
         ])
             ->withTrashed()
             ->whereHas('details', function ($query) use ($ckey, $compIds, $ips) {
+                $query->withTrashed();
                 // Check any of the ban details match the provided player details
                 if ($ckey) {
                     $query->where('ckey', $ckey);

@@ -44,7 +44,11 @@ class BansController extends Controller
         $bans = $this->indexQuery(
             Ban::withTrashed()
                 ->withCount(['details'])
-                ->with(['originalBanDetail', 'gameAdmin', 'gameServer'])
+                ->with([
+                    'originalBanDetail',
+                    'gameAdmin',
+                    'gameServer'
+                ])
                 ->where('deleted_at', '!=', null)
                 ->orWhere('expires_at', '<=', Carbon::now()),
             perPage: 30);
@@ -185,9 +189,17 @@ class BansController extends Controller
 
     public function getDetails(Request $request)
     {
-        return BanDetail::where('ban_id', $request->input('ban_id'))
+        $details = BanDetail::withTrashed()
+            ->where('ban_id', $request->input('ban_id'))
             ->orderBy('id', 'desc')
             ->get();
+
+        $originalDetail = $details->last();
+        $details = $details->filter(function (BanDetail $detail) use ($originalDetail) {
+            return ! $detail->trashed() || $detail->id === $originalDetail->id;
+        });
+
+        return $details->values();
     }
 
     public function storeDetail(Request $request, Ban $ban)

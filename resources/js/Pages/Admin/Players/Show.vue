@@ -119,7 +119,7 @@
       <q-card-section class="q-pa-none">
         <q-tab-panels v-model="banTab" animated>
           <q-tab-panel name="Ban History" class="q-pa-none">
-            <ban-history :bans="banHistory" :ckey="player.ckey" :ips="uniqueIps" :comp-ids="uniqueCompIds" />
+            <ban-history :bans="banHistory" :ckey="player.ckey" />
           </q-tab-panel>
           <q-tab-panel name="Job Ban History" class="q-pa-none">
             <job-ban-history :bans="player.job_bans" />
@@ -266,7 +266,7 @@ export default {
     isBanned() {
       let banned = false
       for (const ban of this.banHistory) {
-        if (!this.isBanExpiredOrRemoved(ban)) {
+        if (ban.active && ban.player_has_active_details) {
           banned = true
           break
         }
@@ -276,18 +276,9 @@ export default {
   },
 
   methods: {
-    isBanExpired(expiresAt) {
-      if (!expiresAt) return false
-      return new Date(expiresAt) <= new Date()
-    },
-
-    isBanExpiredOrRemoved(ban) {
-      return ban.deleted_at || this.isBanExpired(ban.expires_at)
-    },
-
     onNoteAdded(note) {
       this.player.notes.unshift(note)
-    }
+    },
   },
 }
 </script>

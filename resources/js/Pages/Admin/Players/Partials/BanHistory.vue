@@ -37,8 +37,6 @@ export default {
   props: {
     bans: Object,
     ckey: String,
-    ips: Object,
-    compIds: Object,
   },
 
   data() {
@@ -108,25 +106,7 @@ export default {
     },
 
     isBanRemoved(ban) {
-      console.log(ban)
-      let banRemovedForPlayer = !!ban.deleted_at
-
-      if (!banRemovedForPlayer) {
-        let foundInActiveDetails = false
-        for (const detail of ban.details) {
-          if (detail.ckey === this.ckey || this.ips.includes(detail.ip) || this.compIds.includes(detail.comp_id)) {
-            // active ban for this player
-            console.log('found active details', detail)
-            if (this.ips.includes(detail.ip)) console.log('ip match')
-            foundInActiveDetails = true
-            break
-          }
-        }
-
-        if (!foundInActiveDetails) banRemovedForPlayer = true
-      }
-
-      return banRemovedForPlayer
+      return !!ban.deleted_at || !ban.player_has_active_details
     },
   },
 }

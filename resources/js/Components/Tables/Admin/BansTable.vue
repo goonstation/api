@@ -119,7 +119,7 @@ export default {
         {
           name: 'details',
           label: 'Details',
-          field: 'details_count',
+          field: (row) => row.details_count || 1,
           sortable: true,
           filterable: false
         },

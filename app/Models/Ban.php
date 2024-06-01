@@ -24,7 +24,7 @@ class Ban extends Model
         'expires_at',
     ];
 
-    protected $appends = ['duration', 'duration_human'];
+    protected $appends = ['duration', 'duration_human', 'active'];
 
     public function getDurationAttribute()
     {
@@ -43,6 +43,13 @@ class Ban extends Model
         }
 
         return $this->expires_at->longAbsoluteDiffForHumans(99);
+    }
+
+    public function getActiveAttribute()
+    {
+        $now = Carbon::now();
+        $isExpired = $this->expires_at ? $now->isAfter($this->expires_at) : false;
+        return ! $isExpired && is_null($this->deleted_at);
     }
 
     /**
@@ -90,7 +97,7 @@ class Ban extends Model
      */
     public function originalBanDetail()
     {
-        return $this->hasOne(BanDetail::class, 'ban_id')->oldest();
+        return $this->hasOne(BanDetail::class, 'ban_id')->withTrashed()->oldest();
     }
 
     /**
