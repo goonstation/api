@@ -219,6 +219,22 @@ class BansController extends Controller
         return ['data' => $banDetail];
     }
 
+    public function updateDetail(Request $request, BanDetail $banDetail)
+    {
+        $data = $this->validate($request, [
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
+        ]);
+
+        $banDetail->ckey = isset($data['ckey']) ? $data['ckey'] : null;
+        $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
+        $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
+        $banDetail->save();
+
+        return ['data' => $banDetail];
+    }
+
     public function destroyDetail(BanDetail $banDetail)
     {
         $banDetail->delete();
