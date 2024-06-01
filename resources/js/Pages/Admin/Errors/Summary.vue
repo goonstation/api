@@ -1,10 +1,10 @@
 <template>
-  <error-summary-table :initial="errors" />
+  <error-summary-table fetch-on-load />
 </template>
 
 <script>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
-import ErrorSummaryTable from '@/Components/Tables/Admin/ErrorSummaryTable.vue'
+import ErrorSummaryTable from '@/Components/Tables/ErrorSummaryTable.vue'
 
 export default {
   components: {
@@ -12,9 +12,5 @@ export default {
   },
 
   layout: (h, page) => h(AdminLayout, { title: 'Errors' }, () => page),
-
-  props: {
-    errors: Object,
-  },
 }
 </script>

@@ -78,6 +78,7 @@ export default {
         { name: 'Overview', href: '/events' },
         { name: 'Antagonists', href: '/events/antags' },
         { name: 'Deaths', href: '/events/deaths' },
+        { name: 'Errors', href: '/events/errors' },
         { name: 'Fines', href: '/events/fines' },
         { name: 'Tickets', href: '/events/tickets' },
       ],

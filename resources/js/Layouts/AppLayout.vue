@@ -123,6 +123,10 @@ export default {
               href: route('deaths.index'),
             },
             {
+              label: 'Errors',
+              href: route('errors.index'),
+            },
+            {
               label: 'Fines',
               href: route('fines.index'),
             },

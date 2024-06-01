@@ -99,9 +99,10 @@
                   {{ $helpers.serverIdToFriendlyName(roundError.server_id, true) }}
                 </td>
                 <td>
-                  <Link :href="route('admin.errors.show', roundId)">
+                  <Link v-if="isGameAdmin" :href="route('admin.errors.show', roundId)">
                     {{ roundId }}
                   </Link>
+                  <template v-else>{{ roundId }}</template>
                 </td>
                 <td>{{ $formats.number(roundError.count) }}</td>
               </tr>
@@ -142,7 +143,7 @@
 
 <script>
 import { ionCloseOutline } from '@quasar/extras/ionicons-v6'
-import BaseTable from '../BaseTable.vue'
+import BaseTable from './BaseTable.vue'
 import BaseSelect from '@/Components/Selects/BaseSelect.vue'
 import ErrorsByRound from '@/Components/Charts/ErrorsByRound.vue'
 
@@ -156,7 +157,7 @@ export default {
   data() {
     return {
       routes: {
-        fetch: '/admin/errors/summary',
+        fetch: '/events/errors',
       },
       columns: [
         {
@@ -217,8 +218,14 @@ export default {
     }
   },
 
+  computed: {
+    isGameAdmin() {
+      return this.$page.props.auth?.user?.game_admin_id
+    }
+  },
+
   created() {
-    this.errors = this.$attrs.initial.data.length ? this.$attrs.initial.data : []
+    this.errors = this.$attrs?.initial?.data.length ? this.$attrs.initial.data : []
   },
 
   methods: {

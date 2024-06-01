@@ -427,6 +427,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    fetchOnLoad: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -542,7 +546,9 @@ export default {
   },
 
   mounted() {
-    this.loadUrlParams()
+    if (!this.loadUrlParams()) {
+      if (this.fetchOnLoad) this.updateTable()
+    }
     this.$emit('loaded', { filters: this.filters })
   },
 
@@ -606,7 +612,9 @@ export default {
       if (!isEqual(this.filters, newFilters)) {
         this.settingFiltersFromUrl = true
         this.filters = merge(this.filters, newFilters)
+        return true
       }
+      return false
     },
 
     setUrlParams() {

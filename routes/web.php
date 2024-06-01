@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\AntagsController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
+use App\Http\Controllers\Web\ErrorsController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\GameServersController;
@@ -87,6 +88,10 @@ Route::prefix('/events')->group(function () {
     Route::controller(AntagsController::class)->prefix('/antags')->group(function () {
         Route::get('/', 'index')->name('antags.index')->breadcrumb('Antagonists');
         Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->breadcrumb('', 'antags.index');
+    });
+
+    Route::controller(ErrorsController::class)->prefix('/errors')->group(function () {
+        Route::get('/', 'index')->name('errors.index')->breadcrumb('Errors');
     });
 });
 
