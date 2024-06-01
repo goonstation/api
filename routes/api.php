@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\PollsController;
 use App\Http\Controllers\Api\RandomEntriesController;
 use App\Http\Controllers\Api\RedirectsController;
 use App\Http\Controllers\Api\RemoteMusicController;
+use App\Http\Controllers\Api\ServerPerformanceController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\VpnChecksController;
 use App\Http\Controllers\Api\VpnWhitelistController;
@@ -168,5 +169,8 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(DectalkController::class)->prefix('dectalk')->group(function () {
         Route::post('/play', 'play');
+    });
+    Route::controller(ServerPerformanceController::class)->prefix('server-performance')->group(function () {
+        Route::get('/', 'index');
     });
 });
