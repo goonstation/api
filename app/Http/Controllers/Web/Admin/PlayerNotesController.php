@@ -72,6 +72,9 @@ class PlayerNotesController extends Controller
             $request = $request->merge([
                 'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
             ]);
+            if ($request->input('server_id') === 'all') {
+                $request->merge(['server_id' => null]);
+            }
             $this->updateNote($request, $note);
         } catch (\Exception $e) {
             return Redirect::back()->withErrors(['error' => $e->getMessage()]);
