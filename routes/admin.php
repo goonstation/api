@@ -84,6 +84,9 @@ Route::middleware([
             Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
             Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
+
+            Route::get('/remove', 'showRemoveDetails')->name('admin.bans.show-remove-details')->breadcrumb('', 'admin.bans.index');
+            Route::post('/remove', 'lookupDetails')->name('admin.bans.lookup-details');
         });
 
         Route::controller(JobBansController::class)->prefix('job-bans')->group(function () {

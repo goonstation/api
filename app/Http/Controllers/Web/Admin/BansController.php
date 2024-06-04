@@ -241,4 +241,50 @@ class BansController extends Controller
 
         return ['message' => 'Ban detail removed'];
     }
+
+    public function showRemoveDetails(Request $request)
+    {
+        return Inertia::render('Admin/Bans/RemoveDetails');
+    }
+
+    public function lookupDetails(Request $request)
+    {
+        $data = $this->validate($request, [
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
+        ]);
+
+        $conditions = function($query) use ($data)
+        {
+            $query->where(function ($q) use ($data) {
+                if (isset($data['ckey']) && $data['ckey']) {
+                    $q->orWhere('ckey', $data['ckey']);
+                }
+                if (isset($data['comp_id']) && $data['comp_id']) {
+                    $q->orWhere('comp_id', $data['comp_id']);
+                }
+                if (isset($data['ip']) && $data['ip']) {
+                    $q->orWhere('ip', $data['ip']);
+                }
+            });
+        };
+
+        $bans = Ban::with([
+            'details' => $conditions,
+            'originalBanDetail',
+            'gameAdmin',
+            'gameServer',
+        ])
+            ->withCount('details')
+            ->whereHas('details', $conditions)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // return to_route('admin.bans.show-remove-details')->with(['lookup' => $details]);
+        return Inertia::render('Admin/Bans/RemoveDetails', [
+            'lookup' => $bans,
+            'lookupFields' => $data,
+        ]);
+    }
 }

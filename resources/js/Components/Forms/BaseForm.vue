@@ -24,7 +24,7 @@ export default {
     },
     successMessage: {
       type: String,
-      required: true,
+      required: false,
     },
   },
 
@@ -46,10 +46,12 @@ export default {
       this.form.submit(this.submitMethod, this.submitRoute, {
         onSuccess: () => {
           this.$emit('success')
-          this.$q.notify({
-            message: this.successMessage,
-            color: 'positive',
-          })
+          if (this.successMessage) {
+            this.$q.notify({
+              message: this.successMessage,
+              color: 'positive',
+            })
+          }
         },
         onError: (errors) => {
           const error = errors.error || 'An error occurred, please try again.'
