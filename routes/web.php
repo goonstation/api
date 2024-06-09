@@ -36,9 +36,9 @@ if (! config('goonhub.include_frontend')) {
     return;
 }
 
-Route::domain('play2.' . env('APP_URL'))->group(function () {
+Route::domain('play2.goonhub.com')->group(function () {
     Route::controller(PlayController::class)->prefix('/')->group(function () {
-        Route::get('/{serverId}', 'index')->name('play');
+        Route::get('/{serverId?}', 'index')->name('play');
     });
 });
 

@@ -10,7 +10,10 @@ class PlayController extends Controller
 {
     public function index(Request $request, string $serverId)
     {
-        $gameServer = GameServer::where('server_id', $serverId)->where('active', true)->first();
+        $gameServer = null;
+        if ($serverId) {
+            $gameServer = GameServer::where('server_id', $serverId)->where('active', true)->first();
+        }
 
         if (!$gameServer) {
             $gameServer = GameServer::where('active', true)->first();
