@@ -37,7 +37,7 @@ class Map extends Model
             ->where('is_layer', false)
             ->where('admin_only', false)
             ->firstOrFail();
-        $map->thumb_path = 'storage/maps/'.strtolower($map->map_id).'/thumb.png';
+        $map->thumb_path = storage_path('app/public/maps/'.strtolower($map->map_id).'/thumb.png');
         return $map;
     }
 }
