@@ -36,7 +36,7 @@ if (! config('goonhub.include_frontend')) {
     return;
 }
 
-Route::domain('play2.goonhub.com')->group(function () {
+Route::domain('play2.'.preg_replace('(^https?://)', '', config('app.url')))->group(function () {
     Route::controller(PlayController::class)->prefix('/')->group(function () {
         Route::get('/{serverId?}', 'index')->name('play')->withoutMiddleware('web');
     });
