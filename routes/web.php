@@ -43,7 +43,7 @@ Route::domain('play2.' . env('APP_URL'))->group(function () {
 });
 
 Route::controller(OgImageController::class)->prefix('/og-image')->group(function () {
-    Route::get('/{type}/{id}', 'index')->whereAlpha('type')->whereNumber('id')->name('og-image');
+    Route::get('/{type}/{id}', 'index')->whereAlpha('type')->whereNumber('id')->name('og-image')->withoutMiddleware('web');
     Route::get('/preview/{type}/{id}', 'preview')->whereAlpha('type')->whereNumber('id')->name('og-image-preview')->middleware([EnsureUserIsAdmin::class]);
 });
 
