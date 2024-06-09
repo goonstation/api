@@ -201,6 +201,7 @@ return [
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
 
+        App\Providers\OpenGraphImageProvider::class,
     ],
 
     /*
@@ -217,6 +218,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'OpenGraphImage' => App\Facades\OpenGraphImage::class,
     ])->toArray(),
 
 ];

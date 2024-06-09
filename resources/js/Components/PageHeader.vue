@@ -10,7 +10,7 @@
         class="q-mr-md q-mr-md-xl"
       />
       <page-back class="q-mr-sm" />
-      {{ title }}
+      {{ niceTitle }}
     </span>
   </q-header>
 </template>
@@ -112,5 +112,16 @@ export default {
       ionChevronBackCircle,
     }
   },
+
+  computed: {
+    niceTitle() {
+      if (this.title) {
+        return this.title.replace(/#(\d+)?/g, (match, contents) => {
+          return '#' + this.$formats.number(contents)
+        })
+      }
+      return ''
+    },
+  }
 }
 </script>

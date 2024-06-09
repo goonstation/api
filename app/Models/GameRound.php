@@ -14,13 +14,14 @@ use App\Models\Events\EventGauntletHighScore;
 use App\Models\Events\EventLog;
 use App\Models\Events\EventStationName;
 use App\Models\Events\EventTicket;
+use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GameRound extends Model
 {
-    use Filterable, HasFactory;
+    use Filterable, HasFactory, HasOpenGraphData;
 
     protected $casts = [
         'ended_at' => 'datetime',
@@ -133,5 +134,18 @@ class GameRound extends Model
     public function errors()
     {
         return $this->hasMany(EventError::class, 'round_id');
+    }
+
+    public static function getOpenGraphData(int $id)
+    {
+        return self::with([
+                'server',
+                'latestStationName',
+                'mapRecord'
+            ])
+            ->where('id', $id)
+            ->where('ended_at', '!=', null)
+            ->whereRelation('server', 'invisible', '!=', true)
+            ->firstOrFail();
     }
 }

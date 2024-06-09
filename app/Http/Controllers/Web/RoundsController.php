@@ -25,6 +25,8 @@ class RoundsController extends Controller
             perPage: 30
         );
 
+        $this->setMeta(title: 'Rounds');
+
         if ($this->wantsInertia()) {
             return Inertia::render('Rounds/Index', [
                 'rounds' => $rounds,
@@ -54,6 +56,11 @@ class RoundsController extends Controller
             ->where('ended_at', '!=', null)
             ->whereRelation('server', 'invisible', '!=', true)
             ->findOrFail($round);
+
+        $this->setMeta(
+            title: 'Round #' . number_format($gameRound->id),
+            image: ['type' => 'round', 'key' => $gameRound->id]
+        );
 
         return Inertia::render('Rounds/Show', [
             'round' => $gameRound,

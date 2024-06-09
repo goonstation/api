@@ -27,6 +27,7 @@
         "dayjs": "^1.11.10",
         "leaflet": "^1.9.4",
         "pastel-color": "^1.0.3",
+        "puppeteer": "^22.10.0",
         "quasar": "^2.14.0",
         "resumablejs": "^1.1.0",
         "trendline": "^1.0.0",

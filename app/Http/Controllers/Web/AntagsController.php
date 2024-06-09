@@ -32,6 +32,8 @@ class AntagsController extends Controller
             perPage: 20
         );
 
+        $this->setMeta(title: 'Antagonists');
+
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Antags/Index', [
                 'antags' => $antags,
@@ -60,6 +62,11 @@ class AntagsController extends Controller
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();
+
+        $this->setMeta(
+            title: 'Antagonist #' . number_format($antag->id),
+            image: ['type' => 'antag', 'key' => $antag->id]
+        );
 
         return Inertia::render('Events/Antags/Show', [
             'antag' => $antag,

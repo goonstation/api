@@ -94,6 +94,7 @@ class ErrorsController extends Controller
 
         $errors = $errors->simplePaginateFilter(987654321);
 
+        $this->setMeta(title: 'Errors');
         if ($this->wantsInertia($request)) {
             return Inertia::render('Events/Errors/Index', [
                 'errors' => $errors,

@@ -39,6 +39,8 @@ class DeathsController extends Controller
             perPage: 20
         );
 
+        $this->setMeta(title: 'Deaths');
+
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Deaths/Index', [
                 'deaths' => $deaths,
@@ -72,6 +74,11 @@ class DeathsController extends Controller
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();
+
+        $this->setMeta(
+            title: 'Death #' . number_format($death->id),
+            image: ['type' => 'death', 'key' => $death->id]
+        );
 
         return Inertia::render('Events/Deaths/Show', [
             'death' => $death,

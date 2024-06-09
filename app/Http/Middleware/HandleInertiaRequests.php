@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -27,6 +28,35 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
+     * Build a meta data object with defaults
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function getMetaData(Request $request): array
+    {
+        return [
+            'title' => function () use ($request) {
+                $title = $request->session()->get('meta_title');
+                if ($title) $title .= ' - ' . config('app.name');
+                else $title = config('app.name');
+                return $title;
+            },
+            'description' => function () use ($request) {
+                $description = $request->session()->get('meta_description');
+                if (!$description) $description = 'Dive into the world of Space Station 13\'s Goonstation branch with Goonhub. Get access to comprehensive statistics and stay up-to-date with the latest developments.';
+                return $description;
+            },
+            'image' => function () use ($request) {
+                $image = $request->session()->get('meta_image');
+                if (!$image) $image = asset('/storage/img/og.png');
+                return $image;
+            },
+            'url' => url()->current(),
+        ];
+    }
+
+    /**
      * Defines the props that are shared by default.
      *
      * @see https://inertiajs.com/shared-data
@@ -44,6 +74,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'message' => fn () => $request->session()->get('message'),
             ],
+            'meta' => $this->getMetaData($request),
         ]);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <Head :title="title" />
+  <app-head :title="title" />
 
   <div class="page-wrapper flex items-center justify-center q-pa-md">
     <slot />
@@ -13,11 +13,11 @@
 </style>
 
 <script>
-import { Head } from '@inertiajs/vue3'
+import AppHead from '@/Components/AppHead.vue'
 
 export default {
   components: {
-    Head
+    AppHead
   },
 
   props: {

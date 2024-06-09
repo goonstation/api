@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\GameServersController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
+use App\Http\Controllers\Web\OgImageController;
 use App\Http\Controllers\Web\PlayController;
 use App\Http\Controllers\Web\PlayersController;
 use App\Http\Controllers\Web\RedirectController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TerminalController;
 use App\Http\Controllers\Web\TicketsController;
 use App\Http\Controllers\Web\VotesController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +40,11 @@ Route::domain('play2.' . env('APP_URL'))->group(function () {
     Route::controller(PlayController::class)->prefix('/')->group(function () {
         Route::get('/{serverId}', 'index')->name('play');
     });
+});
+
+Route::controller(OgImageController::class)->prefix('/og-image')->group(function () {
+    Route::get('/{type}/{id}', 'index')->whereAlpha('type')->whereNumber('id')->name('og-image');
+    Route::get('/preview/{type}/{id}', 'preview')->whereAlpha('type')->whereNumber('id')->name('og-image-preview')->middleware([EnsureUserIsAdmin::class]);
 });
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
