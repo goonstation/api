@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PlayController extends Controller
 {
-    public function index(Request $request, string $serverId)
+    public function index(Request $request, string $serverId = null)
     {
         $gameServer = null;
         if ($serverId) {

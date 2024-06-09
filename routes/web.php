@@ -38,9 +38,9 @@ if (! config('goonhub.include_frontend')) {
 
 Route::domain('play2.goonhub.com')->group(function () {
     Route::controller(PlayController::class)->prefix('/')->group(function () {
-        Route::get('/{serverId?}', 'index')->name('play');
+        Route::get('/{serverId?}', 'index')->name('play')->withoutMiddleware('web');
     });
-})->withoutMiddleware('web');
+});
 
 Route::controller(OgImageController::class)->prefix('/og-image')->group(function () {
     Route::get('/{type}/{id}', 'index')->whereAlpha('type')->whereNumber('id')->name('og-image')->withoutMiddleware('web');
