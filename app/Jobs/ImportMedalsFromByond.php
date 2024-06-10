@@ -88,6 +88,10 @@ class ImportMedalsFromByond implements ShouldQueue
             ];
         });
 
+        var_dump($medals);
+        echo "Done!\n";
+        return;
+
         echo "Inserting medal data into database\n";
         foreach ($medals as $medalData) {
             $medal = Medal::updateOrCreate(
