@@ -1,5 +1,5 @@
 <template>
-  <q-timeline color="primary">
+  <q-timeline color="primary" class="q-my-none">
     <q-timeline-entry>
       <ban-lookup-form :fields="fields" :submit-route="route('admin.bans.lookup-details')" />
     </q-timeline-entry>
@@ -64,7 +64,8 @@
               color="primary"
               text-color="black"
               :disabled="!details.length"
-              :loading="false"
+              :loading="loading"
+              @click="submit"
             />
           </div>
         </q-card-section>
@@ -74,6 +75,7 @@
 </template>
 
 <script>
+import { router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import BanLookupForm from '@/Components/Forms/BanLookupForm.vue'
 import BanRemovalPlan from './Partials/BanRemovalPlan.vue'
@@ -104,6 +106,7 @@ export default {
         deleteDetails: 0,
         editDetails: 0,
       },
+      loading: false,
     }
   },
 
@@ -133,6 +136,27 @@ export default {
       this.totals = data
       this.details = [...deleting, ...editing]
     },
+
+    async submit() {
+      this.loading = true
+      try {
+        const response = await axios.post(route('admin.bans.remove-lookup-details'), {
+          details: this.details,
+          fields: this.lookupFields,
+        })
+        this.$q.notify({
+          message: response.data.message || 'Ban details successfully removed.',
+          color: 'positive',
+        })
+        router.visit(route('admin.bans.index'))
+      } catch (e) {
+        this.$q.notify({
+          message: e.response.data.message || 'Failed to remove ban details, please try again.',
+          color: 'negative',
+        })
+      }
+      this.loading = false
+    }
   },
 }
 </script>

@@ -244,7 +244,21 @@ class BansController extends Controller
 
     public function showRemoveDetails(Request $request)
     {
-        return Inertia::render('Admin/Bans/RemoveDetails');
+        $data = [
+            'lookupFields' => [
+                'ckey' => $request->input('ckey', null),
+                'comp_id' => $request->input('comp_id', null),
+                'ip' => $request->input('ip', null),
+            ]
+        ];
+
+        $session = $request->session();
+        if ($session->has('lookup') && $session->has('lookupFields')) {
+            $data['lookup'] = $session->get('lookup');
+            $data['lookupFields'] = $session->get('lookupFields');
+        }
+
+        return Inertia::render('Admin/Bans/RemoveDetails', $data);
     }
 
     public function lookupDetails(Request $request)
@@ -281,10 +295,63 @@ class BansController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        // return to_route('admin.bans.show-remove-details')->with(['lookup' => $details]);
-        return Inertia::render('Admin/Bans/RemoveDetails', [
-            'lookup' => $bans,
+        $bans = $bans->where('active', true);
+
+        return redirect(route('admin.bans.show-remove-details'))->with([
+            'lookup' => [...$bans],
             'lookupFields' => $data,
         ]);
+    }
+
+    public function removeLookupDetails(Request $request)
+    {
+        $data = $this->validate($request, [
+            'details' => 'required|array',
+            'fields' => 'required|array',
+            'fields.ckey' => 'nullable|string',
+            'fields.comp_id' => 'nullable|string',
+            'fields.ip' => 'nullable|ip',
+        ]);
+
+        foreach ($data['details'] as $detailId) {
+            $banDetail = BanDetail::where('id', $detailId)->first();
+            $willHave = [
+                'ckey' => !!$banDetail->ckey,
+                'comp_id' => !!$banDetail->comp_id,
+                'ip' => !!$banDetail->ip,
+            ];
+
+            if ($data['fields']['ckey'] === $banDetail->ckey) $willHave['ckey'] = false;
+            if ($data['fields']['comp_id'] === $banDetail->comp_id) $willHave['comp_id'] = false;
+            if ($data['fields']['ip'] === $banDetail->ip) $willHave['ip'] = false;
+
+            $deleting = empty(array_filter(array_values($willHave), 'strlen'));
+
+            if ($deleting) {
+                // Deleting ban detail
+                $ban = Ban::where('id', $banDetail->ban_id)
+                    ->with('originalBanDetail')
+                    ->first();
+
+                if ($ban->originalBanDetail->id === $banDetail->id) {
+                    // This ban detail is the original ban detail for this ban
+                    // So delete the actual ban record too
+                    $ban->deleted_by = Auth::user()->gameAdmin->id;
+                    $ban->save();
+                    $ban->delete();
+                }
+
+                $banDetail->delete();
+
+            } else {
+                // Editing ban detail
+                if (!$willHave['ckey']) $banDetail->ckey = null;
+                if (!$willHave['comp_id']) $banDetail->comp_id = null;
+                if (!$willHave['ip']) $banDetail->ip = null;
+                $banDetail->save();
+            }
+        }
+
+        return true;
     }
 }

@@ -2,8 +2,10 @@
   <q-splitter v-model="splitter">
     <template v-slot:before>
       <q-tree
+        ref="tree"
         v-model:ticked="ticked"
         v-model:selected="selected"
+        v-model:expanded="expanded"
         :nodes="nodes"
         @update:selected="onSelect"
         class="q-pa-sm"
@@ -76,6 +78,7 @@ export default {
       splitter: 50,
       nodes: [],
       ticked: [],
+      expanded: [],
       selected: null,
       selectedBan: null,
       selectedDetail: null,
@@ -138,6 +141,9 @@ export default {
       handler() {
         this.buildNodes()
         this.buildTicked()
+        this.buildExpanded()
+        this.selectedBan = null
+        this.selectedDetail = null
       },
     },
 
@@ -212,6 +218,10 @@ export default {
 
     buildTicked() {
       this.ticked = this.plan.deleteDetails.concat(this.plan.editDetails)
+    },
+
+    buildExpanded() {
+      this.expanded = this.bans.map((ban) => ban.id)
     },
 
     onSelect(id) {

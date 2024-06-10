@@ -4,7 +4,17 @@
       <div class="gh-card__header q-pa-md bordered">
         <span>Lookup Details</span>
       </div>
-      <q-card-section style="max-width: 500px;">
+      <q-card-section style="max-width: 500px">
+        <q-banner class="bg-grey-10 q-py-sm q-px-md q-mb-lg" dense>
+          <template v-slot:avatar>
+            <q-icon :name="ionInformationCircleOutline" color="primary" size="md" class="q-mt-xs" />
+          </template>
+          <div>
+            This tool allows you to lookup bans that contain <strong>ANY</strong> of the provided
+            details for the purposes of removing those details from all ban records.
+          </div>
+        </q-banner>
+
         <q-input
           v-model="form.ckey"
           label="Ckey"
@@ -48,6 +58,7 @@
 </template>
 
 <script>
+import { ionInformationCircleOutline } from '@quasar/extras/ionicons-v6'
 import BaseForm from './BaseForm.vue'
 import BaseSelect from '@/Components/Selects/BaseSelect.vue'
 
@@ -56,6 +67,12 @@ export default {
 
   components: {
     BaseSelect,
+  },
+
+  setup() {
+    return {
+      ionInformationCircleOutline,
+    }
   },
 }
 </script>
