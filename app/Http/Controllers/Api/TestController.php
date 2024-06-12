@@ -13,7 +13,7 @@ class TestController extends Controller
     public function index(Request $request)
     {
         return response()->json([
-            'Test' => 'This is a test',
+            'message' => 'This is a test',
         ]);
     }
 }
