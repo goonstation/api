@@ -29,7 +29,9 @@ class SanctumApi
 
         if (hash('sha256', $token) === $instance->token) {
             if ($user = \App\Models\User::find($instance->tokenable_id)) {
-                Auth::setUser($user);
+                $request->setUserResolver(function () use ($user) {
+                    return $user;
+                });
                 return $next($request);
             }
         }
