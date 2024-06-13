@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('ping', function () {
+    return response()->json('pong');
+});
+
 Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     Route::get('test', [TestController::class, 'index']);
 
