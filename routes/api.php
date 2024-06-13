@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
+Route::middleware(['apiauth', 'isadmin'])->group(function () {
     Route::get('test', [TestController::class, 'index']);
 
     Route::controller(GameRoundsController::class)->prefix('rounds')->group(function () {
