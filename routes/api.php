@@ -89,8 +89,10 @@ Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
     });
     Route::controller(PlayerMedalsController::class)->prefix('players/medals')->group(function () {
         Route::get('/', 'index');
-        Route::get('/{player}', 'show');
+        // Route::get('/{player}', 'show');
+        Route::get('/has/{player}', 'has');
         Route::post('/', 'store');
+        Route::post('/transfer', 'transfer');
         Route::delete('/', 'destroy');
     });
     Route::controller(BansController::class)->prefix('bans')->group(function () {

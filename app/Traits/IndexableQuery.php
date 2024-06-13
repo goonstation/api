@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 trait IndexableQuery
 {
@@ -34,8 +35,14 @@ trait IndexableQuery
             );
 
         if ($paginate) {
-            // $query = $query->simplePaginateFilter(min((int) $request->input('per_page', $perPage), 100));
-            $query = $query->paginateFilter(min((int) $request->input('per_page', $perPage), 100));
+            $maxPerPage = 100;
+            $perPage = (int) $request->input('per_page', $perPage);
+            if ($perPage > $maxPerPage && ! Auth::user()?->is_admin) {
+                $perPage = $maxPerPage;
+            }
+
+            // $query = $query->simplePaginateFilter($perPage);
+            $query = $query->paginateFilter($perPage);
         }
 
         return $query;
