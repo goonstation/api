@@ -29,6 +29,7 @@ class MapsController extends Controller
             $maps = $maps->where('admin_only', false);
         }
 
+        $this->setMeta(title: 'Maps');
         return Inertia::render('Maps/Index', [
             'maps' => $maps->get(),
         ]);
@@ -54,6 +55,10 @@ class MapsController extends Controller
         }
 
         $map = $map->firstOrFail();
+        $this->setMeta(
+            title: $map->name,
+            image: ['type' => 'map', 'key' => $map->id]
+        );
         return Inertia::render('Maps/Show', [
             'map' => $map,
         ]);
@@ -67,6 +72,6 @@ class MapsController extends Controller
         }
 
         $file = storage_path('app/private-maps/' . $path);
-        return response()->download($file);
+        return response()->file($file);
     }
 }

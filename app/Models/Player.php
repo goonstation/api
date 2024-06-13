@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Models\Events\EventDeath;
+use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
-    use Filterable, HasFactory;
+    use Filterable, HasFactory, HasOpenGraphData;
 
     protected $fillable = [
         'id',
@@ -106,5 +107,28 @@ class Player extends Model
     public function medals()
     {
         return $this->hasManyThrough(Medal::class, PlayerMedal::class);
+    }
+
+    public static function getOpenGraphData(int $id)
+    {
+        $player = self::with([
+                'playtime',
+                'firstConnection'
+            ])
+            ->withCount([
+                'participations',
+                'participationsRp',
+                'deaths'
+            ])
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $totalSecondsPlayed = 0;
+        foreach ($player->playtime as $playtime) {
+            $totalSecondsPlayed += $playtime->seconds_played;
+        }
+        $player->hours_played = $totalSecondsPlayed / 3600;
+
+        return $player;
     }
 }

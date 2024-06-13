@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GameServer;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GameServersController extends Controller
 {
@@ -18,7 +19,7 @@ class GameServersController extends Controller
         ]);
 
         $query = GameServer::where('invisible', false);
-        if (isset($data['with_invisible']) && $data['with_invisible']) {
+        if (isset($data['with_invisible']) && $data['with_invisible'] && Auth::user()?->game_admin_id) {
             $query = $query->orWhere('invisible', true);
         }
 

@@ -44,7 +44,11 @@ class BansController extends Controller
         $bans = $this->indexQuery(
             Ban::withTrashed()
                 ->withCount(['details'])
-                ->with(['originalBanDetail', 'gameAdmin', 'gameServer'])
+                ->with([
+                    'originalBanDetail',
+                    'gameAdmin',
+                    'gameServer'
+                ])
                 ->where('deleted_at', '!=', null)
                 ->orWhere('expires_at', '<=', Carbon::now()),
             perPage: 30);
@@ -185,10 +189,17 @@ class BansController extends Controller
 
     public function getDetails(Request $request)
     {
-        return BanDetail::withTrashed()
+        $details = BanDetail::withTrashed()
             ->where('ban_id', $request->input('ban_id'))
             ->orderBy('id', 'desc')
             ->get();
+
+        $originalDetail = $details->last();
+        $details = $details->filter(function (BanDetail $detail) use ($originalDetail) {
+            return ! $detail->trashed() || $detail->id === $originalDetail->id;
+        });
+
+        return $details->values();
     }
 
     public function storeDetail(Request $request, Ban $ban)
@@ -208,10 +219,139 @@ class BansController extends Controller
         return ['data' => $banDetail];
     }
 
+    public function updateDetail(Request $request, BanDetail $banDetail)
+    {
+        $data = $this->validate($request, [
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
+        ]);
+
+        $banDetail->ckey = isset($data['ckey']) ? $data['ckey'] : null;
+        $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
+        $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
+        $banDetail->save();
+
+        return ['data' => $banDetail];
+    }
+
     public function destroyDetail(BanDetail $banDetail)
     {
         $banDetail->delete();
 
         return ['message' => 'Ban detail removed'];
+    }
+
+    public function showRemoveDetails(Request $request)
+    {
+        $data = [
+            'lookupFields' => [
+                'ckey' => $request->input('ckey', null),
+                'comp_id' => $request->input('comp_id', null),
+                'ip' => $request->input('ip', null),
+            ]
+        ];
+
+        $session = $request->session();
+        if ($session->has('lookup') && $session->has('lookupFields')) {
+            $data['lookup'] = $session->get('lookup');
+            $data['lookupFields'] = $session->get('lookupFields');
+        }
+
+        return Inertia::render('Admin/Bans/RemoveDetails', $data);
+    }
+
+    public function lookupDetails(Request $request)
+    {
+        $data = $this->validate($request, [
+            'ckey' => 'required_without_all:comp_id,ip|nullable',
+            'comp_id' => 'required_without_all:ckey,ip|nullable',
+            'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
+        ]);
+
+        $conditions = function($query) use ($data)
+        {
+            $query->where(function ($q) use ($data) {
+                if (isset($data['ckey']) && $data['ckey']) {
+                    $q->orWhere('ckey', $data['ckey']);
+                }
+                if (isset($data['comp_id']) && $data['comp_id']) {
+                    $q->orWhere('comp_id', $data['comp_id']);
+                }
+                if (isset($data['ip']) && $data['ip']) {
+                    $q->orWhere('ip', $data['ip']);
+                }
+            });
+        };
+
+        $bans = Ban::with([
+            'details' => $conditions,
+            'originalBanDetail',
+            'gameAdmin',
+            'gameServer',
+        ])
+            ->withCount('details')
+            ->whereHas('details', $conditions)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $bans = $bans->where('active', true);
+
+        return redirect(route('admin.bans.show-remove-details'))->with([
+            'lookup' => [...$bans],
+            'lookupFields' => $data,
+        ]);
+    }
+
+    public function removeLookupDetails(Request $request)
+    {
+        $data = $this->validate($request, [
+            'details' => 'required|array',
+            'fields' => 'required|array',
+            'fields.ckey' => 'nullable|string',
+            'fields.comp_id' => 'nullable|string',
+            'fields.ip' => 'nullable|ip',
+        ]);
+
+        foreach ($data['details'] as $detailId) {
+            $banDetail = BanDetail::where('id', $detailId)->first();
+            $willHave = [
+                'ckey' => !!$banDetail->ckey,
+                'comp_id' => !!$banDetail->comp_id,
+                'ip' => !!$banDetail->ip,
+            ];
+
+            if ($data['fields']['ckey'] === $banDetail->ckey) $willHave['ckey'] = false;
+            if ($data['fields']['comp_id'] === $banDetail->comp_id) $willHave['comp_id'] = false;
+            if ($data['fields']['ip'] === $banDetail->ip) $willHave['ip'] = false;
+
+            $deleting = empty(array_filter(array_values($willHave), 'strlen'));
+
+            if ($deleting) {
+                // Deleting ban detail
+                $ban = Ban::where('id', $banDetail->ban_id)
+                    ->with('originalBanDetail')
+                    ->first();
+
+                if ($ban->originalBanDetail->id === $banDetail->id) {
+                    // This ban detail is the original ban detail for this ban
+                    // So delete the actual ban record too
+                    $ban->deleted_by = Auth::user()->gameAdmin->id;
+                    $ban->save();
+                    $ban->delete();
+                }
+
+                $banDetail->delete();
+
+            } else {
+                // Editing ban detail
+                if (!$willHave['ckey']) $banDetail->ckey = null;
+                if (!$willHave['comp_id']) $banDetail->comp_id = null;
+                if (!$willHave['ip']) $banDetail->ip = null;
+                $banDetail->save();
+            }
+        }
+
+        return true;
     }
 }

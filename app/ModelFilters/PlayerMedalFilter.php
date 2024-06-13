@@ -27,6 +27,13 @@ class PlayerMedalFilter extends ModelFilter
         return $this->where('player_id', $val);
     }
 
+    public function ckey($val)
+    {
+        return $this->whereHas('player', function ($query) use ($val) {
+            return $query->where('ckey', $val);
+        });
+    }
+
     public function medal($val)
     {
         return $this->where('player_id', $val);

@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\BansController;
+use App\Http\Controllers\Web\Admin\DashboardController;
+use App\Http\Controllers\Web\Admin\ErrorsController;
 use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
+use App\Http\Controllers\Web\Admin\GameAuthCallbackController;
 use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
@@ -12,21 +15,20 @@ use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
 use App\Http\Controllers\Web\Admin\RoundsController;
 use App\Http\Controllers\Web\Admin\UsersController;
+use App\Http\Middleware\CanAccessAdminRoutes;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Middleware\EnsureUserIsGameAdmin;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
+        Route::get('/', 'index')->name('dashboard');
+    });
 
-    Route::prefix('/admin')->middleware([EnsureUserIsGameAdmin::class])->group(function () {
+    Route::prefix('/admin')->middleware([CanAccessAdminRoutes::class])->group(function () {
         Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
             Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
             Route::get('/create', 'create')->name('admin.users.create')->breadcrumb('', 'admin.users.index');
@@ -73,6 +75,7 @@ Route::middleware([
             Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')->breadcrumb('Bans');
             Route::get('/details', 'getDetails')->name('admin.bans.get-details');
             Route::post('/details/{ban}', 'storeDetail')->whereNumber('ban')->name('admin.bans.store-detail');
+            Route::put('/details/{banDetail}', 'updateDetail')->whereNumber('banDetail')->name('admin.bans.update-detail');
             Route::delete('/details/{banDetail}', 'destroyDetail')->whereNumber('banDetail')->name('admin.bans.destroy-detail');
             Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
             Route::get('/{ban}', 'show')->whereNumber('ban')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
@@ -81,6 +84,10 @@ Route::middleware([
             Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
             Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
+
+            Route::get('/remove', 'showRemoveDetails')->name('admin.bans.show-remove-details')->breadcrumb('', 'admin.bans.index');
+            Route::post('/remove/lookup', 'lookupDetails')->name('admin.bans.lookup-details');
+            Route::post('/remove', 'removeLookupDetails')->name('admin.bans.remove-lookup-details');
         });
 
         Route::controller(JobBansController::class)->prefix('job-bans')->group(function () {
@@ -132,6 +139,18 @@ Route::middleware([
                 ->name('admin.logs.get-logs');
         });
 
+        Route::controller(ErrorsController::class)->prefix('errors')->group(function () {
+            Route::get('/', 'index')->name('admin.errors.index')->breadcrumb('Errors');
+            Route::get('/summary', 'summary')->name('admin.errors.summary')->breadcrumb('Errors');
+            Route::get('/{gameRound}', 'show')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.show')
+                ->breadcrumb('', 'admin.errors.index');
+            Route::get('/get-errors/{gameRound}', 'getErrors')
+                ->whereNumber('gameRound')
+                ->name('admin.errors.get-errors');
+        });
+
         Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {
             Route::get('/', 'index')->name('admin.redirects.index')->breadcrumb('Redirects');
             Route::get('/create', 'create')->name('admin.redirects.create')->breadcrumb('', 'admin.redirects.index');
@@ -139,6 +158,10 @@ Route::middleware([
             Route::get('/edit/{redirect}', 'edit')->whereNumber('redirect')->name('admin.redirects.edit')->breadcrumb('', 'admin.redirects.index');
             Route::put('/{redirect}', 'update')->whereNumber('redirect')->name('admin.redirects.update');
             Route::delete('/{redirect}', 'destroy')->whereNumber('redirect')->name('admin.redirects.delete');
+        });
+
+        Route::controller(GameAuthCallbackController::class)->prefix('game-auth-callback')->group(function () {
+            Route::post('/', 'informGame')->name('admin.game-auth-callback');
         });
     });
 });

@@ -28,6 +28,8 @@ class FinesController extends Controller
             perPage: 20
         );
 
+        $this->setMeta(title: 'Fines');
+
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Fines/Index', [
                 'fines' => $fines,
@@ -59,6 +61,11 @@ class FinesController extends Controller
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();
+
+        $this->setMeta(
+            title: 'Fine #' . number_format($fine->id),
+            image: ['type' => 'fine', 'key' => $fine->id]
+        );
 
         return Inertia::render('Events/Fines/Show', [
             'fine' => $fine,

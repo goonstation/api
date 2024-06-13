@@ -1,5 +1,5 @@
 <template>
-  <Head :title="map.name" />
+  <app-head :title="map.name" />
 
   <div id="map" :class="{ ground: isOnGround }"></div>
 
@@ -72,8 +72,9 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { ionArrowBack } from '@quasar/extras/ionicons-v6'
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import { copyToClipboard } from 'quasar'
+import AppHead from '@/Components/AppHead.vue'
 
 let map
 let bounds
@@ -84,7 +85,7 @@ let coordMarker = null
 
 export default {
   components: {
-    Head,
+    AppHead,
     Link,
   },
 

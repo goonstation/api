@@ -1,5 +1,5 @@
 <template>
-  <Head :title="title" />
+  <app-head :title="title" />
   <q-layout view="lhh LpR fff">
     <q-header class="bg-transparent">
       <q-toolbar class="q-pt-md">
@@ -131,20 +131,21 @@
 </style>
 
 <script>
-import { Head, router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import {
   ionMenu,
   ionChevronDown,
   ionCheckmarkCircleOutline,
   ionArrowBackCircleOutline,
 } from '@quasar/extras/ionicons-v6'
+import AppHead from '@/Components/AppHead.vue'
 import SiteNav from '@/Components/SiteNav/SiteNav.vue'
 import PageBack from '@/Components/PageBack.vue'
 import UserAvatar from '@/Components/UserAvatar.vue'
 
 export default {
   components: {
-    Head,
+    AppHead,
     SiteNav,
     PageBack,
     UserAvatar,
@@ -199,7 +200,7 @@ export default {
         },
       ]
 
-      if (!!this.user.game_admin_id) {
+      if (!!this.user.game_admin_id || !!this.user.is_admin) {
         items.push(
           {
             label: 'Admins',
@@ -248,8 +249,13 @@ export default {
               route('admin.maps.index'),
               route('admin.events.index'),
               route('admin.logs.index'),
+              route('admin.errors.index'),
             ],
             children: [
+              {
+                label: 'Errors',
+                href: route('admin.errors.index'),
+              },
               {
                 label: 'Events',
                 href: route('admin.events.index'),

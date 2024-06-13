@@ -4,17 +4,21 @@ use App\Http\Controllers\Web\AntagsController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangelogController;
 use App\Http\Controllers\Web\DeathsController;
+use App\Http\Controllers\Web\ErrorsController;
 use App\Http\Controllers\Web\EventsController;
 use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\GameServersController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
+use App\Http\Controllers\Web\OgImageController;
+use App\Http\Controllers\Web\PlayController;
 use App\Http\Controllers\Web\PlayersController;
 use App\Http\Controllers\Web\RedirectController;
 use App\Http\Controllers\Web\RoundsController;
 use App\Http\Controllers\Web\TerminalController;
 use App\Http\Controllers\Web\TicketsController;
 use App\Http\Controllers\Web\VotesController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +35,17 @@ use Illuminate\Support\Facades\Route;
 if (! config('goonhub.include_frontend')) {
     return;
 }
+
+Route::domain('play.'.preg_replace('(^https?://)', '', config('app.url')))->group(function () {
+    Route::controller(PlayController::class)->prefix('/')->group(function () {
+        Route::get('/{serverId?}', 'index')->name('play')->withoutMiddleware('web');
+    });
+});
+
+Route::controller(OgImageController::class)->prefix('/og-image')->group(function () {
+    Route::get('/{type}/{id}', 'index')->whereAlpha('type')->whereNumber('id')->name('og-image')->withoutMiddleware('web');
+    Route::get('/preview/{type}/{id}', 'preview')->whereAlpha('type')->whereNumber('id')->name('og-image-preview')->middleware([EnsureUserIsAdmin::class]);
+});
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
     Route::get('/', 'index')->name('home')->breadcrumb('Home');
@@ -81,6 +96,10 @@ Route::prefix('/events')->group(function () {
         Route::get('/', 'index')->name('antags.index')->breadcrumb('Antagonists');
         Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->breadcrumb('', 'antags.index');
     });
+
+    Route::controller(ErrorsController::class)->prefix('/errors')->group(function () {
+        Route::get('/', 'index')->name('errors.index')->breadcrumb('Errors');
+    });
 });
 
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
@@ -109,5 +128,6 @@ Route::controller(VotesController::class)->prefix('/votes')->group(function () {
     Route::post('/down', 'downVote')->name('votes.down');
 });
 
+require __DIR__.'/fortify.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/jetstream.php';

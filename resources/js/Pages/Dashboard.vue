@@ -1,5 +1,11 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import GameAuthCallback from '@/Components/GameAuthCallback.vue'
+
+const props = defineProps([
+  'authFromGame',
+  'authFromGameServer',
+])
 </script>
 
 <template>
@@ -20,5 +26,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
       class="full-width flex-grow no-border rounded-borders"
       style="min-height: 500px"
     ></iframe>
+
+    <game-auth-callback :server-id="props.authFromGame" :server="props.authFromGameServer" />
   </AdminLayout>
 </template>

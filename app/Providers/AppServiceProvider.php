@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\PersonalAccessToken;
 use App\Models\User;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->loadHelpers();
 
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
         Scramble::extendOpenApi(function (OpenApi $openApi) {
             $openApi->secure(
                 SecurityScheme::http('bearer', 'JWT')
@@ -45,7 +50,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('viewPulse', function (User $user) {
-            return !!$user->game_admin_id;
+            return !!$user->game_admin_id || !!$user->is_admin;
+        });
+
+        Blade::directive('base64img', function (string $expression) {
+            return "<?php echo 'data:image/jpeg;base64,'.base64_encode(file_get_contents($expression)); ?>";
         });
     }
 

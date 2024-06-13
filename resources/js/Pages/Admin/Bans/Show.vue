@@ -29,7 +29,7 @@
               <tr>
                 <td><strong>Ckey</strong></td>
                 <td>
-                  <Link :href="route('admin.player.show-by-ckey', ban.original_ban_detail.ckey)">
+                  <Link v-if="ban.original_ban_detail.ckey" :href="route('admin.player.show-by-ckey', ban.original_ban_detail.ckey)">
                     {{ ban.original_ban_detail.ckey }}
                   </Link>
                 </td>

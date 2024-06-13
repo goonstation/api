@@ -2,5 +2,7 @@
 !public/
 !audio/
 !map-processing/
+!icons/
+!icons/*
 !.gitignore
 !.gitkeep

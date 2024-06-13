@@ -19,15 +19,83 @@
       >
         <template v-slot:body-cell-ckey="props">
           <q-td :props="props">
-            <Link v-if="props.row.ckey" :href="route('admin.player.show-by-ckey', props.row.ckey)">
+            <q-input
+              v-if="editingItem === props.row.id"
+              v-model="editFields.ckey"
+              label="Ckey"
+              dense
+              outlined
+              clearable
+            />
+            <Link
+              v-else-if="props.row.ckey"
+              :href="route('admin.player.show-by-ckey', props.row.ckey)"
+            >
               {{ props.row.ckey }}
             </Link>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-comp_id="props">
+          <q-td :props="props">
+            <q-input
+              v-if="editingItem === props.row.id"
+              v-model="editFields.comp_id"
+              label="Computer ID"
+              dense
+              outlined
+              clearable
+            />
+            <template v-else>{{ props.row.comp_id }}</template>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-ip="props">
+          <q-td :props="props">
+            <q-input
+              v-if="editingItem === props.row.id"
+              v-model="editFields.ip"
+              label="IP"
+              dense
+              outlined
+              clearable
+            />
+            <template v-else>{{ props.row.ip }}</template>
           </q-td>
         </template>
 
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
             <q-btn
+              v-if="editingItem !== props.row.id"
+              @click="enableEditingItem(props.row)"
+              :icon="ionPencil"
+              class="q-ma-xs"
+              color="primary"
+              size="xs"
+              round
+              outline
+            />
+            <template v-else>
+              <q-btn
+                @click="editItem"
+                :icon="ionCheckmark"
+                class="q-ma-xs"
+                color="positive"
+                size="xs"
+                round
+                outline
+              />
+              <q-btn
+                @click="editingItem = null"
+                :icon="ionClose"
+                class="q-ma-xs"
+                color="negative"
+                size="xs"
+                round
+                outline
+              />
+            </template>
+            <q-btn
+              v-if="editingItem !== props.row.id"
               @click="openConfirmDelete(props.row.id)"
               :icon="ionClose"
               class="q-ma-xs"
@@ -103,6 +171,7 @@ import {
   ionAdd,
   ionRemove,
   ionCheckmark,
+  ionPencil,
 } from '@quasar/extras/ionicons-v6'
 
 export default {
@@ -113,6 +182,7 @@ export default {
       ionAdd,
       ionRemove,
       ionCheckmark,
+      ionPencil,
     }
   },
 
@@ -155,6 +225,12 @@ export default {
         comp_id: null,
         ip: null,
       },
+      editingItem: null,
+      editFields: {
+        ckey: null,
+        comp_id: null,
+        ip: null,
+      },
     }
   },
 
@@ -164,7 +240,6 @@ export default {
         return this.modelValue
       },
       set(val) {
-        console.log('in setter', val)
         this.$emit('update:modelValue', val)
       },
     },
@@ -180,6 +255,13 @@ export default {
     openConfirmDelete(id) {
       this.deletingItem = id
       this.confirmDelete = true
+    },
+
+    enableEditingItem(item) {
+      this.editingItem = item.id
+      this.editFields.ckey = item.ckey
+      this.editFields.comp_id = item.comp_id
+      this.editFields.ip = item.ip
     },
 
     async deleteItem() {
@@ -214,7 +296,6 @@ export default {
           route('admin.bans.store-detail', this.ban.id),
           this.addFields
         )
-        console.log(response)
 
         // add row
         this.ban.details.unshift(response.data.data)
@@ -233,6 +314,33 @@ export default {
 
       this.addingItem = false
     },
+
+    async editItem() {
+      try {
+        const response = await axios.put(
+          route('admin.bans.update-detail', this.editingItem),
+          this.editFields
+        )
+
+        // update row
+        const newDetail = response.data.data
+        const detailIdx = this.ban.details.findIndex((detail) => detail.id === newDetail.id)
+        this.ban.details[detailIdx] = newDetail
+
+        this.$q.notify({
+          message: 'Item successfully updated.',
+          color: 'positive',
+        })
+      } catch (e) {
+        this.$q.notify({
+          message: e.response.data.message || 'Failed to update item, please try again.',
+          color: 'negative',
+        })
+        return
+      }
+
+      this.editingItem = null
+    }
   },
 }
 </script>

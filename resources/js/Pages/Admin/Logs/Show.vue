@@ -48,9 +48,11 @@
         <q-virtual-scroll
           type="table"
           style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
-          :virtual-scroll-item-size="48"
-          :virtual-scroll-sticky-size-start="0"
-          :virtual-scroll-sticky-size-end="32"
+          :virtual-scroll-item-size="24"
+          :virtual-scroll-sticky-size-start="28"
+          :virtual-scroll-slice-size="60"
+          :virtual-scroll-slice-ratio-before="10"
+          :virtual-scroll-slice-ratio-after="10"
           :items="logs"
           flat
           dense
@@ -290,6 +292,18 @@ export default {
           }
         })
         this.filters.logTypesToShow = logTypes
+
+        // Append ckey to player element inner texts
+        const poptsRegex =
+          /(<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=(.*?)' title='Player Options'>)(.*?)(<\/a>)/g
+        for (const logIdx in this.allLogs) {
+          const logEntry = this.allLogs[logIdx]
+          if (logEntry.source)
+            logEntry.source = logEntry.source.replaceAll(poptsRegex, '$1$3 ($2)$4')
+          if (logEntry.message)
+            logEntry.message = logEntry.message.replaceAll(poptsRegex, '$1$3 ($2)$4')
+          this.allLogs[logIdx] = logEntry
+        }
 
         this.filterLogs()
       } catch (e) {

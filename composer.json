@@ -29,6 +29,8 @@
         "pion/laravel-chunk-upload": "^1.5",
         "sentry/sentry-laravel": "^4.5",
         "socialiteproviders/discord": "^4.2",
+        "spatie/browsershot": "^4.0",
+        "spatie/image-optimizer": "^1.7",
         "symfony/css-selector": "^6.3",
         "symfony/panther": "^2.1",
         "tightenco/ziggy": "^1.0",
@@ -60,7 +62,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

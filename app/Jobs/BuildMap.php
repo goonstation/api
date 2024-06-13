@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 use ZipArchive;
 
 class BuildMap implements ShouldQueue
@@ -105,6 +106,8 @@ class BuildMap implements ShouldQueue
             throw new \Exception('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
         }
 
+        $optimizerChain = OptimizerChainFactory::create();
+
         // Build a canvas and generate tiles for our map
         // The canvas is for making a thumbnail of the whole thing afterwards
         $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
@@ -125,7 +128,11 @@ class BuildMap implements ShouldQueue
                 imagecolortransparent($gdImage, $colorToRemove);
 
                 // Generate tile image
-                imagepng($gdImage, storage_path($workDirOutput."/$x,$y.png"));
+                $workPathImage = storage_path($workDirOutput."/$x,$y.png");
+                imagepng($gdImage, $workPathImage);
+
+                // Optimize image
+                $optimizerChain->optimize($workPathImage);
 
                 // Add this tile to our ongoing canvas
                 $canvas->insert(
@@ -142,6 +149,9 @@ class BuildMap implements ShouldQueue
         $canvas
             ->resize(200, 200)
             ->save(storage_path($workDirOutput.'/thumb.png'), 100);
+
+        // Optimize thumbnail
+        $optimizerChain->optimize(storage_path($workDirOutput.'/thumb.png'));
 
         // Make sure public output directory exists
         $mapUri = Str::lower($this->map->map_id);

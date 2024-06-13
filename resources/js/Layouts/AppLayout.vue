@@ -1,8 +1,8 @@
 <template>
-  <Head :title="niceTitle" />
+  <app-head :title="title" />
   <q-layout view="lhh LpR fff">
     <KeepAlive>
-      <page-header :title="niceTitle" @onToggleLeftDrawer="siteNavOpen = !siteNavOpen" />
+      <page-header :title="title" @onToggleLeftDrawer="siteNavOpen = !siteNavOpen" />
     </KeepAlive>
 
     <site-nav v-model:open="siteNavOpen" :items="siteNavItems">
@@ -58,14 +58,14 @@
 </style>
 
 <script>
-import { Head } from '@inertiajs/vue3'
 import { ionLogInOutline } from '@quasar/extras/ionicons-v6'
+import AppHead from '@/Components/AppHead.vue'
 import PageHeader from '@/Components/PageHeader.vue'
 import SiteNav from '@/Components/SiteNav/SiteNav.vue'
 
 export default {
   components: {
-    Head,
+    AppHead,
     PageHeader,
     SiteNav,
   },
@@ -123,6 +123,10 @@ export default {
               href: route('deaths.index'),
             },
             {
+              label: 'Errors',
+              href: route('errors.index'),
+            },
+            {
               label: 'Fines',
               href: route('fines.index'),
             },
@@ -138,16 +142,6 @@ export default {
         },
       ],
     }
-  },
-
-  computed: {
-    niceTitle() {
-      let title = this.title
-      title = title.replace(/#(\d+)?/g, (match, contents) => {
-        return '#' + this.$formats.number(contents)
-      })
-      return title
-    },
   },
 }
 </script>

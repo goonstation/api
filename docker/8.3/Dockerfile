@@ -46,7 +46,8 @@ RUN apt-get update \
     && apt-get install -y yarn \
     && apt-get install -y mysql-client \
     && apt-get install -y postgresql-client-$POSTGRES_VERSION \
-    && apt-get install -y ffmpeg build-essential libasound2-dev libpulse-dev lame
+    && apt-get install -y ffmpeg build-essential libasound2-dev libpulse-dev lame \
+    && apt-get install -y jpegoptim optipng pngquant gifsicle webp libavif-bin
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 

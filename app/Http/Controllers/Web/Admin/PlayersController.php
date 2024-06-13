@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ban;
+use App\Models\BanDetail;
 use App\Models\CursedCompId;
 use App\Models\GameRound;
 use App\Models\Player;
@@ -67,8 +69,14 @@ class PlayersController extends Controller
             $player->connections->pluck('ip')->unique(),
         );
 
+        $ckey = $player->ckey;
         $ips = $player->connections->pluck('ip')->unique()->values();
         $compIds = $player->connections->pluck('comp_id')->unique()->values();
+
+        $banHistory = $banHistory->map(function (Ban $ban) use ($ckey, $ips, $compIds) {
+            $ban->player_has_active_details = $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray());
+            return $ban;
+        });
 
         // Remove any cursed computer IDs (those that are known to belong to shared/common computers)
         $cursedCompIds = CursedCompId::all();
@@ -89,6 +97,8 @@ class PlayersController extends Controller
             'banHistory' => $banHistory,
             'otherAccounts' => $otherAccounts,
             'cursedCompIds' => $cursedCompIds,
+            'uniqueIps' => $ips,
+            'uniqueCompIds' => $compIds,
         ]);
     }
 
@@ -97,5 +107,18 @@ class PlayersController extends Controller
         $player = Player::where('ckey', $ckey)->firstOrFail();
 
         return redirect()->route('admin.players.show', $player->id);
+    }
+
+    private function banPlayerHasActiveDetails(Ban $ban, $ckey, $ips, $compIds)
+    {
+        /** @var BanDetail $detail */
+        foreach ($ban->details as $detail) {
+            if (!$detail->deleted_at) {
+                if ($detail->ckey === $ckey) return true;
+                if ($detail->ip && in_array($detail->ip, $ips)) return true;
+                if ($detail->comp_id && in_array($detail->comp_id, $compIds)) return true;
+            }
+        }
+        return false;
     }
 }

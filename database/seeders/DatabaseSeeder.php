@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\GameAdminRank;
 use App\Models\GameServer;
 use App\Models\Map;
 use Illuminate\Database\Seeder;
@@ -17,6 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        GameAdminRank::insert([
+            ['rank' => 'Host'],
+            ['rank' => 'Coder'],
+            ['rank' => 'Administrator'],
+            ['rank' => 'Inactive'],
+            ['rank' => 'Bot'],
+        ]);
+
         GameServer::insert([
             [
                 'server_id' => 'main1',

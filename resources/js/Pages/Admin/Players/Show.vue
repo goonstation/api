@@ -17,21 +17,46 @@
         </div>
         <q-space />
         <div>
-          <q-chip v-if="isBanned" color="negative" text-color="dark" class="text-weight-bold" square
-            >Banned</q-chip
-          >
-          <q-chip v-else color="positive" text-color="dark" class="text-weight-bold" square
-            >Not Banned</q-chip
-          >
-          <q-chip
-            v-if="player.vpn_whitelist"
-            color="info"
-            text-color="dark"
-            class="text-weight-bold"
-            square
-          >
-            VPN Whitelisted
-          </q-chip>
+          <div class="q-mb-sm">
+            <q-chip
+              v-if="isBanned"
+              color="negative"
+              text-color="dark"
+              class="text-weight-bold"
+              square
+              >Banned</q-chip
+            >
+            <q-chip v-else color="positive" text-color="dark" class="text-weight-bold" square
+              >Not Banned</q-chip
+            >
+            <q-chip
+              v-if="player.vpn_whitelist"
+              color="info"
+              text-color="dark"
+              class="text-weight-bold"
+              square
+            >
+              VPN Whitelisted
+            </q-chip>
+          </div>
+          <div class="text-right">
+            <q-btn
+              outline
+              color="primary"
+              text-color="primary"
+              @click="
+                router.visit(
+                  route('admin.bans.show-remove-details', {
+                    ckey: player.ckey,
+                    comp_id: latestConnection.comp_id,
+                    ip: latestConnection.ip,
+                  })
+                )
+              "
+              label="Unban"
+              size="sm"
+            />
+          </div>
         </div>
       </q-card-section>
 
@@ -119,7 +144,7 @@
       <q-card-section class="q-pa-none">
         <q-tab-panels v-model="banTab" animated>
           <q-tab-panel name="Ban History" class="q-pa-none">
-            <ban-history :bans="banHistory" />
+            <ban-history :bans="banHistory" :ckey="player.ckey" />
           </q-tab-panel>
           <q-tab-panel name="Job Ban History" class="q-pa-none">
             <job-ban-history :bans="player.job_bans" />
@@ -183,7 +208,7 @@ import {
   ionPeople,
   ionInformationCircleOutline,
 } from '@quasar/extras/ionicons-v6'
-import { Link } from '@inertiajs/vue3'
+import { router, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 import AddPlayerNoteDialog from '@/Components/AddPlayerNoteDialog.vue'
@@ -220,6 +245,7 @@ export default {
 
   setup() {
     return {
+      router,
       dayjs,
       ionEarth,
       ionBan,
@@ -235,6 +261,8 @@ export default {
     banHistory: Object,
     otherAccounts: Object,
     cursedCompIds: Object,
+    uniqueIps: Object,
+    uniqueCompIds: Object,
   },
 
   data() {
@@ -264,7 +292,7 @@ export default {
     isBanned() {
       let banned = false
       for (const ban of this.banHistory) {
-        if (!this.isBanExpiredOrRemoved(ban)) {
+        if (ban.active && ban.player_has_active_details) {
           banned = true
           break
         }
@@ -274,18 +302,9 @@ export default {
   },
 
   methods: {
-    isBanExpired(expiresAt) {
-      if (!expiresAt) return false
-      return new Date(expiresAt) <= new Date()
-    },
-
-    isBanExpiredOrRemoved(ban) {
-      return ban.deleted_at || this.isBanExpired(ban.expires_at)
-    },
-
     onNoteAdded(note) {
       this.player.notes.unshift(note)
-    }
+    },
   },
 }
 </script>

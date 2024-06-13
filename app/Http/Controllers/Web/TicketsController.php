@@ -28,6 +28,8 @@ class TicketsController extends Controller
             perPage: 20
         );
 
+        $this->setMeta(title: 'Tickets');
+
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Tickets/Index', [
                 'tickets' => $tickets,
@@ -58,6 +60,11 @@ class TicketsController extends Controller
             ->whereRelation('gameRound', 'ended_at', '!=', null)
             ->whereRelation('gameRound.server', 'invisible', false)
             ->firstOrFail();
+
+        $this->setMeta(
+            title: 'Ticket #' . number_format($ticket->id),
+            image: ['type' => 'ticket', 'key' => $ticket->id]
+        );
 
         return Inertia::render('Events/Tickets/Show', [
             'ticket' => $ticket,

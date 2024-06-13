@@ -4,6 +4,7 @@ namespace App\Models\Events;
 
 use App\Models\GameRound;
 use App\Models\Player;
+use App\Traits\HasOpenGraphData;
 use Awobaz\Compoships\Compoships;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventAntag extends Model
 {
-    use Compoships, Filterable, HasFactory;
+    use Compoships, Filterable, HasFactory, HasOpenGraphData;
 
     protected $table = 'events_antags';
 
@@ -47,5 +48,18 @@ class EventAntag extends Model
             ['player_id', 'round_id'],
             ['player_id', 'round_id']
         );
+    }
+
+    public static function getOpenGraphData(int $id)
+    {
+        return self::with([
+            'gameRound',
+            'gameRound.server',
+            'objectives',
+            'itemPurchases',
+        ])
+            ->where('id', $id)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->firstOrFail();
     }
 }

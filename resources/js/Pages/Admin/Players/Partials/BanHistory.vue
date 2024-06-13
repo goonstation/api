@@ -23,7 +23,7 @@
     </template>
     <template v-slot:body-cell-status="props">
       <q-td :props="props">
-        <q-badge v-if="props.row.deleted_at" color="negative"> Removed </q-badge>
+        <q-badge v-if="isBanRemoved(props.row)" color="negative"> Removed </q-badge>
         <q-badge v-else-if="isBanExpired(props.row.expires_at)" color="warning" text-color="black">
           Expired
         </q-badge>
@@ -36,6 +36,7 @@
 export default {
   props: {
     bans: Object,
+    ckey: String,
   },
 
   data() {
@@ -104,8 +105,8 @@ export default {
       return new Date(expiresAt) <= new Date()
     },
 
-    isBanExpiredOrRemoved(ban) {
-      return ban.deleted_at || this.isBanExpired(ban.expires_at)
+    isBanRemoved(ban) {
+      return !!ban.deleted_at || !ban.player_has_active_details
     },
   },
 }

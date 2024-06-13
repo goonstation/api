@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Session;
 
 class Controller extends BaseController
 {
@@ -24,5 +26,29 @@ class Controller extends BaseController
         }
 
         return $request->hasHeader('X-Inertia') || ! $request->hasHeader('X-Requested-With');
+    }
+
+    /**
+     * Set various meta data properties
+     *
+     * @param string $title
+     * @param string $description
+     * @param array $image
+     * @return void
+     * @throws BindingResolutionException
+     */
+    public function setMeta(string $title = '', string $description = '', array $image = []): void
+    {
+        if ($title) {
+            Session::now('meta_title', $title);
+        }
+
+        if ($description) {
+            Session::now('meta_description', $description);
+        }
+
+        if (isset($image['type']) && isset($image['key'])) {
+            Session::now('meta_image', route('og-image', [$image['type'], $image['key']]));
+        }
     }
 }

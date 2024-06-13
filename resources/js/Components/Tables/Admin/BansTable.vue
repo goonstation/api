@@ -9,6 +9,16 @@
     dense
     flat
   >
+    <template v-slot:header-right>
+      <q-btn
+        @click="router.visit(route('admin.bans.show-remove-details'))"
+        color="primary"
+        text-color="dark"
+      >
+        Remove Bans
+      </q-btn>
+    </template>
+
     <template v-slot:cell-content-details="{ props, col }">
       <q-btn
         class="q-pa-xs q-pl-sm full-width text-weight-regular"
@@ -40,6 +50,7 @@
 </template>
 
 <script>
+import { router } from '@inertiajs/vue3'
 import { ionCaretDown, ionCaretUp } from '@quasar/extras/ionicons-v6'
 import BaseTable from '../BaseTable.vue'
 import BanDetailsTable from './BanDetailsTable.vue'
@@ -52,6 +63,7 @@ export default {
 
   setup() {
     return {
+      router,
       ionCaretDown,
       ionCaretUp,
     }
@@ -98,6 +110,7 @@ export default {
           label: 'Player',
           field: (row) => row.original_ban_detail.ckey,
           sortable: true,
+          filterable: false,
         },
         {
           name: 'reason',
@@ -118,9 +131,9 @@ export default {
         {
           name: 'details',
           label: 'Details',
-          field: 'details_count',
+          field: (row) => row.details_count || 1,
           sortable: true,
-          filterable: false
+          filterable: false,
         },
         {
           name: 'created_at',
