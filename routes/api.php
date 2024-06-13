@@ -43,7 +43,7 @@ Route::get('ping', function () {
     return response()->json('pong');
 });
 
-Route::middleware(['auth:sanctum', 'isadmin'])->group(function () {
+Route::middleware(['sanctumapi', 'isadmin'])->group(function () {
     Route::get('test', [TestController::class, 'index']);
 
     Route::controller(GameRoundsController::class)->prefix('rounds')->group(function () {
