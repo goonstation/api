@@ -97,7 +97,12 @@ class ImportMedals extends Command
 
                 // $this->info("\tInserting medal: ({$medal['id']}) {$medal['title']}");
 
-                $earnedAt = Carbon::parse($scrapedMedal['Date'], -7)
+                $medalDate = $scrapedMedal['Date'];
+                if (str_starts_with($medalDate, 'on')) {
+                    $medalDate = str_replace('on ', '', $medalDate);
+                }
+
+                $earnedAt = Carbon::parse($medalDate, -7)
                     ->setTimezone('UTC')
                     ->toISOString();
 
