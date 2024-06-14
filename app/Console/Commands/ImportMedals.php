@@ -60,7 +60,7 @@ class ImportMedals extends Command
 
         $playerMedalsToInsert = [];
 
-        $tempCounter = 0;
+        $this->info('Processing medal data');
         $bar = $this->output->createProgressBar(count($users));
         $bar->start();
         foreach ($users as $ckey => $scrapedMedals) {
@@ -74,11 +74,11 @@ class ImportMedals extends Command
             }
 
             if (! $player) {
-                $this->warn("No player record found for: $ckey");
+                // $this->warn("No player record found for: $ckey");
                 continue;
             }
 
-            $this->info("Processing medals for $ckey"); // debug
+            // $this->info("Processing medals for $ckey");
             foreach ($scrapedMedals as $scrapedMedal) {
                 $medal = null;
                 if (array_key_exists($scrapedMedal['Name'], $medals)) {
@@ -86,14 +86,16 @@ class ImportMedals extends Command
                 }
 
                 if (! $medal) {
-                    $this->warn("No medal record found for: ".$scrapedMedal['Name']);
+                    $this->warn("No medal record found for: {$scrapedMedal['Name']} ($ckey)");
                     continue;
                 }
 
                 if (array_key_exists($player['id'].'-'.$medal['id'], $earnedMedals)) {
-                    $this->info("Played $ckey has already earned medal ".$scrapedMedal['Name']);
+                    // $this->info("\tPlayed $ckey has already earned medal ".$scrapedMedal['Name']);
                     continue;
                 }
+
+                // $this->info("\tInserting medal: ({$medal['id']}) {$medal['title']}");
 
                 $earnedAt = Carbon::parse($scrapedMedal['Date'], -7)
                     ->setTimezone('UTC')
@@ -108,23 +110,20 @@ class ImportMedals extends Command
             }
 
             $bar->advance();
-
-            $tempCounter++;
-            if ($tempCounter >= 100) break;
         }
 
         $bar->finish();
 
-        // $this->info(PHP_EOL.'Inserting player medals');
-        // $bar = $this->output->createProgressBar(count($playerMedalsToInsert) / 1000);
-        // $bar->start();
-        // foreach (array_chunk($playerMedalsToInsert, 1000, true) as $key => $chunk) {
-        //     DB::table('player_medals')->insert($chunk);
-        //     $bar->advance();
-        // }
-        // $bar->finish();
+        $this->info(PHP_EOL.'Inserting player medals');
+        $bar = $this->output->createProgressBar(count($playerMedalsToInsert) / 1000);
+        $bar->start();
+        foreach (array_chunk($playerMedalsToInsert, 1000, true) as $key => $chunk) {
+            DB::table('player_medals')->insert($chunk);
+            $bar->advance();
+        }
+        $bar->finish();
 
-        // $this->line(PHP_EOL);
+        $this->line(PHP_EOL);
         return Command::SUCCESS;
     }
 }
