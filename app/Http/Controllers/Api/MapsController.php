@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\BuildMap;
 use App\Models\Map;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use ZipArchive;
 

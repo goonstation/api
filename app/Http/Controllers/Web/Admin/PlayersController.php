@@ -75,6 +75,7 @@ class PlayersController extends Controller
 
         $banHistory = $banHistory->map(function (Ban $ban) use ($ckey, $ips, $compIds) {
             $ban->player_has_active_details = $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray());
+
             return $ban;
         });
 
@@ -113,12 +114,19 @@ class PlayersController extends Controller
     {
         /** @var BanDetail $detail */
         foreach ($ban->details as $detail) {
-            if (!$detail->deleted_at) {
-                if ($detail->ckey === $ckey) return true;
-                if ($detail->ip && in_array($detail->ip, $ips)) return true;
-                if ($detail->comp_id && in_array($detail->comp_id, $compIds)) return true;
+            if (! $detail->deleted_at) {
+                if ($detail->ckey === $ckey) {
+                    return true;
+                }
+                if ($detail->ip && in_array($detail->ip, $ips)) {
+                    return true;
+                }
+                if ($detail->comp_id && in_array($detail->comp_id, $compIds)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 }

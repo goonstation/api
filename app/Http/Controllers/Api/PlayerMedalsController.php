@@ -103,7 +103,7 @@ class PlayerMedalsController extends Controller
             }
         }
 
-        if (!$playerId) {
+        if (! $playerId) {
             return response()->json(['message' => 'Unable to locate that player'], 400);
         }
 
@@ -113,7 +113,7 @@ class PlayerMedalsController extends Controller
 
         return ['data' => [
             /** @var bool */
-            'has_medal' => $playerHasMedal
+            'has_medal' => $playerHasMedal,
         ]];
     }
 
@@ -203,7 +203,7 @@ class PlayerMedalsController extends Controller
         ]);
 
         $sourcePlayer = Player::where('ckey', $data['source_ckey'])->first();
-        if (!$sourcePlayer) {
+        if (! $sourcePlayer) {
             return response()->json(['message' => 'Unable to locate source player'], 400);
         }
 
@@ -213,7 +213,7 @@ class PlayerMedalsController extends Controller
         }
 
         $targetPlayer = Player::where('ckey', $data['target_ckey'])->first();
-        if (!$targetPlayer) {
+        if (! $targetPlayer) {
             // Might as well just make a brand new player
             $targetPlayer = Player::create(['ckey' => $data['target_ckey']]);
         }

@@ -58,7 +58,7 @@ class RoundsController extends Controller
             ->findOrFail($round);
 
         $this->setMeta(
-            title: 'Round #' . number_format($gameRound->id),
+            title: 'Round #'.number_format($gameRound->id),
             image: ['type' => 'round', 'key' => $gameRound->id]
         );
 

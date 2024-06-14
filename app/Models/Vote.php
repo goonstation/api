@@ -12,7 +12,7 @@ class Vote extends Model
 
     protected $fillable = [
         'ip',
-        'value'
+        'value',
     ];
 
     public function voteable(): MorphTo

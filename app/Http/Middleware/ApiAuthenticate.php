@@ -29,6 +29,7 @@ class ApiAuthenticate
                         $request->setUserResolver(function () use ($user) {
                             return $user;
                         });
+
                         return $next($request);
                     }
                 }

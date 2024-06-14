@@ -76,6 +76,7 @@ class PlayersController extends Controller
         $totalAveragePlayersOnline = $totalAveragePlayersOnline->average_online;
 
         $this->setMeta(title: 'Players');
+
         return Inertia::render('Players/Index', [
             'averagePlayersOnline' => $averagePlayersOnline,
             'averagePlayersByDay' => $averagePlayersByDay,
@@ -154,6 +155,7 @@ class PlayersController extends Controller
             title: 'Player '.($player->key ?? $player->ckey),
             image: ['type' => 'player', 'key' => $player->id]
         );
+
         return Inertia::render('Players/Show', [
             'player' => $player,
             'latestRound' => $latestRound,

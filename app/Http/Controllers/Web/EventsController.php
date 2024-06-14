@@ -24,6 +24,7 @@ class EventsController extends Controller
         // SELECT sum(reltuples) as estimate FROM pg_class where relname like 'events_%' and relkind = 'r';
 
         $this->setMeta(title: 'Events');
+
         return Inertia::render('Events/Index', [
             'counts' => [
                 'deaths' => $deaths->estimate,

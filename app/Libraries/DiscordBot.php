@@ -17,8 +17,6 @@ class DiscordBot
     /**
      * Export data to a Discord bot
      *
-     * @param  string  $route
-     * @param  array   $data
      * @return string|void
      *
      * @throws \Illuminate\Http\Client\RequestException
@@ -36,6 +34,7 @@ class DiscordBot
         $data['server'] = 'goonhub';
 
         $response = Http::get("$url/$route", $data);
+
         return $response->throw()->json();
     }
 }

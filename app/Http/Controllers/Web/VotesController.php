@@ -13,8 +13,8 @@ use Illuminate\Validation\Rule;
 class VotesController extends Controller
 {
     private $voteableTypes = [
-        'death'  => EventDeath::class,
-        'fine'   => EventFine::class,
+        'death' => EventDeath::class,
+        'fine' => EventFine::class,
         'ticket' => EventTicket::class,
     ];
 
@@ -44,7 +44,7 @@ class VotesController extends Controller
 
         $instance->votes()->create([
             'ip' => $ip,
-            'value' => $direction === 'up' ? 1 : -1
+            'value' => $direction === 'up' ? 1 : -1,
         ]);
 
         return $instance;
@@ -58,9 +58,10 @@ class VotesController extends Controller
         ]);
 
         $instance = $this->applyVote('up', $data['type'], $data['id']);
+
         return response()->json([
             'votes' => $instance->total_votes,
-            'user_votes' => $instance->userVotes
+            'user_votes' => $instance->userVotes,
         ]);
     }
 
@@ -72,9 +73,10 @@ class VotesController extends Controller
         ]);
 
         $instance = $this->applyVote('down', $data['type'], $data['id']);
+
         return response()->json([
             'votes' => $instance->total_votes,
-            'user_votes' => $instance->userVotes
+            'user_votes' => $instance->userVotes,
         ]);
     }
 }

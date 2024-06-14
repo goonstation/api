@@ -10,7 +10,6 @@ use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
@@ -22,9 +21,9 @@ class MapsController extends Controller
 {
     use IndexableQuery, ManagesFileUploads;
 
-    private function associateMapLayers(Map $map, Array|null $layers)
+    private function associateMapLayers(Map $map, ?array $layers)
     {
-        if (!$map->is_layer && is_array($layers) && count($layers)) {
+        if (! $map->is_layer && is_array($layers) && count($layers)) {
             MapLayer::where('map_id', $map->id)->delete();
 
             foreach ($layers as $layerId) {
@@ -38,7 +37,7 @@ class MapsController extends Controller
         }
     }
 
-    private function associateBaseMaps(Map $map, Array|null $baseMaps)
+    private function associateBaseMaps(Map $map, ?array $baseMaps)
     {
         if ($map->is_layer && is_array($baseMaps) && count($baseMaps)) {
             MapLayer::where('layer_id', $map->id)->delete();
@@ -167,7 +166,7 @@ class MapsController extends Controller
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
             'layers' => 'nullable|array',
-            'base_maps' => 'nullable|array'
+            'base_maps' => 'nullable|array',
         ]);
 
         $map = new Map();
@@ -216,7 +215,7 @@ class MapsController extends Controller
             'tile_width' => 'required|integer',
             'tile_height' => 'required|integer',
             'layers' => 'nullable|array',
-            'base_maps' => 'nullable|array'
+            'base_maps' => 'nullable|array',
         ]);
 
         $map->map_id = $data['map_id'];

@@ -7,7 +7,6 @@ use App\Models\JobBan;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesJobBans;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -83,11 +82,11 @@ class JobBansController extends Controller
     public function show(int $jobBan)
     {
         $jobBan = JobBan::withTrashed()
-          ->with([
-            'gameAdmin:id,name,ckey',
-            'gameServer',
-            'deletedByGameAdmin',
-          ])
+            ->with([
+                'gameAdmin:id,name,ckey',
+                'gameServer',
+                'deletedByGameAdmin',
+            ])
             ->findOrFail($jobBan);
 
         return Inertia::render('Admin/JobBans/Show', [

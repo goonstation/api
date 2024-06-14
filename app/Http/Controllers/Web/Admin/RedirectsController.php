@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Redirect as ModelsRedirect;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class RedirectsController extends Controller
@@ -17,7 +16,7 @@ class RedirectsController extends Controller
     {
         $redirects = $this->indexQuery(ModelsRedirect::with([
             'createdByUser.gameAdmin',
-            'updatedByUser.gameAdmin'
+            'updatedByUser.gameAdmin',
         ]), perPage: 30);
 
         if ($this->wantsInertia($request)) {

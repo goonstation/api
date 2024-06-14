@@ -3,14 +3,13 @@
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 trait IndexableQuery
 {
     /**
      * Paginate/filter/sort a model
      *
-     * @param  mixed  $model A model class FQDN, or a query builder for one
+     * @param  mixed  $model  A model class FQDN, or a query builder for one
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     private function indexQuery($model, $filter = null, $sortBy = 'id', $desc = 'true', $perPage = 15, $paginate = true)

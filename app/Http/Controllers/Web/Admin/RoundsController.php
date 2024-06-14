@@ -44,7 +44,7 @@ class RoundsController extends Controller
             'mapRecord:id,map_id,name',
         ])
             ->loadCount([
-                'beeSpawns'
+                'beeSpawns',
             ]);
 
         return Inertia::render('Admin/Rounds/Show', [

@@ -19,7 +19,7 @@ class Controller extends BaseController
      *
      * @return bool
      */
-    public function wantsInertia(Request $request = null)
+    public function wantsInertia(?Request $request = null)
     {
         if (! $request) {
             $request = request();
@@ -31,10 +31,6 @@ class Controller extends BaseController
     /**
      * Set various meta data properties
      *
-     * @param string $title
-     * @param string $description
-     * @param array $image
-     * @return void
      * @throws BindingResolutionException
      */
     public function setMeta(string $title = '', string $description = '', array $image = []): void

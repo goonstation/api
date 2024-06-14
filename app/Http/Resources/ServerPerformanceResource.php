@@ -17,12 +17,12 @@ class ServerPerformanceMetricsResource extends JsonResource
         return [
             'time' => [
                 /** @var float Uptime in number of seconds */
-                'uptime' => $this['time']['uptime']
+                'uptime' => $this['time']['uptime'],
             ],
             'mem' => [
-                /** @var int Available memory in bytes  */
+                /** @var int Available memory in bytes */
                 'available' => $this['mem']['available'],
-                /** @var int Total memory in bytes  */
+                /** @var int Total memory in bytes */
                 'total' => $this['mem']['total'],
             ],
             'currentLoad' => [

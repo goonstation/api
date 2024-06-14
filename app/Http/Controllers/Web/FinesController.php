@@ -20,7 +20,7 @@ class FinesController extends Controller
                 ->withSum([
                     'votes as votes' => function ($query) {
                         $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                    }
+                    },
                 ], 'value')
                 ->with('userVotes:voteable_id,value')
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -55,7 +55,7 @@ class FinesController extends Controller
             ->withSum([
                 'votes as votes' => function ($query) {
                     $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                }
+                },
             ], 'value')
             ->with('userVotes:voteable_id,value')
             ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -63,7 +63,7 @@ class FinesController extends Controller
             ->firstOrFail();
 
         $this->setMeta(
-            title: 'Fine #' . number_format($fine->id),
+            title: 'Fine #'.number_format($fine->id),
             image: ['type' => 'fine', 'key' => $fine->id]
         );
 

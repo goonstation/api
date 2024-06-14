@@ -7,7 +7,6 @@ use App\Models\PlayerNote;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesPlayerNotes;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 

@@ -87,6 +87,7 @@ class ImportMedals extends Command
 
                 if (! $medal) {
                     $this->warn("No medal record found for: {$scrapedMedal['Name']} ($ckey)");
+
                     continue;
                 }
 
@@ -129,6 +130,7 @@ class ImportMedals extends Command
         $bar->finish();
 
         $this->line(PHP_EOL);
+
         return Command::SUCCESS;
     }
 }

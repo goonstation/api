@@ -112,13 +112,13 @@ class Player extends Model
     public static function getOpenGraphData(int $id)
     {
         $player = self::with([
-                'playtime',
-                'firstConnection'
-            ])
+            'playtime',
+            'firstConnection',
+        ])
             ->withCount([
                 'participations',
                 'participationsRp',
-                'deaths'
+                'deaths',
             ])
             ->where('id', $id)
             ->firstOrFail();

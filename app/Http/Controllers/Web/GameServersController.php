@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\GameServer;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class GameServersController extends Controller
 {

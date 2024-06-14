@@ -3,7 +3,6 @@
 namespace App\Libraries;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Browsershot\Browsershot;
 
 class OpenGraphImage
@@ -67,12 +66,17 @@ class OpenGraphImage
     public function getFile(string $type, string|int $key): array|bool
     {
         $fullPath = $this->getFullPath($type, $key);
-        if (! File::exists($fullPath)) return false;
-        if ($this->isFileExpired($fullPath)) return false;
+        if (! File::exists($fullPath)) {
+            return false;
+        }
+        if ($this->isFileExpired($fullPath)) {
+            return false;
+        }
+
         return [
             'age' => $this->getFileAge($fullPath),
             'etag' => $this->getEtag($fullPath),
-            'file' => file_get_contents($fullPath)
+            'file' => file_get_contents($fullPath),
         ];
     }
 
@@ -91,7 +95,7 @@ class OpenGraphImage
         return [
             'age' => $this->getFileAge($fullPath),
             'etag' => $this->getEtag($fullPath),
-            'file' => file_get_contents($fullPath)
+            'file' => file_get_contents($fullPath),
         ];
     }
 }
