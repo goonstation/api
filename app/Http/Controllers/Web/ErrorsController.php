@@ -44,7 +44,7 @@ class ErrorsController extends Controller
                 'file',
                 'line',
             ])
-                ->fromSub(function ($query) use ($dateStart, $filters) {
+                ->fromSub(function ($query) use ($dateStart, $filters, $request) {
                     $query->select([
                         DB::raw('count(*) as count'),
                         DB::raw('count(distinct round_id) as round_count'),
