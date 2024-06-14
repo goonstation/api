@@ -42,7 +42,7 @@ class PlayerNotesController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+            'game_admin_ckey' => $request->user()->gameAdmin->ckey,
         ]);
         if ($request->input('server_id') === 'all') {
             $request->merge(['server_id' => null]);
@@ -70,7 +70,7 @@ class PlayerNotesController extends Controller
     {
         try {
             $request = $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+                'game_admin_ckey' => $request->user()->gameAdmin->ckey,
             ]);
             if ($request->input('server_id') === 'all') {
                 $request->merge(['server_id' => null]);

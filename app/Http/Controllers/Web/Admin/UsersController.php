@@ -55,7 +55,7 @@ class UsersController extends Controller
         $user->password = Hash::make($data['password']);
 
         // Only current admins can modify other admin status
-        if (Auth::user()->is_admin) {
+        if ($request->user()->is_admin) {
             $user->is_admin = $data['is_admin'];
         }
 
@@ -101,7 +101,8 @@ class UsersController extends Controller
         }
 
         // Only current admins can modify other admin status
-        if (Auth::user()->is_admin && $user->id !== Auth::user()->id) {
+        $user = $request->user();
+        if ($user->is_admin && $user->id !== $user->id) {
             $user->is_admin = $data['is_admin'];
         }
 

@@ -19,7 +19,7 @@ class GameServersController extends Controller
         ]);
 
         $query = GameServer::where('invisible', false);
-        if (isset($data['with_invisible']) && $data['with_invisible'] && Auth::user()?->game_admin_id) {
+        if (isset($data['with_invisible']) && $data['with_invisible'] && $request->user()?->game_admin_id) {
             $query = $query->orWhere('invisible', true);
         }
 

@@ -87,7 +87,7 @@ class MapsController extends Controller
             'filePath' => 'required|string',
         ]);
 
-        $gameAdminId = Auth::user()->game_admin_id;
+        $gameAdminId = $request->user()->game_admin_id;
 
         $finalPath = storage_path('app/'.$data['filePath'].$data['fileName']);
         $file = new File($finalPath);

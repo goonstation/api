@@ -37,7 +37,7 @@ trait IndexableQuery
         if ($paginate) {
             $maxPerPage = 100;
             $perPage = (int) $request->input('per_page', $perPage);
-            if ($perPage > $maxPerPage && ! Auth::user()?->is_admin) {
+            if ($perPage > $maxPerPage && ! $request->user()?->is_admin) {
                 $perPage = $maxPerPage;
             }
 

@@ -41,7 +41,7 @@ class JobBansController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+            'game_admin_ckey' => $request->user()->gameAdmin->ckey,
         ]);
         if ($request->input('server_id') === 'all') {
             $request->merge(['server_id' => null]);
@@ -67,7 +67,7 @@ class JobBansController extends Controller
     {
         try {
             $request = $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+                'game_admin_ckey' => $request->user()->gameAdmin->ckey,
             ]);
             if ($request->input('server_id') === 'all') {
                 $request->merge(['server_id' => null]);
@@ -95,9 +95,9 @@ class JobBansController extends Controller
         ]);
     }
 
-    public function destroy(JobBan $jobBan)
+    public function destroy(Request $request, JobBan $jobBan)
     {
-        $jobBan->deleted_by = Auth::user()->gameAdmin->id;
+        $jobBan->deleted_by = $request->user()->gameAdmin->id;
         $jobBan->save();
         $jobBan->delete();
 
@@ -111,7 +111,7 @@ class JobBansController extends Controller
         ]);
 
         $jobBans = JobBan::whereIn('id', $data['ids']);
-        $jobBans->update(['deleted_by' => Auth::user()->gameAdmin->id]);
+        $jobBans->update(['deleted_by' => $request->user()->gameAdmin->id]);
         $jobBans->delete();
 
         return ['message' => 'Job bans removed'];

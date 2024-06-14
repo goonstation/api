@@ -70,7 +70,7 @@ class BansController extends Controller
     public function store(BanRequest $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+            'game_admin_ckey' => $request->user()->gameAdmin->ckey,
         ]);
         $ban = $this->addBan($request);
 
@@ -135,7 +135,7 @@ class BansController extends Controller
     {
         try {
             $request = $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+                'game_admin_ckey' => $request->user()->gameAdmin->ckey,
             ]);
             $this->updateBan($request, $ban);
         } catch (Exception $e) {
@@ -165,9 +165,9 @@ class BansController extends Controller
         ]);
     }
 
-    public function destroy(Ban $ban)
+    public function destroy(Request $request, Ban $ban)
     {
-        $ban->deleted_by = Auth::user()->gameAdmin->id;
+        $ban->deleted_by = $request->user()->gameAdmin->id;
         $ban->save();
         $ban->delete();
 
@@ -181,7 +181,7 @@ class BansController extends Controller
         ]);
 
         $bans = Ban::whereIn('id', $data['ids']);
-        $bans->update(['deleted_by' => Auth::user()->gameAdmin->id]);
+        $bans->update(['deleted_by' => $request->user()->gameAdmin->id]);
         $bans->delete();
 
         return ['message' => 'Bans removed'];
@@ -336,7 +336,7 @@ class BansController extends Controller
                 if ($ban->originalBanDetail->id === $banDetail->id) {
                     // This ban detail is the original ban detail for this ban
                     // So delete the actual ban record too
-                    $ban->deleted_by = Auth::user()->gameAdmin->id;
+                    $ban->deleted_by = $request->user()->gameAdmin->id;
                     $ban->save();
                     $ban->delete();
                 }

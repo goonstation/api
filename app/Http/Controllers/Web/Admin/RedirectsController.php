@@ -44,7 +44,7 @@ class RedirectsController extends Controller
         $redirect = new ModelsRedirect();
         $redirect->from = $data['from'];
         $redirect->to = $data['to'];
-        $redirect->created_by = Auth::user()->id;
+        $redirect->created_by = $request->user()->id;
         $redirect->save();
 
         return to_route('admin.redirects.index');
@@ -66,7 +66,7 @@ class RedirectsController extends Controller
 
         $redirect->from = $data['from'];
         $redirect->to = $data['to'];
-        $redirect->updated_by = Auth::user()->id;
+        $redirect->updated_by = $request->user()->id;
         $redirect->save();
 
         return to_route('admin.redirects.index');

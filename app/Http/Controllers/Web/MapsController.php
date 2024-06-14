@@ -11,7 +11,7 @@ use Inertia\Inertia;
 
 class MapsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $maps = Map::select('id', 'map_id', 'name', 'last_built_at')
             ->with([
@@ -24,7 +24,7 @@ class MapsController extends Controller
             ->where('is_layer', false)
             ->orderBy('name', 'asc');
 
-        $user = Auth::user();
+        $user = $request->user();
         if (!$user || !$user->game_admin_id) {
             $maps = $maps->where('admin_only', false);
         }
@@ -35,9 +35,9 @@ class MapsController extends Controller
         ]);
     }
 
-    public function show(string $map)
+    public function show(Request $request, string $map)
     {
-        $user = Auth::user();
+        $user = $request->user();
         $map = Map::select('id', 'map_id', 'name', 'tile_width', 'tile_height', 'screenshot_tiles', 'updated_at')
             ->where('map_id', Str::upper($map))
             ->where('active', true)
@@ -66,7 +66,7 @@ class MapsController extends Controller
 
     public function getPrivateTile(Request $request, string $path)
     {
-        $user = Auth::user();
+        $user = $request->user();
         if (!$user || !$user->game_admin_id) {
             return abort(404);
         }
