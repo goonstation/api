@@ -187,4 +187,11 @@ class PlayersController extends Controller
             'unearnedMedals' => $unearnedMedals,
         ]);
     }
+
+    public function showByCkey(string $ckey)
+    {
+        $player = Player::where('ckey', $ckey)->firstOrFail();
+
+        return redirect()->route('players.show', $player->id);
+    }
 }
