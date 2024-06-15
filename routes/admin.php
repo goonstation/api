@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Admin\GameAuthCallbackController;
 use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
+use App\Http\Controllers\Web\Admin\MedalsController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
@@ -122,6 +123,19 @@ Route::middleware([
             Route::get('/edit/{map}', 'edit')->whereNumber('map')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
             Route::put('/{map}', 'update')->whereNumber('map')->name('admin.maps.update');
             Route::delete('/{map}', 'destroy')->whereNumber('map')->name('admin.maps.delete');
+        });
+
+        Route::controller(MedalsController::class)->prefix('medals')->group(function () {
+            Route::get('/', 'index')->name('admin.medals.index')->breadcrumb('Medals');
+            Route::get('/create', 'create')->name('admin.medals.create')->breadcrumb('', 'admin.medals.index');
+            Route::post('/', 'store')->name('admin.medals.store');
+            Route::get('/edit/{medal}', 'edit')->whereNumber('medal')->name('admin.medals.edit')->breadcrumb('', 'admin.medals.index');
+            Route::put('/{medal}', 'update')->whereNumber('medal')->name('admin.medals.update');
+            Route::delete('/{medal}', 'destroy')->whereNumber('medal')->name('admin.medals.delete');
+
+            Route::get('/unawarded-to-player/{player}', 'medalsPlayerDoesntHave')->name('admin.medals.unawarded-to-player');
+            Route::post('/add-to-player', 'addToPlayer')->name('admin.medals.add-to-player');
+            Route::delete('/remove-from-player/{player}/{medal}', 'removeFromPlayer')->whereNumber(['player', 'medal'])->name('admin.medals.remove-from-player');
         });
 
         Route::controller(EventsController::class)->prefix('events')->group(function () {

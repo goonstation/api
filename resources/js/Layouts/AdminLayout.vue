@@ -250,6 +250,7 @@ export default {
               route('admin.events.index'),
               route('admin.logs.index'),
               route('admin.errors.index'),
+              route('admin.medals.index'),
             ],
             children: [
               {
@@ -267,6 +268,10 @@ export default {
               {
                 label: 'Maps',
                 href: route('admin.maps.index'),
+              },
+              {
+                label: 'Medals',
+                href: route('admin.medals.index'),
               },
             ],
           },

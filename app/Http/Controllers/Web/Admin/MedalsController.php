@@ -1,0 +1,152 @@
+<?php
+
+namespace App\Http\Controllers\Web\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Medal;
+use App\Models\PlayerMedal;
+use App\Traits\IndexableQuery;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+
+class MedalsController extends Controller
+{
+    use IndexableQuery;
+
+    public function index(Request $request)
+    {
+        $medals = $this->indexQuery(
+            Medal::select([
+                '*',
+                DB::raw('COALESCE(pm.earned_count, 0) AS earned_count'),
+            ])
+            ->joinSub(
+                'SELECT medal_id, COUNT(*) AS earned_count FROM player_medals GROUP BY medal_id',
+                'pm', 'medals.id', '=', 'pm.medal_id', 'left'
+            ),
+            perPage: 30,
+            sortBy: 'title',
+            desc: false);
+
+        if ($this->wantsInertia($request)) {
+            return Inertia::render('Admin/Medals/Index', [
+                'medals' => $medals,
+            ]);
+        } else {
+            return $medals;
+        }
+    }
+
+    public function medalsPlayerDoesntHave(Request $request, int $player)
+    {
+        $medals = $this->indexQuery(
+            Medal::whereDoesntHave('earned', function ($q) use ($player) {
+                $q->where('player_id', $player);
+            }),
+            perPage: 30,
+            sortBy: 'title',
+            desc: false);
+
+        return $medals;
+    }
+
+    public function create()
+    {
+        return Inertia::render('Admin/Medals/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required',
+            'description' => 'nullable|string',
+            'hidden' => 'required|boolean',
+            'image' => 'nullable|file|mimes:png',
+        ]);
+
+        $medal = new Medal();
+        $medal->title = $data['title'];
+        $medal->description = $data['description'];
+        $medal->hidden = $data['hidden'];
+        $medal->save();
+
+        if ($data['image']) {
+            $newMedal = Medal::find($medal->id);
+            $request->file('image')->storeAs(
+                'public/medals', $newMedal->uuid.'.png'
+            );
+        }
+
+        return to_route('admin.medals.index');
+    }
+
+    public function edit(Medal $medal)
+    {
+        return Inertia::render('Admin/Medals/Edit', [
+            'medal' => $medal,
+        ]);
+    }
+
+    public function update(Request $request, Medal $medal)
+    {
+        $data = $request->validate([
+            'title' => 'required',
+            'description' => 'nullable|string',
+            'hidden' => 'required|boolean',
+            'image' => 'nullable|file|mimes:png',
+            'clear_image' => 'nullable|boolean',
+        ]);
+
+        $medal->title = $data['title'];
+        $medal->description = $data['description'];
+        $medal->hidden = $data['hidden'];
+        $medal->save();
+
+        if ($data['image']) {
+            $request->file('image')->storeAs(
+                'public/medals', $medal->uuid.'.png'
+            );
+        } else if ($data['clear_image'] === true) {
+            Storage::delete('public/medals/'.$medal->uuid.'.png');
+        }
+
+        return to_route('admin.medals.index');
+    }
+
+    public function destroy(Medal $medal)
+    {
+        Storage::delete('public/medals/'.$medal->uuid.'.png');
+        $medal->delete();
+
+        return ['message' => 'Medal removed'];
+    }
+
+    public function addToPlayer(Request $request)
+    {
+        $data = $request->validate([
+            'player_id' => 'required',
+            'medal_id' => 'required',
+        ]);
+
+        $medalAward = new PlayerMedal();
+        $medalAward->player_id = $data['player_id'];
+        $medalAward->medal_id = $data['medal_id'];
+        $medalAward->save();
+
+        $medalAward->load('medal');
+        return $medalAward;
+    }
+
+    public function removeFromPlayer(int $player, int $medal)
+    {
+        $medalAward = PlayerMedal::where('player_id', $player)
+            ->where('medal_id', $medal)
+            ->firstOrFail();
+
+        $medalAward->delete();
+
+        return ['message' => 'Removed medal award'];
+    }
+}

@@ -137,6 +137,10 @@ export default {
           ],
         },
         {
+          label: 'Medals',
+          href: route('medals.index'),
+        },
+        {
           label: 'Maps',
           href: route('maps.index'),
         },

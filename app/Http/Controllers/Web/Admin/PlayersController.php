@@ -49,6 +49,7 @@ class PlayersController extends Controller
             },
             'notes.gameAdmin',
             'notes.gameServer',
+            'medals.medal',
         ])
             ->loadCount([
                 'participations',

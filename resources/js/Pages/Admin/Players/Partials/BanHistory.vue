@@ -16,7 +16,10 @@
     </template>
     <template v-slot:body-cell-original_ban_ckey="props">
       <q-td :props="props">
-        <Link :href="route('admin.player.show-by-ckey', props.row.original_ban_detail.ckey)">
+        <Link
+          v-if="props.row.original_ban_detail.ckey"
+          :href="route('admin.player.show-by-ckey', props.row.original_ban_detail.ckey)"
+        >
           {{ props.row.original_ban_detail.ckey }}
         </Link>
       </q-td>

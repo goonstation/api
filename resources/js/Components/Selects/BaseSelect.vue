@@ -13,6 +13,9 @@
     @virtual-scroll="onScroll"
     @filter="filterFn"
   >
+    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+      <slot :name="name" v-bind="slotData" />
+    </template>
     <template #selected-item="{ opt }">
       {{ opt[fieldLabel || optionLabel] }}
     </template>
@@ -108,16 +111,18 @@ export default {
       let newOptions = response.data.data
 
       // Ensure we don't have duplicate items if we already loaded a default item
-      for (const option of this.options) {
-        const existingItemIdx = newOptions.findIndex(
-          (newOption) => newOption[this.optionValue] === option[this.optionValue]
-        )
-        if (existingItemIdx >= 0) {
-          newOptions.splice(existingItemIdx, 1)
+      if (!newSearch) {
+        for (const option of this.options) {
+          const existingItemIdx = newOptions.findIndex(
+            (newOption) => newOption[this.optionValue] === option[this.optionValue]
+          )
+          if (existingItemIdx >= 0) {
+            newOptions.splice(existingItemIdx, 1)
+          }
         }
       }
 
-      if (newSearch && this.defaultItems.length) {
+      if (newSearch && this.defaultItems?.length) {
         newOptions = [...this.defaultItems, ...newOptions]
       }
 
