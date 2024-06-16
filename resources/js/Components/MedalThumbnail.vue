@@ -11,8 +11,6 @@
 img {
   display: block;
   position: relative;
-  // border: 1px solid #444;
-  border-radius: 5px;
 
   &:after {
     content: '';

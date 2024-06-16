@@ -143,18 +143,19 @@ class PlayerMedalsController extends Controller
             $playerId = $player->id;
         }
 
-        $existingPlayerMedal = PlayerMedal::where('player_id', $playerId)
-            ->where('medal_id', $medal->id)
-            ->exists();
-        if ($existingPlayerMedal) {
+        $playerMedal = PlayerMedal::firstOrCreate(
+            [
+                'player_id' => $playerId,
+                'medal_id' => $medal->id,
+            ],
+            [
+                'round_id' => isset($data['round_id']) ? $data['round_id'] : null
+            ]
+        );
+
+        if (!$playerMedal->wasRecentlyCreated) {
             return response()->json(['message' => 'That player already has that medal'], 409);
         }
-
-        $playerMedal = new PlayerMedal();
-        $playerMedal->player_id = $playerId;
-        $playerMedal->medal_id = $medal->id;
-        $playerMedal->round_id = isset($data['round_id']) ? $data['round_id'] : null;
-        $playerMedal->save();
 
         return new PlayerMedalResource($playerMedal);
     }
