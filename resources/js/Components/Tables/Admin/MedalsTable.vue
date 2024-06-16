@@ -45,7 +45,7 @@ export default {
         // view: '/admin/medals/_id',
         create: '/admin/medals/create',
         edit: '/admin/medals/edit/_id',
-        delete: '/admin/medals/_id',
+        // delete: '/admin/medals/_id',
         // deleteMulti: '/admin/medals',
       },
       columns: [
