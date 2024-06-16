@@ -213,6 +213,11 @@ class BansController extends Controller
         $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
         $ban->details()->save($banDetail);
 
+        $banDetail->originalBanDetail = BanDetail::withTrashed()
+            ->where('ban_id', $banDetail->ban_id)
+            ->oldest()
+            ->first();
+
         if (isset($data['evasion']) && $data['evasion']) {
             $gameAdmin = GameAdmin::where('ckey', ckey($data['game_admin_ckey']))->first();
             $player = null;
@@ -234,16 +239,12 @@ class BansController extends Controller
                 'Ban evasion attempt detected, added connection details (IP: %s, CompID: %s) to ban. Original ban ckey: %s. Reason: %s',
                 $banDetail->ip,
                 $banDetail->comp_id,
-                $ban->originalBanDetail->ckey,
+                $banDetail->originalBanDetail->ckey,
                 $ban->reason
             );
             $note->save();
         }
 
-        $banDetail->originalBanDetail = BanDetail::withTrashed()
-            ->where('ban_id', $banDetail->ban_id)
-            ->oldest()
-            ->first();
         return new BanDetailResource($banDetail);
     }
 
