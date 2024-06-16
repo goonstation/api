@@ -185,6 +185,7 @@ trait ManagesBans
         );
         $note->save();
 
-        return new BanResource($ban->load('gameAdmin', 'originalBanDetail'));
+        $ban->gameAdmin = $gameAdmin;
+        return new BanResource($ban->load('originalBanDetail'));
     }
 }
