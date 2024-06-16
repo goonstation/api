@@ -240,6 +240,10 @@ class BansController extends Controller
             $note->save();
         }
 
+        $banDetail->originalBanDetail = BanDetail::withTrashed()
+            ->where('ban_id', $banDetail->ban_id)
+            ->oldest()
+            ->first();
         return new BanDetailResource($banDetail);
     }
 
