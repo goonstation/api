@@ -106,7 +106,7 @@ class PlayersController extends Controller
 
     public function showByCkey(string $ckey)
     {
-        $player = Player::where('ckey', $ckey)->firstOrFail();
+        $player = Player::where('ckey', ckey($ckey))->firstOrFail();
 
         return redirect()->route('admin.players.show', $player->id);
     }

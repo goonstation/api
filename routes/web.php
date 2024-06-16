@@ -65,7 +65,7 @@ Route::controller(PlayersController::class)->prefix('/players')->group(function 
     Route::get('/', 'index')->name('players.index')->breadcrumb('Players');
     Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
     Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')->breadcrumb('', 'players.search');
-    Route::get('/{ckey}', 'showByCkey')->whereAlphaNumeric('ckey')->name('players.show-by-ckey');
+    Route::get('/{ckey}', 'showByCkey')->name('players.show-by-ckey');
 });
 
 Route::controller(RoundsController::class)->prefix('/rounds')->group(function () {

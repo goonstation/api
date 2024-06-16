@@ -67,7 +67,6 @@ Route::middleware([
                 ->name('admin.players.show')
                 ->breadcrumb('', 'admin.players.index');
             Route::get('/{ckey}', 'showByCkey')
-                ->whereAlphaNumeric('ckey')
                 ->name('admin.player.show-by-ckey');
         });
 
