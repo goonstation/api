@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('CREATE INDEX ban_details_ban_id_active_index CONCURRENTLY ON ban_details USING btree (ban_id) WHERE (deleted_at IS NULL);');
+        DB::statement('CREATE INDEX ban_details_ban_id_active_index ON ban_details USING btree (ban_id) WHERE (deleted_at IS NULL);');
     }
 
     /**
