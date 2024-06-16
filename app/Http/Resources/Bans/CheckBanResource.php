@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Bans;
 
 use App\Models\Ban;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin Ban
  */
-class BanResource extends JsonResource
+class CheckBanResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -34,15 +34,9 @@ class BanResource extends JsonResource
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
             /** @var array{id: int, ckey: string, name: string} */
-            // 'game_admin' => $this->whenLoaded('gameAdmin'),
-            /** @var GameAdminResource */
             'game_admin' => $this->gameAdmin,
-            /** @var GameRoundResource */
-            'game_round' => $this->whenLoaded('gameRound'),
-            /** @var BanDetailResource */
-            'original_ban_detail' => $this->whenLoaded('originalBanDetail'),
-            /** @var array{array{id: int, ban_id: int, ckey: string, comp_id: string, ip: string}} */
-            'details' => $this->whenLoaded('details'),
+            /** @var array{array{id: int, ban_id: int, ckey: string, comp_id: string, ip: string, created_at: string}} */
+            'details' => $this->details,
             'requires_appeal' => $this->requires_appeal,
         ];
     }

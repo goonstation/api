@@ -7,6 +7,7 @@ use App\Http\Requests\BanRequest;
 use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\BanDetailResource;
 use App\Http\Resources\BanResource;
+use App\Http\Resources\Bans\CheckBanResource;
 use App\Models\Ban;
 use App\Models\BanDetail;
 use App\Models\GameAdmin;
@@ -18,10 +19,10 @@ use App\Traits\IndexableQuery;
 use App\Traits\ManagesBans;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class BansController extends Controller
 {
@@ -101,7 +102,7 @@ class BansController extends Controller
 
         $ckey = $request->input('ckey', '');
         $compId = $request->input('comp_id', '');
-        $ip = $request->input('ip', '0.0.0.0');
+        $ip = $request->input('ip', '');
         $serverId = $request->input('server_id');
 
         /*
@@ -111,49 +112,39 @@ class BansController extends Controller
         * And are permanent, or have yet to expire
         */
 
-        $ban = Ban::with(['gameAdmin', 'originalBanDetail', 'details', 'gameRound'])
-            ->where(function (Builder $query) use ($serverId) {
+        $detailsExist = BanDetail::select(DB::raw(1))
+            ->whereColumn('bans.id', 'ban_details.ban_id')
+            ->where(function ($q) use ($ckey, $compId, $ip) {
+                // Check any of the ban details match the provided player details
+                if ($ckey) {
+                    $q->orWhere('ckey', $ckey);
+                }
+                if ($compId) {
+                    $q->orWhere('comp_id', $compId);
+                }
+                if ($ip) {
+                    $q->orWhere('ip', $ip);
+                }
+            });
+
+        $ban = Ban::select(['*'])
+            ->with([
+                'gameAdmin:id,ckey,name',
+                'details:id,ban_id,ckey,comp_id,ip,created_at',
+            ])
+            ->where(function ($query) use ($serverId) {
                 // Check if the ban applies to all servers, or the server id we were provided
-                $query->whereNull('server_id')
-                    ->orWhere('server_id', $serverId);
+                $query->whereNull('server_id')->orWhere('server_id', $serverId);
             })
-            ->where(function (Builder $query) {
+            ->where(function ($query) {
                 // Check the ban is permanent, or has yet to expire
-                $query->whereNull('expires_at')
-                    ->orWhere('expires_at', '>', Carbon::now()->toDateTimeString());
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', Carbon::now()->toDateTimeString());
             })
-            ->whereHas('details', function (Builder $query) use ($ckey, $compId, $ip) {
-                $query->whereNull('deleted_at');
-                $query->where(function (Builder $query) use ($ckey, $compId, $ip) {
-                    // Check any of the ban details match the provided player details
-                    if ($ckey) {
-                        $query->where('ckey', $ckey);
-                    } elseif (! $ckey && $compId) {
-                        $query->where('comp_id', $compId);
-                    } elseif (! $ckey && ! $compId && $ip) {
-                        $query->where('ip', $ip);
-                    }
-
-                    if ($ckey && $compId) {
-                        $query->orWhere('comp_id', $compId);
-                    }
-                    if ($ckey && $ip) {
-                        $query->orWhere('ip', $ip);
-                    }
-
-                    if ($compId && $ip) {
-                        $query->orWhere('ip', $ip);
-                    }
-                });
-            })
+            ->whereExists($detailsExist)
             ->orderBy('id', 'desc')
-            ->first();
+            ->firstOrFail();
 
-        if (! $ban) {
-            abort(404);
-        }
-
-        return new BanResource($ban);
+        return new CheckBanResource($ban);
     }
 
     /**
