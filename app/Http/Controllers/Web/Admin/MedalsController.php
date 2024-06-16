@@ -22,10 +22,10 @@ class MedalsController extends Controller
                 '*',
                 DB::raw('COALESCE(pm.earned_count, 0) AS earned_count'),
             ])
-            ->joinSub(
-                'SELECT medal_id, COUNT(*) AS earned_count FROM player_medals GROUP BY medal_id',
-                'pm', 'medals.id', '=', 'pm.medal_id', 'left'
-            ),
+                ->joinSub(
+                    'SELECT medal_id, COUNT(*) AS earned_count FROM player_medals GROUP BY medal_id',
+                    'pm', 'medals.id', '=', 'pm.medal_id', 'left'
+                ),
             perPage: 30,
             sortBy: 'title',
             desc: false);
@@ -108,7 +108,7 @@ class MedalsController extends Controller
             $request->file('image')->storeAs(
                 'public/medals', $medal->uuid.'.png'
             );
-        } else if ($data['clear_image'] === true) {
+        } elseif ($data['clear_image'] === true) {
             Storage::delete('public/medals/'.$medal->uuid.'.png');
         }
 
@@ -136,6 +136,7 @@ class MedalsController extends Controller
         $medalAward->save();
 
         $medalAward->load('medal');
+
         return $medalAward;
     }
 

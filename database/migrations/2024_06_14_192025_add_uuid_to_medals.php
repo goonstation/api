@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         DB::table('medals')->update([
-            'uuid' => new Expression('gen_random_uuid()')
+            'uuid' => new Expression('gen_random_uuid()'),
         ]);
 
         $medals = Medal::all();

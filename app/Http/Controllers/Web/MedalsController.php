@@ -32,6 +32,7 @@ class MedalsController extends Controller
             ->get();
 
         $this->setMeta(title: 'Medals');
+
         return Inertia::render('Medals/Index', [
             'medals' => $medals,
         ]);
@@ -54,6 +55,7 @@ class MedalsController extends Controller
             ->firstOrFail();
 
         $this->setMeta(title: $medal->title);
+
         return Inertia::render('Medals/Show', [
             'medal' => $medal,
         ]);
@@ -74,11 +76,11 @@ class MedalsController extends Controller
                 'key',
                 DB::raw('pm.created_at as earned_at'),
             ])
-            ->joinSub(
-                "SELECT player_id, created_at FROM player_medals WHERE medal_id = {$medal->id}",
-                'pm', 'players.id', '=', 'pm.player_id', 'left'
-            )
-            ->whereRaw('pm.created_at IS NOT NULL'),
+                ->joinSub(
+                    "SELECT player_id, created_at FROM player_medals WHERE medal_id = {$medal->id}",
+                    'pm', 'players.id', '=', 'pm.player_id', 'left'
+                )
+                ->whereRaw('pm.created_at IS NOT NULL'),
             perPage: 30,
             sortBy: 'earned_at'
         );

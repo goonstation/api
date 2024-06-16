@@ -146,16 +146,17 @@ class PlayersController extends Controller
             ->firstOrFail();
 
         $unearnedMedals = Medal::select(['uuid', 'title', 'description'])
-                ->whereNotIn('id', $player->medals->pluck('medal.id'))
-                ->where('hidden', false)
-                ->orderBy('title', 'asc')
-                ->get();
+            ->whereNotIn('id', $player->medals->pluck('medal.id'))
+            ->where('hidden', false)
+            ->orderBy('title', 'asc')
+            ->get();
 
         // Remove unncessary data
         $player->medals->transform(function ($award) {
             unset($award['medal_id']);
             unset($award['player_id']);
             unset($award->medal['id']);
+
             return $award;
         });
 

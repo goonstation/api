@@ -110,6 +110,7 @@ trait ManagesBans
         $note->save();
 
         $ban->gameAdmin = $gameAdmin;
+
         return new BanResource($ban);
     }
 
@@ -186,6 +187,7 @@ trait ManagesBans
         $note->save();
 
         $ban->gameAdmin = $gameAdmin;
+
         return new BanResource($ban->load('originalBanDetail'));
     }
 }

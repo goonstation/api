@@ -24,7 +24,7 @@ class BanDetailResource extends JsonResource
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
             /** @var BanDetailResource */
-            'original_ban_detail' => $this->when(!is_null($this->originalBanDetail), $this->originalBanDetail)
+            'original_ban_detail' => $this->when(! is_null($this->originalBanDetail), $this->originalBanDetail),
         ];
     }
 }

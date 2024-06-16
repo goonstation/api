@@ -149,11 +149,11 @@ class PlayerMedalsController extends Controller
                 'medal_id' => $medal->id,
             ],
             [
-                'round_id' => isset($data['round_id']) ? $data['round_id'] : null
+                'round_id' => isset($data['round_id']) ? $data['round_id'] : null,
             ]
         );
 
-        if (!$playerMedal->wasRecentlyCreated) {
+        if (! $playerMedal->wasRecentlyCreated) {
             return response()->json(['message' => 'That player already has that medal'], 409);
         }
 

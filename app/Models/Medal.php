@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Medal extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $fillable = [
         'title',
