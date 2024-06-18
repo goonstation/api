@@ -56,6 +56,10 @@ class OgImageController extends Controller
 
         $image = $image ? $image : OpenGraphImage::getImage($type, $imageKey, $imageData);
 
+        if (!$image) {
+            return $this->defaultImage();
+        }
+
         return response($image['file'])
             ->withHeaders([
                 'Content-Type' => 'image/png',

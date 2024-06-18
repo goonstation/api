@@ -2,8 +2,9 @@
 
 namespace App\Libraries;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\File;
-use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Http;
 
 class OpenGraphImage
 {
@@ -30,17 +31,40 @@ class OpenGraphImage
         return 1 * 24 * 60 * 60; // 1 day
     }
 
-    protected function makeImage(string $type, $data, string $path): void
+    protected function makeImage(string $type, $data, string $path): bool
     {
-        Browsershot::html(
-            view("open-graph.$type", ['data' => $data])->render()
-        )
-            ->noSandbox()
-            ->userDataDir($this->chromeUserData)
-            ->windowSize(1200, 630)
-            // ->deviceScaleFactor(2)
-            ->setContentUrl(url('/'))
-            ->save($path);
+        $response = null;
+        try {
+            $response = Http::withHeaders([
+                'Cache-Control' => 'no-cache',
+                'Content-Type' => 'application/json'
+            ])->post(
+                config('goonhub.browserless_host').
+                ':'.config('goonhub.browserless_port').
+                '/screenshot?'.
+                'token='.config('goonhub.browserless_token'),
+            [
+                'html' => view("open-graph.$type", ['data' => $data])->render(),
+                'viewport' => [
+                    'width' => 1200,
+                    'height' => 630
+                ],
+                'options' => [
+                    'type' => 'png',
+                    'fullPage' => true
+                ]
+            ]);
+        } catch (ConnectionException $e) {
+            return false;
+        }
+
+        $body = $response->getBody();
+        if (!$response->successful() || !$body) {
+            return false;
+        }
+
+        File::put($path, $body);
+        return true;
     }
 
     protected function getFullPath(string $type, string|int $key): string
@@ -80,18 +104,20 @@ class OpenGraphImage
         ];
     }
 
-    public function getImage(string $type, string|int $key, $data): array
+    public function getImage(string $type, string|int $key, $data): array|bool
     {
         $path = $this->storagePath.'/'.$type;
         $fullPath = $this->getFullPath($type, $key);
 
+        $madeImage = false;
         if (! File::exists($fullPath) || $this->isFileExpired($fullPath)) {
             if (! File::exists($path)) {
                 File::makeDirectory($path, 0755, true);
             }
-            $this->makeImage($type, $data, $fullPath);
+            $madeImage = $this->makeImage($type, $data, $fullPath);
         }
 
+        if (!$madeImage) return false;
         return [
             'age' => $this->getFileAge($fullPath),
             'etag' => $this->getEtag($fullPath),

@@ -20,6 +20,10 @@ return [
     'discord_bot_url' => env('DISCORD_BOT_URL', null),
     'discord_bot_key' => env('DISCORD_BOT_KEY', null),
 
+    'browserless_host' => env('BROWSERLESS_HOST', null),
+    'browserless_port' => env('BROWSERLESS_PORT', null),
+    'browserless_token' => env('BROWSERLESS_TOKEN', null),
+
     'server_performance' => [
         'key' => env('SERVER_PERFORMANCE_KEY', null),
         'servers' => [
