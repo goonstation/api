@@ -10,7 +10,7 @@
     <div v-if="medal.hasOwnProperty('earned_count') && !hideEarned" class="medal__bottom">
       <div class="text-sm opacity-80">
         Earned by
-        {{ medal.earned_count }}
+        {{ $formats.number(medal.earned_count) }}
         player<template v-if="medal.earned_count !== 1">s</template>
       </div>
     </div>

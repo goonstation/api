@@ -16,6 +16,10 @@ class Medal extends Model
         'hidden',
     ];
 
+    protected $hidden = [
+        'id'
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */

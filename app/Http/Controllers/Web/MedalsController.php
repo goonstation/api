@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Medal;
 use App\Models\Player;
+use App\Models\PlayerMedal;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,10 +32,28 @@ class MedalsController extends Controller
             ->orderBy('title', 'asc')
             ->get();
 
+        $recentMedalsEarned = PlayerMedal::select([
+                'id',
+                'player_id',
+                'medal_id',
+                'created_at'
+            ])
+            ->with([
+                'player:id,ckey,key',
+                'medal:id,uuid,title'
+            ])
+            ->whereRelation('medal', 'hidden', false)
+            ->whereRelation('gameRound', 'ended_at', '!=', null)
+            ->whereRelation('gameRound.server', 'invisible', false)
+            ->orderBy('id', 'desc')
+            ->limit(10)
+            ->get();
+
         $this->setMeta(title: 'Medals');
 
         return Inertia::render('Medals/Index', [
             'medals' => $medals,
+            'recentMedalsEarned' => $recentMedalsEarned,
         ]);
     }
 
@@ -63,7 +82,9 @@ class MedalsController extends Controller
 
     public function players(Request $request, string $uuid)
     {
-        $medal = Medal::where('uuid', $uuid)->firstOrFail();
+        $medal = Medal::where('uuid', $uuid)
+            ->where('hidden', false)
+            ->firstOrFail();
 
         if ($request->input('sort_by') === 'name') {
             $request->merge(['sort_by' => 'ckey']);

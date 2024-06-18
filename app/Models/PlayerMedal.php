@@ -16,6 +16,10 @@ class PlayerMedal extends Model
         'round_id',
     ];
 
+    protected $hidden = [
+        'medal_id',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

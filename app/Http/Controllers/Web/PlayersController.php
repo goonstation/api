@@ -133,6 +133,7 @@ class PlayersController extends Controller
                     ])->whereHas('medal', function ($q2) {
                         $q2->where('hidden', false);
                     })
+                    ->whereRelation('gameRound', 'ended_at', '!=', null)
                     ->orderBy('created_at', 'desc');
             },
         ])
@@ -150,15 +151,6 @@ class PlayersController extends Controller
             ->where('hidden', false)
             ->orderBy('title', 'asc')
             ->get();
-
-        // Remove unncessary data
-        $player->medals->transform(function ($award) {
-            unset($award['medal_id']);
-            unset($award['player_id']);
-            unset($award->medal['id']);
-
-            return $award;
-        });
 
         $favoriteJob = PlayerParticipation::select('job')
             ->selectRaw('count(id) as played_job')
