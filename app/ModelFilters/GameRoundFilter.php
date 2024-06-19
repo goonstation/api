@@ -24,7 +24,10 @@ class GameRoundFilter extends ModelFilter
 
     public function server($val)
     {
-        if ($val === 'all') return;
+        if ($val === 'all') {
+            return;
+        }
+
         return $this->where('server_id', 'ILIKE', '%'.$val.'%');
     }
 

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventDeath extends Model
 {
-    use Filterable, HasFactory, Voteable, HasOpenGraphData;
+    use Filterable, HasFactory, HasOpenGraphData, Voteable;
 
     protected $table = 'events_deaths';
 
@@ -36,7 +36,7 @@ class EventDeath extends Model
     {
         return self::with([
             'gameRound',
-            'gameRound.server'
+            'gameRound.server',
         ])
             ->where('id', $id)
             ->whereRelation('gameRound', 'ended_at', '!=', null)

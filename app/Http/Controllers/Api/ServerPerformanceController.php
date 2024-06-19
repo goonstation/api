@@ -17,7 +17,9 @@ class ServerPerformanceController extends Controller
 {
     private function getPerformance(string $address)
     {
-        if (!config('goonhub.server_performance.key')) return null;
+        if (! config('goonhub.server_performance.key')) {
+            return null;
+        }
 
         return Cache::remember(
             'server_performance_'.$address,
@@ -35,9 +37,12 @@ class ServerPerformanceController extends Controller
                     return null;
                 }
 
-                if ($res->status() === 401) return null;
+                if ($res->status() === 401) {
+                    return null;
+                }
 
                 $jsonRes = (string) $res->getBody();
+
                 return json_decode($jsonRes, true);
             }
         );
@@ -55,12 +60,13 @@ class ServerPerformanceController extends Controller
             $performanceData = $this->getPerformance($address);
             $res[] = new ServerPerformanceResource([
                 'name' => $name,
-                'metrics' => $performanceData ? new ServerPerformanceMetricsResource($performanceData) : null
+                'metrics' => $performanceData ? new ServerPerformanceMetricsResource($performanceData) : null,
             ]);
         }
+
         return response()->json([
             /** @var ServerPerformanceResource[] */
-            'data' => $res
+            'data' => $res,
         ]);
     }
 }

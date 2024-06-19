@@ -34,16 +34,14 @@ class BanResource extends JsonResource
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
             /** @var array{id: int, ckey: string, name: string} */
-            'game_admin' => $this->whenLoaded('gameAdmin', function () {
-                return $this->gameAdmin()->select('id', 'ckey', 'name')->first();
-            }),
+            // 'game_admin' => $this->whenLoaded('gameAdmin'),
+            /** @var GameAdminResource */
+            'game_admin' => $this->gameAdmin,
             /** @var GameRoundResource */
             'game_round' => $this->whenLoaded('gameRound'),
-            /** @var array{id: int, ban_id: int, ckey: string, comp_id: string, ip: string} */
-            'original_ban_detail' => $this->whenLoaded('originalBanDetail', function () {
-                return $this->originalBanDetail()->select('id', 'ban_id', 'ckey', 'comp_id', 'ip')->first();
-            }),
-            /** @var array<BanDetailResource> */
+            /** @var BanDetailResource */
+            'original_ban_detail' => $this->whenLoaded('originalBanDetail'),
+            /** @var array{array{id: int, ban_id: int, ckey: string, comp_id: string, ip: string}} */
             'details' => $this->whenLoaded('details'),
             'requires_appeal' => $this->requires_appeal,
         ];

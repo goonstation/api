@@ -13,7 +13,6 @@ use App\Traits\ManagesBans;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -47,7 +46,7 @@ class BansController extends Controller
                 ->with([
                     'originalBanDetail',
                     'gameAdmin',
-                    'gameServer'
+                    'gameServer',
                 ])
                 ->where('deleted_at', '!=', null)
                 ->orWhere('expires_at', '<=', Carbon::now()),
@@ -70,7 +69,7 @@ class BansController extends Controller
     public function store(BanRequest $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+            'game_admin_ckey' => $request->user()->gameAdmin->ckey,
         ]);
         $ban = $this->addBan($request);
 
@@ -135,7 +134,7 @@ class BansController extends Controller
     {
         try {
             $request = $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+                'game_admin_ckey' => $request->user()->gameAdmin->ckey,
             ]);
             $this->updateBan($request, $ban);
         } catch (Exception $e) {
@@ -165,9 +164,9 @@ class BansController extends Controller
         ]);
     }
 
-    public function destroy(Ban $ban)
+    public function destroy(Request $request, Ban $ban)
     {
-        $ban->deleted_by = Auth::user()->gameAdmin->id;
+        $ban->deleted_by = $request->user()->gameAdmin->id;
         $ban->save();
         $ban->delete();
 
@@ -181,7 +180,7 @@ class BansController extends Controller
         ]);
 
         $bans = Ban::whereIn('id', $data['ids']);
-        $bans->update(['deleted_by' => Auth::user()->gameAdmin->id]);
+        $bans->update(['deleted_by' => $request->user()->gameAdmin->id]);
         $bans->delete();
 
         return ['message' => 'Bans removed'];
@@ -249,7 +248,7 @@ class BansController extends Controller
                 'ckey' => $request->input('ckey', null),
                 'comp_id' => $request->input('comp_id', null),
                 'ip' => $request->input('ip', null),
-            ]
+            ],
         ];
 
         $session = $request->session();
@@ -269,8 +268,7 @@ class BansController extends Controller
             'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
         ]);
 
-        $conditions = function($query) use ($data)
-        {
+        $conditions = function ($query) use ($data) {
             $query->where(function ($q) use ($data) {
                 if (isset($data['ckey']) && $data['ckey']) {
                     $q->orWhere('ckey', $data['ckey']);
@@ -316,14 +314,20 @@ class BansController extends Controller
         foreach ($data['details'] as $detailId) {
             $banDetail = BanDetail::where('id', $detailId)->first();
             $willHave = [
-                'ckey' => !!$banDetail->ckey,
-                'comp_id' => !!$banDetail->comp_id,
-                'ip' => !!$banDetail->ip,
+                'ckey' => (bool) $banDetail->ckey,
+                'comp_id' => (bool) $banDetail->comp_id,
+                'ip' => (bool) $banDetail->ip,
             ];
 
-            if ($data['fields']['ckey'] === $banDetail->ckey) $willHave['ckey'] = false;
-            if ($data['fields']['comp_id'] === $banDetail->comp_id) $willHave['comp_id'] = false;
-            if ($data['fields']['ip'] === $banDetail->ip) $willHave['ip'] = false;
+            if ($data['fields']['ckey'] === $banDetail->ckey) {
+                $willHave['ckey'] = false;
+            }
+            if ($data['fields']['comp_id'] === $banDetail->comp_id) {
+                $willHave['comp_id'] = false;
+            }
+            if ($data['fields']['ip'] === $banDetail->ip) {
+                $willHave['ip'] = false;
+            }
 
             $deleting = empty(array_filter(array_values($willHave), 'strlen'));
 
@@ -336,7 +340,7 @@ class BansController extends Controller
                 if ($ban->originalBanDetail->id === $banDetail->id) {
                     // This ban detail is the original ban detail for this ban
                     // So delete the actual ban record too
-                    $ban->deleted_by = Auth::user()->gameAdmin->id;
+                    $ban->deleted_by = $request->user()->gameAdmin->id;
                     $ban->save();
                     $ban->delete();
                 }
@@ -345,9 +349,15 @@ class BansController extends Controller
 
             } else {
                 // Editing ban detail
-                if (!$willHave['ckey']) $banDetail->ckey = null;
-                if (!$willHave['comp_id']) $banDetail->comp_id = null;
-                if (!$willHave['ip']) $banDetail->ip = null;
+                if (! $willHave['ckey']) {
+                    $banDetail->ckey = null;
+                }
+                if (! $willHave['comp_id']) {
+                    $banDetail->comp_id = null;
+                }
+                if (! $willHave['ip']) {
+                    $banDetail->ip = null;
+                }
                 $banDetail->save();
             }
         }

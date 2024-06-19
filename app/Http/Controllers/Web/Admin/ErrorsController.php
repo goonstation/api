@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Events\EventError;
 use App\Models\GameRound;
 use App\Traits\IndexableQuery;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ErrorsController extends Controller

@@ -103,7 +103,7 @@ class PlayerMedalsController extends Controller
             }
         }
 
-        if (!$playerId) {
+        if (! $playerId) {
             return response()->json(['message' => 'Unable to locate that player'], 400);
         }
 
@@ -113,7 +113,7 @@ class PlayerMedalsController extends Controller
 
         return ['data' => [
             /** @var bool */
-            'has_medal' => $playerHasMedal
+            'has_medal' => $playerHasMedal,
         ]];
     }
 
@@ -143,18 +143,19 @@ class PlayerMedalsController extends Controller
             $playerId = $player->id;
         }
 
-        $existingPlayerMedal = PlayerMedal::where('player_id', $playerId)
-            ->where('medal_id', $medal->id)
-            ->exists();
-        if ($existingPlayerMedal) {
+        $playerMedal = PlayerMedal::firstOrCreate(
+            [
+                'player_id' => $playerId,
+                'medal_id' => $medal->id,
+            ],
+            [
+                'round_id' => isset($data['round_id']) ? $data['round_id'] : null,
+            ]
+        );
+
+        if (! $playerMedal->wasRecentlyCreated) {
             return response()->json(['message' => 'That player already has that medal'], 409);
         }
-
-        $playerMedal = new PlayerMedal();
-        $playerMedal->player_id = $playerId;
-        $playerMedal->medal_id = $medal->id;
-        $playerMedal->round_id = isset($data['round_id']) ? $data['round_id'] : null;
-        $playerMedal->save();
 
         return new PlayerMedalResource($playerMedal);
     }
@@ -203,7 +204,7 @@ class PlayerMedalsController extends Controller
         ]);
 
         $sourcePlayer = Player::where('ckey', $data['source_ckey'])->first();
-        if (!$sourcePlayer) {
+        if (! $sourcePlayer) {
             return response()->json(['message' => 'Unable to locate source player'], 400);
         }
 
@@ -213,7 +214,7 @@ class PlayerMedalsController extends Controller
         }
 
         $targetPlayer = Player::where('ckey', $data['target_ckey'])->first();
-        if (!$targetPlayer) {
+        if (! $targetPlayer) {
             // Might as well just make a brand new player
             $targetPlayer = Player::create(['ckey' => $data['target_ckey']]);
         }

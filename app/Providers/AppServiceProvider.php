@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('viewPulse', function (User $user) {
-            return !!$user->game_admin_id || !!$user->is_admin;
+            return (bool) $user->game_admin_id || (bool) $user->is_admin;
         });
 
         Blade::directive('base64img', function (string $expression) {

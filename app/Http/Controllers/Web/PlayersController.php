@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GameRound;
 use App\Models\GameServer;
 use App\Models\GlobalStat;
+use App\Models\Medal;
 use App\Models\Player;
 use App\Models\PlayerParticipation;
 use App\Models\PlayersOnline;
@@ -76,6 +77,7 @@ class PlayersController extends Controller
         $totalAveragePlayersOnline = $totalAveragePlayersOnline->average_online;
 
         $this->setMeta(title: 'Players');
+
         return Inertia::render('Players/Index', [
             'averagePlayersOnline' => $averagePlayersOnline,
             'averagePlayersByDay' => $averagePlayersByDay,
@@ -124,6 +126,16 @@ class PlayersController extends Controller
             },
             'firstConnection:id,player_id,created_at',
             'playtime:player_id,seconds_played',
+            'medals' => function ($q) {
+                $q->select('id', 'medal_id', 'player_id', 'created_at')
+                    ->with([
+                        'medal:id,uuid,title,description',
+                    ])->whereHas('medal', function ($q2) {
+                        $q2->where('hidden', false);
+                    })
+                    ->whereRelation('gameRound', 'ended_at', '!=', null)
+                    ->orderBy('created_at', 'desc');
+            },
         ])
             ->select('id', 'ckey', 'key')
             ->withCount([
@@ -133,6 +145,12 @@ class PlayersController extends Controller
             ])
             ->where('id', $player)
             ->firstOrFail();
+
+        $unearnedMedals = Medal::select(['uuid', 'title', 'description'])
+            ->whereNotIn('id', $player->medals->pluck('medal.id'))
+            ->where('hidden', false)
+            ->orderBy('title', 'asc')
+            ->get();
 
         $favoriteJob = PlayerParticipation::select('job')
             ->selectRaw('count(id) as played_job')
@@ -154,10 +172,19 @@ class PlayersController extends Controller
             title: 'Player '.($player->key ?? $player->ckey),
             image: ['type' => 'player', 'key' => $player->id]
         );
+
         return Inertia::render('Players/Show', [
             'player' => $player,
             'latestRound' => $latestRound,
             'favoriteJob' => $favoriteJob ? $favoriteJob->job : null,
+            'unearnedMedals' => $unearnedMedals,
         ]);
+    }
+
+    public function showByCkey(string $ckey)
+    {
+        $player = Player::where('ckey', ckey($ckey))->firstOrFail();
+
+        return redirect()->route('players.show', $player->id);
     }
 }

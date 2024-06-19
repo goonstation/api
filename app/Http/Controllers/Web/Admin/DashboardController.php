@@ -13,7 +13,7 @@ class DashboardController extends Controller
     {
         $authFromGame = false;
         $authFromGameServer = null;
-        if ($request->session()->has('auth_from_game')){
+        if ($request->session()->has('auth_from_game')) {
             $authFromGame = $request->session()->remove('auth_from_game');
             $authFromGameServer = GameServer::where('server_id', $authFromGame)->first();
         }

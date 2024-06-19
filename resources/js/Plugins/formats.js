@@ -8,29 +8,19 @@ export default {
       },
       date: (val, noTime) => {
         if (!val) return
-        const opts = {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        }
+        const date = dayjs.utc(val)
+        if (!date.isValid()) return
+        let format = 'ddd, D MMM YYYY'
         if (!noTime) {
-          opts.hour = '2-digit'
-          opts.minute = '2-digit'
+          format += ', HH:mm'
         }
-        return new Date(val).toLocaleDateString('en-GB', opts)
+        return date.local().format(format)
       },
       dateWithTime: (val) => {
         if (!val) return
-        const opts = {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }
-        return new Date(val).toLocaleDateString('en-GB', opts)
+        const date = dayjs.utc(val)
+        if (!date.isValid()) return
+        return date.local().format('ddd, D MMM YYYY, HH:mm')
       },
       fromNow: (val) => {
         const date = dayjs.utc(val)

@@ -49,6 +49,7 @@ class PlayersController extends Controller
             },
             'notes.gameAdmin',
             'notes.gameServer',
+            'medals.medal',
         ])
             ->loadCount([
                 'participations',
@@ -75,6 +76,7 @@ class PlayersController extends Controller
 
         $banHistory = $banHistory->map(function (Ban $ban) use ($ckey, $ips, $compIds) {
             $ban->player_has_active_details = $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray());
+
             return $ban;
         });
 
@@ -104,7 +106,7 @@ class PlayersController extends Controller
 
     public function showByCkey(string $ckey)
     {
-        $player = Player::where('ckey', $ckey)->firstOrFail();
+        $player = Player::where('ckey', ckey($ckey))->firstOrFail();
 
         return redirect()->route('admin.players.show', $player->id);
     }
@@ -113,12 +115,19 @@ class PlayersController extends Controller
     {
         /** @var BanDetail $detail */
         foreach ($ban->details as $detail) {
-            if (!$detail->deleted_at) {
-                if ($detail->ckey === $ckey) return true;
-                if ($detail->ip && in_array($detail->ip, $ips)) return true;
-                if ($detail->comp_id && in_array($detail->comp_id, $compIds)) return true;
+            if (! $detail->deleted_at) {
+                if ($detail->ckey === $ckey) {
+                    return true;
+                }
+                if ($detail->ip && in_array($detail->ip, $ips)) {
+                    return true;
+                }
+                if ($detail->comp_id && in_array($detail->comp_id, $compIds)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 }

@@ -28,7 +28,9 @@ return new class extends Migration
         $maps = Map::where('is_layer', false)->get();
         $debris = Map::where('map_id', 'DEBRIS')->first();
         foreach ($maps as $map) {
-            if ($map->map_id === 'OSHAN' || $map->map_id === 'NADIR' || $map->map_id === 'POD_WARS') continue;
+            if ($map->map_id === 'OSHAN' || $map->map_id === 'NADIR' || $map->map_id === 'POD_WARS') {
+                continue;
+            }
             $mapLayer = new MapLayer();
             $mapLayer->map_id = $map->id;
             $mapLayer->layer_id = $debris->id;

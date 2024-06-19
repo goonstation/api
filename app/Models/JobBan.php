@@ -29,7 +29,7 @@ class JobBan extends Model
     public function getDurationAttribute()
     {
         $now = Carbon::now();
-        if (!$this->expires_at || $now->isAfter($this->expires_at)) {
+        if (! $this->expires_at || $now->isAfter($this->expires_at)) {
             return 0;
         }
 
@@ -80,7 +80,7 @@ class JobBan extends Model
     /**
      * @return Builder
      */
-    public static function getValidJobBans(string $ckey, string $job = null, string $serverId = null)
+    public static function getValidJobBans(string $ckey, ?string $job = null, ?string $serverId = null)
     {
         $query = JobBan::with(['gameAdmin:id,ckey,name'])
             ->where('ckey', $ckey)

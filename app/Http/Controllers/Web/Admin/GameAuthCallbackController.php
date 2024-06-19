@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Libraries\GameBridge;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class GameAuthCallbackController extends Controller
 {
@@ -20,7 +19,7 @@ class GameAuthCallbackController extends Controller
         try {
             $res = GameBridge::relay($data['server_id'], [
                 'type' => 'goonhub_auth',
-                'ckey' => Auth::user()->gameAdmin->ckey,
+                'ckey' => $request->user()->gameAdmin->ckey,
             ]);
             $reachedGame = true;
         } catch (\Throwable $e) {

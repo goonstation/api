@@ -31,7 +31,7 @@ class DeathsController extends Controller
                 ->withSum([
                     'votes as votes' => function ($query) {
                         $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                    }
+                    },
                 ], 'value')
                 ->with('userVotes:voteable_id,value')
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -68,7 +68,7 @@ class DeathsController extends Controller
             ->withSum([
                 'votes as votes' => function ($query) {
                     $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                }
+                },
             ], 'value')
             ->with('userVotes:voteable_id,value')
             ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -76,7 +76,7 @@ class DeathsController extends Controller
             ->firstOrFail();
 
         $this->setMeta(
-            title: 'Death #' . number_format($death->id),
+            title: 'Death #'.number_format($death->id),
             image: ['type' => 'death', 'key' => $death->id]
         );
 

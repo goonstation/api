@@ -64,7 +64,7 @@ class AntagsController extends Controller
             ->firstOrFail();
 
         $this->setMeta(
-            title: 'Antagonist #' . number_format($antag->id),
+            title: 'Antagonist #'.number_format($antag->id),
             image: ['type' => 'antag', 'key' => $antag->id]
         );
 

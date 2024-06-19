@@ -165,6 +165,18 @@
       </q-card-section>
     </q-card>
 
+    <q-card class="gh-card gh-card--small q-mb-md" flat>
+      <div class="gh-card__header flex">
+        <q-icon :name="ionMedal" size="22px" />
+        <span>Medals ({{ player.medals.length }})</span>
+        <q-space />
+        <add-player-medal-dialog :player="player" @success="onMedalAdded" size="sm" />
+      </div>
+      <q-card-section class="q-pa-none">
+        <medals v-model="player.medals" :player-id="player.id" />
+      </q-card-section>
+    </q-card>
+
     <q-card class="gh-card gh-card--small" flat>
       <div class="gh-card__header">
         <q-icon :name="ionPeople" size="22px" />
@@ -207,17 +219,20 @@ import {
   ionPencil,
   ionPeople,
   ionInformationCircleOutline,
+  ionMedal,
 } from '@quasar/extras/ionicons-v6'
 import { router, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 import AddPlayerNoteDialog from '@/Components/AddPlayerNoteDialog.vue'
+import AddPlayerMedalDialog from '@/Components/AddPlayerMedalDialog.vue'
 import Ips from './Partials/Ips.vue'
 import CompIds from './Partials/CompIds.vue'
 import Connections from './Partials/Connections.vue'
 import BanHistory from './Partials/BanHistory.vue'
 import JobBanHistory from './Partials/JobBanHistory.vue'
 import Notes from './Partials/Notes.vue'
+import Medals from './Partials/Medals.vue'
 import OtherAccounts from './Partials/OtherAccounts.vue'
 
 export default {
@@ -234,12 +249,14 @@ export default {
     Link,
     PlayerAvatar,
     AddPlayerNoteDialog,
+    AddPlayerMedalDialog,
     Ips,
     CompIds,
     Connections,
     BanHistory,
     JobBanHistory,
     Notes,
+    Medals,
     OtherAccounts,
   },
 
@@ -252,6 +269,7 @@ export default {
       ionPencil,
       ionPeople,
       ionInformationCircleOutline,
+      ionMedal,
     }
   },
 
@@ -305,6 +323,9 @@ export default {
     onNoteAdded(note) {
       this.player.notes.unshift(note)
     },
+    onMedalAdded(medal) {
+      this.player.medals.unshift(medal)
+    }
   },
 }
 </script>

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\BuildMap;
 use App\Models\Map;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use ZipArchive;
 
@@ -46,7 +45,7 @@ class MapsController extends Controller
             return response()->json(['message' => 'Unable to locate configuration for that map.'], 400);
         }
 
-        $gameAdminId = Auth::user()->game_admin_id;
+        $gameAdminId = $request->user()->game_admin_id;
 
         $file = $request->file('images');
         $mapZipPath = BuildMap::moveUploadedFile($file);

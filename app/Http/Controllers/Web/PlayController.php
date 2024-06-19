@@ -15,28 +15,29 @@ class PlayController extends Controller
         if ($serverId === 'streamer1') {
             $server = [
                 'name' => 'Goonstation Nightshade 1',
-                'byond_link' => 'byond://tomato1.goonhub.com:27111'
+                'byond_link' => 'byond://tomato1.goonhub.com:27111',
             ];
-        } else if ($serverId === 'streamer2') {
+        } elseif ($serverId === 'streamer2') {
             $server = [
                 'name' => 'Goonstation Nightshade 2',
-                'byond_link' => 'byond://tomato2.goonhub.com:27112'
+                'byond_link' => 'byond://tomato2.goonhub.com:27112',
             ];
-        } else if ($serverId === 'streamer3') {
+        } elseif ($serverId === 'streamer3') {
             $server = [
                 'name' => 'Goonstation Nightshade 3',
-                'byond_link' => 'byond://tomato3.goonhub.com:27113'
+                'byond_link' => 'byond://tomato3.goonhub.com:27113',
             ];
-        } else if ($serverId === 'streamer4') {
+        } elseif ($serverId === 'streamer4') {
             $server = [
                 'name' => 'Goonstation Nightshade 4',
-                'byond_link' => 'byond://tomato4.goonhub.com:27114'
+                'byond_link' => 'byond://tomato4.goonhub.com:27114',
             ];
         }
+
         return (object) $server;
     }
 
-    public function index(Request $request, string $serverId = null)
+    public function index(Request $request, ?string $serverId = null)
     {
         $gameServer = null;
         if ($serverId) {
@@ -47,12 +48,12 @@ class PlayController extends Controller
             }
         }
 
-        if (!$gameServer) {
+        if (! $gameServer) {
             $gameServer = GameServer::where('active', true)->first();
         }
 
         return view('play', [
-            'server' => $gameServer
+            'server' => $gameServer,
         ]);
     }
 }

@@ -47,7 +47,7 @@ class OgImageController extends Controller
         if (array_key_exists($type, $this->validTypes)) {
             $imageKey = $id;
             $image = OpenGraphImage::getFile($type, $id);
-            if (!$image) {
+            if (! $image) {
                 $imageData = $this->validTypes[$type]::getOpenGraphData($id);
             }
         } else {
@@ -55,6 +55,11 @@ class OgImageController extends Controller
         }
 
         $image = $image ? $image : OpenGraphImage::getImage($type, $imageKey, $imageData);
+
+        if (!$image) {
+            return $this->defaultImage();
+        }
+
         return response($image['file'])
             ->withHeaders([
                 'Content-Type' => 'image/png',
@@ -68,14 +73,14 @@ class OgImageController extends Controller
 
     public function preview(Request $request, string $type, int $id)
     {
-        if (!array_key_exists($type, $this->validTypes)) {
+        if (! array_key_exists($type, $this->validTypes)) {
             return abort(404);
         }
 
         return view(
             "open-graph.$type",
             [
-                'data' => $this->validTypes[$type]::getOpenGraphData($id)
+                'data' => $this->validTypes[$type]::getOpenGraphData($id),
             ]
         );
     }

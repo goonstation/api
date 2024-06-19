@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\FinesController;
 use App\Http\Controllers\Web\GameServersController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\MapsController;
+use App\Http\Controllers\Web\MedalsController;
 use App\Http\Controllers\Web\OgImageController;
 use App\Http\Controllers\Web\PlayController;
 use App\Http\Controllers\Web\PlayersController;
@@ -64,6 +65,7 @@ Route::controller(PlayersController::class)->prefix('/players')->group(function 
     Route::get('/', 'index')->name('players.index')->breadcrumb('Players');
     Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
     Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')->breadcrumb('', 'players.search');
+    Route::get('/{ckey}', 'showByCkey')->name('players.show-by-ckey');
 });
 
 Route::controller(RoundsController::class)->prefix('/rounds')->group(function () {
@@ -126,6 +128,12 @@ Route::controller(GameServersController::class)->prefix('/game-servers')->group(
 Route::controller(VotesController::class)->prefix('/votes')->group(function () {
     Route::post('/up', 'upVote')->name('votes.up');
     Route::post('/down', 'downVote')->name('votes.down');
+});
+
+Route::controller(MedalsController::class)->prefix('/medals')->group(function () {
+    Route::get('/', 'index')->name('medals.index')->breadcrumb('Medals');
+    Route::get('/{uuid}', 'show')->name('medals.show')->breadcrumb('', 'medals.index');
+    Route::get('/players/{uuid}', 'players')->name('medals.players');
 });
 
 require __DIR__.'/fortify.php';

@@ -10,6 +10,16 @@ class PlayerMedal extends Model
 {
     use Filterable, HasFactory;
 
+    protected $fillable = [
+        'player_id',
+        'medal_id',
+        'round_id',
+    ];
+
+    protected $hidden = [
+        'medal_id',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

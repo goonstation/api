@@ -139,10 +139,10 @@ class GameRound extends Model
     public static function getOpenGraphData(int $id)
     {
         return self::with([
-                'server',
-                'latestStationName',
-                'mapRecord'
-            ])
+            'server',
+            'latestStationName',
+            'mapRecord',
+        ])
             ->where('id', $id)
             ->where('ended_at', '!=', null)
             ->whereRelation('server', 'invisible', '!=', true)

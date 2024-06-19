@@ -20,11 +20,15 @@ return [
     'discord_bot_url' => env('DISCORD_BOT_URL', null),
     'discord_bot_key' => env('DISCORD_BOT_KEY', null),
 
+    'browserless_host' => env('BROWSERLESS_HOST', null),
+    'browserless_port' => env('BROWSERLESS_PORT', null),
+    'browserless_token' => env('BROWSERLESS_TOKEN', null),
+
     'server_performance' => [
         'key' => env('SERVER_PERFORMANCE_KEY', null),
         'servers' => [
             'Tartarus' => '51.222.44.203:16420',
             'Asphodel' => '15.235.86.196:16420',
-        ]
-    ]
+        ],
+    ],
 ];

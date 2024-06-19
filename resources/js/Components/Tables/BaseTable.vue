@@ -283,7 +283,11 @@
       <q-card flat bordered>
         <q-card-section class="row items-center no-wrap">
           <q-avatar :icon="ionInformationCircleOutline" color="negative" text-color="dark" />
-          <span class="q-ml-sm"> Are you sure you want to delete this? </span>
+          <span class="q-ml-sm">
+            <slot name="delete-confirm" :props="{ item: deletingItem }">
+              Are you sure you want to delete this?
+            </slot>
+          </span>
         </q-card-section>
 
         <q-card-actions align="right">

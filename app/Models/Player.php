@@ -104,21 +104,34 @@ class Player extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
+    // public function medals()
+    // {
+    //     return $this->hasManyThrough(
+    //         Medal::class,
+    //         PlayerMedal::class,
+    //         'player_id',
+    //         'id'
+    //     );
+    // }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function medals()
     {
-        return $this->hasManyThrough(Medal::class, PlayerMedal::class);
+        return $this->hasMany(PlayerMedal::class);
     }
 
     public static function getOpenGraphData(int $id)
     {
         $player = self::with([
-                'playtime',
-                'firstConnection'
-            ])
+            'playtime',
+            'firstConnection',
+        ])
             ->withCount([
                 'participations',
                 'participationsRp',
-                'deaths'
+                'deaths',
             ])
             ->where('id', $id)
             ->firstOrFail();

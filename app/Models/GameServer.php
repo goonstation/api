@@ -14,6 +14,6 @@ class GameServer extends Model
 
     public function getByondLinkAttribute()
     {
-        return 'byond://' . $this->address . ':' . $this->port;
+        return 'byond://'.$this->address.':'.$this->port;
     }
 }

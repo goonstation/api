@@ -39,7 +39,7 @@ class GameRoundsController extends Controller
             ->where('id', '!=', $gameRound->id)
             ->latest()
             ->first();
-        if ($previousRound && !$previousRound->ended_at) {
+        if ($previousRound && ! $previousRound->ended_at) {
             // Previous round didn't tell the API that it ended
             // (maybe crashed, or restarted outside of game functions)
             $previousRound->ended_at = Carbon::now();

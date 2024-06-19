@@ -23,7 +23,7 @@ class VpnCheckResource extends JsonResource
             'error' => $this->error,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            /** @var array{cached: boolean, whitelisted: boolean} */
+            /** @var array{cached: bool, whitelisted: bool} */
             'meta' => $this->meta,
         ];
     }

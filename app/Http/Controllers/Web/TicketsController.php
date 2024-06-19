@@ -20,7 +20,7 @@ class TicketsController extends Controller
                 ->withSum([
                     'votes as votes' => function ($query) {
                         $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                    }
+                    },
                 ], 'value')
                 ->with('userVotes:voteable_id,value')
                 ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -54,7 +54,7 @@ class TicketsController extends Controller
             ->withSum([
                 'votes as votes' => function ($query) {
                     $query->select(DB::raw('COALESCE(SUM(value), 0)'));
-                }
+                },
             ], 'value')
             ->with('userVotes:voteable_id,value')
             ->whereRelation('gameRound', 'ended_at', '!=', null)
@@ -62,7 +62,7 @@ class TicketsController extends Controller
             ->firstOrFail();
 
         $this->setMeta(
-            title: 'Ticket #' . number_format($ticket->id),
+            title: 'Ticket #'.number_format($ticket->id),
             image: ['type' => 'ticket', 'key' => $ticket->id]
         );
 

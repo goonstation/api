@@ -7,7 +7,6 @@ use App\Models\PlayerNote;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesPlayerNotes;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -42,7 +41,7 @@ class PlayerNotesController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+            'game_admin_ckey' => $request->user()->gameAdmin->ckey,
         ]);
         if ($request->input('server_id') === 'all') {
             $request->merge(['server_id' => null]);
@@ -70,7 +69,7 @@ class PlayerNotesController extends Controller
     {
         try {
             $request = $request->merge([
-                'game_admin_ckey' => Auth::user()->gameAdmin->ckey,
+                'game_admin_ckey' => $request->user()->gameAdmin->ckey,
             ]);
             if ($request->input('server_id') === 'all') {
                 $request->merge(['server_id' => null]);
