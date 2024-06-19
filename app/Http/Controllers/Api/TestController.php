@@ -14,6 +14,10 @@ class TestController extends Controller
     {
         return response()->json([
             'message' => 'This is a test',
+            'data' => [
+                'ip' => $request->ip(),
+                'agent' => $request->userAgent(),
+            ]
         ]);
     }
 }
