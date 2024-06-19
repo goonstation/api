@@ -133,7 +133,10 @@ class PlayersController extends Controller
                     ])->whereHas('medal', function ($q2) {
                         $q2->where('hidden', false);
                     })
-                    ->whereRelation('gameRound', 'ended_at', '!=', null)
+                    ->where(function ($q2) {
+                        $q2->whereRelation('gameRound', 'ended_at', '!=', null)
+                            ->orWhere('round_id', null);
+                    })
                     ->orderBy('created_at', 'desc');
             },
         ])
