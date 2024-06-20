@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -28,17 +30,24 @@ class PlayerPlaytimeController extends Controller
         */
         $data = $request->validate([
             'players' => 'required|array',
-            'players.*.id' => 'required|integer|exists:players,id',
+            'players.*.id' => 'required|integer',
             'players.*.seconds_played' => 'required|integer',
             'server_id' => 'required|string',
         ]);
 
+        $playerIds = Player::select('id')
+            ->whereIn('id', Arr::pluck($data['players'], 'id'))
+            ->get()
+            ->pluck('id')
+            ->toArray();
+
         $values = [];
-        $playerIds = [];
         $valuesSql = '';
+        $recordedPlayerIds = [];
         foreach ($data['players'] as $key => $player) {
-            if (in_array($player['id'], $playerIds)) continue;
-            $playerIds[] = $player['id'];
+            if (!in_array($player['id'], $playerIds)) continue;
+            if (in_array($player['id'], $recordedPlayerIds)) continue;
+            $recordedPlayerIds[] = $player['id'];
             array_push($values, $player['id'], $player['seconds_played'], $data['server_id']);
             $valuesSql .= '(?, ?, ?), ';
         }
