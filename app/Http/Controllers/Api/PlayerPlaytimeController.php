@@ -34,8 +34,11 @@ class PlayerPlaytimeController extends Controller
         ]);
 
         $values = [];
+        $playerIds = [];
         $valuesSql = '';
         foreach ($data['players'] as $key => $player) {
+            if (in_array($player['id'], $playerIds)) continue;
+            $playerIds[] = $player['id'];
             array_push($values, $player['id'], $player['seconds_played'], $data['server_id']);
             $valuesSql .= '(?, ?, ?), ';
         }
