@@ -129,10 +129,8 @@ class PlayersController extends Controller
             'medals' => function ($q) {
                 $q->select('id', 'medal_id', 'player_id', 'created_at')
                     ->with([
-                        'medal:id,uuid,title,description',
-                    ])->whereHas('medal', function ($q2) {
-                        $q2->where('hidden', false);
-                    })
+                        'medal:id,uuid,title,description,hidden',
+                    ])
                     ->where(function ($q2) {
                         $q2->whereRelation('gameRound', 'ended_at', '!=', null)
                             ->orWhere('round_id', null);
@@ -148,6 +146,17 @@ class PlayersController extends Controller
             ])
             ->where('id', $player)
             ->firstOrFail();
+
+        // Remove unncessary data
+        $player->medals->transform(function ($award) {
+            if ($award->medal['hidden']) {
+                unset($award->medal['uuid']);
+                unset($award->medal['title']);
+                unset($award->medal['description']);
+            }
+
+            return $award;
+        });
 
         $unearnedMedals = Medal::select(['uuid', 'title', 'description'])
             ->whereNotIn('id', $player->medals->pluck('medal.id'))

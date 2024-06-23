@@ -3,12 +3,8 @@
     <q-card-section class="flex items-center justify-between gap-xs-sm">
       <div class="text-subtitle1 flex items-center">
         <q-icon :name="ionMedal" size="md" class="q-mr-md" />
-        <template v-if="showUnearned">
-          Unearned Medals ({{ unearned.length }})
-        </template>
-        <template v-else>
-          Medals ({{ medals.length }})
-        </template>
+        <template v-if="showUnearned"> Unearned Medals ({{ unearned.length }}) </template>
+        <template v-else> Medals ({{ medals.length }}) </template>
       </div>
       <div>
         <q-btn @click="showUnearned = !showUnearned" color="grey-5" size="sm" outline>
@@ -44,7 +40,22 @@
             v-for="award in medals"
             class="items-center gap-xs-md col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-4"
           >
-            <div class="medal">
+            <div v-if="award.medal.hidden" class="medal">
+              <div class="flex items-center justify-center" style="width: 64px; height: 64px">
+                <q-icon :name="ionHelp" size="lg" />
+              </div>
+              <div>
+                <div class="text-grey-5 text-bold">Hidden Medal</div>
+                <div class="text-sm opacity-80">What could it be?</div>
+                <div class="earned-at text-sm opacity-80">
+                  Earned {{ $formats.fromNow(award.created_at) }}
+                  <q-tooltip :offset="[0, 5]" class="text-sm">{{
+                    $formats.dateWithTime(award.created_at)
+                  }}</q-tooltip>
+                </div>
+              </div>
+            </div>
+            <div v-else class="medal">
               <medal-thumbnail :medal="award.medal" />
               <div>
                 <div class="text-primary text-bold">{{ award.medal.title }}</div>
@@ -83,7 +94,7 @@
 </style>
 
 <script>
-import { ionMedal } from '@quasar/extras/ionicons-v6'
+import { ionMedal, ionHelp } from '@quasar/extras/ionicons-v6'
 import MedalThumbnail from '@/Components/MedalThumbnail.vue'
 
 export default {
@@ -94,6 +105,7 @@ export default {
   setup() {
     return {
       ionMedal,
+      ionHelp,
     }
   },
 
