@@ -30,6 +30,10 @@ class MedalsController extends Controller
             sortBy: 'title',
             desc: false);
 
+        $medals->setCollection(
+            $medals->getCollection()->makeVisible(['id'])
+        );
+
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Medals/Index', [
                 'medals' => $medals,
@@ -85,7 +89,7 @@ class MedalsController extends Controller
     public function edit(Medal $medal)
     {
         return Inertia::render('Admin/Medals/Edit', [
-            'medal' => $medal,
+            'medal' => $medal->makeVisible(['id']),
         ]);
     }
 
@@ -127,12 +131,14 @@ class MedalsController extends Controller
     {
         $data = $request->validate([
             'player_id' => 'required',
-            'medal_id' => 'required',
+            'medal_uuid' => 'required',
         ]);
+
+        $medal = Medal::where('uuid', $data['medal_uuid'])->firstOrFail();
 
         $medalAward = new PlayerMedal();
         $medalAward->player_id = $data['player_id'];
-        $medalAward->medal_id = $data['medal_id'];
+        $medalAward->medal_id = $medal->id;
         $medalAward->save();
 
         $medalAward->load('medal');
@@ -140,10 +146,11 @@ class MedalsController extends Controller
         return $medalAward;
     }
 
-    public function removeFromPlayer(int $player, int $medal)
+    public function removeFromPlayer(int $player, string $medal)
     {
+        $medal = Medal::where('uuid', $medal)->firstOrFail();
         $medalAward = PlayerMedal::where('player_id', $player)
-            ->where('medal_id', $medal)
+            ->where('medal_id', $medal->id)
             ->firstOrFail();
 
         $medalAward->delete();

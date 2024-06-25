@@ -10,10 +10,10 @@
 
         <q-card-section>
           <base-select
-            v-model="form.medal_id"
+            v-model="form.medal_uuid"
             label="Medal"
             :load-route="route('admin.medals.unawarded-to-player', player.id)"
-            option-value="id"
+            option-value="uuid"
             option-label="title"
             search-key="title"
             filled
@@ -22,8 +22,8 @@
             emit-value
             map-options
             use-input
-            :error="!!form.errors.medal_id"
-            :error-message="form.errors.medal_id"
+            :error="!!form.errors.medal_uuid"
+            :error-message="form.errors.medal_uuid"
           >
             <template #option="scope">
               <q-item v-bind="scope.itemProps">
@@ -85,7 +85,7 @@ export default {
       open: false,
       form: useForm({
         player_id: this.player.id,
-        medal_id: null,
+        medal_uuid: null,
       }),
     }
   },

@@ -15,7 +15,7 @@
     <template #body-cell-actions="props">
       <q-td :props="props">
         <q-btn
-          @click="openConfirmDelete(props.row.medal.id)"
+          @click="openConfirmDelete(props.row.medal.uuid)"
           :icon="ionClose"
           class="q-ma-xs"
           color="negative"
@@ -146,7 +146,7 @@ export default {
 
       // remove row
       const newMedals = this.modelValue.filter((medal) => {
-        return medal.medal.id !== this.deletingItem
+        return medal.medal.uuid !== this.deletingItem
       })
 
       this.deletingItem = null
