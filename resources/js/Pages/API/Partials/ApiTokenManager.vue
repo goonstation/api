@@ -187,7 +187,7 @@ const deleteApiToken = () => {
             v-if="$page.props.jetstream.flash.token"
             class="bg-grey-1 q-px-md q-py-sm rounded-borders text-sm text-dark break-all"
           >
-            {{ $page.props.jetstream.flash.token }}
+          {{ $page.props.jetstream.flash.token }}
           </div>
         </q-card-section>
 

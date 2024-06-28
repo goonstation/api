@@ -3,13 +3,14 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
-use App\Models\User;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Auth\Access\Gate as AccessGate;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerAccessGate();
+
         if ($this->app->environment(['local', 'staging'])) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
@@ -45,12 +48,12 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
-            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
+        Scramble::routes(function (Route $route) {
+            return $route->getDomain() === 'api.'.preg_replace('(^https?://)', '', config('app.url'));
         });
 
-        Gate::define('viewPulse', function (User $user) {
-            return (bool) $user->game_admin_id || (bool) $user->is_admin;
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
 
         Blade::directive('base64img', function (string $expression) {
@@ -63,5 +66,14 @@ class AppServiceProvider extends ServiceProvider
         foreach (glob(__DIR__.'/../Helpers/*.php') as $filename) {
             require_once $filename;
         }
+    }
+
+    protected function registerAccessGate()
+    {
+        $this->app->singleton(GateContract::class, function ($app) {
+            return new AccessGate($app, function () {
+                return request()->user();
+            });
+        });
     }
 }

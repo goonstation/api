@@ -18,20 +18,28 @@ class ApiAuthenticate
     {
         $bearer = $request->bearerToken();
         if ($bearer) {
-            $tokenParts = explode('|', $bearer, 2);
-            if (count($tokenParts) === 2) {
-                $id = $tokenParts[0];
-                $token = $tokenParts[1];
-                $instance = DB::table('personal_access_tokens')->find($id);
+            $pat = null;
+            if (str_contains($bearer, '|')) {
+                $tokenParts = explode('|', $bearer, 2);
+                if (count($tokenParts) === 2) {
+                    $id = $tokenParts[0];
+                    $token = $tokenParts[1];
+                    $pat = DB::table('personal_access_tokens')->find($id);
+                    if (hash('sha256', $token) !== $pat->token) $pat = null;
+                }
+            } else {
+                $pat = DB::table('personal_access_tokens')
+                    ->where('token', hash('sha256', $bearer))
+                    ->first();
+            }
 
-                if (hash('sha256', $token) === $instance->token) {
-                    if ($user = \App\Models\User::find($instance->tokenable_id)) {
-                        $request->setUserResolver(function () use ($user) {
-                            return $user;
-                        });
+            if ($pat) {
+                if ($user = \App\Models\User::find($pat->tokenable_id)) {
+                    $request->setUserResolver(function () use ($user) {
+                        return $user;
+                    });
 
-                        return $next($request);
-                    }
+                    return $next($request);
                 }
             }
         }

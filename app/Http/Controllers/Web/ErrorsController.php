@@ -66,7 +66,7 @@ class ErrorsController extends Controller
                     $query->whereRaw('(file is not null and line is not null)');
 
                     // Non-admins can't view errors within secret module files
-                    if (! $request->user()?->game_admin_id) {
+                    if (! $request->user()?->isGameAdmin()) {
                         $query->whereRaw('starts_with(file, \'code_secret\') = false');
                     }
 

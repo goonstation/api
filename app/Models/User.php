@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use EloquentFilter\Filterable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Filterable;
     use HasApiTokens;
@@ -72,5 +73,15 @@ class User extends Authenticatable
     public function gameAdmin()
     {
         return $this->hasOne(GameAdmin::class, 'id', 'game_admin_id');
+    }
+
+    public function isAdmin()
+    {
+        return (bool) $this->is_admin;
+    }
+
+    public function isGameAdmin()
+    {
+        return (bool) $this->game_admin_id;
     }
 }

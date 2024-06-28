@@ -39,9 +39,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['apiauth', 'isadmin'])->group(function () {
-    Route::get('test', [TestController::class, 'index']);
+Route::get('test', [TestController::class, 'index'])->can('view-test');
 
+Route::middleware(['isadmin'])->group(function () {
     Route::controller(GameRoundsController::class)->prefix('rounds')->group(function () {
         Route::post('/', 'store');
         Route::put('/{gameRound}', 'update');

@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Router;
 
 class Kernel extends HttpKernel
 {
@@ -42,8 +44,9 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            // 'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\ApiAuthenticate::class,
+            \App\Http\Middleware\Throttle::class,
         ],
     ];
 
@@ -65,7 +68,15 @@ class Kernel extends HttpKernel
         'isadmin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'throttle' => \App\Http\Middleware\Throttle::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    public function __construct(Application $app, Router $router)
+    {
+        // Our custom throttle middleware relies on user auth being done first
+        array_push($this->middlewarePriority, \App\Http\Middleware\Throttle::class);
+
+        parent::__construct($app, $router);
+    }
 }
