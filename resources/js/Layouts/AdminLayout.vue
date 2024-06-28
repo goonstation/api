@@ -64,7 +64,7 @@
                   <q-item-section>Profile</q-item-section>
                 </q-item>
                 <q-item
-                  v-if="$page.props.jetstream.hasApiFeatures && user.is_admin"
+                  v-if="$page.props.jetstream.hasApiFeatures"
                   clickable
                   @click="router.visit(route('api-tokens.index'))"
                   v-close-popup

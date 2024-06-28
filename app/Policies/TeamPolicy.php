@@ -31,7 +31,7 @@ class TeamPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin;
+        return $user->isAdmin();
     }
 
     /**

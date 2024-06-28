@@ -17,7 +17,7 @@ class EnsureUserIsGameAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->user()->game_admin_id) {
+        if (! $request->user()->isGameAdmin()) {
             return $request->expectsJson()
                 ? abort(403, 'You don\'t have permission to access this route.')
                 : Redirect::guest(URL::route('dashboard'));

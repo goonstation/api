@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Events\EventDeath;
 use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -120,6 +121,18 @@ class Player extends Model
     public function medals()
     {
         return $this->hasMany(PlayerMedal::class);
+    }
+
+    public function importedMedals()
+    {
+        return $this->hasOne(PlayerMedalsImported::class);
+    }
+
+    protected function hasImportedMedals(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->importedMedals()->exists(),
+        );
     }
 
     public static function getOpenGraphData(int $id)

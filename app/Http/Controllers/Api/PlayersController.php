@@ -8,6 +8,7 @@ use App\Http\Resources\PlayerIpsResource;
 use App\Http\Resources\PlayerResource;
 use App\Http\Resources\PlayerSearchResource;
 use App\Http\Resources\PlayerStatsResource;
+use App\Jobs\ImportByondMedalsForPlayer;
 use App\Jobs\RecordByondJoinDate;
 use App\Jobs\RecordPlayerConnection;
 use App\Models\Player;
@@ -36,7 +37,10 @@ class PlayersController extends Controller
         ]);
 
         $player = Player::where('ckey', $data['ckey'])->first();
+        $creatingPlayer = false;
+
         if (is_null($player)) {
+            $creatingPlayer = true;
             $player = new Player();
             $player->ckey = $data['ckey'];
         }
@@ -58,6 +62,10 @@ class PlayersController extends Controller
         }
 
         RecordPlayerConnection::dispatch($player->id, $data);
+
+        if ($creatingPlayer || !$player->hasImportedMedals) {
+            ImportByondMedalsForPlayer::dispatch($player->ckey);
+        }
 
         return new PlayerResource($player);
     }

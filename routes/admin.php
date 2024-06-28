@@ -134,7 +134,7 @@ Route::middleware([
 
             Route::get('/unawarded-to-player/{player}', 'medalsPlayerDoesntHave')->name('admin.medals.unawarded-to-player');
             Route::post('/add-to-player', 'addToPlayer')->name('admin.medals.add-to-player');
-            Route::delete('/remove-from-player/{player}/{medal}', 'removeFromPlayer')->whereNumber(['player', 'medal'])->name('admin.medals.remove-from-player');
+            Route::delete('/remove-from-player/{player}/{medal}', 'removeFromPlayer')->whereNumber(['player'])->name('admin.medals.remove-from-player');
         });
 
         Route::controller(EventsController::class)->prefix('events')->group(function () {

@@ -64,15 +64,15 @@
         <div v-if="$page.props.jetstream.hasEmailVerification && user.email_verified_at === null">
           <p class="text-sm q-mt-sm">
             Your email address is unverified.
-
-            <Link
-              :href="route('verification.send')"
-              method="post"
-              as="button"
-              @click.prevent="sendEmailVerification"
-            >
-              Click here to re-send the verification email.
-            </Link>
+            <q-btn
+              class="q-ml-sm"
+              label="Click here to re-send the verification email"
+              type="button"
+              color="primary"
+              text-color="black"
+              size="sm"
+              @click="sendEmailVerification"
+            />
           </p>
 
           <div
@@ -141,6 +141,7 @@ export default {
     },
 
     sendEmailVerification() {
+      router.post(route('verification.send'))
       this.verificationLinkSent = true
     },
 

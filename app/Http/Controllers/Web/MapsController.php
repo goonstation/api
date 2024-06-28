@@ -24,7 +24,7 @@ class MapsController extends Controller
             ->orderBy('name', 'asc');
 
         $user = $request->user();
-        if (! $user || ! $user->game_admin_id) {
+        if (! $user || ! $user->isGameAdmin()) {
             $maps = $maps->where('admin_only', false);
         }
 
@@ -44,13 +44,13 @@ class MapsController extends Controller
             ->where('is_layer', false)
             ->with([
                 'layers' => function ($q) use ($user) {
-                    if (! $user || ! $user->game_admin_id) {
+                    if (! $user || ! $user->isGameAdmin()) {
                         $q->where('admin_only', false);
                     }
                 },
             ]);
 
-        if (! $user || ! $user->game_admin_id) {
+        if (! $user || ! $user->isGameAdmin()) {
             $map = $map->where('admin_only', false);
         }
 
@@ -68,7 +68,7 @@ class MapsController extends Controller
     public function getPrivateTile(Request $request, string $path)
     {
         $user = $request->user();
-        if (! $user || ! $user->game_admin_id) {
+        if (! $user || ! $user->isGameAdmin()) {
             return abort(404);
         }
 

@@ -30,11 +30,9 @@ class RouteServiceProvider extends ServiceProvider
             resolve(\Illuminate\Routing\UrlGenerator::class)->forceScheme('https');
         }
 
-        $this->configureRateLimiting();
-
         $this->routes(function () {
             Route::middleware('api')
-                ->prefix('api')
+                ->domain('api.'.preg_replace('(^https?://)', '', config('app.url')))
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('api')
@@ -43,23 +41,6 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-        });
-    }
-
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            $user = $request->user();
-            if ($user && $user->is_admin) {
-                return Limit::none();
-            }
-
-            return Limit::perMinute(60)->by($user?->id ?: $request->ip());
         });
     }
 }

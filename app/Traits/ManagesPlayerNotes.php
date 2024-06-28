@@ -14,8 +14,8 @@ trait ManagesPlayerNotes
     {
         $data = $request->validate([
             'game_admin_ckey' => 'exists:game_admins,ckey',
-            'round_id' => 'nullable|integer',
-            'server_id' => 'nullable|string',
+            'round_id' => 'nullable|integer|exists:game_rounds,id',
+            'server_id' => 'nullable|string|exists:game_servers,server_id',
             'ckey' => 'required',
             'note' => 'required',
         ]);
@@ -46,7 +46,7 @@ trait ManagesPlayerNotes
     {
         $data = $request->validate([
             'game_admin_ckey' => 'exists:game_admins,ckey',
-            'server_id' => 'nullable|string',
+            'server_id' => 'nullable|string|exists:game_servers,server_id',
             'ckey' => 'required',
             'note' => 'required',
         ]);
