@@ -9,35 +9,41 @@
       </q-card-section>
 
       <q-card-section>
-        <q-markup-table flat bordered>
-          <thead>
-            <tr>
-              <th>Computer ID</th>
-              <th>Connections</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="group in compIds">
-              <td>{{ group.comp_id }}</td>
-              <td>{{ group.connections }}</td>
-              <td>
-                <q-chip
-                  v-if="getCursedCompId(group.comp_id)"
-                  color="negative"
-                  text-color="dark"
-                  class="text-weight-bold"
-                  square
-                >
-                  Cursed
-                  <q-tooltip>
-                    {{ getCursedCompId(group.comp_id).reason }}
-                  </q-tooltip>
-                </q-chip>
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
+        <q-table
+          :rows="compIds"
+          :columns="columns"
+          :pagination="{ sortBy: 'last_seen', descending: true, rowsPerPage: 20 }"
+          flat
+          bordered
+        >
+          <template v-slot:body-cell-comp_id="props">
+            <q-td :props="props">
+              <Link
+                :href="route('admin.players.index', { filters: { compId: props.row.comp_id } })"
+              >
+                {{ props.row.comp_id }}
+                <q-tooltip>Search for other players with this Comp ID</q-tooltip>
+              </Link>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-cursed="props">
+            <q-td :props="props">
+              <q-chip
+                v-if="getCursedCompId(props.row.comp_id)"
+                color="negative"
+                text-color="dark"
+                class="text-weight-bold"
+                square
+                dense
+              >
+                Cursed
+                <q-tooltip>
+                  {{ getCursedCompId(props.row.comp_id).reason }}
+                </q-tooltip>
+              </q-chip>
+            </q-td>
+          </template>
+        </q-table>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -61,6 +67,31 @@ export default {
   data() {
     return {
       dialog: false,
+      columns: [
+        {
+          name: 'comp_id',
+          field: 'comp_id',
+          label: 'Comp ID',
+        },
+        {
+          name: 'connections',
+          field: 'connections',
+          label: 'Connections',
+          sortable: true,
+        },
+        {
+          name: 'last_seen',
+          field: 'last_seen',
+          label: 'Last Seen',
+          sortable: true,
+          format: this.$formats.dateWithTime,
+        },
+        {
+          name: 'cursed',
+          label: '',
+          headerClasses: 'q-table--col-auto-width',
+        },
+      ],
     }
   },
 
@@ -71,14 +102,16 @@ export default {
         const groupIdx = groups.findIndex((group) => group.comp_id === connection.comp_id)
         if (groupIdx !== -1) {
           groups[groupIdx].connections++
+          groups[groupIdx].last_seen = connection.created_at
         } else {
           groups.push({
             comp_id: connection.comp_id,
             connections: 1,
+            last_seen: connection.created_at,
           })
         }
       }
-      return groups.sort((a, b) => b.connections - a.connections)
+      return groups
     },
   },
 
