@@ -325,7 +325,7 @@ export default {
     },
     onMedalAdded(medal) {
       this.player.medals.unshift(medal)
-    }
+    },
   },
 }
 </script>
