@@ -86,6 +86,20 @@ RUN CHROMEDRIVER_VERSION=$(curl https://googlechromelabs.github.io/chrome-for-te
         chmod +x chromedriver-linux64/chromedriver && \
         mv chromedriver-linux64/chromedriver /usr/local/bin
 
+# Packages for compiling the game with Byond
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y rsync gcc-multilib lib32stdc++6 zlib1g-dev:i386 libssl-dev:i386 pkg-config:i386 libstdc++6 libstdc++6:i386
+
+# Configure git credentials for Goonstation and install Cargo
+USER sail
+RUN git config --global credential.helper store && \
+    echo "https://robuddybot:foo@github.com" > ~/.git-credentials && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    ~/.cargo/bin/rustup target add i686-unknown-linux-gnu && \
+    chmod -R 777 ~/.cargo
+USER root
+
 # Clean up apt cache
 RUN apt-get -y autoremove && \
         apt-get clean && \

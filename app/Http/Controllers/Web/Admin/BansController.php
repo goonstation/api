@@ -76,7 +76,7 @@ class BansController extends Controller
         dispatch(function () use ($ban) {
             try {
                 $byondEpochStart = Carbon::parse('2000-01-01 00:00:00'); // byond epoch start
-                DiscordBot::export('ban', [
+                DiscordBot::export('ban', 'GET', [
                     'key' => $ban->gameAdmin->ckey,
                     'key2' => "{$ban->originalBanDetail->ckey} (IP: {$ban->originalBanDetail->ip}, CompID: {$ban->originalBanDetail->comp_id})",
                     'msg' => $ban->reason,
