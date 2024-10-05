@@ -340,6 +340,16 @@ export default {
   },
 
   created() {
+    if (this.state === 'create') {
+      const url = new URL(window.location.href)
+      const urlSearch = new URLSearchParams(url.search)
+      urlSearch.forEach((param, key) => {
+        if (this.form.hasOwnProperty(key)) {
+          this.form[key] = param
+        }
+      })
+    }
+
     if (this.form.expires_at) {
       const expiresAt = new Date(this.form.expires_at)
       this.durationTimeUntil = date.formatDate(expiresAt, 'YYYY/MM/DD HH:mm')

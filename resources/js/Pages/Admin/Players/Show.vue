@@ -41,6 +41,7 @@
           </div>
           <div class="text-right">
             <q-btn
+              v-if="isBanned"
               outline
               color="primary"
               text-color="primary"
@@ -54,6 +55,23 @@
                 )
               "
               label="Unban"
+              size="sm"
+            />
+            <q-btn
+              v-else
+              outline
+              color="primary"
+              text-color="primary"
+              @click="
+                router.visit(
+                  route('admin.bans.create', {
+                    ckey: player.ckey,
+                    comp_id: latestConnection.comp_id,
+                    ip: latestConnection.ip,
+                  })
+                )
+              "
+              label="Ban"
               size="sm"
             />
           </div>
