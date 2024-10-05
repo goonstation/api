@@ -19,7 +19,11 @@ class PlayersController extends Controller
 
     public function index(Request $request)
     {
-        $players = $this->indexQuery(Player::withCount(['connections', 'participations']), perPage: 30);
+        $model = Player::withCount(['connections', 'participations']);
+        if ($request->has('with_latest_connection')) {
+            $model = $model->with('latestConnection');
+        }
+        $players = $this->indexQuery($model, perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Players/Index', [

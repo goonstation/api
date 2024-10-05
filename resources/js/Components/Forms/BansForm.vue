@@ -9,13 +9,47 @@
           <q-card-section>
             <q-input
               v-model="form.ckey"
+              @keydown.enter.prevent="searchForPlayer"
               label="Ckey"
               filled
               lazy-rules
               dense
               :error="!!form.errors.ckey"
               :error-message="form.errors.ckey"
-            />
+            >
+              <template #after>
+                <q-btn
+                  @click="searchForPlayer"
+                  :icon="ionSearch"
+                  :disabled="!form.ckey"
+                  :loading="searchingForPlayer"
+                  padding="sm"
+                >
+                  <q-tooltip>Search for player</q-tooltip>
+                  <q-menu v-model="showPlayerSearchResults">
+                    <q-markup-table
+                      v-if="playerSearchResults?.length"
+                      class="search-player-results"
+                      flat
+                    >
+                      <tbody>
+                        <tr v-for="player in playerSearchResults" @click="selectPlayer(player)">
+                          <td>{{ player.ckey }}</td>
+                          <td>{{ player.latest_connection?.comp_id }}</td>
+                          <td>{{ player.latest_connection?.ip }}</td>
+                          <td>
+                            <q-btn :icon="ionArrowUndoOutline" dense>
+                              <q-tooltip> Fill player detail inputs </q-tooltip>
+                            </q-btn>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </q-markup-table>
+                    <div v-else class="q-pa-md">No results found</div>
+                  </q-menu>
+                </q-btn>
+              </template>
+            </q-input>
             <q-input
               v-model="form.comp_id"
               label="Computer ID"
@@ -226,15 +260,26 @@
   </div>
 </template>
 
+<style lang="scss" scoped>
+.search-player-results {
+  tr {
+    cursor: pointer;
+  }
+}
+</style>
+
 <script>
 import { date } from 'quasar'
 import {
   ionCalendarClearOutline,
   ionInformationCircleOutline,
   ionAlertCircleOutline,
+  ionSearch,
+  ionArrowUndoOutline,
 } from '@quasar/extras/ionicons-v6'
 import BaseForm from './BaseForm.vue'
 import BaseSelect from '@/Components/Selects/BaseSelect.vue'
+import axios from 'axios'
 
 export default {
   extends: BaseForm,
@@ -248,6 +293,8 @@ export default {
       ionCalendarClearOutline,
       ionInformationCircleOutline,
       ionAlertCircleOutline,
+      ionSearch,
+      ionArrowUndoOutline,
     }
   },
 
@@ -269,6 +316,9 @@ export default {
       durationTimeAfterHours: null,
       durationTimeAfterMinutes: null,
       editingDuration: false,
+      searchingForPlayer: false,
+      playerSearchResults: null,
+      showPlayerSearchResults: false,
     }
   },
 
@@ -374,6 +424,35 @@ export default {
         ' ' +
         userTz
       )
+    },
+
+    async searchForPlayer() {
+      if (this.searchingForPlayer) return
+      this.searchingForPlayer = true
+      this.showPlayerSearchResults = false
+      this.playerSearchResults = null
+
+      const { data } = await axios.get(route('admin.players.index'), {
+        params: {
+          filters: {
+            ckey: this.form.ckey,
+          },
+          sort_by: 'id',
+          descending: false,
+          with_latest_connection: true,
+        },
+      })
+
+      this.playerSearchResults = data.data
+      this.showPlayerSearchResults = true
+      this.searchingForPlayer = false
+    },
+
+    selectPlayer(player) {
+      this.form.ckey = player.ckey
+      this.form.comp_id = player.latest_connection.comp_id
+      this.form.ip = player.latest_connection.ip
+      this.showPlayerSearchResults = false
     },
   },
 }
