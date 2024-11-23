@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Laravel\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use ZipArchive;
 

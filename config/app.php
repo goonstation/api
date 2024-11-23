@@ -186,7 +186,6 @@ return [
          * Package Service Providers...
          */
         EloquentFilter\ServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
 
         /*
@@ -216,8 +215,6 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
-        'Image' => Intervention\Image\Facades\Image::class,
         'OpenGraphImage' => App\Facades\OpenGraphImage::class,
     ])->toArray(),
 
