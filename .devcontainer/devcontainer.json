@@ -2,7 +2,7 @@
 {
   "name": "Goonhub",
   "dockerComposeFile": [
-    "../docker-compose.sail.yml"
+    "../docker-compose.yml"
   ],
   "service": "laravel.test",
   "workspaceFolder": "/var/www/html",
