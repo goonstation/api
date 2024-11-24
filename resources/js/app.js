@@ -4,7 +4,7 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { Quasar, Notify } from 'quasar'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import { ZiggyVue } from '../../vendor/tightenco/ziggy'
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 import dayjs from 'dayjs'

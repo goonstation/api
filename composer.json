@@ -8,12 +8,12 @@
         "awobaz/compoships": "^2.2",
         "aws/aws-sdk-php": "^3.283",
         "binarytorch/larecipe": "^2.6",
-        "dedoc/scramble": "^0.11.27",
-        "geoip2/geoip2": "^3.1",
+        "dedoc/scramble": "^0.9.0",
+        "geoip2/geoip2": "~2.0",
         "glhd/gretel": "^1.7",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^1.0",
-        "intervention/image-laravel": "*",
+        "intervention/image": "^2.7",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.17",
         "laravel/jetstream": "^5.0",
@@ -30,9 +30,10 @@
         "sentry/sentry-laravel": "^4.5",
         "socialiteproviders/discord": "^4.2",
         "spatie/image-optimizer": "^1.7",
-        "symfony/css-selector": "^7.1",
+        "symfony/css-selector": "^6.3",
         "symfony/panther": "^2.1",
-        "tightenco/ziggy": "^2.4",
+        "tightenco/ziggy": "^1.0",
+        "tronovav/geoip2-update": "^2.3",
         "tucker-eric/eloquentfilter": "^3.1"
     },
     "require-dev": {
@@ -42,7 +43,7 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^11.0",
+        "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
