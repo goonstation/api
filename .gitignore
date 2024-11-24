@@ -16,3 +16,6 @@ yarn-error.log
 /.fleet
 /.idea
 horizon.log
+**/.DS_Store
+.config
+.data

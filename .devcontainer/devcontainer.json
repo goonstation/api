@@ -1,0 +1,34 @@
+// https://aka.ms/devcontainer.json
+{
+  "name": "Goonhub",
+  "dockerComposeFile": [
+    "../docker-compose.sail.yml"
+  ],
+  "service": "laravel.test",
+  "workspaceFolder": "/var/www/html",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mikestead.dotenv",
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "ryannaddy.laravel-artisan",
+        "onecentlin.laravel5-snippets",
+        "onecentlin.laravel-blade",
+        "junstyle.php-cs-fixer",
+        "Vue.volar",
+        "EditorConfig.EditorConfig",
+        "dbaeumer.vscode-eslint",
+        "christian-kohler.npm-intellisense",
+        "bmewburn.vscode-intelephense-client",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {}
+    }
+  },
+  "remoteUser": "sail",
+  "initializeCommand": "sh .devcontainer/init.sh",
+  "postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true && composer install"
+  // "forwardPorts": [],
+  // "runServices": [],
+  // "shutdownAction": "none",
+}
