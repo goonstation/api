@@ -3,9 +3,13 @@ ARG PHP_VERSION=8.3
 
 ARG COMPOSER_VERSION=latest
 
+ARG NODE_VERSION="current"
+
 ARG BUN_VERSION="latest"
 
-FROM oven/bun:${BUN_VERSION} AS build
+FROM node:${NODE_VERSION}-slim AS node
+
+FROM oven/bun:${BUN_VERSION} AS bun
 
 FROM composer:${COMPOSER_VERSION} AS vendor
 
@@ -149,7 +153,9 @@ RUN mkdir -p \
     bootstrap/cache && chmod -R a+rw storage
 
 COPY --link --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/composer
-COPY --link --chown=${USER}:${USER} --from=build /usr/local/bin/bun /usr/local/bin/bun
+COPY --link --chown=${USER}:${USER} --from=bun /usr/local/bin/bun /usr/local/bin/bun
+COPY --link --chown=${USER}:${USER} --from=node /usr/local/bin /usr/local/bin
+COPY --link --chown=${USER}:${USER} --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --link --chown=${USER}:${USER} ./supervisord.conf /etc/supervisor/
 COPY --link --chown=${USER}:${USER} ./octane/Swoole/supervisord.swoole.conf /etc/supervisor/conf.d/
 COPY --link --chown=${USER}:${USER} ./supervisord.*.conf /etc/supervisor/conf.d/

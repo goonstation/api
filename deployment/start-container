@@ -8,7 +8,7 @@ running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 echo "Container mode: $container_mode"
 
 initialStuff() {
-    sh build.sh
+    sh "$ROOT/build.sh"
     php artisan storage:link;
 
     if [ "${running_migrations_and_seeders}" = "true" ]; then
