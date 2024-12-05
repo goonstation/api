@@ -67,6 +67,7 @@ class PlayersController extends Controller
             ->groupBy('created_at')
             ->orderByRaw('total_online DESC NULLS LAST')
             ->first();
+        /** @phpstan-ignore-next-line */
         $mostPlayersOnline = $mostPlayersOnline ? $mostPlayersOnline->total_online : 0;
 
         $totalAveragePlayersOnline = PlayersOnline::select(
@@ -74,6 +75,7 @@ class PlayersController extends Controller
         )
             ->where('online', '!=', null)
             ->first();
+        /** @phpstan-ignore-next-line */
         $totalAveragePlayersOnline = $totalAveragePlayersOnline->average_online;
 
         $this->setMeta(title: 'Players');

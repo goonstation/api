@@ -1,9 +1,14 @@
 {
-  "artisan.docker.enabled": true,
-  "artisan.docker.command": "./vendor/bin/sail",
-  "editor.rulers": [100],
-  "[php]": {
-    "editor.defaultFormatter": "junstyle.php-cs-fixer"
-  },
-  "php-cs-fixer.allowRisky": true
+    "editor.rulers": [
+        100
+    ],
+    "[php]": {
+        "editor.defaultFormatter": "open-southeners.laravel-pint"
+    },
+    "intelephense.codeLens.implementations.enable": true,
+    "intelephense.codeLens.overrides.enable": true,
+    "intelephense.codeLens.parent.enable": true,
+    "intelephense.codeLens.references.enable": true,
+    "intelephense.codeLens.usages.enable": true,
+    "intelephense.format.enable": false
 }

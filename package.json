@@ -24,6 +24,7 @@
     "dependencies": {
         "@quasar/extras": "^1.16.8",
         "apexcharts": "^3.44.0",
+        "caniuse-lite": "^1.0.30001684",
         "dayjs": "^1.11.10",
         "leaflet": "^1.9.4",
         "pastel-color": "^1.0.3",

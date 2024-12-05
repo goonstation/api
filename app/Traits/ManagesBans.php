@@ -9,9 +9,9 @@ use App\Models\BanDetail;
 use App\Models\GameAdmin;
 use App\Models\Player;
 use App\Models\PlayerNote;
-use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Exception;
+use Illuminate\Support\Carbon;
 
 trait ManagesBans
 {
@@ -58,7 +58,7 @@ trait ManagesBans
         if (isset($request['duration'])) {
             $duration = (int) $request['duration'];
             if ($duration > 0) {
-                $expiresAt = Carbon::now()->addSeconds($duration)->toDateTimeString();
+                $expiresAt = Carbon::now()->addSeconds($duration);
             }
         }
 
@@ -75,28 +75,27 @@ trait ManagesBans
             $serverId = null;
         }
 
-        $ban = new Ban();
-        $ban->game_admin_id = $gameAdmin->id;
+        $ban = new Ban;
         $ban->round_id = isset($request['round_id']) ? $request['round_id'] : null;
         $ban->server_id = $serverId;
         $ban->reason = $request['reason'];
         $ban->expires_at = $expiresAt;
         $ban->requires_appeal = isset($request['requires_appeal']) ? (bool) $request['requires_appeal'] : false;
+        $ban->gameAdmin()->associate($gameAdmin);
         $ban->save();
 
-        $banDetail = new BanDetail();
+        $banDetail = new BanDetail;
         $banDetail->ckey = $ckey;
         $banDetail->comp_id = isset($request['comp_id']) ? $request['comp_id'] : null;
         $banDetail->ip = isset($request['ip']) ? $request['ip'] : null;
         $ban->details()->save($banDetail);
 
-        $note = new PlayerNote();
+        $note = new PlayerNote;
         if ($player) {
-            $note->player_id = $player->id;
+            $note->player()->associate($player);
         } else {
             $note->ckey = $ckey;
         }
-        $note->game_admin_id = $gameAdmin->id;
         $note->server_id = $serverId;
         $note->round_id = isset($request['round_id']) ? $request['round_id'] : null;
         $note->note = sprintf(
@@ -107,9 +106,8 @@ trait ManagesBans
                 : 'permanently',
             $request['reason']
         );
+        $note->gameAdmin()->associate($gameAdmin);
         $note->save();
-
-        $ban->gameAdmin = $gameAdmin;
 
         return new BanResource($ban);
     }
@@ -165,13 +163,12 @@ trait ManagesBans
         $ban->update($newBanDetails);
         $ban->originalBanDetail->update($request->only(['ckey', 'comp_id', 'ip']));
 
-        $note = new PlayerNote();
+        $note = new PlayerNote;
         if ($player) {
-            $note->player_id = $player->id;
+            $note->player()->associate($player);
         } else {
             $note->ckey = $ckey;
         }
-        $note->game_admin_id = $gameAdmin->id;
         $note->server_id = $ban->server_id;
         $note->round_id = $ban->round_id;
         $note->note = sprintf(
@@ -184,10 +181,9 @@ trait ManagesBans
             $ban->originalBanDetail->comp_id,
             $ban->originalBanDetail->ip
         );
+        $note->gameAdmin()->associate($gameAdmin);
         $note->save();
 
-        $ban->gameAdmin = $gameAdmin;
-
-        return new BanResource($ban->load('originalBanDetail'));
+        return new BanResource($ban);
     }
 }

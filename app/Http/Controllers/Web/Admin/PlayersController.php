@@ -80,7 +80,10 @@ class PlayersController extends Controller
         $compIds = $player->connections->pluck('comp_id')->unique()->values();
 
         $banHistory = $banHistory->map(function (Ban $ban) use ($ckey, $ips, $compIds) {
-            $ban->player_has_active_details = $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray());
+            $ban->setAttribute(
+                'player_has_active_details',
+                $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray())
+            );
 
             return $ban;
         });
@@ -114,8 +117,9 @@ class PlayersController extends Controller
 
         // Determine what connection detail the other player has in common with the viewed player
         $otherAccounts->transform(function (Player $account) use ($otherIpsPlayerIds, $otherCompIdsPlayerIds) {
-            $account->_matchedOnIp = $otherIpsPlayerIds->containsStrict($account->id);
-            $account->_matchedOnCompId = $otherCompIdsPlayerIds->containsStrict($account->id);
+            $account->setAttribute('_matchedOnIp', $otherIpsPlayerIds->containsStrict($account->id));
+            $account->setAttribute('_matchedOnCompId', $otherCompIdsPlayerIds->containsStrict($account->id));
+
             return $account;
         });
 

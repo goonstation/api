@@ -27,7 +27,7 @@ trait ManagesPlayerNotes
 
         $player = Player::where('ckey', $data['ckey'])->first();
 
-        $note = new PlayerNote();
+        $note = new PlayerNote;
         $note->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
         $note->round_id = isset($data['round_id']) ? $data['round_id'] : null;
         $note->server_id = isset($data['server_id']) ? $data['server_id'] : null;

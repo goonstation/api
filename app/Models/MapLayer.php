@@ -5,6 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $map_id
+ * @property int $layer_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Map $layer
+ * @property-read \App\Models\Map $map
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer whereLayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer whereMapId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MapLayer whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class MapLayer extends Model
 {
     use HasFactory;

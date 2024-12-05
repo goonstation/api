@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\JobBan;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin JobBan */
 class JobBanResource extends JsonResource
 {
     /**

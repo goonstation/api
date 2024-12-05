@@ -99,7 +99,7 @@ class PlayerMetadataController extends Controller
             'metadata' => 'required|string',
         ]);
 
-        $metadata = new PlayerMetadata();
+        $metadata = new PlayerMetadata;
         $metadata->player_id = $data['player_id'];
         $metadata->metadata = $data['metadata'];
         $metadata->save();

@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
@@ -14,8 +15,10 @@ class ModelHelper
         $models = collect(File::allFiles(app_path()))
             ->map(function ($item) {
                 $path = $item->getRelativePathName();
+                /** @var Application */
+                $container = Container::getInstance();
                 $class = sprintf('\%s%s',
-                    Container::getInstance()->getNamespace(),
+                    $container->getNamespace(),
                     strtr(substr($path, 0, strrpos($path, '.')), '/', '\\'));
 
                 return $class;

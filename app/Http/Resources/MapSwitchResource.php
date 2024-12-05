@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\MapSwitch;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin MapSwitch */
 class MapSwitchResource extends JsonResource
 {
     /**

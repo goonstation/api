@@ -33,7 +33,7 @@ class UpdateGeoLite implements ShouldQueue
         $homePath = getenv('HOME');
         $binPath = "$homePath/geoipupdate_{$version}";
 
-        if (!is_dir($binPath)) {
+        if (! is_dir($binPath)) {
             $fileName = "geoipupdate_{$version}_linux_amd64";
             $fileNameWithExt = "$fileName.tar.gz";
             $downloadUrl = "https://github.com/maxmind/geoipupdate/releases/download/v$version/$fileNameWithExt";
@@ -43,9 +43,9 @@ class UpdateGeoLite implements ShouldQueue
             unlink("$homePath/$fileNameWithExt");
         }
 
-        $configFile = storage_path('app') . '/GeoIP.conf';
-        $outputDir = storage_path('app') . '/GeoLite2';
-        $lockFile = storage_path('app') . '/.geoipupdate.lock';
+        $configFile = storage_path('app').'/GeoIP.conf';
+        $outputDir = storage_path('app').'/GeoLite2';
+        $lockFile = storage_path('app').'/.geoipupdate.lock';
         $accountId = config('goonhub.maxmind_account_id');
         $licenseKey = config('goonhub.maxmind_license_key');
         file_put_contents($configFile,
@@ -56,7 +56,9 @@ class UpdateGeoLite implements ShouldQueue
             "LockFile $lockFile"
         );
 
-        if (!is_dir($outputDir)) mkdir($outputDir);
+        if (! is_dir($outputDir)) {
+            mkdir($outputDir);
+        }
         exec("$binPath/geoipupdate -f $configFile -v");
     }
 }

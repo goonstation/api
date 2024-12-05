@@ -27,7 +27,7 @@ class PlayerAntagsController extends Controller
             'weight_exempt' => 'nullable|string',
         ]);
 
-        $antagPick = new PlayerAntag();
+        $antagPick = new PlayerAntag;
         $antagPick->player_id = $data['player_id'];
         $antagPick->round_id = $data['round_id'];
         $antagPick->antag_role = $data['antag_role'];

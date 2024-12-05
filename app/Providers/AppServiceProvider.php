@@ -7,10 +7,11 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Auth\Access\Gate as AccessGate;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Foundation\Application;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -70,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
 
     protected function registerAccessGate()
     {
-        $this->app->singleton(GateContract::class, function ($app) {
+        $this->app->scoped(GateContract::class, function (Application $app) {
             return new AccessGate($app, function () {
                 return request()->user();
             });

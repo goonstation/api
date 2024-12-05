@@ -14,13 +14,14 @@
         "ryannaddy.laravel-artisan",
         "onecentlin.laravel5-snippets",
         "onecentlin.laravel-blade",
-        "junstyle.php-cs-fixer",
         "Vue.volar",
         "EditorConfig.EditorConfig",
         "dbaeumer.vscode-eslint",
         "christian-kohler.npm-intellisense",
         "bmewburn.vscode-intelephense-client",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "georgykurian.laravel-ide-helper",
+        "open-southeners.laravel-pint"
       ],
       "settings": {}
     }

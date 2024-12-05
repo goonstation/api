@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Events\EventAiLaw;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EventAiLaw */
 class EventAiLawResource extends JsonResource
 {
     /**

@@ -2,9 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\PersonalAccessToken;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ApiAuthenticate
 {
@@ -24,17 +25,18 @@ class ApiAuthenticate
                 if (count($tokenParts) === 2) {
                     $id = $tokenParts[0];
                     $token = $tokenParts[1];
-                    $pat = DB::table('personal_access_tokens')->find($id);
-                    if (hash('sha256', $token) !== $pat->token) $pat = null;
+                    $pat = PersonalAccessToken::find($id);
+                    if (hash('sha256', $token) !== $pat->token) {
+                        $pat = null;
+                    }
                 }
             } else {
-                $pat = DB::table('personal_access_tokens')
-                    ->where('token', hash('sha256', $bearer))
+                $pat = PersonalAccessToken::where('token', hash('sha256', $bearer))
                     ->first();
             }
 
             if ($pat) {
-                if ($user = \App\Models\User::find($pat->tokenable_id)) {
+                if ($user = User::find($pat->tokenable_id)) {
                     $request->setUserResolver(function () use ($user) {
                         return $user;
                     });

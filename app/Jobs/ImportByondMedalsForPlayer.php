@@ -41,7 +41,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
 
         if (str_starts_with($earnedAt, 'at')) {
             $earnedAt = str_replace('at ', '', $earnedAt);
-        } else if (str_starts_with($earnedAt, 'on')) {
+        } elseif (str_starts_with($earnedAt, 'on')) {
             $earnedAt = str_replace('on ', '', $earnedAt);
             if (preg_match('/^\w+day, \d+:\d+ [ap]m$/i', $earnedAt)) {
                 // on <day of the week>, <time>
@@ -51,6 +51,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
         }
 
         $ret = Carbon::parse($earnedAt, -7);
+
         return $ret->setTimezone('UTC')->toIso8601String();
     }
 
@@ -65,7 +66,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
         // echo "Starting medal import for '$ckey'\n";
 
         $player = Player::where('ckey', $ckey)->first();
-        if (!$player) {
+        if (! $player) {
             throw new \Exception("Player '$ckey' does not exist");
         }
 
@@ -77,7 +78,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
         $res = Http::get("https://www.byond.com/members/$ckey?tab=medals&all=1");
         $html = $res->getBody();
 
-        $doc = new DOMDocument();
+        $doc = new DOMDocument;
         $internalErrors = libxml_use_internal_errors(true);
         $doc->loadHTML($html);
         libxml_use_internal_errors($internalErrors);
@@ -86,12 +87,13 @@ class ImportByondMedalsForPlayer implements ShouldQueue
         $medals = [];
         $rows = $xpath->query('//*[@class="medal_table"]/tr');
 
-        if (!$rows->count()) {
+        if (! $rows->count()) {
             $notice = $xpath->query('//*[@class="notice"]')->item(0);
             if ($notice && str_contains($notice->textContent, 'not active')) {
                 // Byond user account is inactive
                 // echo "Player is marked inactive on Byond\n";
             }
+
             return;
         }
 
@@ -105,16 +107,21 @@ class ImportByondMedalsForPlayer implements ShouldQueue
                 } else {
                     $inOurMedalSection = false;
                 }
+
                 continue;
             }
 
-            if (!$inOurMedalSection) continue;
+            if (! $inOurMedalSection) {
+                continue;
+            }
 
             $cells = $xpath->query('./td', $row);
             foreach ($cells as $cell) {
                 $medalTitle = $xpath->query('.//*[@class="medal_name"]', $cell)->item(0)?->textContent;
                 $medalEarned = $xpath->query('.//p[@class="smaller"]', $cell)->item(0)?->textContent;
-                if (!$medalTitle || !$medalEarned) continue;
+                if (! $medalTitle || ! $medalEarned) {
+                    continue;
+                }
 
                 try {
                     $medalEarned = $this->parseEarnedAt($medalEarned);
@@ -125,6 +132,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
                         'earned' => $medalEarned,
                         'error' => $e->getMessage(),
                     ]);
+
                     continue;
                 }
 
@@ -142,9 +150,9 @@ class ImportByondMedalsForPlayer implements ShouldQueue
 
         // echo "Inserting medal data into database\n";
         foreach ($medals as $medalData) {
-            $medal = Medal::where('title', 'ilike', '%' . $medalData['title'] . '%')
+            $medal = Medal::where('title', 'ilike', '%'.$medalData['title'].'%')
                 ->first();
-            if (!$medal) {
+            if (! $medal) {
                 // echo "Medal '{$medalData['title']}' does not exist\n";
                 continue;
             }
@@ -168,11 +176,12 @@ class ImportByondMedalsForPlayer implements ShouldQueue
 
                     $report['updated'][] = $medalData['title'];
                 }
+
                 continue;
             }
 
             // echo "Inserting award for '{$medalData['title']}'\n";
-            $award = new PlayerMedal();
+            $award = new PlayerMedal;
             $award->player_id = $player->id;
             $award->medal_id = $medal->id;
             $award->created_at = $medalData['earned'];
@@ -182,7 +191,7 @@ class ImportByondMedalsForPlayer implements ShouldQueue
             $report['inserted'][] = $medalData['title'];
         }
 
-        $playerMedalsImported = new PlayerMedalsImported();
+        $playerMedalsImported = new PlayerMedalsImported;
         $playerMedalsImported->player_id = $player->id;
         $playerMedalsImported->save();
 

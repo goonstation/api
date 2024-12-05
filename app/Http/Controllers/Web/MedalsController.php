@@ -33,14 +33,14 @@ class MedalsController extends Controller
             ->get();
 
         $recentMedalsEarned = PlayerMedal::select([
-                'id',
-                'player_id',
-                'medal_id',
-                'created_at'
-            ])
+            'id',
+            'player_id',
+            'medal_id',
+            'created_at',
+        ])
             ->with([
                 'player:id,ckey,key',
-                'medal:id,uuid,title'
+                'medal:id,uuid,title',
             ])
             ->whereRelation('medal', 'hidden', false)
             ->whereRelation('gameRound', 'ended_at', '!=', null)

@@ -2,8 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Models\VpnCheck;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin VpnCheck
+ *
+ * @property array $meta
+ */
 class VpnCheckResource extends JsonResource
 {
     /**

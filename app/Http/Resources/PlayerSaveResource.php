@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PlayerSave;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerSave */
 class PlayerSaveResource extends JsonResource
 {
     /**

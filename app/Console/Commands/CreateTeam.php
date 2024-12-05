@@ -37,7 +37,7 @@ class CreateTeam extends Command
             return Command::FAILURE;
         }
 
-        $team = new Team();
+        $team = new Team;
         $team->user_id = $teamOwner;
         $team->name = $teamName;
         $team->personal_team = false;

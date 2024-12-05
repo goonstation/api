@@ -201,6 +201,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
 
         App\Providers\OpenGraphImageProvider::class,
+        App\Providers\GameBridgeServiceProvider::class,
     ],
 
     /*
@@ -216,6 +217,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'OpenGraphImage' => App\Facades\OpenGraphImage::class,
+        'GameBridge' => App\Facades\GameBridge::class,
     ])->toArray(),
 
 ];

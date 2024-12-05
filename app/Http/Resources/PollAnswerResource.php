@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PollAnswer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PollAnswer */
 class PollAnswerResource extends JsonResource
 {
     /**

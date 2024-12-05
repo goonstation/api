@@ -12,6 +12,8 @@ use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @tags Player Medals

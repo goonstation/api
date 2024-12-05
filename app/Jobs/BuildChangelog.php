@@ -135,7 +135,7 @@ class BuildChangelog implements ShouldQueue
         if ($item) {
             $item->update(['entries' => $entries]);
         } else {
-            $item = new Changelog();
+            $item = new Changelog;
             $item->entries = $entries;
             $item->save();
         }

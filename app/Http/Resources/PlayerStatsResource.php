@@ -2,8 +2,18 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Player;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Player
+ *
+ * @property int $played
+ * @property int $played_rp
+ * @property int $connected
+ * @property int $connected_rp
+ * @property int $time_played
+ */
 class PlayerStatsResource extends JsonResource
 {
     /**
