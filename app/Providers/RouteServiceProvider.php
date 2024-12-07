@@ -29,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('api')
-                ->domain('api.'.preg_replace('(^https?://)', '', config('app.url')))
+                ->domain(config('app.api_url'))
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('web')

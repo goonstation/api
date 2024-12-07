@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Scramble::routes(function (Route $route) {
-            return $route->getDomain() === 'api.'.preg_replace('(^https?://)', '', config('app.url'));
+            return $route->getDomain() === config('app.api_url');
         });
 
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
