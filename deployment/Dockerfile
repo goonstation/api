@@ -18,11 +18,13 @@ FROM php:${PHP_VERSION}-cli-bookworm
 ARG WWWUSER=1000
 ARG WWWGROUP=1000
 ARG TZ=UTC
+ARG WITH_HORIZON=false
+ARG WITH_SCHEDULER=false
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TERM=xterm-color \
-    WITH_HORIZON=false \
-    WITH_SCHEDULER=false \
+    WITH_HORIZON=${WITH_HORIZON} \
+    WITH_SCHEDULER=${WITH_SCHEDULER} \
     OCTANE_SERVER=swoole \
     USER=octane \
     ROOT=/var/www/html \
