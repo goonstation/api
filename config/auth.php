@@ -43,7 +43,7 @@ return [
         'api' => [
             'driver' => 'api',
             'provider' => 'users',
-        ]
+        ],
     ],
 
     /*
