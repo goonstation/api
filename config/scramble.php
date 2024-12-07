@@ -13,7 +13,7 @@ return [
      * Your API domain. By default, app domain is used. This is also a part of the default API routes
      * matcher, so when implementing your own, make sure you use this config if needed.
      */
-    'api_domain' => config('app.api_url'),
+    'api_domain' => preg_replace('(^https?://)', '', config('app.api_url')),
 
     'info' => [
         /*
