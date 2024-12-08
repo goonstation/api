@@ -87,7 +87,7 @@
 
   &:hover,
   &:focus {
-    color: color.adjust(#7289da, $lightness: -3%);
+    background: color.adjust(#7289da, $lightness: -3%);
   }
 }
 </style>
