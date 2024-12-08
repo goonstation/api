@@ -73,6 +73,8 @@
 </template>
 
 <style lang="scss" scoped>
+@use "sass:color";
+
 .login-discord {
   display: block;
   padding: 10px;
@@ -85,7 +87,7 @@
 
   &:hover,
   &:focus {
-    background: darken(#7289da, 3);
+    color: color.adjust(#7289da, $lightness: -3%);
   }
 }
 </style>

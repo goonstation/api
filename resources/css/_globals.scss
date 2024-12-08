@@ -1,10 +1,12 @@
+@use "sass:color";
+
 a {
   text-decoration: none;
   color: $primary;
 
   &:hover,
   &:focus {
-    color: darken($primary, 15);
+    color: color.adjust($primary, $lightness: -15%);
   }
 }
 
