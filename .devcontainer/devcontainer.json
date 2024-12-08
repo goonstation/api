@@ -21,7 +21,8 @@
         "bmewburn.vscode-intelephense-client",
         "esbenp.prettier-vscode",
         "georgykurian.laravel-ide-helper",
-        "open-southeners.laravel-pint"
+        "open-southeners.laravel-pint",
+        "eamodio.gitlens"
       ],
       "settings": {}
     }
