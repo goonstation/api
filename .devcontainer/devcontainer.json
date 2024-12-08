@@ -22,14 +22,15 @@
         "esbenp.prettier-vscode",
         "georgykurian.laravel-ide-helper",
         "open-southeners.laravel-pint",
-        "eamodio.gitlens"
+        "eamodio.gitlens",
+        "oven.bun-vscode"
       ],
       "settings": {}
     }
   },
   "remoteUser": "sail",
   "initializeCommand": "sh .devcontainer/init.sh",
-  "postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true && composer install"
+  "postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true && composer install && bun install"
   // "forwardPorts": [],
   // "runServices": [],
   // "shutdownAction": "none",
