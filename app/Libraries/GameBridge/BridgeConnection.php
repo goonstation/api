@@ -5,6 +5,7 @@ namespace App\Libraries\GameBridge;
 use App\Models\GameServer;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
 use Illuminate\Support\Collection;
+use Laravel\Octane\Exceptions\TaskTimeoutException;
 use Laravel\Octane\Facades\Octane;
 use RuntimeException;
 
@@ -12,13 +13,13 @@ class BridgeConnection
 {
     private Collection $targets;
 
-    private ?int $timeout = null;
+    private int $timeout = 5;
 
     private ?string $message = null;
 
-    private ?bool $force = null;
+    private bool $force = false;
 
-    private ?int $cacheFor = null;
+    private int $cacheFor = 30;
 
     public function target($target)
     {
@@ -132,13 +133,25 @@ class BridgeConnection
         ];
 
         $jobs = [];
+        $timeout = 0;
         foreach ($this->targets as $target) {
             $jobs[$target->serverId] = $this->handler($target->address, $target->port, $options);
+            if ($wantResponse) {
+                $timeout += $this->timeout * 3; // connect, send, read
+            } else {
+                $timeout += $this->timeout * 2;  // connect, send
+            }
         }
 
-        $responses = collect(Octane::concurrently($jobs));
+        $response = null;
+        try {
+            $responses = collect(Octane::concurrently($jobs, $timeout * 1000));
+            $response = count($responses) === 1 ? $responses->first() : $responses;
+        } catch (TaskTimeoutException $e) {
+            $response = new BridgeConnectionResponse($e->getMessage(), true);
+        }
 
-        return count($responses) === 1 ? $responses->first() : $responses;
+        return $response;
     }
 
     public function sendAndForget()
