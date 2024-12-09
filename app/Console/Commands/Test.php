@@ -31,17 +31,16 @@ class Test extends Command
     {
         // $server = GameServer::find(6);
         $bridge = GameBridge::create()
-            ->target('dev')
+            ->target(['dev', 'main1'])
             // ->force(true)
-            ->message('ping');
+            ->message('status');
         $response = $bridge->send();
-        dump($response->message);
+        dump($response);
 
         // $bridge = GameBridge::create()
         //     ->target('dev')
-        //     // ->force(true)
+        //     ->force(true)
         //     ->message('ping');
-        // dump($bridge->send());
         // $bridge->sendAndForget();
         return 0;
     }

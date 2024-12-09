@@ -42,44 +42,22 @@ class BridgeConnectionSocket
         $this->ip = $ip;
         $this->port = $port;
 
-        foreach ($options as $key => $val) {
-            if (is_null($val)) {
-                continue;
-            }
-            if (! method_exists($this, $key)) {
-                continue;
-            }
-            $this->$key($val);
-        }
-    }
+        $this->timeout = $options->timeout ?: 5;
+        $this->force = $options->force ?: false;
+        $this->cacheFor = $options->cacheFor ?: 60;
+        $this->wantResponse = $options->wantResponse ?: false;
 
-    public function timeout(int $timeout = 5)
-    {
-        $this->timeout = $timeout;
-    }
-
-    public function force(bool $force = false)
-    {
-        $this->force = $force;
-    }
-
-    public function message(string $message)
-    {
-        $msgHash = md5($message);
+        $msgHash = md5($options->message);
         $this->lockKey = "GameBridge-lock-{$this->ip}-{$this->port}-$msgHash";
         $this->cacheKey = "GameBridge-{$this->ip}-{$this->port}-$msgHash";
-        $this->message = $message;
-    }
-
-    public function cacheFor(int $seconds = 60)
-    {
-        $this->cacheFor = $seconds;
+        $this->message = $options->message;
     }
 
     private function error()
     {
         $code = socket_last_error();
         $msg = socket_strerror($code);
+        $this->disconnect();
         throw new RuntimeException($msg, $code);
     }
 
@@ -102,12 +80,14 @@ class BridgeConnectionSocket
         $attempts = 0;
         $msTimeout = $this->timeout * 1000;
         $connected = false;
-        while (! ($connected = @socket_connect($this->socket, $this->ip, $this->port)) && $attempts++ < $msTimeout) {
+        while (! $connected && $attempts < $msTimeout) {
+            $connected = @socket_connect($this->socket, $this->ip, $this->port);
             $error = socket_last_error();
-            if ($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) {
+            if ($error && $error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) {
                 return $this->error();
             }
             usleep(1000); // 1 millisecond
+            $attempts++;
         }
 
         if (! $connected) {

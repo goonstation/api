@@ -5,11 +5,12 @@ namespace App\Libraries\GameBridge;
 use App\Models\GameServer;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
 use Illuminate\Support\Collection;
+use Laravel\Octane\Facades\Octane;
 use RuntimeException;
 
 class BridgeConnection
 {
-    private array $targets = [];
+    private Collection $targets;
 
     private ?int $timeout = null;
 
@@ -25,7 +26,7 @@ class BridgeConnection
             throw new RuntimeException('Invalid target');
         }
 
-        $this->targets = [];
+        $this->targets = collect();
         $servers = new ModelCollection;
 
         if ($target instanceof GameServer) {
@@ -50,38 +51,19 @@ class BridgeConnection
 
         /** @var GameServer $server */
         foreach ($servers as $server) {
-            $this->targets[] = (object) [
+            $this->targets->add((object) [
                 'serverId' => $server->server_id,
-                'socket' => new BridgeConnectionSocket(
-                    $server->address,
-                    $server->port,
-                    (object) [
-                        'message' => $this->message,
-                        'timeout' => $this->timeout,
-                        'force' => $this->force,
-                        'cacheFor' => $this->cacheFor,
-                    ]
-                ),
-            ];
+                'address' => $server->address,
+                'port' => $server->port,
+            ]);
         }
 
         return $this;
     }
 
-    private function updateTarget($key, $val)
-    {
-        foreach ($this->targets as $target) {
-            if (! method_exists($target->socket, $key)) {
-                continue;
-            }
-            $target->socket->$key($val);
-        }
-        $this->$key = $val;
-    }
-
     public function timeout(int $timeout)
     {
-        $this->updateTarget('timeout', $timeout);
+        $this->timeout = $timeout;
 
         return $this;
     }
@@ -94,53 +76,67 @@ class BridgeConnection
         if (! str_starts_with($message, '?')) {
             $message = "?$message";
         }
-        $this->updateTarget('message', $message);
+        $this->message = $message;
 
         return $this;
     }
 
     public function force(bool $force)
     {
-        $this->updateTarget('force', $force);
+        $this->force = $force;
 
         return $this;
     }
 
     public function cacheFor(int $seconds)
     {
-        $this->updateTarget('cacheFor', $seconds);
+        $this->cacheFor = $seconds;
 
         return $this;
     }
 
-    public function send(bool $wantResponse = true): BridgeConnectionResponse|Collection
+    private function handler($address, $port, $options)
     {
-        $responses = collect();
-        foreach ($this->targets as $target) {
+        return function () use ($address, $port, $options) {
+            $socket = new BridgeConnectionSocket($address, $port, $options);
             $response = '';
             $error = false;
+
             try {
-                $target->socket->wantResponse = $wantResponse;
-                $target->socket->send();
-                if ($wantResponse) {
-                    $response = $target->socket->read();
-                    $error = $target->socket->error;
+                $socket->send();
+                if ($socket->wantResponse) {
+                    $response = $socket->read();
+                    $error = $socket->error;
                 }
             } catch (\Throwable $e) {
-                if ($wantResponse) {
+                if ($socket->wantResponse) {
                     $response = $e->getMessage();
                     $error = true;
                 }
             }
-            $target->socket->disconnect();
-            if ($wantResponse) {
-                $responses->add(new BridgeConnectionResponse(
-                    $response,
-                    $error,
-                    $target->socket->cacheHit
-                ));
-            }
+
+            $socket->disconnect();
+
+            return new BridgeConnectionResponse($response, $error, $socket->cacheHit);
+        };
+    }
+
+    public function send(bool $wantResponse = true): BridgeConnectionResponse|Collection
+    {
+        $options = (object) [
+            'message' => $this->message,
+            'timeout' => $this->timeout,
+            'force' => $this->force,
+            'cacheFor' => $this->cacheFor,
+            'wantResponse' => $wantResponse,
+        ];
+
+        $jobs = [];
+        foreach ($this->targets as $target) {
+            $jobs[$target->serverId] = $this->handler($target->address, $target->port, $options);
         }
+
+        $responses = collect(Octane::concurrently($jobs));
 
         return count($responses) === 1 ? $responses->first() : $responses;
     }

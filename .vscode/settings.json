@@ -10,5 +10,7 @@
     "intelephense.codeLens.parent.enable": true,
     "intelephense.codeLens.references.enable": true,
     "intelephense.codeLens.usages.enable": true,
-    "intelephense.format.enable": false
+    "intelephense.format.enable": false,
+    "editor.formatOnSave": true,
+    "laravel-pint.enable": true
 }
