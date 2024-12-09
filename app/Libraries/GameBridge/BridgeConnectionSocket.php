@@ -99,7 +99,11 @@ class BridgeConnectionSocket
     public function disconnect()
     {
         if ($this->socket) {
-            socket_close($this->socket);
+            try {
+                socket_close($this->socket);
+            } catch (\Throwable) {
+                // possible we already closed this socket
+            }
         }
         if ($this->lock) {
             $this->lock->release();
