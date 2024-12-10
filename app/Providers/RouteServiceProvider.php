@@ -32,10 +32,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->domain(config('app.api_url'))
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('api')
-                ->domain('api.'.preg_replace('(^https?://)', '', config('app.url')))
-                ->group(base_path('routes/api.php'));
-
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
