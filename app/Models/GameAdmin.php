@@ -6,6 +6,37 @@ use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $ckey
+ * @property string|null $name
+ * @property int|null $rank_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Ban> $bans
+ * @property-read int|null $bans_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JobBan> $jobBans
+ * @property-read int|null $job_bans_count
+ * @property-read \App\Models\GameAdminRank|null $rank
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin filter(array $input = [], $filter = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereBeginsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereCkey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereEndsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereLike($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereRankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdmin whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class GameAdmin extends Model
 {
     use Filterable, HasFactory;

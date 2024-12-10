@@ -17,7 +17,7 @@ trait Voteable
         return $this->votes()->sum('value');
     }
 
-    public function userVotes()
+    public function userVotes(): MorphMany
     {
         return $this->votes()->where('ip', request()->ip());
     }

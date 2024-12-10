@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\GameAdminRank;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin GameAdminRank */
 class GameAdminRankResource extends JsonResource
 {
     /**

@@ -41,7 +41,7 @@ class PlayersController extends Controller
 
         if (is_null($player)) {
             $creatingPlayer = true;
-            $player = new Player();
+            $player = new Player;
             $player->ckey = $data['ckey'];
         }
 
@@ -63,7 +63,7 @@ class PlayersController extends Controller
 
         RecordPlayerConnection::dispatch($player->id, $data);
 
-        if ($creatingPlayer || !$player->hasImportedMedals) {
+        if ($creatingPlayer || ! $player->hasImportedMedals) {
             ImportByondMedalsForPlayer::dispatch($player->ckey);
         }
 
@@ -199,6 +199,7 @@ class PlayersController extends Controller
         }
 
         $ips = $player->connections->map(function ($item) {
+            /** @phpstan-ignore-next-line */
             return ['ip' => $item->ip, 'connected' => $item->connected];
         });
 
@@ -240,6 +241,7 @@ class PlayersController extends Controller
         }
 
         $compIds = $player->connections->map(function ($item) {
+            /** @phpstan-ignore-next-line */
             return ['comp_id' => $item->comp_id, 'connected' => $item->connected];
         });
 

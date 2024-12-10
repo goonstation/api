@@ -152,7 +152,7 @@ class PollsController extends Controller
             $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
         }
 
-        $poll = new Poll();
+        $poll = new Poll;
         $poll->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
         $poll->question = $data['question'];
         $poll->multiple_choice = isset($data['multiple_choice']) ? $data['multiple_choice'] : false;
@@ -161,7 +161,7 @@ class PollsController extends Controller
         $poll->save();
 
         foreach ($data['options'] as $key => $option) {
-            $pollOption = new PollOption();
+            $pollOption = new PollOption;
             $pollOption->option = $option;
             $pollOption->position = $key + 1;
             $poll->options()->save($pollOption);
@@ -223,7 +223,7 @@ class PollsController extends Controller
 
         $currentOptionCount = PollOption::where('poll_id', $poll->id)->count();
 
-        $pollOption = new PollOption();
+        $pollOption = new PollOption;
         $pollOption->poll_id = $poll->id;
         $pollOption->option = $data['option'];
         $pollOption->position = $currentOptionCount + 1;
@@ -298,7 +298,7 @@ class PollsController extends Controller
             }
         }
 
-        $answer = new PollAnswer();
+        $answer = new PollAnswer;
         $answer->poll_option_id = $pollOption->id;
         $answer->player_id = $data['player_id'];
         $answer->save();

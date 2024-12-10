@@ -134,76 +134,82 @@
 .log-type-filter,
 .log-type-row {
   &.log-type-ahelp {
-    background: #4a4aa7;
+    background: #10107F;
   }
   .log-type-label-ahelp {
-    background: #6e6eff;
+    background: #36365F;
+  }
+  &.log-type-mhelp {
+    background: #4B135E;
+  }
+  .log-type-label-mhelp {
+    background: #52365F;
   }
   &.log-type-admin {
-    background: #2c5f79;
+    background: #003652;
   }
   .log-type-label-admin {
-    background: #3e97c3;
+    background: #134B5E;
   }
   &.log-type-bombing {
-    background: #575757;
+    background: #484E51;
   }
   .log-type-label-bombing {
-    background: #979797;
+    background: #6d777c;
   }
   &.log-type-chemistry {
-    background: #c56504;
+    background: #8C4D0F;
   }
   .log-type-label-chemistry {
-    background: #ff8000;
+    background: #c26100;
   }
   &.log-type-debug {
-    background: #6b5731;
+    background: #523600;
   }
   .log-type-label-debug {
-    background: #a9884a;
+    background: #834100;
   }
   &.log-type-diary {
-    background: #8f6031;
+    background: #743400;
   }
   .log-type-label-diary {
-    background: #d38c45;
+    background: #634221;
   }
   &.log-type-ooc {
-    background: #5252c5;
+    background: #303074;
   }
   .log-type-label-ooc {
-    background: #6b6bff;
+    background: #3F3F96;
   }
   &.log-type-pdamsg {
-    background: #779144;
+    background: #323D0F;
   }
   .log-type-label-pdamsg {
-    background: #9cc747;
+    background: #536026;
   }
   &.log-type-say {
-    background: #5c5ca9;
+    background: #262A2B;
   }
   .log-type-label-say {
-    background: #8888f7;
+    background: #303436;
   }
   &.log-type-combat {
-    background: #9b2424;
+    background: #470000;
   }
   .log-type-label-combat {
-    background: #e93636;
-  }
-  &.log-type-pathology {
-    background: #2a7f2a;
-  }
-  .log-type-label-pathology {
-    background: #36c336;
+    background: #720000;
   }
   &.log-type-whisper {
-    background: #6060a1;
+    background: #1C1D1F;
   }
   .log-type-label-whisper {
-    background: #8888d5;
+    background: #313638;
+  }
+  &.log-type-tgui {
+    background: #003539;
+  }
+  .log-type-label-tgui {
+    background: #274B4C;
   }
 }
 </style>

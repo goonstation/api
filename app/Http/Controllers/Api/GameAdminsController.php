@@ -62,14 +62,12 @@ class GameAdminsController extends Controller
         $data = $request->validate([
             'ckey' => 'required|string|unique:game_admins,ckey',
             'name' => 'nullable|string',
-            'discord_id' => 'nullable|string',
             'rank' => 'required|exists:game_admin_ranks,id',
         ]);
 
-        $gameAdmin = new GameAdmin();
+        $gameAdmin = new GameAdmin;
         $gameAdmin->ckey = $data['ckey'];
         $gameAdmin->name = isset($data['name']) ? $data['name'] : null;
-        $gameAdmin->discord_id = isset($data['discord_id']) ? $data['discord_id'] : null;
         $gameAdmin->rank_id = $data['rank'];
         $gameAdmin->save();
 
@@ -86,7 +84,6 @@ class GameAdminsController extends Controller
         $data = $request->validate([
             'ckey' => 'nullable|string|unique:game_admins,ckey',
             'name' => 'nullable|string',
-            'discord_id' => 'nullable|string',
             'rank' => 'nullable|exists:game_admin_ranks',
         ]);
 
@@ -95,9 +92,6 @@ class GameAdminsController extends Controller
         }
         if (! empty($data['name'])) {
             $gameAdmin->name = $data['name'];
-        }
-        if (! empty($data['discord_id'])) {
-            $gameAdmin->discord_id = $data['discord_id'];
         }
         if (! empty($data['rank'])) {
             $gameAdmin->rank_id = $data['rank'];

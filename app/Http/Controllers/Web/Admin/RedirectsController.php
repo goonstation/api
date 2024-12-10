@@ -40,7 +40,7 @@ class RedirectsController extends Controller
             'to' => 'required|url',
         ]);
 
-        $redirect = new ModelsRedirect();
+        $redirect = new ModelsRedirect;
         $redirect->from = $data['from'];
         $redirect->to = $data['to'];
         $redirect->created_by = $request->user()->id;

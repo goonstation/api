@@ -53,12 +53,12 @@ class InitialSetup extends Command
         }
 
         $hostRank = GameAdminRank::where('rank', 'Host')->first();
-        $gameAdmin = new GameAdmin();
+        $gameAdmin = new GameAdmin;
         $gameAdmin->ckey = ckey($byondCkey);
         $gameAdmin->rank_id = $hostRank->id;
         $gameAdmin->save();
 
-        $action = new CreateNewUser();
+        $action = new CreateNewUser;
         $user = $action->create([
             'name' => $userName,
             'email' => $userEmail,

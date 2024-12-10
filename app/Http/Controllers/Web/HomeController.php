@@ -60,7 +60,7 @@ class HomeController extends Controller
 
         $lastRounds = [];
         foreach ($serversToShow as $server) {
-            $lastRounds[] = GameRound::with([
+            $lastRound = GameRound::with([
                 'server:server_id,name',
                 'latestStationName:round_id,name',
             ])
@@ -69,6 +69,10 @@ class HomeController extends Controller
                 ->whereNotNull('ended_at')
                 ->orderByRaw('created_at DESC NULLS LAST')
                 ->first();
+
+            if ($lastRound) {
+                $lastRounds[] = $lastRound;
+            }
         }
 
         $changelog = ChangelogHelper::get(7);

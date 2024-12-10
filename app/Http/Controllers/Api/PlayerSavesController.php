@@ -101,9 +101,12 @@ class PlayerSavesController extends Controller
             $playerId = $player->id;
         }
 
-        $currentSaves = PlayerSave::where('player_id', $playerId)->count();
-        if ($currentSaves >= 15) {
-            return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
+        $saveExists = PlayerSave::where('player_id', $playerId)->where('name', $data['name'])->first();
+        if (! $saveExists) {
+            $currentSaves = PlayerSave::where('player_id', $playerId)->count();
+            if ($currentSaves >= 15) {
+                return response()->json(['message' => 'Your account can only hold 15 savefiles.'], 400);
+            }
         }
 
         $save = PlayerSave::updateOrCreate([

@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Medal;
+use App\Models\PlayerMedal;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerMedal */
 class PlayerMedalResource extends JsonResource
 {
     /**

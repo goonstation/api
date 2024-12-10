@@ -95,7 +95,7 @@ class MapsController extends Controller
         $job = new BuildMap($data['map'], $mapZipPath, $gameAdminId);
 
         // image count check
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($mapZipPath);
         $expectedImageCount = $job->getExpectedImageCount();
         $imageCount = $zip->count();
@@ -122,7 +122,7 @@ class MapsController extends Controller
     {
         // check if the upload is success, throw exception or return response you need
         if ($receiver->isUploaded() === false) {
-            throw new UploadMissingFileException();
+            throw new UploadMissingFileException;
         }
         // receive the file
         $save = $receiver->receive();
@@ -169,7 +169,7 @@ class MapsController extends Controller
             'base_maps' => 'nullable|array',
         ]);
 
-        $map = new Map();
+        $map = new Map;
         $map->map_id = $data['map_id'];
         $map->name = $data['name'];
         $map->active = $data['active'];

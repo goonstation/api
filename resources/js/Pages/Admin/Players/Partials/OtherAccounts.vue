@@ -21,12 +21,31 @@
         <template v-else>Never</template>
       </q-td>
     </template>
+    <template v-slot:body-cell-match_ip="props">
+      <q-td :props="props">
+        <q-icon
+          :name="props.row._matchedOnIp === true ? ionCheckmark : ionClose"
+          :color="props.row._matchedOnIp === true ? 'positive' : 'negative'"
+          size="xs"
+        />
+      </q-td>
+    </template>
+    <template v-slot:body-cell-match_comp_id="props">
+      <q-td :props="props">
+        <q-icon
+          :name="props.row._matchedOnCompId === true ? ionCheckmark : ionClose"
+          :color="props.row._matchedOnCompId === true ? 'positive' : 'negative'"
+          size="xs"
+        />
+      </q-td>
+    </template>
   </q-table>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash'
+import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v6'
 import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 
 export default {
@@ -42,6 +61,8 @@ export default {
     return {
       dayjs,
       upperFirst,
+      ionCheckmark,
+      ionClose,
     }
   },
 
@@ -60,12 +81,24 @@ export default {
           label: 'Ckey',
           field: 'ckey',
           sortable: true,
-          align: 'left'
+          align: 'left',
         },
         {
           name: 'last_seen',
           label: 'Last Seen',
           filterable: false,
+        },
+        {
+          name: 'match_ip',
+          label: 'Same IP',
+          field: '_matchedOnIp',
+          headerClasses: 'q-table--col-auto-width',
+        },
+        {
+          name: 'match_comp_id',
+          label: 'Same Comp ID',
+          field: '_matchedOnCompId',
+          headerClasses: 'q-table--col-auto-width',
         },
       ],
     }

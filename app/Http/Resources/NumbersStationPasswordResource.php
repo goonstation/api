@@ -2,12 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Ban;
+use App\Models\NumbersStationPassword;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @mixin Ban
- */
+/** @mixin NumbersStationPassword */
 class NumbersStationPasswordResource extends JsonResource
 {
     /**

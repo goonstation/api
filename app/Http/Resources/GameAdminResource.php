@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\GameAdmin;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin GameAdmin */
 class GameAdminResource extends JsonResource
 {
     /**
@@ -18,7 +20,6 @@ class GameAdminResource extends JsonResource
             'id' => $this->id,
             'ckey' => $this->ckey,
             'name' => $this->name,
-            'discord_id' => $this->discord_id,
             /** @var GameAdminRankResource */
             'rank' => $this->rank,
             'created_at' => $this->created_at,

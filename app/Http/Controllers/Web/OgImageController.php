@@ -56,7 +56,7 @@ class OgImageController extends Controller
 
         $image = $image ? $image : OpenGraphImage::getImage($type, $imageKey, $imageData);
 
-        if (!$image) {
+        if (! $image) {
             return $this->defaultImage();
         }
 

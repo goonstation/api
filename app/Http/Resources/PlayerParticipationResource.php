@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PlayerParticipation;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerParticipation */
 class PlayerParticipationResource extends JsonResource
 {
     /**

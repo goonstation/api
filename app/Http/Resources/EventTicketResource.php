@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Events\EventTicket;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EventTicket */
 class EventTicketResource extends JsonResource
 {
     /**

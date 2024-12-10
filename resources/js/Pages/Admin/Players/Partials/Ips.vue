@@ -9,20 +9,22 @@
       </q-card-section>
 
       <q-card-section>
-        <q-markup-table flat bordered>
-          <thead>
-            <tr>
-              <th>IP</th>
-              <th>Connections</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="group in ips">
-              <td>{{ group.ip }}</td>
-              <td>{{ group.connections }}</td>
-            </tr>
-          </tbody>
-        </q-markup-table>
+        <q-table
+          :rows="ips"
+          :columns="columns"
+          :pagination="{ sortBy: 'last_seen', descending: true, rowsPerPage: 20 }"
+          flat
+          bordered
+        >
+          <template v-slot:body-cell-ip="props">
+            <q-td :props="props">
+              <Link :href="route('admin.players.index', { filters: { ip: props.row.ip } })">
+                {{ props.row.ip }}
+                <q-tooltip>Search for other players with this IP</q-tooltip>
+              </Link>
+            </q-td>
+          </template>
+        </q-table>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -45,6 +47,26 @@ export default {
   data() {
     return {
       dialog: false,
+      columns: [
+        {
+          name: 'ip',
+          field: 'ip',
+          label: 'IP',
+        },
+        {
+          name: 'connections',
+          field: 'connections',
+          label: 'Connections',
+          sortable: true,
+        },
+        {
+          name: 'last_seen',
+          field: 'last_seen',
+          label: 'Last Seen',
+          sortable: true,
+          format: this.$formats.dateWithTime,
+        },
+      ],
     }
   },
 
@@ -55,15 +77,17 @@ export default {
         const groupIdx = groups.findIndex((group) => group.ip === connection.ip)
         if (groupIdx !== -1) {
           groups[groupIdx].connections++
+          groups[groupIdx].last_seen = connection.created_at
         } else {
           groups.push({
             ip: connection.ip,
-            connections: 1
+            connections: 1,
+            last_seen: connection.created_at,
           })
         }
       }
-      return groups.sort((a, b) => b.connections - a.connections)
-    }
-  }
+      return groups
+    },
+  },
 }
 </script>

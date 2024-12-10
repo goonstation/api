@@ -56,7 +56,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'asset_url' => env('ASSET_URL'),
+    'api_url' => env('API_URL', 'http://api.localhost'),
+
+    'asset_url' => env('ASSET_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -186,7 +188,6 @@ return [
          * Package Service Providers...
          */
         EloquentFilter\ServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
 
         /*
@@ -202,6 +203,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
 
         App\Providers\OpenGraphImageProvider::class,
+        App\Providers\GameBridgeServiceProvider::class,
     ],
 
     /*
@@ -216,9 +218,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
-        'Image' => Intervention\Image\Facades\Image::class,
         'OpenGraphImage' => App\Facades\OpenGraphImage::class,
+        'GameBridge' => App\Facades\GameBridge::class,
     ])->toArray(),
 
 ];

@@ -3,14 +3,15 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
+use App\Services\Auth\ApiSanctumGuard;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
-use Illuminate\Auth\Access\Gate as AccessGate;
+use Illuminate\Auth\RequestGuard;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -23,9 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerAccessGate();
-
-        if ($this->app->environment(['local'])) {
+        if ($this->app->environment(['local', 'staging'])) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
@@ -42,14 +41,22 @@ class AppServiceProvider extends ServiceProvider
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
-        Scramble::extendOpenApi(function (OpenApi $openApi) {
+        Auth::resolved(function ($auth) {
+            $auth->extend('api', function ($app, $name, array $config) use ($auth) {
+                return tap($this->createApiGuard($auth, $config), function ($guard) {
+                    app()->refresh('request', $guard, 'setRequest');
+                });
+            });
+        });
+
+        Scramble::afterOpenApiGenerated(function (OpenApi $openApi) {
             $openApi->secure(
                 SecurityScheme::http('bearer', 'JWT')
             );
         });
 
         Scramble::routes(function (Route $route) {
-            return $route->getDomain() === 'api.'.preg_replace('(^https?://)', '', config('app.url'));
+            return $route->getDomain() === preg_replace('(^https?://)', '', config('app.api_url'));
         });
 
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
@@ -68,12 +75,12 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    protected function registerAccessGate()
+    protected function createApiGuard($auth, $config)
     {
-        $this->app->singleton(GateContract::class, function ($app) {
-            return new AccessGate($app, function () {
-                return request()->user();
-            });
-        });
+        return new RequestGuard(
+            new ApiSanctumGuard($auth, config('sanctum.expiration'), $config['provider']),
+            request(),
+            $auth->createUserProvider($config['provider'] ?? null)
+        );
     }
 }

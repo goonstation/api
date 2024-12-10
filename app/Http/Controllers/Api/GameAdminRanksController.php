@@ -61,7 +61,7 @@ class GameAdminRanksController extends Controller
             'rank' => 'required|string',
         ]);
 
-        $gameAdminRank = new GameAdminRank();
+        $gameAdminRank = new GameAdminRank;
         $gameAdminRank->rank = $data['rank'];
         $gameAdminRank->save();
 

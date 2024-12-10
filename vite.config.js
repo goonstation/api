@@ -4,7 +4,6 @@ import laravel from 'laravel-vite-plugin'
 import vue from '@vitejs/plugin-vue'
 import VueMacros from 'unplugin-vue-macros/vite'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { sassMigratorQuasar } from 'rollup-plugin-sass-migrator'
 
 export default defineConfig({
   server: {
@@ -27,15 +26,7 @@ export default defineConfig({
       template: { transformAssetUrls },
     }),
     quasar({
-      sassVariables: 'resources/css/quasar-variables.scss',
-    }),
-    // Quasar recommends pinning sass at a low version, but that sucks so let's use modern sass
-    // and just convert their dumb vendor files into valid syntax
-    sassMigratorQuasar({
-      indexPath: 'node_modules/quasar/src/css/index.sass',
-    }),
-    sassMigratorQuasar({
-      indexPath: 'node_modules/quasar/src/css/flex-addon.sass',
+      sassVariables: path.resolve(__dirname, './resources/css/quasar-variables.scss'),
     }),
   ],
   resolve: {

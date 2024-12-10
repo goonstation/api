@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Events\EventStationName;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EventStationName */
 class EventStationNameResource extends JsonResource
 {
     /**

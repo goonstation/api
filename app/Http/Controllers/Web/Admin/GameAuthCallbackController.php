@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
+use App\Facades\GameBridge;
 use App\Http\Controllers\Controller;
-use App\Libraries\GameBridge;
 use Illuminate\Http\Request;
 
 class GameAuthCallbackController extends Controller
@@ -14,21 +14,17 @@ class GameAuthCallbackController extends Controller
             'server_id' => 'required',
         ]);
 
-        $reachedGame = false;
-        $res = null;
-        try {
-            $res = GameBridge::relay($data['server_id'], [
+        $response = GameBridge::create()
+            ->target($data['server_id'])
+            ->message([
                 'type' => 'goonhub_auth',
                 'ckey' => $request->user()->gameAdmin->ckey,
-            ]);
-            $reachedGame = true;
-        } catch (\Throwable $e) {
-            // pass
-        }
+            ])
+            ->send();
 
         return response()->json([
-            'success' => $reachedGame,
-            'res' => $res,
+            'success' => ! $response->error,
+            'res' => $response->message,
         ]);
     }
 }

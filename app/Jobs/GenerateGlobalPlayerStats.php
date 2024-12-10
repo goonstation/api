@@ -43,6 +43,7 @@ class GenerateGlobalPlayerStats implements ShouldQueue
 
         $niceData = [];
         foreach ($data as $conn) {
+            /** @phpstan-ignore-next-line */
             $niceData[] = [$conn->date, $conn->connections];
         }
         $playerParticipationsPerDay = $niceData;
@@ -67,6 +68,7 @@ class GenerateGlobalPlayerStats implements ShouldQueue
         $niceData = [];
         $groupedCountries = 0;
         foreach ($data as $conn) {
+            /** @phpstan-ignore-next-line */
             $percent = (float) number_format($conn->unique_connections / $total * 100, 2, '.', '');
             if ($percent <= 2) {
                 $groupedCountries += $percent;

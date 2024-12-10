@@ -5,9 +5,9 @@ namespace App\Traits;
 use App\Http\Resources\JobBanResource;
 use App\Models\GameAdmin;
 use App\Models\JobBan;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 trait ManagesJobBans
 {
@@ -33,12 +33,12 @@ trait ManagesJobBans
 
         $expiresAt = null;
         if (isset($data['duration'])) {
-            $expiresAt = Carbon::now()->addSeconds($data['duration'])->toDateTimeString();
+            $expiresAt = Carbon::now()->addSeconds($data['duration']);
         }
 
         $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
 
-        $jobBan = new JobBan();
+        $jobBan = new JobBan;
         $jobBan->game_admin_id = $gameAdmin->id;
         $jobBan->round_id = isset($data['round_id']) ? $data['round_id'] : null;
         $jobBan->server_id = $serverId;
@@ -63,8 +63,9 @@ trait ManagesJobBans
         $serverId = isset($data['server_id']) ? $data['server_id'] : null;
 
         // Check another ban doesn't already exist for the provided job
+        /** @var JobBan */
         $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
-        if (! empty($existingJobBan) && $jobBan->id !== $existingJobBan->id) {
+        if ($existingJobBan && $jobBan->id !== $existingJobBan->id) {
             throw new Exception('The player is already banned from that job on this server.');
         }
 

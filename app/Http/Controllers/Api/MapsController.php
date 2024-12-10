@@ -51,7 +51,7 @@ class MapsController extends Controller
         $mapZipPath = BuildMap::moveUploadedFile($file);
         $job = new BuildMap($data['map'], $mapZipPath, $gameAdminId);
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($mapZipPath);
         $expectedImageCount = $job->getExpectedImageCount();
         $imageCount = $zip->count();

@@ -31,12 +31,6 @@ class ServerPerformanceMetricsResource extends JsonResource
                 /** @var float CPU load in % */
                 'currentLoad' => $this['currentLoad']['currentLoad'],
             ],
-            'currentLoad' => [
-                /** @var float Average load in % */
-                'avgLoad' => $this['currentLoad']['avgLoad'],
-                /** @var float CPU load in % */
-                'currentLoad' => $this['currentLoad']['currentLoad'],
-            ],
             'fsSize' => [
                 /** @var int Total size in bytes */
                 'size' => $this['fsSize'][0]['size'],
