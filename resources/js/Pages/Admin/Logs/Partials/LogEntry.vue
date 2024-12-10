@@ -91,7 +91,7 @@
   color: black;
 }
 
-:deep(.traitorTag) {
+:deep(.traitor-marker) {
   display: inline-block;
   border-radius: 3px;
   padding: 0 5px;
@@ -155,6 +155,9 @@ export default {
         <span class="dmg-brute" title="Burn">$5</span>
       </span>`
       )
+
+      const traitorRegex = /\[<span class='traitorTag'>T<\/span>\]/g
+      message = message.replaceAll(traitorRegex, '<span class="traitor-marker">T</span>')
 
       if (this.searchTerms.length) {
         const searchRegex = new RegExp(
