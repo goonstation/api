@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Medal;
 use App\Models\PlayerMedal;
 use App\Traits\IndexableQuery;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -30,9 +31,9 @@ class MedalsController extends Controller
             sortBy: 'title',
             desc: false);
 
-        $medals->setCollection(
-            $medals->getCollection()->makeVisible(['id'])
-        );
+        /** @var Collection */
+        $collection = $medals->getCollection();
+        $medals->setCollection($collection->makeVisible(['id']));
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Medals/Index', [
@@ -70,7 +71,7 @@ class MedalsController extends Controller
             'image' => 'nullable|file|mimes:png',
         ]);
 
-        $medal = new Medal();
+        $medal = new Medal;
         $medal->title = $data['title'];
         $medal->description = $data['description'];
         $medal->hidden = $data['hidden'];
@@ -136,7 +137,7 @@ class MedalsController extends Controller
 
         $medal = Medal::where('uuid', $data['medal_uuid'])->firstOrFail();
 
-        $medalAward = new PlayerMedal();
+        $medalAward = new PlayerMedal;
         $medalAward->player_id = $data['player_id'];
         $medalAward->medal_id = $medal->id;
         $medalAward->save();

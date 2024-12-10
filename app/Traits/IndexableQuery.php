@@ -9,8 +9,8 @@ trait IndexableQuery
     /**
      * Paginate/filter/sort a model
      *
-     * @param  mixed  $model  A model class FQDN, or a query builder for one
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @param  string|Builder  $model  A model class FQDN, or a query builder for one
+     * @return \Illuminate\Pagination\LengthAwarePaginator|Builder
      */
     private function indexQuery($model, $filter = null, $sortBy = 'id', $desc = 'true', $perPage = 15, $paginate = true)
     {

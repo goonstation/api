@@ -2,8 +2,15 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Poll;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Poll
+ *
+ * @property int $total_answers
+ * @property int|null $winning_option_id
+ */
 class PollResource extends JsonResource
 {
     /**

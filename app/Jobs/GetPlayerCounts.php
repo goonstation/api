@@ -2,15 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Libraries\GameBridge;
+use App\Facades\GameBridge;
 use App\Models\GameServer;
 use App\Models\PlayersOnline;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 class GetPlayerCounts implements ShouldQueue
 {
@@ -38,14 +38,13 @@ class GetPlayerCounts implements ShouldQueue
 
         $when = Carbon::now();
         foreach ($servers as $server) {
-            $playerCount = 0;
-            try {
-                $status = GameBridge::status($server->server_id);
-                $playerCount = $status['players'];
-            } catch (\Exception $e) {
-                $playerCount = null;
-            }
-            $playersOnline = new PlayersOnline();
+            $response = GameBridge::create()
+                ->target($server)
+                ->force(true)
+                ->message('players')
+                ->send();
+            $playerCount = $response->error ? null : (int) $response->message;
+            $playersOnline = new PlayersOnline;
             $playersOnline->timestamps = false;
             $playersOnline->server_id = $server->server_id;
             $playersOnline->online = $playerCount;

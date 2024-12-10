@@ -61,19 +61,19 @@ class ProcessMap extends Command
             mkdir(storage_path($outputBuild));
         }
 
-        $canvas = Image::canvas($mapSize, $mapSize);
+        $canvas = Image::create($mapSize, $mapSize);
         $imageIndex = 0;
         for ($y = 0; $y < $imagesPerRow; $y++) {
             for ($x = 0; $x < $imagesPerRow; $x++) {
                 $imagePath = storage_path('app/'.$inputImages[$imageIndex]);
-                $image = Image::make($imagePath);
+                $image = Image::read($imagePath);
 
-                $gdImage = $image->getCore();
+                $gdImage = $image->core()->native();
                 $colorToRemove = imagecolorallocate($gdImage, 255, 0, 228); // pink, #ff00e4
                 imagecolortransparent($gdImage, $colorToRemove);
                 imagepng($gdImage, storage_path("$outputBuild/$x,$y.png"));
 
-                $canvas->insert($gdImage, 'top-left', $x * $screenshotSize, $y * $screenshotSize);
+                $canvas->place($gdImage, 'top-left', $x * $screenshotSize, $y * $screenshotSize);
                 $imageIndex++;
             }
         }

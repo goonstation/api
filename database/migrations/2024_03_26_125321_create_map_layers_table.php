@@ -31,7 +31,7 @@ return new class extends Migration
             if ($map->map_id === 'OSHAN' || $map->map_id === 'NADIR' || $map->map_id === 'POD_WARS') {
                 continue;
             }
-            $mapLayer = new MapLayer();
+            $mapLayer = new MapLayer;
             $mapLayer->map_id = $map->id;
             $mapLayer->layer_id = $debris->id;
             $mapLayer->save();

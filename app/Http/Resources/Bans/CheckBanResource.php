@@ -5,9 +5,7 @@ namespace App\Http\Resources\Bans;
 use App\Models\Ban;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @mixin Ban
- */
+/** @mixin Ban */
 class CheckBanResource extends JsonResource
 {
     /**

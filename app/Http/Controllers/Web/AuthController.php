@@ -20,7 +20,7 @@ class AuthController extends Controller
         $user = null;
         try {
             $discordUser = Socialite::driver('discord')->user();
-            $user = User::where('discord_id', $discordUser->id)->first();
+            $user = User::where('discord_id', $discordUser->getId())->first();
         } catch (\Exception $e) {
             // pass
         }

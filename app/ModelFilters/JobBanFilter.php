@@ -49,15 +49,15 @@ class JobBanFilter extends ModelFilter
         return $this->whereLike('reason', $val);
     }
 
-    public function expiredAt($val)
-    {
-        $val = explode('-', $val);
-        $from = date($val[0]);
-        $to = date($val[1]);
-        if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return;
-        }
+    // public function expiredAt($val)
+    // {
+    //     $val = explode('-', $val);
+    //     $from = date($val[0]);
+    //     $to = date($val[1]);
+    //     if (! $this->validateDate($from) || ! $this->validateDate($to)) {
+    //         return;
+    //     }
 
-        return $this->whereBetween('expired_at', [$from, $to]);
-    }
+    //     return $this->whereBetween('expired_at', [$from, $to]);
+    // }
 }

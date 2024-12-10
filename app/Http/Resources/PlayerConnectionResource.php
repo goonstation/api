@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PlayerConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerConnection */
 class PlayerConnectionResource extends JsonResource
 {
     /**

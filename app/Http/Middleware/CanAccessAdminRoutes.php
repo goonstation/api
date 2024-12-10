@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 
@@ -17,7 +18,8 @@ class CanAccessAdminRoutes
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->user()->isAdmin() && ! $request->user()->isGameAdmin()) {
+        $user = Auth::user();
+        if (! $user->isAdmin() && ! $user->isGameAdmin()) {
             return $request->expectsJson()
                 ? abort(403, 'You don\'t have permission to access this route.')
                 : Redirect::guest(URL::route('dashboard'));

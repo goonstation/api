@@ -45,7 +45,7 @@ class RecordPlayerConnection implements ShouldQueue
             // pass
         }
 
-        $connection = new PlayerConnection();
+        $connection = new PlayerConnection;
         $connection->player_id = $this->playerId;
         $connection->round_id = $this->data['round_id'];
         $connection->ip = $this->data['ip'];

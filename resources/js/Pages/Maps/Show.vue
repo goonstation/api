@@ -71,6 +71,7 @@
 <script>
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { router } from '@inertiajs/vue3'
 import { ionArrowBack } from '@quasar/extras/ionicons-v6'
 import { Link } from '@inertiajs/vue3'
 import { copyToClipboard } from 'quasar'
@@ -237,8 +238,7 @@ export default {
       const newParams = decodeURI(urlSearch.toString())
       let newUrl = window.location.pathname
       if (newParams) newUrl += `?${newParams}`
-      history.replaceState(null, '', newUrl)
-      this.$inertia.page.url = newUrl
+      router.visit(newUrl, { preserveState: true, replace: true })
     },
 
     loadUrlParams() {

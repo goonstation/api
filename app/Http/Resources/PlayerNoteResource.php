@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PlayerNote;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerNote */
 class PlayerNoteResource extends JsonResource
 {
     /**

@@ -95,7 +95,7 @@ class BuildMap implements ShouldQueue
         mkdir(storage_path($workDirOutput));
 
         // Extract image files for processing
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($this->zipPath);
         $zip->extractTo(storage_path($workDirInput));
         $zip->close();
@@ -112,7 +112,7 @@ class BuildMap implements ShouldQueue
         // The canvas is for making a thumbnail of the whole thing afterwards
         $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
         $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
-        $canvas = Image::canvas(
+        $canvas = Image::create(
             $this->map->tile_width * self::TILE_SIZE,
             $this->map->tile_height * self::TILE_SIZE
         );
@@ -120,8 +120,8 @@ class BuildMap implements ShouldQueue
         for ($y = 0; $y < $imagesPerColumn; $y++) {
             for ($x = 0; $x < $imagesPerRow; $x++) {
                 $imagePath = $inputImages[$imageIndex]->getRealPath();
-                $image = Image::make($imagePath);
-                $gdImage = $image->getCore();
+                $image = Image::read($imagePath);
+                $gdImage = $image->core()->native();
 
                 // Remove pink background color, to reduce image size
                 $colorToRemove = imagecolorallocate($gdImage, 255, 0, 228); // pink, #ff00e4
@@ -135,7 +135,7 @@ class BuildMap implements ShouldQueue
                 $optimizerChain->optimize($workPathImage);
 
                 // Add this tile to our ongoing canvas
-                $canvas->insert(
+                $canvas->place(
                     $gdImage,
                     'top-left',
                     $x * ($this->map->screenshot_tiles * self::TILE_SIZE),

@@ -2,8 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Models\BanDetail;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin BanDetail
+ *
+ * @property BanDetailResource|null $originalBanDetail
+ */
 class BanDetailResource extends JsonResource
 {
     /**

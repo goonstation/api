@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PlayerMetadata;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin PlayerMetadata */
 class PlayerMetadataResource extends JsonResource
 {
     /**

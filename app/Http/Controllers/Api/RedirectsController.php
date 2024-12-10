@@ -77,7 +77,7 @@ class RedirectsController extends Controller
             'to' => 'required|url',
         ]);
 
-        $redirect = new Redirect();
+        $redirect = new Redirect;
         $redirect->from = $data['from'];
         $redirect->to = $data['to'];
         $redirect->save();

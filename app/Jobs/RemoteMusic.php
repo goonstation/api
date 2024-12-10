@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Facades\GameBridge;
 use App\Helpers\HumanReadable;
-use App\Libraries\GameBridge;
 use App\Models\GameAdmin;
 use App\Models\GameRound;
 use App\Models\RemoteMusicPlay;
@@ -67,7 +67,7 @@ class RemoteMusic implements ShouldQueue
         }
 
         // download video
-        $yt = new YoutubeDl();
+        $yt = new YoutubeDl;
         $yt->setBinPath($this->youtubedlPath);
         $collection = $yt->download(
             Options::create()
@@ -114,13 +114,16 @@ class RemoteMusic implements ShouldQueue
             $gameAdmin = GameAdmin::where('ckey', $this->gameAdminCkey)->first();
         }
 
-        $remoteMusicPlay = new RemoteMusicPlay();
+        $remoteMusicPlay = new RemoteMusicPlay;
         $remoteMusicPlay->title = $audio->getTitle();
         $remoteMusicPlay->round_id = $this->round->id;
         $remoteMusicPlay->game_admin_id = $gameAdmin ? $gameAdmin->id : null;
         $remoteMusicPlay->save();
 
-        GameBridge::relay($this->round->server_id, "type=youtube&data=$data");
+        GameBridge::create()
+            ->target($this->round->server_id)
+            ->message("type=youtube&data=$data")
+            ->sendAndForget();
     }
 
     /**
@@ -131,10 +134,10 @@ class RemoteMusic implements ShouldQueue
     public function failed(\Throwable $exception)
     {
         if ($this->round) {
-            GameBridge::relay(
-                $this->round->server_id,
-                "type=youtube&error={$exception->getMessage()}"
-            );
+            GameBridge::create()
+                ->target($this->round->server_id)
+                ->message("type=youtube&error={$exception->getMessage()}")
+                ->sendAndForget();
         }
     }
 }

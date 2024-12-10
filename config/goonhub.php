@@ -7,8 +7,6 @@ return [
     'ci_api_key' => env('GOONHUB_CI_API_KEY', null),
 
     'game_bridge_url' => env('GAME_BRIDGE_URL', null),
-    'game_bridge_user' => env('GAME_BRIDGE_USER', null),
-    'game_bridge_pass' => env('GAME_BRIDGE_PASS', null),
 
     'ipquality_pass' => env('IPQUALITY_PASS', null),
 

@@ -653,8 +653,7 @@ export default {
       if (newParams) {
         newUrl += `?${newParams}`
       }
-      history.replaceState(null, '', newUrl)
-      this.$inertia.page.url = newUrl
+      router.visit(newUrl, { preserveState: true, replace: true })
     },
 
     onFiltersChange() {
