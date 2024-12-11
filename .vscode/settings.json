@@ -12,5 +12,6 @@
     "intelephense.codeLens.usages.enable": true,
     "intelephense.format.enable": false,
     "editor.formatOnSave": true,
-    "laravel-pint.enable": true
+    "laravel-pint.enable": true,
+    "phpstan.showTypeOnHover": true
 }

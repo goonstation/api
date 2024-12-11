@@ -23,7 +23,8 @@
         "georgykurian.laravel-ide-helper",
         "open-southeners.laravel-pint",
         "eamodio.gitlens",
-        "oven.bun-vscode"
+        "oven.bun-vscode",
+        "SanderRonde.phpstan-vscode"
       ],
       "settings": {}
     }
