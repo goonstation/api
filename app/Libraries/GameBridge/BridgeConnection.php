@@ -5,8 +5,6 @@ namespace App\Libraries\GameBridge;
 use App\Models\GameServer;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
 use Illuminate\Support\Collection;
-use Laravel\Octane\Exceptions\TaskTimeoutException;
-use Laravel\Octane\Facades\Octane;
 use RuntimeException;
 
 class BridgeConnection
@@ -98,7 +96,6 @@ class BridgeConnection
 
     private function handler($address, $port, $options)
     {
-        // return function () use ($address, $port, $options) {
         $socket = new BridgeConnectionSocket($address, $port, $options);
         $response = '';
         $error = false;
@@ -119,7 +116,6 @@ class BridgeConnection
         $socket->disconnect();
 
         return new BridgeConnectionResponse($response, $error, $socket->cacheHit);
-        // };
     }
 
     public function send(bool $wantResponse = true): BridgeConnectionResponse|Collection
@@ -132,26 +128,10 @@ class BridgeConnection
             'wantResponse' => $wantResponse,
         ];
 
-        // $jobs = [];
-        // $timeout = 0;
         $responses = collect();
         foreach ($this->targets as $target) {
-            // $jobs[$target->serverId] = $this->handler($target->address, $target->port, $options);
-            // if ($wantResponse) {
-            //     $timeout += $this->timeout * 3; // connect, send, read
-            // } else {
-            //     $timeout += $this->timeout * 2;  // connect, send
-            // }
             $responses->add($this->handler($target->address, $target->port, $options));
         }
-
-        // $response = null;
-        // try {
-        //     $responses = collect(Octane::concurrently($jobs, $timeout * 1000));
-        //     $response = count($responses) === 1 ? $responses->first() : $responses;
-        // } catch (TaskTimeoutException $e) {
-        //     $response = new BridgeConnectionResponse($e->getMessage(), true);
-        // }
 
         return count($responses) === 1 ? $responses->first() : $responses;
     }
