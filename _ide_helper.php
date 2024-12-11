@@ -18619,6 +18619,86 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Jaybizzle\LaravelCrawlerDetect\Facades {
+            /**
+     * 
+     *
+     */        class LaravelCrawlerDetect {
+                    /**
+         * Compile the regex patterns into one regex string.
+         *
+         * @param array
+         * @return string 
+         * @static 
+         */        public static function compileRegex($patterns)
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->compileRegex($patterns);
+        }
+                    /**
+         * Set HTTP headers.
+         *
+         * @param array|null $httpHeaders
+         * @static 
+         */        public static function setHttpHeaders($httpHeaders)
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->setHttpHeaders($httpHeaders);
+        }
+                    /**
+         * Return user agent headers.
+         *
+         * @return array 
+         * @static 
+         */        public static function getUaHttpHeaders()
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->getUaHttpHeaders();
+        }
+                    /**
+         * Set the user agent.
+         *
+         * @param string|null $userAgent
+         * @static 
+         */        public static function setUserAgent($userAgent)
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->setUserAgent($userAgent);
+        }
+                    /**
+         * Check user agent string against the regex.
+         *
+         * @param string|null $userAgent
+         * @return bool 
+         * @static 
+         */        public static function isCrawler($userAgent = null)
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->isCrawler($userAgent);
+        }
+                    /**
+         * Return the matches.
+         *
+         * @return string|null 
+         * @static 
+         */        public static function getMatches()
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->getMatches();
+        }
+                    /**
+         * 
+         *
+         * @return string|null 
+         * @static 
+         */        public static function getUserAgent()
+        {
+                        /** @var \Jaybizzle\CrawlerDetect\CrawlerDetect $instance */
+                        return $instance->getUserAgent();
+        }
+            }
+    }
+
 namespace App\Facades {
             /**
      * 
@@ -24432,6 +24512,7 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class Crawler extends \Jaybizzle\LaravelCrawlerDetect\Facades\LaravelCrawlerDetect {}
             class OpenGraphImage extends \App\Facades\OpenGraphImage {}
             class GameBridge extends \App\Facades\GameBridge {}
             class LaRecipe extends \BinaryTorch\LaRecipe\LaRecipe {}

@@ -189,6 +189,7 @@ return [
          */
         EloquentFilter\ServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
+        Jaybizzle\LaravelCrawlerDetect\LaravelCrawlerDetectServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -218,6 +219,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'Crawler' => Jaybizzle\LaravelCrawlerDetect\Facades\LaravelCrawlerDetect::class,
         'OpenGraphImage' => App\Facades\OpenGraphImage::class,
         'GameBridge' => App\Facades\GameBridge::class,
     ])->toArray(),
