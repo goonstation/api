@@ -13,7 +13,7 @@ class TestController extends Controller
     public function index(Request $request)
     {
         return response()->json([
-            'message' => 'This is a test',
+            'message' => app(\Swoole\Http\Server::class)->stats(1),
         ]);
     }
 }

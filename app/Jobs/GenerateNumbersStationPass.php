@@ -2,8 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Libraries\GameBridge;
-use App\Models\GameServer;
+use App\Facades\GameBridge;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,9 +22,7 @@ class GenerateNumbersStationPass implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.
@@ -133,17 +130,10 @@ class GenerateNumbersStationPass implements ShouldQueue
 
         if (App::environment('production')) {
             // Send new numbers to all active servers
-            $servers = GameServer::where('active', true)->get();
-            foreach ($servers as $server) {
-                try {
-                    GameBridge::relay($server['server_id'], [
-                        'type' => 'numbersStation',
-                        'numbers' => $numbers,
-                    ]);
-                } catch (\Throwable $e) {
-                    // Ignore inability to reach a server for this
-                }
-            }
+            GameBridge::create()
+                ->target('active')
+                ->message(['type' => 'numbersStation', 'numbers' => $numbers])
+                ->sendAndForget();
         }
     }
 }

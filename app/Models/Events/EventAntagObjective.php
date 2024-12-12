@@ -9,6 +9,36 @@ use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $round_id
+ * @property int|null $player_id
+ * @property string|null $objective
+ * @property bool|null $success
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read GameRound $gameRound
+ * @property-read Player|null $player
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective filter(array $input = [], $filter = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective paginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective simplePaginateFilter($perPage = null, $columns = [], $pageName = 'page', $page = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereBeginsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereEndsWith($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereLike($column, $value, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereObjective($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereRoundId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereSuccess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventAntagObjective whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class EventAntagObjective extends Model
 {
     use Compoships, Filterable, HasFactory;

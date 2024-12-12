@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
+use App\Facades\GameBridge;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
 use App\Libraries\DiscordBot;
-use App\Libraries\GameBridge;
 use App\Models\Ban;
 use App\Models\BanDetail;
 use App\Traits\IndexableQuery;
@@ -87,24 +87,9 @@ class BansController extends Controller
                 // ignore
             }
 
-            if ($ban->server_id) {
-                try {
-                    GameBridge::relay($ban->server_id, [
-                        'type' => 'ban_added',
-                        'admin_ckey' => $ban->gameAdmin->ckey,
-                        'server_id' => $ban->server_id,
-                        'ckey' => $ban->originalBanDetail->ckey,
-                        'comp_id' => $ban->originalBanDetail->comp_id,
-                        'ip' => $ban->originalBanDetail->ip,
-                        'reason' => $ban->reason,
-                        'duration' => $ban->duration,
-                        'requires_appeal' => $ban->requires_appeal ? 1 : 0,
-                    ]);
-                } catch (\Throwable $e) {
-                    // ignore
-                }
-            } else {
-                GameBridge::relayAll([
+            GameBridge::create()
+                ->target($ban->server_id ?: 'active')
+                ->message([
                     'type' => 'ban_added',
                     'admin_ckey' => $ban->gameAdmin->ckey,
                     'server_id' => $ban->server_id,
@@ -114,8 +99,8 @@ class BansController extends Controller
                     'reason' => $ban->reason,
                     'duration' => $ban->duration,
                     'requires_appeal' => $ban->requires_appeal ? 1 : 0,
-                ]);
-            }
+                ])
+                ->sendAndForget();
         });
 
         return to_route('admin.bans.index');
@@ -209,7 +194,7 @@ class BansController extends Controller
             'ip' => 'required_without_all:ckey,comp_id|nullable|ip',
         ]);
 
-        $banDetail = new BanDetail();
+        $banDetail = new BanDetail;
         $banDetail->ckey = isset($data['ckey']) ? $data['ckey'] : null;
         $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
         $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;

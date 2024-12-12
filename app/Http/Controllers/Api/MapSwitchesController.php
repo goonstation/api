@@ -35,7 +35,7 @@ class MapSwitchesController extends Controller
             $gameAdmin = GameAdmin::where('ckey', $data['game_admin_ckey'])->first();
         }
 
-        $mapSwitch = new MapSwitch();
+        $mapSwitch = new MapSwitch;
         if ($gameAdmin) {
             $mapSwitch->game_admin_id = $gameAdmin->id;
         }

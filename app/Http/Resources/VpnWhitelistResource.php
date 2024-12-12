@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\VpnWhitelist;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin VpnWhitelist */
 class VpnWhitelistResource extends JsonResource
 {
     /**

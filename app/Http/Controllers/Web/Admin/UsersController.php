@@ -46,7 +46,7 @@ class UsersController extends Controller
             'is_admin' => 'boolean',
         ]);
 
-        $user = new User();
+        $user = new User;
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->discord_id = isset($data['discord_id']) ? $data['discord_id'] : null;

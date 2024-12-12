@@ -37,33 +37,34 @@ class OpenGraphImage
         try {
             $response = Http::withHeaders([
                 'Cache-Control' => 'no-cache',
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
             ])->post(
                 config('goonhub.browserless_host').
                 ':'.config('goonhub.browserless_port').
                 '/screenshot?'.
                 'token='.config('goonhub.browserless_token'),
-            [
-                'html' => view("open-graph.$type", ['data' => $data])->render(),
-                'viewport' => [
-                    'width' => 1200,
-                    'height' => 630
-                ],
-                'options' => [
-                    'type' => 'png',
-                    'fullPage' => true
-                ]
-            ]);
+                [
+                    'html' => view("open-graph.$type", ['data' => $data])->render(),
+                    'viewport' => [
+                        'width' => 1200,
+                        'height' => 630,
+                    ],
+                    'options' => [
+                        'type' => 'png',
+                        'fullPage' => true,
+                    ],
+                ]);
         } catch (ConnectionException $e) {
             return false;
         }
 
         $body = $response->getBody();
-        if (!$response->successful() || !$body) {
+        if (! $response->successful() || ! $body) {
             return false;
         }
 
         File::put($path, $body);
+
         return true;
     }
 
@@ -117,7 +118,10 @@ class OpenGraphImage
             $madeImage = $this->makeImage($type, $data, $fullPath);
         }
 
-        if (!$madeImage) return false;
+        if (! $madeImage) {
+            return false;
+        }
+
         return [
             'age' => $this->getFileAge($fullPath),
             'etag' => $this->getEtag($fullPath),

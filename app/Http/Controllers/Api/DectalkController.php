@@ -47,7 +47,7 @@ class DectalkController extends Controller
         exec("lame -V2 \"$dectalkFilePath\" \"$mp3FilePath\" 2>&1 >/dev/null");
         exec("rm \"$dectalkFilePath\"");
 
-        $dectalkPhrase = new DectalkPhrase();
+        $dectalkPhrase = new DectalkPhrase;
         $dectalkPhrase->phrase = $data['text'];
         $dectalkPhrase->round_id = $data['round_id'];
         $dectalkPhrase->save();

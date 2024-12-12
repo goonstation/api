@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Events\EventFine;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin EventFine */
 class EventFineResource extends JsonResource
 {
     /**

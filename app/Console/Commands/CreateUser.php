@@ -39,7 +39,7 @@ class CreateUser extends Command
             return Command::FAILURE;
         }
 
-        $action = new CreateNewUser();
+        $action = new CreateNewUser;
         $user = $action->create([
             'name' => $userName,
             'email' => $userEmail,

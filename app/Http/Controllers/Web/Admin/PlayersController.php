@@ -8,6 +8,7 @@ use App\Models\BanDetail;
 use App\Models\CursedCompId;
 use App\Models\GameRound;
 use App\Models\Player;
+use App\Models\PlayerConnection;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesBans;
 use Illuminate\Http\Request;
@@ -19,7 +20,11 @@ class PlayersController extends Controller
 
     public function index(Request $request)
     {
-        $players = $this->indexQuery(Player::withCount(['connections', 'participations']), perPage: 30);
+        $model = Player::withCount(['connections', 'participations']);
+        if ($request->has('with_latest_connection')) {
+            $model = $model->with('latestConnection');
+        }
+        $players = $this->indexQuery($model, perPage: 30);
 
         if ($this->wantsInertia($request)) {
             return Inertia::render('Admin/Players/Index', [
@@ -75,7 +80,10 @@ class PlayersController extends Controller
         $compIds = $player->connections->pluck('comp_id')->unique()->values();
 
         $banHistory = $banHistory->map(function (Ban $ban) use ($ckey, $ips, $compIds) {
-            $ban->player_has_active_details = $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray());
+            $ban->setAttribute(
+                'player_has_active_details',
+                $this->banPlayerHasActiveDetails($ban, $ckey, $ips->toArray(), $compIds->toArray())
+            );
 
             return $ban;
         });
@@ -84,14 +92,36 @@ class PlayersController extends Controller
         $cursedCompIds = CursedCompId::all();
         $compIds = $compIds->diff($cursedCompIds->pluck('comp_id')->values());
 
+        // Get other connection details associated with this player
+        $otherIps = PlayerConnection::select(['player_id', 'ip'])
+            ->whereIn('ip', $ips)
+            ->where('player_id', '!=', $player->id)
+            ->distinct()
+            ->get();
+        $otherCompIds = PlayerConnection::select(['player_id', 'comp_id'])
+            ->whereIn('comp_id', $compIds)
+            ->where('player_id', '!=', $player->id)
+            ->distinct()
+            ->get();
+
+        // Get the players for the other connection details
+        $otherIpsPlayerIds = $otherIps->pluck('player_id');
+        $otherCompIdsPlayerIds = $otherCompIds->pluck('player_id');
         $otherAccounts = Player::with(['latestConnection'])
-            ->whereHas('connections', function ($query) use ($ips, $compIds) {
-                $query->whereIn('ip', $ips)
-                    ->orWhereIn('comp_id', $compIds);
-            })
-            ->where('id', '!=', $player->id)
+            ->whereIn(
+                'id',
+                $otherIpsPlayerIds->merge($otherCompIdsPlayerIds)->unique()
+            )
             ->orderBy('id', 'desc')
             ->get();
+
+        // Determine what connection detail the other player has in common with the viewed player
+        $otherAccounts->transform(function (Player $account) use ($otherIpsPlayerIds, $otherCompIdsPlayerIds) {
+            $account->setAttribute('_matchedOnIp', $otherIpsPlayerIds->containsStrict($account->id));
+            $account->setAttribute('_matchedOnCompId', $otherCompIdsPlayerIds->containsStrict($account->id));
+
+            return $account;
+        });
 
         return Inertia::render('Admin/Players/Show', [
             'player' => $player,

@@ -2,10 +2,7 @@
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import GameAuthCallback from '@/Components/GameAuthCallback.vue'
 
-const props = defineProps([
-  'authFromGame',
-  'authFromGameServer',
-])
+const props = defineProps(['authFromGame', 'authFromGameServer'])
 </script>
 
 <template>
@@ -16,8 +13,9 @@ const props = defineProps([
       </div>
       <q-card-section>
         This is the admin dashboard. It is in active development so large parts are missing or
-        incomplete. Please ping Wire in Discord if something is obviously broken, or you have a
-        feature request.
+        incomplete. Please make a Github issue
+        <a href="https://github.com/goonstation/api/issues" target="_blank">here</a> if you have a
+        bug report or feature request.
       </q-card-section>
     </q-card>
 

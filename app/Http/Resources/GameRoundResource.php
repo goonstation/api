@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\GameRound;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin GameRound */
 class GameRoundResource extends JsonResource
 {
     /**

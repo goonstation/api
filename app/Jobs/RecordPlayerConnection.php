@@ -39,13 +39,13 @@ class RecordPlayerConnection implements ShouldQueue
     {
         $geoRecord = null;
         try {
-            $geoReader = new Reader(storage_path('app').'/GeoLite2-Country/GeoLite2-Country.mmdb');
+            $geoReader = new Reader(storage_path('app').'/GeoLite2/GeoLite2-Country.mmdb');
             $geoRecord = $geoReader->country($this->data['ip']);
         } catch (\Exception|TypeError $e) {
             // pass
         }
 
-        $connection = new PlayerConnection();
+        $connection = new PlayerConnection;
         $connection->player_id = $this->playerId;
         $connection->round_id = $this->data['round_id'];
         $connection->ip = $this->data['ip'];

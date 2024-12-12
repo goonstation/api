@@ -12,7 +12,7 @@ class Range implements InvokableRule
      * @param  string  $attribute
      * @param  mixed  $value
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     * @return void
+     * @return \Illuminate\Translation\PotentiallyTranslatedString|void
      */
     public function __invoke($attribute, $value, $fail)
     {

@@ -207,16 +207,19 @@ class BansController extends Controller
             'evasion' => 'nullable|boolean',
         ]);
 
-        $banDetail = new BanDetail();
+        $banDetail = new BanDetail;
         $banDetail->ckey = isset($data['ckey']) ? $data['ckey'] : null;
         $banDetail->comp_id = isset($data['comp_id']) ? $data['comp_id'] : null;
         $banDetail->ip = isset($data['ip']) ? $data['ip'] : null;
         $ban->details()->save($banDetail);
 
-        $banDetail->originalBanDetail = BanDetail::withTrashed()
-            ->where('ban_id', $banDetail->ban_id)
-            ->oldest()
-            ->first();
+        $banDetail->setAttribute(
+            'originalBanDetail',
+            BanDetail::withTrashed()
+                ->where('ban_id', $banDetail->ban_id)
+                ->oldest()
+                ->first()
+        );
 
         if (isset($data['evasion']) && $data['evasion']) {
             $gameAdmin = GameAdmin::where('ckey', ckey($data['game_admin_ckey']))->first();
@@ -226,7 +229,7 @@ class BansController extends Controller
                 $player = Player::where('ckey', $ckey)->first();
             }
 
-            $note = new PlayerNote();
+            $note = new PlayerNote;
             if ($player) {
                 $note->player_id = $player->id;
             } else {
@@ -239,6 +242,7 @@ class BansController extends Controller
                 'Ban evasion attempt detected, added connection details (IP: %s, CompID: %s) to ban. Original ban ckey: %s. Reason: %s',
                 $banDetail->ip,
                 $banDetail->comp_id,
+                /** @phpstan-ignore-next-line */
                 $banDetail->originalBanDetail->ckey,
                 $ban->reason
             );

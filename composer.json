@@ -8,12 +8,13 @@
         "awobaz/compoships": "^2.2",
         "aws/aws-sdk-php": "^3.283",
         "binarytorch/larecipe": "^2.6",
-        "dedoc/scramble": "^0.9.0",
-        "geoip2/geoip2": "~2.0",
+        "dedoc/scramble": "^0.11.27",
+        "geoip2/geoip2": "^3.1",
         "glhd/gretel": "^1.7",
         "guzzlehttp/guzzle": "^7.2",
-        "inertiajs/inertia-laravel": "^1.0",
-        "intervention/image": "^2.7",
+        "inertiajs/inertia-laravel": "2.x-dev",
+        "intervention/image-laravel": "*",
+        "jaybizzle/laravel-crawler-detect": "1.*",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.17",
         "laravel/jetstream": "^5.0",
@@ -30,20 +31,21 @@
         "sentry/sentry-laravel": "^4.5",
         "socialiteproviders/discord": "^4.2",
         "spatie/image-optimizer": "^1.7",
-        "symfony/css-selector": "^6.3",
+        "symfony/css-selector": "^7.1",
         "symfony/panther": "^2.1",
-        "tightenco/ziggy": "^1.0",
-        "tronovav/geoip2-update": "^2.3",
+        "tightenco/ziggy": "^2.4",
         "tucker-eric/eloquentfilter": "^3.1"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.2",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.40",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^11.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
@@ -72,7 +74,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "analyse": "./vendor/bin/phpstan analyse"
     },
     "extra": {
         "laravel": {

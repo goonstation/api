@@ -9,10 +9,7 @@ class TestPolicy
     /**
      * Create a new policy instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     public function view(User $user): bool
     {

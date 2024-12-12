@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Libraries\GameBridge;
+use App\Facades\GameBridge;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -38,10 +38,13 @@ class PrintGameMysteryFile implements ShouldQueue
      */
     public function handle()
     {
-        GameBridge::relay($this->serverId, [
-            'type' => 'mysteryPrint',
-            'print_title' => $this->title,
-            'print_file' => $this->file,
-        ]);
+        GameBridge::create()
+            ->target($this->serverId)
+            ->message([
+                'type' => 'mysteryPrint',
+                'print_title' => $this->title,
+                'print_file' => $this->file,
+            ])
+            ->sendAndForget();
     }
 }
