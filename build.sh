@@ -5,9 +5,7 @@ git fetch
 git reset --hard "@{u}"
 git clean -fd
 php artisan clear-compiled
-composer install --classmap-authoritative --optimize-autoloader --apcu-autoloader --no-interaction --no-ansi --no-dev
-composer dump-autoload -o
-composer clear-cache
+composer install --classmap-authoritative --optimize-autoloader --no-interaction --no-ansi --no-dev --no-cache
 bun install --frozen-lockfile
 bun x update-browserslist-db@latest
 bun run build
