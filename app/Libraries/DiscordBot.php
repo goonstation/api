@@ -21,7 +21,7 @@ class DiscordBot
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public static function export(string $route, string $method = 'GET', array $data)
+    public static function export(string $route, string $method, array $data)
     {
         $config = DiscordBot::getConfig();
         if (! $config['url']) {
@@ -30,10 +30,10 @@ class DiscordBot
         $url = $config['url'];
         $data['api_key'] = $config['key'];
 
-        if (!$data['server_name']) {
+        if (empty($data['server_name'])) {
             $data['server_name'] = 'Goonhub';
         }
-        if (!$data['server']) {
+        if (empty($data['server'])) {
             $data['server'] = 'goonhub';
         }
 

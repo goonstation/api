@@ -3,69 +3,148 @@
 namespace App\Libraries\GameBuilder;
 
 use Illuminate\Support\Facades\File;
+use Str;
 use Symfony\Component\Process\Process;
 
 class Repo
 {
-    private $remoteUrl = 'https://robuddybot@github.com/goonstation/goonstation';
+    private $build;
+
+    private $repoUrl = 'github.com/goonstation/goonstation';
+
+    private $userName = 'robuddybot';
+
+    private $userEmail = 'robuddybot@goonhub.com';
+
+    private $repoShared;
 
     public $repoDir;
-    private $repoSecretDir;
 
-    public function __construct(string $serverDir)
+    public function __construct(Build $build, string $serverDir)
     {
+        $this->build = $build;
+        $this->repoShared = storage_path('app/game-builder/shared-git');
         $this->repoDir = "$serverDir/repo";
-        $this->repoSecretDir = "{$this->repoDir}/+secret";
+
+        if (File::missing($this->repoShared)) {
+            File::makeDirectory($this->repoShared);
+        }
     }
 
-    private function run(array $cmd, string $cwd = '')
+    private function run(array $cmd, string $cwd = '', int $timeout = 60, array $env = [])
     {
-        if (!$cwd) $cwd = $this->repoDir;
-        $process = new Process($cmd, $cwd);
-        $process->mustRun();
+        $this->build->checkCancelled();
+        if (! $cwd) {
+            $cwd = $this->repoDir;
+        }
+
+        $process = new Process($cmd, $cwd, timeout: $timeout, env: $env);
+        $this->build->runProcess($process);
+
         return trim($process->getOutput(), " \n\r\t\v\0\"");
     }
 
-    public function init(string $branch = 'master')
+    private function getRepoUrl(string $url)
     {
-        if (File::exists($this->repoDir)) {
-            return;
+        if (! str_starts_with($url, 'http')) {
+            $url = "https://$url";
+        }
+        if (str_ends_with($url, '.git')) {
+            $url = substr($url, 0, -4);
+        }
+        $urlParts = parse_url($url);
+        $githubToken = config('github.user_token');
+        $remoteUrl = "{$urlParts['host']}{$urlParts['path']}";
+        $remoteUrlWithAuth = "{$this->userName}:$githubToken@$remoteUrl";
+
+        return (object) [
+            'base' => $remoteUrl,
+            'full' => "https://$remoteUrlWithAuth",
+            'slug' => Str::slug($remoteUrl),
+        ];
+    }
+
+    private function updateReference(object $repoUrl)
+    {
+        $refDir = "{$this->repoShared}/{$repoUrl->slug}";
+        if (File::exists($refDir)) {
+            $this->run(['git', 'fetch', '--all'], cwd: $refDir);
+
+        } else {
+            $this->run([
+                'git', 'clone', '--bare',
+                '-c', "user.name={$this->userName}",
+                '-c', "user.email={$this->userEmail}",
+                $repoUrl->full, $repoUrl->slug,
+            ], cwd: $this->repoShared, timeout: 300);
+        }
+    }
+
+    public function init()
+    {
+        $repoUrl = $this->getRepoUrl($this->repoUrl);
+        $this->updateReference($repoUrl);
+
+        if (File::missing($this->repoDir)) {
+            File::makeDirectory($this->repoDir, recursive: true);
+
+            $this->run([
+                'git', 'clone',
+                '-c', "user.name={$this->userName}",
+                '-c', "user.email={$this->userEmail}",
+                '--reference', "{$this->repoShared}/{$repoUrl->slug}",
+                $repoUrl->full, $this->repoDir,
+            ], timeout: 300);
         }
 
-        File::makeDirectory($this->repoDir, recursive: true);
+        $process = Process::fromShellCommandline(
+            'git config --file .gitmodules --get-regexp path | awk \'{ print $1 }\'',
+            $this->repoDir
+        );
+        $process->mustRun();
+        $submodules = explode("\n", $process->getOutput());
+        foreach ($submodules as $submodule) {
+            if (empty($submodule)) {
+                continue;
+            }
 
-        $process = new Process([
-            'git', 'clone', '--recurse-submodules',
-            '-b', $branch,
-            $this->remoteUrl, $this->repoDir
-        ], timeout: 300);
-        $process->mustRun();
+            preg_match('/submodule\.(.*?)\./i', $submodule, $matches);
+            $key = $matches[1];
+            $path = $this->run([
+                'git', 'config', '--file', '.gitmodules',
+                '--get', "submodule.$key.path",
+            ]);
+            $url = $this->run([
+                'git', 'config', '--file', '.gitmodules',
+                '--get', "submodule.$key.url",
+            ]);
 
-        $process = new Process(['git', 'config', 'user.name', 'robuddybot'], $this->repoDir);
-        $process->mustRun();
-        $process = new Process(['git', 'config', 'user.email', 'robuddybot@goonhub.com'], $this->repoDir);
-        $process->mustRun();
+            $subRepoUrl = $this->getRepoUrl($url);
+            $this->updateReference($subRepoUrl);
+
+            if (File::isEmptyDirectory("{$this->repoDir}/$path")) {
+                $this->run([
+                    'git', 'submodule', 'update', '--init',
+                    '--reference', "{$this->repoShared}/{$subRepoUrl->slug}",
+                    '--', $path,
+                ], timeout: 300);
+            }
+        }
     }
 
     public function fetch()
     {
-        return $this->run(['git', 'fetch', '--recurse-submodules']);
+        return $this->run([
+            'git', 'fetch', '--recurse-submodules', 'origin',
+        ], timeout: 300);
     }
 
-    public function update()
+    public function reset()
     {
         return $this->run(['git', 'reset', '--recurse-submodules', '--hard', '@{u}']);
     }
 
-    public function getBranch(bool $secret = false): string
-    {
-        return $this->run(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-            $secret ? $this->repoSecretDir : $this->repoDir
-        );
-    }
-
-    public function getHash(string $branch = null): string
+    public function getHash(?string $branch = null): string
     {
         return $this->run(['git', 'rev-parse', $branch ? $branch : '@']);
     }
@@ -80,6 +159,11 @@ class Repo
         return $this->run(['git', 'checkout', '--recurse-submodules', $branch]);
     }
 
+    public function checkoutRemote(string $branch)
+    {
+        return $this->run(['git', 'checkout', '--recurse-submodules', '-f', '-B', $branch, '--track', "origin/$branch"]);
+    }
+
     public function createAndCheckoutBranch(string $branch)
     {
         return $this->run(['git', 'checkout', '--recurse-submodules', '-b', $branch]);
@@ -92,7 +176,7 @@ class Repo
 
     public function resetBranchToCommit(string $commit)
     {
-        return $this->run(['git', 'reset', '--recurse-submodules', '--hard', $commit]);
+        return $this->run(['git', 'reset', '--hard', $commit]);
     }
 
     public function merge(string $branch)
@@ -112,7 +196,7 @@ class Repo
 
     public function commit(string $message)
     {
-        return $this->run(['git', 'commit', '-m', $message]);
+        return $this->run(['git', 'commit', '--no-gpg-sign', '-m', $message]);
     }
 
     public function getMessage(string $commit)

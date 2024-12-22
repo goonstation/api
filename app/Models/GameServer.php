@@ -5,6 +5,7 @@ namespace App\Models;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -39,6 +40,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereShortName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereUpdatedAt($value)
  *
+ * @property-read \App\Models\GameBuildSetting|null $gameBuildSetting
+ *
  * @mixin \Eloquent
  */
 class GameServer extends Model
@@ -50,5 +53,10 @@ class GameServer extends Model
     public function getByondLinkAttribute()
     {
         return 'byond://'.$this->address.':'.$this->port;
+    }
+
+    public function gameBuildSetting(): HasOne
+    {
+        return $this->hasOne(GameBuildSetting::class, 'server_id', 'server_id');
     }
 }

@@ -21,15 +21,16 @@ return new class extends Migration
             $table->smallInteger('byond_minor');
             $table->text('rustg_version');
             $table->boolean('rp_mode')->default(false);
-            $table->text('map')->nullable();
+            $table->text('map_id')->nullable();
             $table->timestamps();
 
             $table->foreign('server_id')->references('server_id')->on('game_servers');
+            $table->foreign('map_id')->references('map_id')->on('maps');
         });
 
         $servers = GameServer::all();
         foreach ($servers as $server) {
-            $setting = new GameBuildSetting();
+            $setting = new GameBuildSetting;
             $setting->server_id = $server->server_id;
             if ($server->server_id === 'dev') {
                 $setting->branch = 'develop';

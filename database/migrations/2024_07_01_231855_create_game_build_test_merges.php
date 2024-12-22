@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreign('server_id')->references('server_id')->on('game_servers');
             $table->foreign('added_by')->references('id')->on('game_admins');
             $table->foreign('updated_by')->references('id')->on('game_admins');
+
+            $table->unique(['pr_id', 'server_id']);
         });
     }
 

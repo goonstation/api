@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\GameBuildTestMergeCreateRequest;
+use App\Http\Requests\GameBuildTestMergeUpdateRequest;
+use App\Http\Requests\IndexQueryRequest;
+use App\Http\Resources\GameBuildTestMergeResource;
+use App\Models\GameBuildTestMerge;
+use App\Rules\DateRange;
+use App\Traits\IndexableQuery;
+use App\Traits\ManagesGameBuildTestMerges;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+/**
+ * @tags Game Build Test Merges
+ */
+class GameBuildTestMergesController extends Controller
+{
+    use IndexableQuery, ManagesGameBuildTestMerges;
+
+    /**
+     * List
+     *
+     * List paginated and filtered game build test merges
+     *
+     * @return AnonymousResourceCollection<LengthAwarePaginator<GameBuildTestMergeResource>>
+     */
+    public function index(IndexQueryRequest $request)
+    {
+        $request->validate([
+            'filters.id' => 'int',
+            'filters.pr' => 'int',
+            'filters.server' => 'string',
+            'filters.added_by' => 'string',
+            'filters.updated_by' => 'string',
+            'filters.commit' => 'string',
+            /**
+             * A date or date range
+             *
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.created_at' => new DateRange,
+            /**
+             * A date or date range
+             *
+             * @example 2023/01/30 12:00:00 - 2023/02/01 12:00:00
+             */
+            'filters.updated_at' => new DateRange,
+        ]);
+
+        return GameBuildTestMergeResource::collection(
+            $this->indexQuery(GameBuildTestMerge::class)
+        );
+    }
+
+    /**
+     * Add
+     *
+     * Add a new game build test merge
+     */
+    public function store(GameBuildTestMergeCreateRequest $request)
+    {
+        return $this->addTestMerge($request);
+    }
+
+    /**
+     * Update
+     *
+     * Update an existing game build test merge
+     */
+    public function update(GameBuildTestMergeUpdateRequest $request, GameBuildTestMerge $testMerge)
+    {
+        try {
+            return $this->updateTestMerge($request, $testMerge);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Delete
+     *
+     * Delete an existing game build test merge
+     */
+    public function destroy(GameBuildTestMerge $testMerge)
+    {
+        $testMerge->delete();
+
+        return ['message' => 'Test merge removed'];
+    }
+}

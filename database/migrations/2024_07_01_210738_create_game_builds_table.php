@@ -17,14 +17,18 @@ return new class extends Migration
             $table->integer('started_by')->nullable();
             $table->text('branch')->nullable();
             $table->text('commit')->nullable();
-            $table->text('map')->nullable();
+            $table->text('map_id')->nullable();
             $table->boolean('failed')->default(false);
             $table->boolean('cancelled')->default(false);
+            $table->boolean('map_switch')->default(false);
+            $table->integer('cancelled_by')->nullable();
             $table->timestamps();
             $table->timestamp('ended_at')->nullable();
 
             $table->foreign('server_id')->references('server_id')->on('game_servers');
+            $table->foreign('map_id')->references('map_id')->on('maps');
             $table->foreign('started_by')->references('id')->on('game_admins');
+            $table->foreign('cancelled_by')->references('id')->on('game_admins');
         });
     }
 
