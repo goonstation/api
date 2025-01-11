@@ -1,14 +1,18 @@
-import path from 'path'
-import { defineConfig } from 'vite'
-import laravel from 'laravel-vite-plugin'
-import vue from '@vitejs/plugin-vue'
-import VueMacros from 'unplugin-vue-macros/vite'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+import vue from '@vitejs/plugin-vue'
+import laravel from 'laravel-vite-plugin'
+import path from 'path'
+import VueMacros from 'unplugin-vue-macros/vite'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   server: {
+    port: 5174,
     hmr: {
       host: 'localhost',
+    },
+    watch: {
+      ignored: ['**/storage/app/**'],
     },
   },
   build: {

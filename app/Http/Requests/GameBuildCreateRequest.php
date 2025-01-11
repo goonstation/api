@@ -24,7 +24,8 @@ class GameBuildCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'game_admin_ckey' => 'required|string',
+            'game_admin_id' => 'required_without:game_admin_ckey|exists:game_admins,id',
+            'game_admin_ckey' => 'required_without:game_admin_id|exists:game_admins,ckey',
             'server_id' => 'required|string',
             'map' => 'nullable|string|exists:maps,map_id',
         ];

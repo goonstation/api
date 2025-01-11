@@ -43,9 +43,26 @@ class GameBuildSettingFilter extends ModelFilter
         return $this->filterRange('byond_minor', $val);
     }
 
+    public function byondVersion($val)
+    {
+        $val = explode('.', $val);
+        $major = $val[0];
+        $minor = null;
+        if (count($val) > 1) {
+            $minor = $val[1];
+        }
+
+        $query = $this->where('byond_major', $major);
+        if ($minor) {
+            $query = $query->where('byond_minor', $minor);
+        }
+
+        return $query;
+    }
+
     public function rustgVersion($val)
     {
-        return $this->where('rustg_version', $val);
+        return $this->where('rustg_version', 'ILIKE', '%'.$val.'%');
     }
 
     public function rpMode($val)
@@ -56,5 +73,12 @@ class GameBuildSettingFilter extends ModelFilter
     public function mapId($val)
     {
         return $this->where('map_id', $val);
+    }
+
+    public function map($val)
+    {
+        return $this->related('map', function ($query) use ($val) {
+            return $query->where('name', 'ILIKE', '%'.$val.'%');
+        });
     }
 }

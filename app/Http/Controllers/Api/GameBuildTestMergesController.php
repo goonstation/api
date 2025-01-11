@@ -59,11 +59,15 @@ class GameBuildTestMergesController extends Controller
     /**
      * Add
      *
-     * Add a new game build test merge
+     * Add one or multiple new game build test merges
      */
     public function store(GameBuildTestMergeCreateRequest $request)
     {
-        return $this->addTestMerge($request);
+        try {
+            return $this->addTestMerge($request);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**

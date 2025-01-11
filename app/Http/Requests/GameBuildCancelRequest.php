@@ -24,8 +24,9 @@ class GameBuildCancelRequest extends FormRequest
     public function rules()
     {
         return [
-            'game_admin_ckey' => 'required|string',
+            'game_admin_ckey' => 'nullable|string',
             'server_id' => 'required|string',
+            'type' => 'nullable|in:current,queued',
         ];
     }
 }

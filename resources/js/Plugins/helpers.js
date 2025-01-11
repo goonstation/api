@@ -1,6 +1,6 @@
 export default {
-  install: (app, options) => {
-    app.config.globalProperties.$helpers = {
+  install: (app) => {
+    const helpers = {
       serverIdToFriendlyName: (val, short = false) => {
         if (val === 'dev') {
           return short ? 'Goon Dev' : 'Goonstation Development'
@@ -41,7 +41,10 @@ export default {
         } else {
           return '#ffd125'
         }
-      }
+      },
     }
+
+    app.config.globalProperties.$helpers = helpers
+    return helpers
   },
 }

@@ -20503,6 +20503,31 @@ namespace Spatie\LaravelIgnition\Facades {
             }
     }
 
+namespace Illuminate\Support {
+            /**
+     * 
+     *
+     * @template TKey of array-key
+     * @template-covariant TValue
+     * @implements \ArrayAccess<TKey, TValue>
+     * @implements \Illuminate\Support\Enumerable<TKey, TValue>
+     */        class Collection {
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param mixed $perPage
+         * @param mixed $total
+         * @param mixed $page
+         * @param mixed $pageName
+         * @static 
+         */        public static function paginate($perPage, $total = null, $page = null, $pageName = 'page')
+        {
+                        return \Illuminate\Support\Collection::paginate($perPage, $total, $page, $pageName);
+        }
+            }
+    }
+
 namespace Illuminate\Http {
             /**
      * 

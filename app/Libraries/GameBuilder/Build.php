@@ -2,16 +2,20 @@
 
 namespace App\Libraries\GameBuilder;
 
+use App\Events\GameBuildCancelled;
+use App\Events\GameBuildLog as EventsGameBuildLog;
+use App\Events\GameBuildStarted;
 use App\Facades\GameBridge;
 use App\Libraries\DiscordBot;
 use App\Models\GameAdmin;
 use App\Models\GameBuild;
+use App\Models\GameBuildLog;
 use App\Models\GameBuildSecret;
 use App\Models\GameBuildSetting;
 use App\Models\GameBuildTestMerge;
 use App\Models\GameServer;
-use Cache;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process as FacadesProcess;
@@ -79,6 +83,12 @@ class Build
 
     private $cancelCacheKey;
 
+    private $logs = [];
+
+    private $lastLogFlush = 0;
+
+    private $logFlushBatchTime = 1;
+
     public function __construct(GameServer $server, GameAdmin $admin, bool $mapSwitch = false)
     {
         $this->server = $server;
@@ -109,26 +119,65 @@ class Build
         $this->cancelCacheKey = "GameBuild-{$this->server->server_id}-cancel";
         Cache::forget($this->cancelCacheKey);
 
-        $this->repo = new Repo($this, $this->serverDir);
-
         if (File::missing($this->rootDir)) {
             File::makeDirectory($this->rootDir);
         }
 
+        $this->repo = new Repo($this, $this->serverDir);
+
         $this->log("Created build object for {$server->server_id}");
-        if ($this->mapSwitch) {
-            $this->log("Map switch build detected: {$this->settings->map->name}");
+    }
+
+    private function flushLogs()
+    {
+        if (empty($this->logs)) {
+            return;
+        }
+        $this->lastLogFlush = time();
+        $logs = $this->logs;
+        $this->logs = [];
+        // echo '[DEBUG] Batch inserting logs: '.count($logs).PHP_EOL;
+        GameBuildLog::insert($logs);
+        EventsGameBuildLog::dispatch($this->model->id, $logs);
+    }
+
+    public function log($msg, $type = 'out', ?string $group = null, bool $flush = false)
+    {
+        if (str_ends_with($msg, "\n")) {
+            $msg = substr($msg, 0, -1);
+        }
+        if (isset($this->model)) {
+            $this->logs[] = [
+                'build_id' => $this->model->id,
+                'log' => trim($msg),
+                'type' => $type,
+                'group' => $group,
+                'created_at' => now(),
+            ];
+        }
+
+        if ($flush || time() - $this->lastLogFlush > $this->logFlushBatchTime) {
+            $this->flushLogs();
         }
     }
 
-    public function log($msg)
+    public function runProcess(Process $process, bool $logOut = true, bool $logErr = true)
     {
-        echo '['.date('Y-m-d H:i:s').'] '.$msg.PHP_EOL;
-    }
-
-    public function runProcess(Process $process)
-    {
-        $process->start();
+        $line = '';
+        $process->start(function ($type, $out) use (&$line, $logOut, $logErr) {
+            if ($type === 'out' && ! $logOut) {
+                return;
+            }
+            if ($type === 'err' && ! $logErr) {
+                return;
+            }
+            if (! str_ends_with($out, "\n")) {
+                $line .= $out;
+            } else {
+                $this->log(empty($line) ? $out : $line, $type);
+                $line = '';
+            }
+        });
         Cache::set($this->procCacheKey, $process->getPid());
         $process->wait();
         Cache::forget($this->procCacheKey);
@@ -144,6 +193,7 @@ class Build
 
     public static function cancel(string $serverId, int $adminId)
     {
+        GameBuildCancelled::dispatch($serverId, $adminId, 'current');
         Cache::set("GameBuild-$serverId-cancel", $adminId);
         $pid = Cache::get("GameBuild-$serverId-proc");
         if ($pid) {
@@ -155,13 +205,23 @@ class Build
     {
         $this->checkCancelled();
         $this->log('Creating model');
+
+        $testMerges = GameBuildTestMerge::select([
+            'pr_id', 'added_by', 'updated_by', 'commit', 'created_at', 'updated_at',
+        ])
+            ->where('setting_id', $this->settings->id)
+            ->get();
+
         $gameBuild = new GameBuild;
         $gameBuild->server_id = $this->server->server_id;
         $gameBuild->started_by = $this->admin->id;
         $gameBuild->branch = $this->settings->branch;
         $gameBuild->map_switch = $this->mapSwitch;
         $gameBuild->map_id = $this->settings->map_id;
+        $gameBuild->test_merges = $testMerges->toArray();
         $gameBuild->save();
+
+        Cache::set("GameBuild-{$this->server->server_id}-build", $gameBuild->id, 600);
 
         $this->model = $gameBuild;
     }
@@ -169,11 +229,12 @@ class Build
     private function mergeTestMerges()
     {
         $this->checkCancelled();
-        $testMerges = GameBuildTestMerge::where('server_id', $this->server->server_id)
+        $this->log('Checking for test merges', group: 'Test Merges');
+        $testMerges = GameBuildTestMerge::where('setting_id', $this->settings->id)
             ->get();
 
         if ($testMerges->isEmpty()) {
-            $this->log('[Test Merges] None found');
+            $this->log('None found');
 
             return;
         }
@@ -192,7 +253,7 @@ class Build
     private function mergeTestMerge(GameBuildTestMerge $testMerge)
     {
         $this->checkCancelled();
-        $this->log("[Test Merges] Merging PR #{$testMerge->pr_id}");
+        $this->log("Merging PR #{$testMerge->pr_id}");
         $prBranch = "pr-{$testMerge->pr_id}";
 
         // This fetches the PR and makes a new branch at the latest HEAD
@@ -217,7 +278,7 @@ class Build
         try {
             $this->repo->merge($prBranch);
         } catch (ProcessFailedException) {
-            $this->log('[Test Merges] Failed to merge due to conflicts');
+            $this->log('Failed to merge due to conflicts');
             $this->testMergeConflicts[] = [
                 'prId' => $testMerge->pr_id,
                 'files' => $this->repo->getConflictedFiles(),
@@ -284,6 +345,7 @@ class Build
     private function generateSecrets()
     {
         $this->checkCancelled();
+        $this->log('Generating secrets');
         $secrets = GameBuildSecret::all()->map(function ($secret) {
             $key = Str::upper($secret->key);
 
@@ -300,7 +362,8 @@ class Build
     private function prepareBuildDir()
     {
         $this->checkCancelled();
-        $this->log('Preparing build directory');
+        $this->log('Preparing build directory', group: 'Build Preparation');
+
         // Ensure build dir exists and is empty
         if (File::exists($this->buildDir)) {
             File::deleteDirectory($this->buildDir, preserve: true);
@@ -309,6 +372,7 @@ class Build
         }
 
         // Copy repo dir contents to build, without git history
+        $this->log('Copying repository to build directory');
         $process = Process::fromShellCommandline("rsync -a --exclude=.git {$this->repo->repoDir}/ {$this->buildDir}");
         $this->runProcess($process);
 
@@ -316,6 +380,7 @@ class Build
         File::put("{$this->buildDir}/_std/__build.dm", $this->generateBuildDefines());
 
         // Merge various secret things into the main repo
+        $this->log('Merging in secret repository config');
         File::copyDirectory("{$this->buildDir}/+secret/config", "{$this->buildDir}/config");
 
         // Add secret tokens to config
@@ -325,16 +390,17 @@ class Build
     private function updateByond()
     {
         $this->checkCancelled();
+        $this->log('Checking for updates', group: 'Byond');
         $version = "{$this->settings->byond_major}.{$this->settings->byond_minor}";
 
         if (File::exists($this->byondDir)) {
             // Byond version already downloaded
-            $this->log("[Byond] Already downloaded $version");
+            $this->log("Already downloaded $version");
 
             return;
         }
 
-        $this->log('[Byond] Updating');
+        $this->log('Updating');
 
         if (! File::exists($this->rootByondDir)) {
             File::makeDirectory($this->rootByondDir);
@@ -355,13 +421,13 @@ class Build
         shell_exec("chmod -R 770 {$this->byondDir}");
         File::deleteDirectory($workDir);
 
-        $this->log("[Byond] Downloaded $version");
+        $this->log("Downloaded $version");
     }
 
     private function compile()
     {
         $this->checkCancelled();
-        $this->log('[Compile] Compiling');
+        $this->log('Compiling', group: 'Compilation');
 
         // Debug: cause a compile error
         // File::append("{$this->buildDir}/code/world/world.dm", "\nthisProcDoesNotExist()");
@@ -377,13 +443,13 @@ class Build
         );
         $this->runProcess($process);
 
-        $this->log('[Compile] Success');
+        $this->log('Success');
     }
 
     private function prepareDeployDir()
     {
         $this->checkCancelled();
-        $this->log('Preparing deploy directory');
+        $this->log('Preparing deploy directory', group: 'Deployment Preparation');
         // Ensure deploy dir exists and is "empty"
         if (File::exists($this->deployDir)) {
             File::deleteDirectory($this->deployDir, preserve: true);
@@ -413,12 +479,14 @@ class Build
         }
 
         // Dump test merge PR details to json files that the game can later read for whatever
+        $this->log('Dumping test merge pull request details');
+        File::makeDirectory("{$this->deployDir}/testmerges");
         foreach ($this->testMergeSuccesses as $prId) {
-            File::makeDirectory("{$this->deployDir}/testmerges");
             Http::sink("{$this->deployDir}/testmerges/$prId.json")
                 ->get("https://api.github.com/repos/goonstation/goonstation/pulls/$prId");
         }
 
+        $this->log('Creating rsc.zip');
         $zip = new ZipArchive;
         $zip->open("{$this->deployDir}/rsc.zip", ZipArchive::CREATE);
         $zip->addFile("{$this->deployDir}/goonstation.rsc", 'goonstation.rsc');
@@ -428,16 +496,17 @@ class Build
     private function buildRustg()
     {
         $this->checkCancelled();
+        $this->log('Checking for updates', group: 'Rust-G');
         $this->rustgDir = "{$this->rootRustgDir}/{$this->settings->rustg_version}";
 
         if (File::exists($this->rustgDir)) {
             // Rust-g version already built
-            $this->log("[Rust-G] Already built {$this->settings->rustg_version}");
+            $this->log("Already built {$this->settings->rustg_version}");
 
             return;
         }
 
-        $this->log('[Rust-G] Updating');
+        $this->log('Updating');
 
         if (! File::exists($this->rootRustgDir)) {
             File::makeDirectory($this->rootRustgDir);
@@ -452,6 +521,7 @@ class Build
         ]);
         $this->runProcess($process);
 
+        $this->log('Building, this might take a while', flush: true);
         $cargoBin = getenv('HOME').'/.cargo/bin';
         $process = new Process(
             [
@@ -464,19 +534,20 @@ class Build
             ],
             timeout: 300
         );
-        $this->runProcess($process);
+        $this->runProcess($process, false, false);
 
         File::makeDirectory($this->rustgDir);
         File::copy("$workDir/target/i686-unknown-linux-gnu/release/librust_g.so", "{$this->rustgDir}/librust_g.so");
         shell_exec("chmod -R 770 {$this->rustgDir}");
         File::deleteDirectory($workDir);
 
-        $this->log("[Rust-G] Updated to {$this->settings->rustg_version}");
+        $this->log("Updated to {$this->settings->rustg_version}");
     }
 
     private function buildCdn()
     {
         $this->checkCancelled();
+        $this->log('Checking for updates', group: 'CDN');
         if (File::exists($this->buildCdnDir)) {
             $process = new Process([
                 'diff', '-qr',
@@ -491,7 +562,7 @@ class Build
 
             if (! $process->getOutput()) {
                 // CDN files haven't changed, avoid rebuilding
-                $this->log('[CDN] No changes');
+                $this->log('No changes');
 
                 return;
             }
@@ -499,17 +570,19 @@ class Build
             File::makeDirectory($this->buildCdnDir);
         }
 
-        $this->log('[CDN] Building');
+        $this->log('Building');
 
         $nvm = getenv('NVM_DIR');
         $nvmUse = fn ($cmd) => sprintf("bash -c '. %s/nvm.sh ; %s ;'", $nvm, $cmd);
 
         // Install target Node version if missing
         if (File::missing("$nvm/versions/node/v{$this->cdnNodeVersion}")) {
-            $this->log('[CDN] Missing target Node version, installing');
+            $this->log('Missing target Node version, installing');
             $process = Process::fromShellCommandline($nvmUse("nvm install {$this->cdnNodeVersion}"));
             $this->runProcess($process);
         }
+
+        $this->log('Preparing build directory');
 
         // Clean out old CDN build dir, but keep node modules so we don't have to waste time reinstalling them all
         File::moveDirectory("{$this->buildCdnDir}/node_modules", "{$this->serverDir}/node_modules");
@@ -522,34 +595,37 @@ class Build
         File::put("{$this->buildCdnDir}/revision", $this->repo->getHash());
 
         $process = Process::fromShellCommandline(
-            $nvmUse("nvm exec {$this->cdnNodeVersion} npm install --no-progress"),
+            $nvmUse("nvm exec {$this->cdnNodeVersion} npm install --no-progress --quiet"),
             $this->buildCdnDir, timeout: 300
         );
         $this->runProcess($process);
         $process = Process::fromShellCommandline(
-            $nvmUse("nvm exec {$this->cdnNodeVersion} npm run build -- --servertype {$this->server->server_id}"),
+            $nvmUse("nvm exec {$this->cdnNodeVersion} npm run build --quiet -- --servertype {$this->server->server_id}"),
             $this->buildCdnDir, timeout: 300
         );
         $this->runProcess($process);
 
         File::moveDirectory("{$this->buildCdnDir}/build", "{$this->deployDir}/cdn");
-        $this->log('[CDN] Built');
+        $this->log('Built');
     }
 
     private function deploy()
     {
         $this->checkCancelled();
-        $this->log('Deploying');
+        $this->log('Starting deployment', group: 'Deployment');
 
         // Byond
+        $this->log('Deploying Byond executables');
         $process = Process::fromShellCommandline("rsync -ar --ignore-existing {$this->rootByondDir}/* {$this->deployTargetRoot}/byond/");
         $this->runProcess($process);
 
         // Rust-G
+        $this->log('Deploying Rust-G library');
         $process = Process::fromShellCommandline("rsync -ar --ignore-existing {$this->rootRustgDir}/* {$this->deployTargetRoot}/rust-g/");
         $this->runProcess($process);
 
         // CDN
+        $this->log('Deploying CDN assets');
         if (! File::exists($this->cdnTarget)) {
             File::makeDirectory($this->cdnTarget);
         }
@@ -568,15 +644,14 @@ class Build
         File::put("{$this->deployDir}/.env.build", implode("\n", $buildEnv));
 
         // Game
+        $this->log('Deploying game update files');
         $gameUpdateDir = "{$this->deployTarget}/game/update";
         if (! File::exists($gameUpdateDir)) {
             File::makeDirectory($gameUpdateDir, recursive: true);
         }
         $process = Process::fromShellCommandline("rm -r $gameUpdateDir/* >/dev/null 2>&1");
         $process->run();
-        $process = Process::fromShellCommandline("mv {$this->deployDir}/* $gameUpdateDir/");
-        $this->runProcess($process);
-        $process = Process::fromShellCommandline("mv {$this->deployDir}/.* $gameUpdateDir/");
+        $process = Process::fromShellCommandline("rsync -rl {$this->deployDir}/* $gameUpdateDir/");
         $this->runProcess($process);
     }
 
@@ -617,12 +692,17 @@ class Build
 
     public function start()
     {
-        $this->log('Starting build');
-
         try {
+            $this->lastLogFlush = time();
             $this->createModel();
+            GameBuildStarted::dispatch($this->server->id, $this->model);
+            $this->log('Starting build');
 
-            $this->log('Resetting repo');
+            if ($this->mapSwitch) {
+                $this->log('Detected map switch');
+            }
+
+            $this->log('Resetting repo', group: 'Repo');
             $this->repo->init();
             $this->repo->checkoutRemote($this->settings->branch);
 
@@ -640,12 +720,11 @@ class Build
 
         } catch (ProcessFailedException $e) {
             $process = $e->getProcess();
-            $cmd = $process->getCommandLine();
             $message = $process->getErrorOutput();
             if (! $message) {
                 $message = $process->getOutput();
             }
-            $this->log("[PROCESS EXCEPTION] $cmd\n $message");
+            $this->log($message, group: 'error');
             $this->error = $message ? $message : true;
 
         } catch (ProcessSignaledException|CancelledException) {
@@ -655,12 +734,13 @@ class Build
             $this->cancelled = true;
             $this->model->cancelled = true;
             $this->model->cancelled_by = $cancelledBy;
-            $this->log('[CANCELLED]');
+            $cancelledByAdmin = GameAdmin::firstWhere('id', $cancelledBy);
+            $cancelledByAdmin = $cancelledByAdmin->name ?: $cancelledByAdmin->ckey;
+            $this->log("Build cancelled by $cancelledByAdmin", group: 'error-reset');
 
         } catch (\Throwable $e) {
-            $test = $e::class;
             $message = $e->getMessage();
-            $this->log("[EXCEPTION] $test $message");
+            $this->log($message, group: 'error');
             $this->error = $message ? $message : true;
         }
 
@@ -670,7 +750,8 @@ class Build
 
         $this->notifyDiscordBot();
 
-        $this->log('Finished build');
+        $this->log('Finished build', group: 'reset');
+        $this->flushLogs();
     }
 
     private function notifyDiscordBot()
@@ -678,7 +759,7 @@ class Build
         if (! App::isProduction()) {
             return;
         }
-        $this->log('Notifying Discord bot');
+        $this->log('Notifying Discord bot', group: 'Discord Notification');
 
         $commit = $this->repo->getHash($this->settings->branch);
         $data = [
@@ -708,9 +789,9 @@ class Build
         if (! App::isProduction()) {
             return;
         }
-        $this->log('Notifying game of map switch');
+        $this->log('Notifying game of map switch', group: 'Map Switch Notification');
 
-        // TODO: some way to cancel bridge comm
+        // TODO: some way to cancel bridge comm?
         GameBridge::create()
             ->target($this->server->server_id)
             ->message([

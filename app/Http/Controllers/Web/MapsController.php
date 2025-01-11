@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Map;
+use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class MapsController extends Controller
 {
+    use IndexableQuery;
+
     public function index(Request $request)
     {
-        $maps = Map::select('id', 'map_id', 'name', 'last_built_at')
+        $query = Map::select('id', 'map_id', 'name', 'last_built_at')
             ->with([
                 'latestGameRound' => function ($q) {
                     $q->where('ended_at', '!=', null)
@@ -25,14 +28,25 @@ class MapsController extends Controller
 
         $user = $request->user();
         if (! $user || ! $user->isGameAdmin()) {
-            $maps = $maps->where('admin_only', false);
+            $query = $query->where('admin_only', false);
         }
 
-        $this->setMeta(title: 'Maps');
+        if ($this->wantsInertia($request)) {
+            $this->setMeta(title: 'Maps');
 
-        return Inertia::render('Maps/Index', [
-            'maps' => $maps->get(),
-        ]);
+            return Inertia::render('Maps/Index', [
+                'maps' => $query->get(),
+            ]);
+        } else {
+            $maps = $this->indexQuery(
+                $query,
+                perPage: 30,
+                sortBy: 'name',
+                desc: false
+            );
+
+            return $maps;
+        }
     }
 
     public function show(Request $request, string $map)

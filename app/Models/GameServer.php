@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property bool $invisible
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\GameBuildSetting|null $gameBuildSetting
  * @property-read mixed $byond_link
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer filter(array $input = [], $filter = null)
@@ -39,8 +40,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereServerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereShortName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereUpdatedAt($value)
- *
- * @property-read \App\Models\GameBuildSetting|null $gameBuildSetting
  *
  * @mixin \Eloquent
  */

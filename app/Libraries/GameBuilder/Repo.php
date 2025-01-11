@@ -39,7 +39,7 @@ class Repo
         }
 
         $process = new Process($cmd, $cwd, timeout: $timeout, env: $env);
-        $this->build->runProcess($process);
+        $this->build->runProcess($process, logOut: false);
 
         return trim($process->getOutput(), " \n\r\t\v\0\"");
     }
@@ -71,6 +71,7 @@ class Repo
             $this->run(['git', 'fetch', '--all'], cwd: $refDir);
 
         } else {
+            $this->build->log('Cloning shared repo, this might take a while', flush: true);
             $this->run([
                 'git', 'clone', '--bare',
                 '-c', "user.name={$this->userName}",
@@ -82,10 +83,16 @@ class Repo
 
     public function init()
     {
+        $lockFile = "{$this->repoDir}/.git/index.lock";
+        if (File::exists($lockFile)) {
+            File::delete($lockFile);
+        }
+
         $repoUrl = $this->getRepoUrl($this->repoUrl);
         $this->updateReference($repoUrl);
 
         if (File::missing($this->repoDir)) {
+            $this->build->log('Cloning new repo');
             File::makeDirectory($this->repoDir, recursive: true);
 
             $this->run([

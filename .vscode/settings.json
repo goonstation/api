@@ -5,6 +5,11 @@
   "[php]": {
     "editor.defaultFormatter": "open-southeners.laravel-pint"
   },
+  "[js,mjs,cjs,vue,json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
   "intelephense.codeLens.implementations.enable": true,
   "intelephense.codeLens.overrides.enable": true,
   "intelephense.codeLens.parent.enable": true,
@@ -12,9 +17,25 @@
   "intelephense.codeLens.usages.enable": true,
   "intelephense.format.enable": false,
   "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "never"
+  },
   "laravel-pint.enable": true,
   "phpstan.showTypeOnHover": true,
   "helper.models": false,
   "intelephense.files.maxSize": 5000000,
-  "intelephense.telemetry.enabled": false
+  "intelephense.telemetry.enabled": false,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "vue"
+  ],
+  "prettier.useEditorConfig": true,
+  "scss.dev.serverPort": 5173,
+  "html-css-class-completion.enableScssFindUsage": true,
+  "html-css-class-completion.enableFindUsage": true
 }

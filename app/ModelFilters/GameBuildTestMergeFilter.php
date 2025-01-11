@@ -29,7 +29,9 @@ class GameBuildTestMergeFilter extends ModelFilter
 
     public function server($val)
     {
-        return $this->where('server_id', $val);
+        return $this->related('buildSettings', function ($query) use ($val) {
+            return $query->where('server_id', 'ILIKE', '%'.$val.'%');
+        });
     }
 
     public function commit($val)

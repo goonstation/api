@@ -1,21 +1,25 @@
 import './bootstrap'
 
-import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
-import { Quasar, Notify } from 'quasar'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import { ZiggyVue } from '../../vendor/tightenco/ziggy'
+import { Notify, Quasar } from 'quasar'
+import { createApp, h } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
+import { ZiggyVue } from '../../vendor/tightenco/ziggy'
 
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 import duration from 'dayjs/plugin/duration'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
+dayjs.extend(timezone)
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
 dayjs.extend(isSameOrBefore)
+dayjs.extend(advancedFormat)
 
 import VueApexCharts from 'vue3-apexcharts'
 
@@ -25,16 +29,17 @@ import iconSet from 'quasar/icon-set/svg-ionicons-v6'
 iconSet.arrow.dropdown = ionChevronDown
 
 // Import Quasar css
+import 'quasar/src/css/flex-addon.sass'
 import 'quasar/src/css/index.sass'
-import "quasar/src/css/flex-addon.sass"
 
 import '../css/app.scss'
 
 // Plugins!
-import route from './Plugins/route'
-import helpers from './Plugins/helpers'
 import formats from './Plugins/formats'
 import globals from './Plugins/globals'
+import helpers from './Plugins/helpers'
+import route from './Plugins/route'
+import store from './Plugins/store'
 
 createInertiaApp({
   resolve: (name) =>
@@ -45,17 +50,18 @@ createInertiaApp({
       .use(ZiggyVue, Ziggy)
       .use(Quasar, {
         plugins: {
-          Notify
+          Notify,
         },
         config: {
           dark: true,
           notify: {
-            position: 'top-right'
-          }
+            position: 'top-right',
+          },
         },
         iconSet,
-        cssAddon: true
+        cssAddon: true,
       })
+      .use(store)
       .use(route)
       .use(helpers)
       .use(formats)

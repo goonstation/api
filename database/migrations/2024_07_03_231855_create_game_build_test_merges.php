@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('game_build_test_merges', function (Blueprint $table) {
             $table->id();
             $table->integer('pr_id');
-            $table->text('server_id');
+            $table->integer('setting_id');
             $table->integer('added_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->text('commit')->nullable();
             $table->timestamps();
 
-            $table->foreign('server_id')->references('server_id')->on('game_servers');
+            $table->foreign('setting_id')->references('id')->on('game_build_settings');
             $table->foreign('added_by')->references('id')->on('game_admins');
             $table->foreign('updated_by')->references('id')->on('game_admins');
 
-            $table->unique(['pr_id', 'server_id']);
+            $table->unique(['pr_id', 'setting_id']);
         });
     }
 

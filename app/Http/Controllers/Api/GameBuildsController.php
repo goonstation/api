@@ -7,20 +7,13 @@ use App\Http\Requests\GameBuildCancelRequest;
 use App\Http\Requests\GameBuildCreateRequest;
 use App\Http\Requests\IndexQueryRequest;
 use App\Http\Resources\GameBuildResource;
-use App\Http\Resources\GameBuildStatusCurrentResource;
-use App\Http\Resources\GameBuildStatusQueuedResource;
 use App\Http\Resources\GameBuildStatusResource;
-use App\Jobs\GameBuild as GameBuildJob;
-use App\Models\GameAdmin;
 use App\Models\GameBuild;
-use App\Models\GameServer;
 use App\Rules\DateRange;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesGameBuilds;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
 
 /**
  * @tags Game Builds
@@ -82,40 +75,9 @@ class GameBuildsController extends Controller
      */
     public function status()
     {
-        $res = ['current' => [], 'queued' => []];
-        /** @var \Illuminate\Redis\Connections\PhpRedisConnection */
-        $redis = Queue::getRedis();
-        $reservedJobs = $redis->zrange('queues:default:reserved', 0, -1);
-        foreach ($reservedJobs as $job) {
-            $job = json_decode($job);
-            if ($job->data->commandName === GameBuildJob::class) {
-                $runningJob = collect();
-                foreach ($job->tags as $tag) {
-                    if (str_starts_with($tag, GameAdmin::class)) {
-                        [$type, $id] = explode(':', $tag);
-                        $runningJob->put('admin', GameAdmin::firstWhere('id', $id));
-                    } elseif (str_starts_with($tag, GameServer::class)) {
-                        [$type, $id] = explode(':', $tag);
-                        $runningJob->put('server', GameServer::firstWhere('id', $id));
-                    }
-                }
+        $status = $this->getStatus();
 
-                if ($runningJob->has('server')) {
-                    $queuedJob = Cache::get("GameBuild-{$runningJob->get('server')->server_id}-queued");
-                    if ($queuedJob) {
-                        $res['queued'][] = new GameBuildStatusQueuedResource([
-                            'admin' => GameAdmin::firstWhere('id', $queuedJob['admin']),
-                            'server' => $runningJob->get('server'),
-                            'type' => $queuedJob['type'],
-                        ]);
-                    }
-                }
-
-                $res['current'][] = new GameBuildStatusCurrentResource($runningJob);
-            }
-        }
-
-        return new GameBuildStatusResource($res);
+        return new GameBuildStatusResource($status);
     }
 
     /**
@@ -125,7 +87,11 @@ class GameBuildsController extends Controller
      */
     public function build(GameBuildCreateRequest $request)
     {
-        $this->addBuild($request);
+        try {
+            $this->addBuild($request);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
 
         return ['message' => 'Success'];
     }

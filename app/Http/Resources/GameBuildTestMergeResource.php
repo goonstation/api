@@ -19,7 +19,7 @@ class GameBuildTestMergeResource extends JsonResource
         return [
             'id' => $this->id,
             'pr_id' => $this->pr_id,
-            'server_id' => $this->server_id,
+            'server_id' => $this->buildSettings->server_id,
             'added_by' => $this->addedBy,
             'updated_by' => $this->updatedBy,
             'commit' => $this->commit,

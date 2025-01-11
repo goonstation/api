@@ -30,6 +30,8 @@ class GameBuildResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'ended_at' => $this->ended_at,
+            /** @var int */
+            'duration' => $this->getAttribute('duration'),
         ];
     }
 }

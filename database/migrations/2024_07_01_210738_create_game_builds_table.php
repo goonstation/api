@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('branch')->nullable();
             $table->text('commit')->nullable();
             $table->text('map_id')->nullable();
+            $table->json('test_merges')->nullable();
             $table->boolean('failed')->default(false);
             $table->boolean('cancelled')->default(false);
             $table->boolean('map_switch')->default(false);

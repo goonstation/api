@@ -22,4 +22,9 @@ class GameServerFilter extends ModelFilter
 
         return $this->where('server_id', $val);
     }
+
+    public function active($val)
+    {
+        return $this->where('active', $val);
+    }
 }

@@ -2,6 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Events\GameBuildCancelled;
+use App\Events\GameBuildFinished;
+use App\Events\GameBuildQueued;
+use App\Events\GameBuildQueuedStarting;
+use App\Events\GameBuildStarting;
 use App\Libraries\GameBuilder\Build;
 use App\Models\GameAdmin;
 use App\Models\GameServer;
@@ -11,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class GameBuild implements ShouldBeUnique, ShouldQueue
 {
@@ -43,12 +49,20 @@ class GameBuild implements ShouldBeUnique, ShouldQueue
         $this->queuedCacheKey = "GameBuild-{$this->server->server_id}-queued";
 
         $isBuilding = $this->isBuilding($this->server->server_id);
-        if ($isBuilding && $this->mapSwitch) {
+        if (! $isBuilding) {
+            // Job is going to dispatch
+            GameBuildStarting::dispatch($this->admin, $this->server, $this->mapSwitch, now());
+
+        } elseif ($isBuilding && $this->mapSwitch && ! Cache::has($this->queuedCacheKey)) {
+            // Job is going to be blocked from dispatching, but we can queue it to run after
+            GameBuildQueued::dispatch($this->admin, $this->server, $this->mapSwitch, now());
+
             Cache::set($this->queuedCacheKey, [
-                'type' => 'switch',
-                'admin' => $this->admin->id,
+                'admin' => $this->admin,
+                'mapSwitch' => $this->mapSwitch,
                 'jobLockOwner' => $isBuilding,
-            ], 300);
+                'pushedAt' => now(),
+            ], $this->timeout);
         }
     }
 
@@ -61,6 +75,22 @@ class GameBuild implements ShouldBeUnique, ShouldQueue
         $key = "{$prefix}laravel_unique_job:".self::class.":$serverId";
 
         return $conn->get($key);
+    }
+
+    public static function isQueued(string $serverId)
+    {
+        return Cache::has("GameBuild-$serverId-queued");
+    }
+
+    public static function cancelQueuedBuild(string $serverId, int $adminId)
+    {
+        $cancelled = Cache::forget("GameBuild-$serverId-queued");
+
+        if ($cancelled) {
+            GameBuildCancelled::dispatch($serverId, $adminId, 'queued');
+        }
+
+        return $cancelled;
     }
 
     public function uniqueId(): string
@@ -78,8 +108,16 @@ class GameBuild implements ShouldBeUnique, ShouldQueue
                 owner: $queuedBuild['jobLockOwner']
             );
             $lock->release();
+            GameBuildQueuedStarting::dispatch($this->server->id);
             GameBuild::dispatch($this->admin, $this->server, true);
         }
+    }
+
+    private function onFinish()
+    {
+        GameBuildFinished::dispatch($this->server->id);
+        Cache::forget("GameBuild-{$this->server->server_id}-build");
+        $this->runQueuedBuild();
     }
 
     /**
@@ -91,11 +129,12 @@ class GameBuild implements ShouldBeUnique, ShouldQueue
     {
         $build = new Build($this->server, $this->admin, $this->mapSwitch);
         $build->start();
-        $this->runQueuedBuild();
+        $this->onFinish();
     }
 
     public function failed(?\Throwable $exception): void
     {
-        $this->runQueuedBuild();
+        Log::alert($exception->getMessage());
+        $this->onFinish();
     }
 }

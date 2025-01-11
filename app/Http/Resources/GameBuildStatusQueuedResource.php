@@ -15,7 +15,10 @@ class GameBuildStatusQueuedResource extends JsonResource
             'admin' => $this['admin'],
             /** @var GameServer */
             'server' => $this['server'],
-            'type' => $this['type'],
+            /** @var bool */
+            'mapSwitch' => $this['mapSwitch'],
+            /** @format date-time */
+            'startedAt' => $this['startedAt'],
         ];
     }
 }

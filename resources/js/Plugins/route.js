@@ -1,5 +1,8 @@
+import { router } from '@inertiajs/vue3'
+
 export default {
-  install: (app, options) => {
+  install: (app) => {
     app.config.globalProperties.$route = route
+    app.config.globalProperties.$rtr = router
   },
 }

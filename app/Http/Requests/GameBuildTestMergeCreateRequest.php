@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class GameBuildTestMergeCreateRequest extends FormRequest
 {
@@ -24,20 +23,16 @@ class GameBuildTestMergeCreateRequest extends FormRequest
      */
     public function rules()
     {
-        $serverId = $this->input('server_id');
-        $prId = $this->input('pr_id');
-
         return [
+            /** Required without game_admin_ckey */
             'game_admin_id' => 'required_without:game_admin_ckey|exists:game_admins,id',
+            /** Required without game_admin_id */
             'game_admin_ckey' => 'required_without:game_admin_id|exists:game_admins,ckey',
-            'pr_id' => [
-                'required',
-                'integer',
-                Rule::unique('game_build_test_merges')->where(function ($q) use ($serverId, $prId) {
-                    return $q->where('server_id', $serverId)->where('pr_id', $prId);
-                }),
-            ],
-            'server_id' => 'required|string|exists:game_servers,server_id',
+            'pr_id' => 'required|integer',
+            /** Required without server_ids */
+            'server_id' => 'required_without:server_ids|string|exists:game_servers,server_id',
+            /** Required without server_id */
+            'server_ids' => 'required_without:server_id|array|exists:game_servers,server_id',
             'commit' => 'nullable|string',
         ];
     }

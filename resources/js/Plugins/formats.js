@@ -1,10 +1,14 @@
 import dayjs from 'dayjs'
 
 export default {
-  install: (app, options) => {
-    app.config.globalProperties.$formats = {
+  install: (app) => {
+    const formats = {
       number: (val) => {
         return new Intl.NumberFormat().format(val)
+      },
+      percent: (val, digits = 2) => {
+        if (!val) return '0%'
+        return val.toLocaleString('en-US', { style: 'percent', minimumFractionDigits: digits })
       },
       date: (val, noTime) => {
         if (!val) return
@@ -38,5 +42,8 @@ export default {
         return app.config.globalProperties.$helpers.serverIdToFriendlyName(val, short)
       },
     }
+
+    app.config.globalProperties.$formats = formats
+    return formats
   },
 }

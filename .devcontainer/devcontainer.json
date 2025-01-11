@@ -25,7 +25,11 @@
         "eamodio.gitlens",
         "oven.bun-vscode",
         "SanderRonde.phpstan-vscode",
-        "dunstontc.vscode-docker-syntax"
+        "dunstontc.vscode-docker-syntax",
+        "abdelaziz18003.quasar-snippets",
+        "hossaini.quasar-intellisense",
+        "mrmlnc.vscode-scss",
+        "Zignd.html-css-class-completion"
       ],
       "settings": {}
     }
