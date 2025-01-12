@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\GameRoundsController;
 use App\Http\Controllers\Api\GauntletController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
-use App\Http\Controllers\Api\MapSwitchesController;
 use App\Http\Controllers\Api\NumbersStationController;
 use App\Http\Controllers\Api\PlayerAntagsController;
 use App\Http\Controllers\Api\PlayerMedalsController;
@@ -117,9 +116,6 @@ Route::middleware(['isadmin'])->group(function () {
     });
     Route::controller(MapsController::class)->prefix('maps')->group(function () {
         Route::post('/generate', 'generate');
-    });
-    Route::controller(MapSwitchesController::class)->prefix('map-switch')->group(function () {
-        Route::post('/', 'store');
     });
     Route::controller(VpnChecksController::class)->prefix('vpncheck')->group(function () {
         Route::get('/{ip}', 'check');

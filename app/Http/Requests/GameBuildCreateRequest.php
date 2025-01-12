@@ -27,7 +27,9 @@ class GameBuildCreateRequest extends FormRequest
             'game_admin_id' => 'required_without:game_admin_ckey|exists:game_admins,id',
             'game_admin_ckey' => 'required_without:game_admin_id|exists:game_admins,ckey',
             'server_id' => 'required|string',
+            'round_id' => 'nullable|integer|exists:game_rounds,id',
             'map' => 'nullable|string|exists:maps,map_id',
+            'votes' => 'nullable|integer',
         ];
     }
 }

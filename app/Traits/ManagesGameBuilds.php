@@ -12,6 +12,7 @@ use App\Models\GameAdmin;
 use App\Models\GameBuild;
 use App\Models\GameBuildSetting;
 use App\Models\GameServer;
+use App\Models\MapSwitch;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
@@ -71,14 +72,24 @@ trait ManagesGameBuilds
         $server = GameServer::where('server_id', $request['server_id'])->firstOrFail();
         $setting = GameBuildSetting::where('server_id', $request['server_id'])->firstOrFail();
 
-        $mapSwitch = false;
+        $switchMap = false;
         if (! empty($request['map'])) {
-            $mapSwitch = true;
+            $switchMap = true;
             $setting->map_id = $request['map'];
             $setting->save();
         }
 
-        GameBuildJob::dispatch($admin, $server, $mapSwitch);
+        if (! empty($request['round_id']) && ! empty($request['votes'])) {
+            $mapSwitch = new MapSwitch;
+            $mapSwitch->game_admin_id = $admin->id;
+            $mapSwitch->round_id = $request['round_id'];
+            $mapSwitch->server_id = $request['server_id'];
+            $mapSwitch->map = $request['map'];
+            $mapSwitch->votes = $request['votes'];
+            $mapSwitch->save();
+        }
+
+        GameBuildJob::dispatch($admin, $server, $switchMap);
     }
 
     private function cancelBuild(GameBuildCancelRequest $request)
