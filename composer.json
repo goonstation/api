@@ -32,6 +32,7 @@
     "sentry/sentry-laravel": "^4.5",
     "socialiteproviders/discord": "^4.2",
     "spatie/image-optimizer": "^1.7",
+    "spatie/laravel-sitemap": "^7.3",
     "symfony/css-selector": "^7.1",
     "symfony/panther": "^2.1",
     "tightenco/ziggy": "^2.4",
@@ -80,7 +81,8 @@
     "docs-models": [
       "@php artisan ide-helper:models -W -R",
       "./vendor/bin/pint ./app/Models"
-    ]
+    ],
+    "pint": "./vendor/bin/pint"
   },
   "extra": {
     "laravel": {

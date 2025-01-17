@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $byond_minor
  * @property string $rustg_version
  * @property bool $rp_mode
+ * @property string|null $map_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $map_id
  * @property-read \App\Models\GameServer $gameServer
  * @property-read \App\Models\Map|null $map
  *

@@ -14,6 +14,7 @@ use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\MedalsController;
+use App\Http\Controllers\Web\Admin\OrchestrationController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
@@ -210,6 +211,11 @@ Route::middleware([
             Route::get('/{testMerge}/commit', 'editCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit-commit')->breadcrumb('', 'admin.builds.test-merges.index');
             Route::put('/{testMerge}/commit', 'updateCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.update-commit');
             Route::put('/{prId}/commits', 'updateCommits')->whereNumber('prId')->name('admin.builds.test-merges.update-commits');
+        });
+
+        Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
+            Route::get('/status', 'status')->name('admin.orchestration.status');
+            Route::post('/restart', 'restart')->name('admin.orchestration.restart');
         });
     });
 });

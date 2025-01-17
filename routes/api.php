@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\GauntletController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\NumbersStationController;
+use App\Http\Controllers\Api\OrchestrationController;
 use App\Http\Controllers\Api\PlayerAntagsController;
 use App\Http\Controllers\Api\PlayerMedalsController;
 use App\Http\Controllers\Api\PlayerMetadataController;
@@ -191,5 +192,9 @@ Route::middleware(['isadmin'])->group(function () {
         Route::post('/', 'store');
         Route::put('/{testMerge}', 'update');
         Route::delete('/{testMerge}', 'destroy');
+    });
+    Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
+        Route::get('/status', 'status');
+        Route::post('/restart', 'restart');
     });
 });

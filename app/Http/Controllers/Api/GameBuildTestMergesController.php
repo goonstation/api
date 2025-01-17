@@ -52,7 +52,7 @@ class GameBuildTestMergesController extends Controller
         ]);
 
         return GameBuildTestMergeResource::collection(
-            $this->indexQuery(GameBuildTestMerge::class)
+            $this->indexQuery(GameBuildTestMerge::with(['buildSettings', 'addedBy', 'updatedBy']))
         );
     }
 

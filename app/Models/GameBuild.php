@@ -16,16 +16,15 @@ use Illuminate\Support\Carbon;
  * @property int|null $started_by
  * @property string|null $branch
  * @property string|null $commit
+ * @property string|null $map_id
+ * @property array<array-key, mixed>|null $test_merges
  * @property bool $failed
  * @property bool $cancelled
+ * @property bool $map_switch
+ * @property int|null $cancelled_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $ended_at
- * @property string|null $map_id
- * @property bool $map_switch
- * @property int|null $cancelled_by
- * @property string|null $job_id
- * @property array|null $test_merges
  * @property-read \App\Models\GameAdmin|null $cancelledBy
  * @property-read mixed $duration
  * @property-read \App\Models\GameServer $gameServer
@@ -50,7 +49,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereEndsWith($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereFailed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereMapId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuild whereMapSwitch($value)

@@ -16,3 +16,4 @@ php artisan route:clear
 php artisan breadcrumbs:cache
 php artisan route:cache
 php artisan migrate --force
+php artisan gh:generate-sitemap

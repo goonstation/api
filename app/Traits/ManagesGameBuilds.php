@@ -64,10 +64,6 @@ trait ManagesGameBuilds
 
     private function addBuild(GameBuildCreateRequest $request)
     {
-        if (GameBuildJob::isBuilding($request['server_id'])) {
-            throw new \Exception('Already building that server');
-        }
-
         $admin = GameAdmin::where('ckey', $request['game_admin_ckey'])->firstOrFail();
         $server = GameServer::where('server_id', $request['server_id'])->firstOrFail();
         $setting = GameBuildSetting::where('server_id', $request['server_id'])->firstOrFail();
@@ -77,6 +73,10 @@ trait ManagesGameBuilds
             $switchMap = true;
             $setting->map_id = $request['map'];
             $setting->save();
+        } else {
+            if (GameBuildJob::isBuilding($request['server_id'])) {
+                throw new \Exception('Already building that server');
+            }
         }
 
         if (! empty($request['round_id']) && ! empty($request['votes'])) {

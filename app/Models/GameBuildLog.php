@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $build_id
  * @property string|null $type
+ * @property string|null $group
  * @property string $log
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $group
  * @property-read \App\Models\GameBuild $gameBuild
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuildLog newModelQuery()
