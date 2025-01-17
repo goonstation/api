@@ -1,2 +1,9 @@
 User-agent: *
 Disallow:
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /rounds/
+Disallow: /players/
+Disallow: /events/
+Disallow: /medals/
+Disallow: /secret/
