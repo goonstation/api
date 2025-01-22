@@ -54,6 +54,10 @@ class GameBuildTestMergesController extends Controller
 
         $item = $res->json();
 
+        if (! array_key_exists('number', $item)) {
+            return null;
+        }
+
         return [
             'number' => $item['number'],
             'merged' => $item['merged'],
