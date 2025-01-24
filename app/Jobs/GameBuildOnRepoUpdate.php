@@ -6,10 +6,9 @@ use App\Jobs\GameBuild as GameBuildJob;
 use App\Models\GameAdmin;
 use App\Models\GameBuild;
 use App\Models\GameBuildSetting;
+use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
 
 class GameBuildOnRepoUpdate implements ShouldQueue
 {
@@ -37,25 +36,18 @@ class GameBuildOnRepoUpdate implements ShouldQueue
 
         $latestRemoteCommits = [];
         foreach ($branches as $branch) {
-            $res = null;
             try {
-                $res = Http::withHeaders([
-                    'Accept: application/vnd.github.sha',
-                    'Authorization: Bearer '.config('github.user_token'),
-                    'X-Github-Api-Version: 2022-11-28',
-                    'User-Agent: Goonhub',
-                ])
-                    ->get("https://api.github.com/repos/goonstation/goonstation/commits/$branch");
-            } catch (ConnectionException) {
+                /** @var \Github\Client */
+                $conn = GitHub::connection();
+                $latestCommit = $conn->repo()->commits()->show(
+                    config('goonhub.github_organization'),
+                    config('goonhub.github_repo'),
+                    $branch
+                );
+                $latestRemoteCommits[$branch] = $latestCommit['sha'];
+            } catch (\Throwable) {
                 continue;
             }
-
-            if (is_null($res)) {
-                continue;
-            }
-
-            $item = $res->json();
-            $latestRemoteCommits[$branch] = $item['sha'];
         }
 
         $botAdmin = GameAdmin::whereRelation('rank', 'rank', 'Bot')->first();

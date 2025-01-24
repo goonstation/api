@@ -91,7 +91,7 @@ class GameBuildTestMergesController extends Controller
      */
     public function destroy(GameBuildTestMerge $testMerge)
     {
-        $testMerge->delete();
+        $this->destroyTestMerge($testMerge);
 
         return ['message' => 'Test merge removed'];
     }

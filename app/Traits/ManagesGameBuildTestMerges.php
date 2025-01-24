@@ -5,12 +5,82 @@ namespace App\Traits;
 use App\Http\Requests\GameBuildTestMergeCreateRequest;
 use App\Http\Requests\GameBuildTestMergeUpdateRequest;
 use App\Http\Resources\GameBuildTestMergeResource;
+use App\Libraries\DiscordBot;
 use App\Models\GameAdmin;
 use App\Models\GameBuildSetting;
 use App\Models\GameBuildTestMerge;
+use App\Models\GameServer;
+use GrahamCampbell\GitHub\Facades\GitHub;
 
 trait ManagesGameBuildTestMerges
 {
+    private const TM_LABEL = 'S-Testmerged';
+
+    private function getPullRequestLabels(int $prId)
+    {
+        $labels = [];
+
+        try {
+            /** @var \Github\Client */
+            $conn = GitHub::connection();
+            $labels = $conn->issue()->labels()->all(
+                config('goonhub.github_organization'),
+                config('goonhub.github_repo'),
+                $prId
+            );
+        } catch (\Throwable) {
+            //
+        }
+
+        return collect($labels);
+    }
+
+    private function addPullRequestLabel(int $prId)
+    {
+        try {
+            /** @var \Github\Client */
+            $conn = GitHub::connection();
+            $conn->issue()->labels()->add(
+                config('goonhub.github_organization'),
+                config('goonhub.github_repo'),
+                $prId,
+                self::TM_LABEL
+            );
+        } catch (\Throwable) {
+            //
+        }
+    }
+
+    private function removePullRequestLabel(int $prId)
+    {
+        try {
+            /** @var \Github\Client */
+            $conn = GitHub::connection();
+            $conn->issue()->labels()->remove(
+                config('goonhub.github_organization'),
+                config('goonhub.github_repo'),
+                $prId,
+                self::TM_LABEL
+            );
+        } catch (\Throwable) {
+            //
+        }
+    }
+
+    private function announceOnDiscord(string $type, array $servers, int $prId, ?string $commit = null)
+    {
+        $gameServers = GameServer::select(['short_name'])->whereIn('server_id', $servers)->get();
+        try {
+            DiscordBot::export("testmerges/$type", 'POST', [
+                'pr' => $prId,
+                'servers' => $gameServers->pluck('short_name')->toArray(),
+                'commit' => $commit,
+            ]);
+        } catch (\Throwable) {
+            // ignore
+        }
+    }
+
     private function addTestMerge(GameBuildTestMergeCreateRequest $request)
     {
         $gameAdmin = GameAdmin::where('ckey', ckey($request['game_admin_ckey']))->first();
@@ -46,6 +116,13 @@ trait ManagesGameBuildTestMerges
             $testMerge->save();
             $testMerges->add($testMerge);
         }
+
+        $labels = $this->getPullRequestLabels($request['pr_id']);
+        if ($labels->doesntContain('name', self::TM_LABEL)) {
+            $this->addPullRequestLabel($request['pr_id']);
+        }
+
+        $this->announceOnDiscord('added', $servers, $request['pr_id'], isset($request['commit']) ?: $request['commit']);
 
         return GameBuildTestMergeResource::collection($testMerges);
     }
@@ -85,9 +162,32 @@ trait ManagesGameBuildTestMerges
 
         $gameAdmin = GameAdmin::where('ckey', ckey($request['game_admin_ckey']))->first();
 
+        if ($request->missing('commit')) {
+            $testMerge->commit = null;
+        }
         $testMerge->updatedBy()->associate($gameAdmin);
         $testMerge->save();
 
+        $this->announceOnDiscord('updated', [$testMerge->buildSettings->server_id], $testMerge->pr_id, $testMerge->commit);
+
         return new GameBuildTestMergeResource($testMerge);
+    }
+
+    private function destroyTestMerge(GameBuildTestMerge $testMerge)
+    {
+        $otherTestMerges = GameBuildTestMerge::where('pr_id', $testMerge->pr_id)
+            ->whereNot('id', $testMerge->id)
+            ->exists();
+
+        if (! $otherTestMerges) {
+            $labels = $this->getPullRequestLabels($testMerge->pr_id);
+            if ($labels->contains('name', self::TM_LABEL)) {
+                $this->removePullRequestLabel($testMerge->pr_id);
+            }
+        }
+
+        $this->announceOnDiscord('removed', [$testMerge->buildSettings->server_id], $testMerge->pr_id);
+
+        $testMerge->delete();
     }
 }

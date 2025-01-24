@@ -22384,6 +22384,154 @@ namespace App\Facades {
             }
     }
 
+namespace GrahamCampbell\GitHub\Facades {
+    /**
+     * This is the github facade class.
+     *
+     * @author Graham Campbell <hello@gjcampbell.co.uk>
+     */
+    class GitHub {
+        /**
+         * Get the configuration for a connection.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return array 
+         * @static 
+         */
+        public static function getConnectionConfig($name = null)
+        {
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->getConnectionConfig($name);
+        }
+
+        /**
+         * Get the factory instance.
+         *
+         * @return \GrahamCampbell\GitHub\GitHubFactory 
+         * @static 
+         */
+        public static function getFactory()
+        {
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->getFactory();
+        }
+
+        /**
+         * Get a connection instance.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return object 
+         * @static 
+         */
+        public static function connection($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->connection($name);
+        }
+
+        /**
+         * Reconnect to the given connection.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return object 
+         * @static 
+         */
+        public static function reconnect($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->reconnect($name);
+        }
+
+        /**
+         * Disconnect from the given connection.
+         *
+         * @param string|null $name
+         * @return void 
+         * @static 
+         */
+        public static function disconnect($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            $instance->disconnect($name);
+        }
+
+        /**
+         * Get the default connection name.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getDefaultConnection()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->getDefaultConnection();
+        }
+
+        /**
+         * Set the default connection name.
+         *
+         * @param string $name
+         * @return void 
+         * @static 
+         */
+        public static function setDefaultConnection($name)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            $instance->setDefaultConnection($name);
+        }
+
+        /**
+         * Register an extension connection resolver.
+         *
+         * @param string $name
+         * @param callable $resolver
+         * @return void 
+         * @static 
+         */
+        public static function extend($name, $resolver)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            $instance->extend($name, $resolver);
+        }
+
+        /**
+         * Return all of the created connections.
+         *
+         * @return array<string,object> 
+         * @static 
+         */
+        public static function getConnections()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->getConnections();
+        }
+
+        /**
+         * Get the config instance.
+         *
+         * @return \Illuminate\Contracts\Config\Repository 
+         * @static 
+         */
+        public static function getConfig()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \GrahamCampbell\GitHub\GitHubManager $instance */
+            return $instance->getConfig();
+        }
+
+            }
+    }
+
 namespace Glhd\Gretel\Support\Facades {
     /**
      * 
@@ -29275,6 +29423,7 @@ namespace  {
     class Crawler extends \Jaybizzle\LaravelCrawlerDetect\Facades\LaravelCrawlerDetect {}
     class OpenGraphImage extends \App\Facades\OpenGraphImage {}
     class GameBridge extends \App\Facades\GameBridge {}
+    class GitHub extends \GrahamCampbell\GitHub\Facades\GitHub {}
     class LaRecipe extends \BinaryTorch\LaRecipe\LaRecipe {}
     class Gretel extends \Glhd\Gretel\Support\Facades\Gretel {}
     class Image extends \Intervention\Image\Laravel\Facades\Image {}

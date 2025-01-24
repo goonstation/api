@@ -3,13 +3,12 @@
 namespace App\Jobs;
 
 use App\Models\Changelog;
+use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 
 class BuildChangelog implements ShouldQueue
 {
@@ -25,28 +24,6 @@ class BuildChangelog implements ShouldQueue
     public function __construct()
     {
         //
-    }
-
-    private function getChangelogFromRepo()
-    {
-        $res = null;
-        try {
-            $res = Http::withHeaders([
-                'Accept: application/vnd.github+json',
-                'Authorization: Bearer '.config('github.user_token'),
-                'X-Github-Api-Version: 2022-11-28',
-                'User-Agent: Goonhub',
-            ])
-                ->get('https://api.github.com/repos/goonstation/goonstation/contents/strings/changelog.txt');
-        } catch (ConnectionException $e) {
-            return null;
-        }
-
-        if (is_null($res) || ! isset($res['content'])) {
-            return null;
-        }
-
-        return base64_decode($res['content']);
     }
 
     private function flushEntry($date, $entry)
@@ -82,7 +59,13 @@ class BuildChangelog implements ShouldQueue
      */
     public function handle()
     {
-        $changelog = $this->getChangelogFromRepo();
+        /** @var \Github\Client */
+        $conn = GitHub::connection();
+        $changelog = $conn->repo()->contents()->download(
+            config('goonhub.github_organization'),
+            config('goonhub.github_repo'),
+            'strings/changelog.txt'
+        );
         if (! $changelog) {
             return;
         }

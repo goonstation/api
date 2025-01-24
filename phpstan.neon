@@ -7,6 +7,9 @@ parameters:
     paths:
         - app/
 
+    stubFiles:
+        - stubs/GitHub.stub
+
     # Level 10 is the highest level
     level: 3
 

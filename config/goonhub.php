@@ -8,6 +8,9 @@ return [
 
     'game_bridge_url' => env('GAME_BRIDGE_URL', null),
 
+    'github_organization' => env('GITHUB_ORGANIZATION', null),
+    'github_repo' => env('GITHUB_REPO', null),
+
     'ipquality_pass' => env('IPQUALITY_PASS', null),
 
     'byond_user' => env('BYOND_USER', null),

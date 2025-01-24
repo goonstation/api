@@ -7,10 +7,10 @@ use App\Http\Requests\GameBuildTestMergeCreateRequest;
 use App\Models\GameBuildTestMerge;
 use App\Traits\IndexableQuery;
 use App\Traits\ManagesGameBuildTestMerges;
-use Illuminate\Http\Client\ConnectionException;
+use Github\ResultPager;
+use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class GameBuildTestMergesController extends Controller
@@ -34,77 +34,18 @@ class GameBuildTestMergesController extends Controller
 
     private function getPullRequestDetails(int $prId)
     {
-        $res = null;
         try {
-            $res = Http::withHeaders([
-                'Accept: application/vnd.github+json',
-                'Authorization: Bearer '.config('github.user_token'),
-                'X-Github-Api-Version: 2022-11-28',
-                'User-Agent: Goonhub',
-            ])
-                ->asJson()
-                ->get("https://api.github.com/repos/goonstation/goonstation/pulls/$prId");
-        } catch (ConnectionException) {
-            return null;
-        }
+            /** @var \Github\Client */
+            $conn = GitHub::connection();
+            $item = $conn->pullRequest()->show(
+                config('goonhub.github_organization'),
+                config('goonhub.github_repo'),
+                $prId
+            );
 
-        if (is_null($res)) {
-            return null;
-        }
-
-        $item = $res->json();
-
-        if (! array_key_exists('number', $item)) {
-            return null;
-        }
-
-        return [
-            'number' => $item['number'],
-            'merged' => $item['merged'],
-            'locked' => $item['locked'],
-            'draft' => $item['draft'],
-            'title' => $item['title'],
-            'user' => [
-                'login' => $item['user']['login'],
-                'html_url' => $item['user']['html_url'],
-            ],
-            'head' => [
-                'sha' => $item['head']['sha'],
-            ],
-            'created_at' => $item['created_at'],
-            'updated_at' => $item['updated_at'],
-        ];
-    }
-
-    private function getPullRequestList(int $page = 1)
-    {
-        $items = collect();
-        $res = null;
-        try {
-            $res = Http::withHeaders([
-                'Accept: application/vnd.github+json',
-                'Authorization: Bearer '.config('github.user_token'),
-                'X-Github-Api-Version: 2022-11-28',
-                'User-Agent: Goonhub',
-            ])
-                ->asJson()
-                ->get('https://api.github.com/repos/goonstation/goonstation/pulls', [
-                    'per_page' => 100,
-                    'page' => $page,
-                ]);
-        } catch (ConnectionException) {
-            return null;
-        }
-
-        if (is_null($res)) {
-            return null;
-        }
-
-        $data = $res->json();
-
-        foreach ($data as $item) {
-            $items->add([
+            return [
                 'number' => $item['number'],
+                'merged' => $item['merged'],
                 'locked' => $item['locked'],
                 'draft' => $item['draft'],
                 'title' => $item['title'],
@@ -117,19 +58,47 @@ class GameBuildTestMergesController extends Controller
                 ],
                 'created_at' => $item['created_at'],
                 'updated_at' => $item['updated_at'],
+            ];
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function getPullRequestList()
+    {
+        try {
+            /** @var \Github\Client */
+            $conn = GitHub::connection();
+            $pagination = new ResultPager($conn);
+            $data = $pagination->fetchAll($conn->pullRequests(), 'all', [
+                config('goonhub.github_organization'),
+                config('goonhub.github_repo'),
+                ['state' => 'open'],
             ]);
-        }
 
-        if ($res->hasHeader('link')) {
-            preg_match('/.*page=(\d+)(?=>; rel="Next")/i', $res->getHeader('link')[0], $matches);
-            if ($matches && count($matches) > 1) {
-                $nextPage = (int) $matches[1];
-                $newItems = $this->getPullRequestList($nextPage);
-                $items = $items->merge($newItems);
+            $items = collect();
+            foreach ($data as $item) {
+                $items->add([
+                    'number' => $item['number'],
+                    'locked' => $item['locked'],
+                    'draft' => $item['draft'],
+                    'title' => $item['title'],
+                    'user' => [
+                        'login' => $item['user']['login'],
+                        'html_url' => $item['user']['html_url'],
+                    ],
+                    'head' => [
+                        'sha' => $item['head']['sha'],
+                    ],
+                    'created_at' => $item['created_at'],
+                    'updated_at' => $item['updated_at'],
+                ]);
             }
-        }
 
-        return $items;
+            return $items;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     public function pullRequestDetails(int $prId)
@@ -231,7 +200,7 @@ class GameBuildTestMergesController extends Controller
 
     public function destroy(GameBuildTestMerge $testMerge)
     {
-        $testMerge->delete();
+        $this->destroyTestMerge($testMerge);
 
         return ['message' => 'Test merge removed'];
     }
@@ -242,8 +211,10 @@ class GameBuildTestMergesController extends Controller
             'ids' => 'required|array',
         ]);
 
-        $testMerges = GameBuildTestMerge::whereIn('id', $data['ids']);
-        $testMerges->delete();
+        $testMerges = GameBuildTestMerge::whereIn('id', $data['ids'])->get();
+        foreach ($testMerges as $testMerge) {
+            $this->destroyTestMerge($testMerge);
+        }
 
         return ['message' => 'Test merges removed'];
     }

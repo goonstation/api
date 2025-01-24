@@ -2,6 +2,7 @@
 
 namespace App\Libraries\GameBuilder;
 
+use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Support\Facades\File;
 use Str;
 use Symfony\Component\Process\Process;
@@ -10,7 +11,7 @@ class Repo
 {
     private $build;
 
-    private $repoUrl = 'github.com/goonstation/goonstation';
+    private $repoUrl = 'github.com';
 
     private $userName = 'robuddybot';
 
@@ -25,6 +26,10 @@ class Repo
         $this->build = $build;
         $this->repoShared = storage_path('app/game-builder/shared-git');
         $this->repoDir = "$serverDir/repo";
+
+        $org = config('goonhub.github_organization');
+        $repo = config('goonhub.github_repo');
+        $this->repoUrl = "github.com/$org/$repo";
 
         if (File::missing($this->repoShared)) {
             File::makeDirectory($this->repoShared);
@@ -53,7 +58,7 @@ class Repo
             $url = substr($url, 0, -4);
         }
         $urlParts = parse_url($url);
-        $githubToken = config('github.user_token');
+        $githubToken = GitHub::getConnectionConfig()['token'];
         $remoteUrl = "{$urlParts['host']}{$urlParts['path']}";
         $remoteUrlWithAuth = "{$this->userName}:$githubToken@$remoteUrl";
 
