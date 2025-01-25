@@ -29,7 +29,8 @@
         "abdelaziz18003.quasar-snippets",
         "hossaini.quasar-intellisense",
         "mrmlnc.vscode-scss",
-        "Zignd.html-css-class-completion"
+        "Zignd.html-css-class-completion",
+        "GitHub.vscode-github-actions"
       ],
       "settings": {}
     }
