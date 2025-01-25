@@ -15,16 +15,15 @@ use App\Models\GameServer;
 use App\Models\MapSwitch;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 
 trait ManagesGameBuilds
 {
     private function getStatus()
     {
         $res = ['current' => [], 'queued' => []];
-        $queue = Queue::getConnection();
         /** @var \Illuminate\Redis\Connections\PhpRedisConnection */
-        $redis = $queue->client();
+        $redis = Redis::client('default');
         $reservedJobs = $redis->zrange('queues:default:reserved', 0, -1);
         foreach ($reservedJobs as $job) {
             $job = json_decode($job);
