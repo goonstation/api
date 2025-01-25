@@ -53,7 +53,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: composer install
 
       - name: Run Pint
         run: ./vendor/bin/pint --test
