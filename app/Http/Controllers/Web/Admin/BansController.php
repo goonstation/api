@@ -314,6 +314,7 @@ class BansController extends Controller
                 $willHave['ip'] = false;
             }
 
+            // @phpstan-ignore argument.type
             $deleting = empty(array_filter(array_values($willHave), 'strlen'));
 
             if ($deleting) {

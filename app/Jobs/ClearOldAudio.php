@@ -12,8 +12,6 @@ class ClearOldAudio implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $entries = [];
-
     /**
      * Create a new job instance.
      *

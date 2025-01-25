@@ -3,6 +3,7 @@
 namespace App\Actions\Jetstream;
 
 use App\Models\Team;
+use App\Models\TeamInvitation as ModelsTeamInvitation;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\Query\Builder;
@@ -29,6 +30,7 @@ class InviteTeamMember implements InvitesTeamMembers
 
         InvitingTeamMember::dispatch($team, $email, $role);
 
+        /** @var ModelsTeamInvitation */
         $invitation = $team->teamInvitations()->create([
             'email' => $email,
             'role' => $role,

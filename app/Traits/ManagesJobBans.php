@@ -63,7 +63,7 @@ trait ManagesJobBans
         $serverId = isset($data['server_id']) ? $data['server_id'] : null;
 
         // Check another ban doesn't already exist for the provided job
-        /** @var JobBan */
+        /** @var JobBan|null */
         $existingJobBan = JobBan::getValidJobBans($jobBan->ckey, $data['job'], $serverId)->first();
         if ($existingJobBan && $jobBan->id !== $existingJobBan->id) {
             throw new Exception('The player is already banned from that job on this server.');

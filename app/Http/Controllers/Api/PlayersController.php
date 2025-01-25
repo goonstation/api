@@ -150,7 +150,7 @@ class PlayersController extends Controller
             }
             $conns = $conns->merge($conn);
         }
-        if ($playerConns) {
+        if ($playerConns->isNotEmpty()) {
             $conns = $conns->merge($playerConns);
         }
 
@@ -198,9 +198,8 @@ class PlayersController extends Controller
             return response()->json(['message' => 'Player does not exist'], 404);
         }
 
-        $ips = $player->connections->map(function ($item) {
-            /** @phpstan-ignore-next-line */
-            return ['ip' => $item->ip, 'connected' => $item->connected];
+        $ips = $player->connections->map(function (PlayerConnection $item) {
+            return ['ip' => $item['ip'], 'connected' => $item['connected']];
         });
 
         return new PlayerIpsResource([
@@ -240,9 +239,8 @@ class PlayersController extends Controller
             return response()->json(['message' => 'Player does not exist'], 404);
         }
 
-        $compIds = $player->connections->map(function ($item) {
-            /** @phpstan-ignore-next-line */
-            return ['comp_id' => $item->comp_id, 'connected' => $item->connected];
+        $compIds = $player->connections->map(function (PlayerConnection $item) {
+            return ['comp_id' => $item['comp_id'], 'connected' => $item['connected']];
         });
 
         return new PlayerCompIdsResource([

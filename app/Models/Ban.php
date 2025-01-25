@@ -94,7 +94,7 @@ class Ban extends BaseModel
             return null;
         }
 
-        return $this->expires_at->longAbsoluteDiffForHumans(99);
+        return $this->expires_at->longAbsoluteDiffForHumans(parts: 99);
     }
 
     public function getActiveAttribute()

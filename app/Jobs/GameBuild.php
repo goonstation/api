@@ -53,7 +53,7 @@ class GameBuild implements ShouldBeUnique, ShouldQueue
             // Job is going to dispatch
             GameBuildStarting::dispatch($this->admin, $this->server, $this->mapSwitch, now());
 
-        } elseif ($isBuilding && $this->mapSwitch && ! Cache::has($this->queuedCacheKey)) {
+        } elseif ($this->mapSwitch && ! Cache::has($this->queuedCacheKey)) {
             // Job is going to be blocked from dispatching, but we can queue it to run after
             GameBuildQueued::dispatch($this->admin, $this->server, $this->mapSwitch, now());
 
