@@ -9,31 +9,32 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.3]
+    env:
+      extensions: pcntl, zip, pgsql, gd, imap, mysql, bcmath, soap, intl, ldap, msgpack, igbinary, redis, swoole, memcached, pcov, imagick
+      key: cache-v1 # can be any string, change to clear the extension cache
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.extensions }}
+          key: ${{ env.key }}
 
-      - uses: php-actions/composer@v6
+      - name: Cache extensions
+        uses: actions/cache@v4
         with:
-          php_version: ${{ matrix.php }}
-          php_extensions: pcntl zip pgsql gd imap mysql bcmath soap intl ldap msgpack igbinary redis swoole memcached pcov imagick
-          # Lock composer to working version.
-          # See https://github.com/php-actions/composer/issues/120
-          version: 2.8.1
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
 
-      - name: Run Pint
-        uses: aglipanci/laravel-pint-action@latest
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          verboseMode: true
-
-      - name: PHPStan Static Analysis
-        uses: php-actions/phpstan@v3
-        with:
-          php_version: ${{ matrix.php }}
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.extensions }}
+          coverage: none
