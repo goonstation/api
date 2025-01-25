@@ -22,8 +22,9 @@ trait ManagesGameBuilds
     private function getStatus()
     {
         $res = ['current' => [], 'queued' => []];
+        $queue = Queue::getConnection();
         /** @var \Illuminate\Redis\Connections\PhpRedisConnection */
-        $redis = Queue::getRedis();
+        $redis = $queue->client();
         $reservedJobs = $redis->zrange('queues:default:reserved', 0, -1);
         foreach ($reservedJobs as $job) {
             $job = json_decode($job);
