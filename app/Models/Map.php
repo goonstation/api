@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -54,7 +53,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *
  * @mixin \Eloquent
  */
-class Map extends Model
+class Map extends BaseModel
 {
     use Filterable, HasFactory, HasOpenGraphData;
 

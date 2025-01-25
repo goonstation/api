@@ -4,7 +4,6 @@ namespace App\Models;
 
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -44,7 +43,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class PlayerNote extends Model
+class PlayerNote extends BaseModel
 {
     use Filterable, HasFactory;
 

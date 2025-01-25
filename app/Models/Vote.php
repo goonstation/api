@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @mixin \Eloquent
  */
-class Vote extends Model
+class Vote extends BaseModel
 {
     use HasFactory;
 

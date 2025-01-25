@@ -10,6 +10,8 @@ use App\Models\Medal;
 use App\Models\Player;
 use App\Models\PlayerParticipation;
 use App\Models\PlayersOnline;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -94,10 +96,17 @@ class PlayersController extends Controller
     public function search(Request $request)
     {
         $players = Player::with([
-            'latestConnection' => function ($q) {
-                $q->select('id', 'player_id', 'round_id', 'created_at')
-                    ->whereRelation('gameRound', 'ended_at', '!=', null)
-                    ->whereRelation('gameRound.server', 'invisible', '!=', true);
+            'latestConnection' => function (HasOne $q) {
+                $q->select([
+                    'player_connections.id',
+                    'player_connections.player_id',
+                    'player_connections.round_id',
+                    'player_connections.created_at',
+                ])
+                    ->whereRelation('gameRound', function (Builder $q2) {
+                        $q2->whereNotNull('ended_at')
+                            ->whereRelation('server', 'invisible', '!=', true);
+                    });
             },
         ])
             ->select('id', 'ckey', 'key')
@@ -121,12 +130,26 @@ class PlayersController extends Controller
     public function show(Request $request, int $player)
     {
         $player = Player::with([
-            'latestConnection' => function ($q) {
-                $q->select('id', 'player_id', 'created_at', 'round_id')
-                    ->whereRelation('gameRound', 'ended_at', '!=', null)
-                    ->whereRelation('gameRound.server', 'invisible', '!=', true);
+            'latestConnection' => function (HasOne $q) {
+                $q->select([
+                    'player_connections.id',
+                    'player_connections.player_id',
+                    'player_connections.round_id',
+                    'player_connections.created_at',
+                ])
+                    ->whereRelation('gameRound', function (Builder $q2) {
+                        $q2->whereNotNull('ended_at')
+                            ->whereRelation('server', 'invisible', '!=', true);
+                    });
             },
-            'firstConnection:id,player_id,created_at',
+            'firstConnection' => function (HasOne $q) {
+                $q->select([
+                    'player_connections.id',
+                    'player_connections.player_id',
+                    'player_connections.round_id',
+                    'player_connections.created_at',
+                ]);
+            },
             'playtime:player_id,seconds_played',
             'medals' => function ($q) {
                 $q->select('id', 'medal_id', 'player_id', 'created_at')
@@ -150,15 +173,9 @@ class PlayersController extends Controller
             ->firstOrFail();
 
         // Remove unncessary data
-        $player->medals->transform(function ($award) {
-            if ($award->medal['hidden']) {
-                unset($award->medal['uuid']);
-                unset($award->medal['title']);
-                unset($award->medal['description']);
-            }
-
-            return $award;
-        });
+        foreach ($player->medals as $award) {
+            $award->medal->makeHiddenIf($award->medal->hidden, ['uuid', 'title', 'description']);
+        }
 
         $unearnedMedals = Medal::select(['uuid', 'title', 'description'])
             ->whereNotIn('id', $player->medals->pluck('medal.id'))

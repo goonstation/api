@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * @property int $id
  * @property string $key
@@ -22,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class GameBuildSecret extends Model
+class GameBuildSecret extends BaseModel
 {
     //
 }

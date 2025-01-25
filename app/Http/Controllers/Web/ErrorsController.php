@@ -35,6 +35,7 @@ class ErrorsController extends Controller
         }
         $dateStart = $dateStart->startOfDay();
 
+        /** @var \Illuminate\Database\Eloquent\Builder<EventError> */
         $errors = $this->indexQuery(
             EventError::select([
                 DB::raw('sum(count) as overview_count'),

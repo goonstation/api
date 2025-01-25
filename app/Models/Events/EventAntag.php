@@ -2,13 +2,13 @@
 
 namespace App\Models\Events;
 
+use App\Models\BaseModel;
 use App\Models\GameRound;
 use App\Models\Player;
 use App\Traits\HasOpenGraphData;
 use Awobaz\Compoships\Compoships;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -54,7 +54,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
-class EventAntag extends Model
+class EventAntag extends BaseModel
 {
     use Compoships, Filterable, HasFactory, HasOpenGraphData;
 

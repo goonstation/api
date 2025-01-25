@@ -4,7 +4,7 @@ namespace App\Models;
 
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -36,7 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Medal extends Model
+class Medal extends BaseModel
 {
     use Filterable, HasFactory;
 
@@ -50,15 +50,12 @@ class Medal extends Model
         'id',
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
     // public function players()
     // {
     //     return $this->hasManyThrough(Player::class, PlayerMedal::class);
     // }
 
-    public function earned()
+    public function earned(): HasMany
     {
         return $this->hasMany(PlayerMedal::class);
     }

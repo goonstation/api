@@ -2,12 +2,12 @@
 
 namespace App\Models\Events;
 
+use App\Models\BaseModel;
 use App\Models\GameRound;
 use App\Models\Player;
 use Awobaz\Compoships\Compoships;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -39,7 +39,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class EventAntagObjective extends Model
+class EventAntagObjective extends BaseModel
 {
     use Compoships, Filterable, HasFactory;
 
