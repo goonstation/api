@@ -11,21 +11,20 @@ jobs:
         php: [8.3]
     env:
       extensions: pcntl, zip, pgsql, gd, imap, mysql, bcmath, soap, intl, ldap, msgpack, igbinary, redis, swoole, memcached, pcov, imagick
-      key: cache-v1 # can be any string, change to clear the extension cache
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup cache environment
+      - name: Setup PHP extensions cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ env.extensions }}
-          key: ${{ env.key }}
+          key: cache-v1 # can be any string, change to clear the extension cache
 
-      - name: Cache extensions
+      - name: Cache PHP extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
@@ -58,7 +57,7 @@ jobs:
       - name: Run Pint
         run: ./vendor/bin/pint --test
 
-      - name: Restore PHPStan Result Cache
+      - name: Restore PHPStan result cache
         uses: actions/cache/restore@v4
         with:
           path: tmp # same as in phpstan.neon
@@ -69,7 +68,7 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan
 
-      - name: Save PHPStan Result Cache
+      - name: Save PHPStan result cache
         uses: actions/cache/save@v4
         if: always()
         with:
