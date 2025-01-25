@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  lint:
+  analyse:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -14,7 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
       - uses: php-actions/composer@v6
+        with:
+          php_version: ${{ matrix.php }}
+          version: 2.8.1
 
       - name: Run Pint
         uses: aglipanci/laravel-pint-action@latest
