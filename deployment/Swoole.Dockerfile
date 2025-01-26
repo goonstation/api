@@ -5,11 +5,7 @@ ARG COMPOSER_VERSION=latest
 
 ARG NODE_VERSION="current"
 
-ARG BUN_VERSION="latest"
-
 FROM node:${NODE_VERSION}-slim AS node
-
-FROM oven/bun:${BUN_VERSION} AS bun
 
 FROM composer:${COMPOSER_VERSION} AS vendor
 
@@ -81,7 +77,8 @@ RUN apt-get update; \
     memcached \
     igbinary \
     ldap \
-    swoole
+    swoole \
+    uv
 
 RUN arch="$(uname -m)" \
     && case "$arch" in \
@@ -110,34 +107,54 @@ RUN cp ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
 # Custom stuff
 ##########################################
 
+# Node via NVM
+USER ${USER}
+SHELL ["/bin/bash", "--login", "-c"]
+ENV NVM_DIR /home/${USER}/.nvm
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && \
+    nvm install --default $NODE_VERSION && \
+    nvm use default && \
+    npm install -g npm bun
+USER root
+
 # Youtube DLP
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
     chmod a+rwx /usr/local/bin/yt-dlp
 
 ## Dectalk
-RUN cd /home/${USER} && \
-    git clone https://github.com/dectalk/dectalk.git && \
-    cd dectalk/src && \
-    autoreconf -si && \
-    ./configure && \
-    make -j && \
-    cd ../../ && \
-    chown -R ${USER}:${USER} dectalk && \
-    ln -s /home/${USER}/dectalk/dist/say /usr/local/bin/dectalk
+RUN cd /usr/local/src && \
+    curl -fsSL https://github.com/dectalk/dectalk/releases/download/2023-10-30/ubuntu-latest.tar.gz -o dectalk.tar.gz && \
+    mkdir dectalk && \
+    tar -xzf dectalk.tar.gz -C dectalk/ && \
+    rm dectalk.tar.gz && \
+    chmod -R +x dectalk && \
+    ln -s /usr/local/src/dectalk/say /usr/local/bin/dectalk
 
 # Chrome
-RUN curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output chrome.deb && \
+RUN curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && \
     apt-get install -y ./chrome.deb && \
     rm chrome.deb
 
 # Chromedriver
 RUN CHROMEDRIVER_VERSION=$(curl https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE) && \
-    curl -L https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip --output chromedriver-linux64.zip && \
+    curl -fsSL https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip -o chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     rm chromedriver-linux64.zip && \
     chmod +x chromedriver-linux64/chromedriver && \
-    mv chromedriver-linux64/chromedriver /usr/local/bin && \
-    rm -rf chromedriver-linux64
+    mv chromedriver-linux64/chromedriver /usr/local/bin
+
+# Packages for compiling the game with Byond
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y rsync gcc-multilib lib32stdc++6 zlib1g-dev:i386 libssl-dev:i386 pkg-config:i386 libstdc++6 libstdc++6:i386
+
+# Install Cargo for building Rust-G
+USER ${USER}
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    ~/.cargo/bin/rustup target add i686-unknown-linux-gnu && \
+    chmod -R 770 ~/.cargo
+USER root
 
 ##########################################
 
@@ -155,9 +172,6 @@ RUN mkdir -p \
     bootstrap/cache && chmod -R a+rw storage
 
 COPY --link --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/composer
-COPY --link --chown=${USER}:${USER} --from=bun /usr/local/bin/bun /usr/local/bin/bun
-COPY --link --chown=${USER}:${USER} --from=node /usr/local/bin /usr/local/bin
-COPY --link --chown=${USER}:${USER} --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --link --chown=${USER}:${USER} ./supervisord.conf /etc/supervisor/
 COPY --link --chown=${USER}:${USER} ./octane/Swoole/supervisord.swoole.conf /etc/supervisor/conf.d/
 COPY --link --chown=${USER}:${USER} ./supervisord.*.conf /etc/supervisor/conf.d/
