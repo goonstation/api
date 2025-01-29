@@ -40,5 +40,6 @@
   "html-css-class-completion.enableFindUsage": true,
   "files.associations": {
     "*.stub": "php"
-  }
+  },
+  "phpstan.checkValidity": true
 }

@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process as FacadesProcess;
-use Str;
+use Illuminate\Support\Str;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\Process;
@@ -39,6 +40,8 @@ class Build
 
     private $mapSwitch = false;
 
+    public static $path = 'app/game-builder';
+
     private $rootDir;
 
     private $tmpDir;
@@ -55,13 +58,9 @@ class Build
 
     private $buildCdnDir;
 
-    private $deployDir;
+    private $artifactsDir;
 
-    private $rustgDir;
-
-    private $deployTargetRoot = '/remote-game';
-
-    private $deployTarget;
+    private $maxArtifacts = 3;
 
     private $cdnTargetRoot = '/cdn';
 
@@ -99,19 +98,17 @@ class Build
 
         $this->mapSwitch = $mapSwitch && $this->settings->map_id ? true : false;
 
-        $this->rootDir = storage_path('app/game-builder');
+        $this->rootDir = storage_path($this::$path);
         $this->tmpDir = "{$this->rootDir}/tmp";
         $this->rootByondDir = "{$this->rootDir}/byond";
         $this->rootRustgDir = "{$this->rootDir}/rustg";
         $this->serverDir = "{$this->rootDir}/servers/{$server->server_id}";
         $this->buildDir = "{$this->serverDir}/build";
         $this->buildCdnDir = "{$this->serverDir}/buildcdn";
-        $this->deployDir = "{$this->serverDir}/deploy";
+        $this->artifactsDir = "{$this->serverDir}/artifacts";
 
         $byondVersion = "{$this->settings->byond_major}.{$this->settings->byond_minor}";
         $this->byondDir = "{$this->rootByondDir}/$byondVersion";
-
-        $this->deployTarget = "{$this->deployTargetRoot}/servers/{$server->server_id}";
         $this->cdnTarget = "{$this->cdnTargetRoot}/{$server->server_id}";
 
         $this->procCacheKey = "GameBuild-{$this->server->server_id}-proc";
@@ -136,7 +133,6 @@ class Build
         $this->lastLogFlush = time();
         $logs = $this->logs;
         $this->logs = [];
-        // echo '[DEBUG] Batch inserting logs: '.count($logs).PHP_EOL;
         GameBuildLog::insert($logs);
         EventsGameBuildLog::dispatch($this->model->id, $logs);
     }
@@ -199,6 +195,11 @@ class Build
         if ($pid) {
             FacadesProcess::run("kill -9 $pid");
         }
+    }
+
+    private function getBuildStamp()
+    {
+        return $this->model->id;
     }
 
     private function createModel()
@@ -416,8 +417,16 @@ class Build
         $zip->open("$workDir/byond.zip");
         $zip->extractTo($workDir);
         $zip->close();
+        File::moveDirectory("$workDir/byond", "$workDir/$version");
 
-        File::moveDirectory("$workDir/byond", $this->byondDir);
+        $process = new Process([
+            'tar', 'czf',
+            "{$this->rootByondDir}/$version.tar.gz",
+            $version,
+        ], cwd: $workDir);
+        $this->runProcess($process);
+
+        File::moveDirectory("$workDir/$version", $this->byondDir);
         shell_exec("chmod -R 770 {$this->byondDir}");
         File::deleteDirectory($workDir);
 
@@ -446,60 +455,13 @@ class Build
         $this->log('Success');
     }
 
-    private function prepareDeployDir()
-    {
-        $this->checkCancelled();
-        $this->log('Preparing deploy directory', group: 'Deployment Preparation');
-        // Ensure deploy dir exists and is "empty"
-        if (File::exists($this->deployDir)) {
-            File::deleteDirectory($this->deployDir, preserve: true);
-        } else {
-            File::makeDirectory($this->deployDir, recursive: true);
-        }
-
-        File::makeDirectory("{$this->deployDir}/+secret", recursive: true);
-    }
-
-    private function prepareCompiledAssetsForDeploy()
-    {
-        $this->checkCancelled();
-        $this->log('Preparing compiled assets for deployment');
-        $files = ['goonstation.dmb', 'goonstation.rsc', 'buildByond.conf'];
-        $dirs = ['assets', 'config', 'strings', 'sound', 'tools'];
-        $secretDirs = ['assets', 'strings'];
-
-        foreach ($files as $file) {
-            File::move("{$this->buildDir}/$file", "{$this->deployDir}/$file");
-        }
-        foreach ($dirs as $dir) {
-            File::moveDirectory("{$this->buildDir}/$dir", "{$this->deployDir}/$dir");
-        }
-        foreach ($secretDirs as $dir) {
-            File::moveDirectory("{$this->buildDir}/+secret/$dir", "{$this->deployDir}/+secret/$dir");
-        }
-
-        // Dump test merge PR details to json files that the game can later read for whatever
-        $this->log('Dumping test merge pull request details');
-        File::makeDirectory("{$this->deployDir}/testmerges");
-        foreach ($this->testMergeSuccesses as $prId) {
-            Http::sink("{$this->deployDir}/testmerges/$prId.json")
-                ->get("https://api.github.com/repos/goonstation/goonstation/pulls/$prId");
-        }
-
-        $this->log('Creating rsc.zip');
-        $zip = new ZipArchive;
-        $zip->open("{$this->deployDir}/rsc.zip", ZipArchive::CREATE);
-        $zip->addFile("{$this->deployDir}/goonstation.rsc", 'goonstation.rsc');
-        $zip->close();
-    }
-
     private function buildRustg()
     {
         $this->checkCancelled();
         $this->log('Checking for updates', group: 'Rust-G');
-        $this->rustgDir = "{$this->rootRustgDir}/{$this->settings->rustg_version}";
+        $rustgArtifact = "{$this->rootRustgDir}/{$this->settings->rustg_version}.tar.gz";
 
-        if (File::exists($this->rustgDir)) {
+        if (File::exists($rustgArtifact)) {
             // Rust-g version already built
             $this->log("Already built {$this->settings->rustg_version}");
 
@@ -536,9 +498,16 @@ class Build
         );
         $this->runProcess($process, false, false);
 
-        File::makeDirectory($this->rustgDir);
-        File::copy("$workDir/target/i686-unknown-linux-gnu/release/librust_g.so", "{$this->rustgDir}/librust_g.so");
-        shell_exec("chmod -R 770 {$this->rustgDir}");
+        $this->log('Creating artifact');
+        File::makeDirectory("$workDir/{$this->settings->rustg_version}");
+        File::move(
+            "$workDir/target/i686-unknown-linux-gnu/release/librust_g.so",
+            "$workDir/{$this->settings->rustg_version}/librust_g.so"
+        );
+        $process = new Process([
+            'tar', 'czf', $rustgArtifact, $this->settings->rustg_version,
+        ], cwd: $workDir);
+        $this->runProcess($process);
         File::deleteDirectory($workDir);
 
         $this->log("Updated to {$this->settings->rustg_version}");
@@ -578,7 +547,7 @@ class Build
         // Install target Node version if missing
         if (File::missing("$nvm/versions/node/v{$this->cdnNodeVersion}")) {
             $this->log('Missing target Node version, installing');
-            $process = Process::fromShellCommandline($nvmUse("nvm install {$this->cdnNodeVersion}"));
+            $process = Process::fromShellCommandline($nvmUse("nvm install --no-progress {$this->cdnNodeVersion}"));
             $this->runProcess($process);
         }
 
@@ -605,54 +574,144 @@ class Build
         );
         $this->runProcess($process);
 
-        File::moveDirectory("{$this->buildCdnDir}/build", "{$this->deployDir}/cdn");
         $this->log('Built');
     }
 
-    private function deploy()
+    private function createGameArtifacts()
     {
         $this->checkCancelled();
-        $this->log('Starting deployment', group: 'Deployment');
+        $this->log('Creating game artifacts', group: 'Game Artifact');
+        $buildStamp = $this->getBuildStamp();
 
-        // Byond
-        $this->log('Deploying Byond executables');
-        $process = Process::fromShellCommandline("rsync -ar --ignore-existing {$this->rootByondDir}/* {$this->deployTargetRoot}/byond/");
-        $this->runProcess($process);
-
-        // Rust-G
-        $this->log('Deploying Rust-G library');
-        $process = Process::fromShellCommandline("rsync -ar --ignore-existing {$this->rootRustgDir}/* {$this->deployTargetRoot}/rust-g/");
-        $this->runProcess($process);
-
-        // CDN
-        $this->log('Deploying CDN assets');
-        if (! File::exists($this->cdnTarget)) {
-            File::makeDirectory($this->cdnTarget);
-        }
-        $process = Process::fromShellCommandline("mv {$this->deployDir}/rsc.zip {$this->cdnTarget}/");
-        $this->runProcess($process);
-        if (File::exists("{$this->deployDir}/cdn")) {
-            $process = Process::fromShellCommandline("rsync -rl {$this->deployDir}/cdn/* {$this->cdnTarget}/ && rm -r {$this->deployDir}/cdn");
-            $this->runProcess($process);
+        // Dump test merge PR details to json files that the game can later read for whatever
+        $this->log('Dumping test merge pull request details');
+        File::makeDirectory("{$this->buildDir}/testmerges");
+        foreach ($this->testMergeSuccesses as $prId) {
+            try {
+                Http::sink("{$this->buildDir}/testmerges/$prId.json")
+                    ->get("https://api.github.com/repos/goonstation/goonstation/pulls/$prId");
+            } catch (\Throwable) {
+                // dont care if this fails
+            }
         }
 
         // Stamp runtime tool versions so the game startup script can pick the right stuff
         $buildEnv = [
-            "BYOND_DIR={$this->settings->byond_major}.{$this->settings->byond_minor}",
-            "RUSTG_DIR={$this->settings->rustg_version}",
+            "BUILDSTAMP=$buildStamp",
+            "BYOND_MAJOR_VERSION={$this->settings->byond_major}",
+            "BYOND_MINOR_VERSION={$this->settings->byond_minor}",
+            "RUSTG_VERSION={$this->settings->rustg_version}",
         ];
-        File::put("{$this->deployDir}/.env.build", implode("\n", $buildEnv));
+        File::put("{$this->buildDir}/.env.build", implode("\n", $buildEnv));
 
-        // Game
-        $this->log('Deploying game update files');
-        $gameUpdateDir = "{$this->deployTarget}/game/update";
-        if (! File::exists($gameUpdateDir)) {
-            File::makeDirectory($gameUpdateDir, recursive: true);
+        $this->log('Creating rsc.zip');
+        $zip = new ZipArchive;
+        $zip->open("{$this->buildDir}/rsc.zip", ZipArchive::CREATE);
+        $zip->addFile("{$this->buildDir}/goonstation.rsc", 'goonstation.rsc');
+        $zip->close();
+
+        if (File::missing($this->artifactsDir)) {
+            File::makeDirectory($this->artifactsDir);
         }
-        $process = Process::fromShellCommandline("rm -r $gameUpdateDir/* >/dev/null 2>&1");
-        $process->run();
-        $process = Process::fromShellCommandline("rsync -rl {$this->deployDir}/* $gameUpdateDir/");
+
+        // What to include in the deployed game
+        $include = [
+            'goonstation.dmb', 'goonstation.rsc', 'buildByond.conf', '.env.build',
+            'assets', 'config', 'strings', 'sound', 'tools', 'testmerges',
+            '+secret/assets', '+secret/strings',
+        ];
+        $this->log('Creating new game build artifact archive');
+        $process = new Process([
+            'tar', 'czf', "{$this->artifactsDir}/game-$buildStamp.tar.gz", ...$include,
+        ], cwd: $this->buildDir);
         $this->runProcess($process);
+
+        $this->log('Cleaning up old artifacts');
+        $artifacts = collect(File::allFiles($this->artifactsDir))
+            ->filter(function ($artifact) {
+                return str_starts_with($artifact->getFilename(), 'game-') && $artifact->getExtension() === 'gz';
+            })
+            ->sortBy(function (SplFileInfo $artifact) {
+                preg_match('/^game-(\d+)\.tar\.gz$/i', $artifact->getFilename(), $matches);
+
+                return (int) $matches[1];
+            });
+
+        if ($artifacts->count() > $this->maxArtifacts) {
+            for ($i = 0; $i < ($artifacts->count() - $this->maxArtifacts); $i++) {
+                File::delete($artifacts[$i]);
+            }
+        }
+    }
+
+    private function deployCdn()
+    {
+        $this->checkCancelled();
+        $this->log('Deploying CDN assets');
+
+        if (! File::exists($this->cdnTarget)) {
+            File::makeDirectory($this->cdnTarget);
+        }
+        $process = Process::fromShellCommandline("mv {$this->buildDir}/rsc.zip {$this->cdnTarget}/");
+        $this->runProcess($process);
+        if (File::exists("{$this->buildCdnDir}/build")) {
+            $process = Process::fromShellCommandline("rsync -rl {$this->buildCdnDir}/build/* {$this->cdnTarget}/ && rm -r {$this->buildCdnDir}/build");
+            $this->runProcess($process);
+        }
+    }
+
+    private function uploadArtifacts()
+    {
+        $this->checkCancelled();
+        $this->log('Checking what artifacts the remote server wants');
+        $buildStamp = $this->getBuildStamp();
+        $byondVersion = "{$this->settings->byond_major}.{$this->settings->byond_minor}";
+
+        $toUpload = ['game' => false, 'byond' => false, 'rustg' => false];
+        $res = Http::get("{$this->server->orchestrator}/build/check", [
+            'server' => $this->server->server_id,
+            'buildstamp' => $buildStamp,
+            'byond' => $byondVersion,
+            'rustg' => $this->settings->rustg_version,
+        ]);
+        $res = $res->json();
+        $toUpload = $res['outdated'];
+
+        if (in_array(true, $toUpload, true) === false) {
+            $this->log('Remote server wants no new artifacts');
+
+            return;
+        }
+
+        $req = Http::createPendingRequest();
+        if ($toUpload['game']) {
+            $this->log('Attaching new game build artifact to upload');
+            $req->attach(
+                'build',
+                file_get_contents("{$this->artifactsDir}/game-$buildStamp.tar.gz"),
+                "game-$buildStamp.tar.gz"
+            );
+        }
+        if ($toUpload['byond']) {
+            $this->log('Attaching new byond artifact to upload');
+            $req->attach(
+                'byond',
+                file_get_contents("{$this->rootByondDir}/$byondVersion.tar.gz"),
+                "$byondVersion.tar.gz"
+            );
+        }
+        if ($toUpload['rustg']) {
+            $this->log('Attaching new rust-g artifact to upload');
+            $req->attach(
+                'rustg',
+                file_get_contents("{$this->rootRustgDir}/{$this->settings->rustg_version}.tar.gz"),
+                "{$this->settings->rustg_version}.tar.gz"
+            );
+        }
+        $this->log('Uploading new artifacts to remote server');
+        $res = $req->withQueryParameters(['server' => $this->server->server_id])
+            ->post("{$this->server->orchestrator}/build/upload");
+        $res->throwUnlessStatus(200);
     }
 
     private function buildFull()
@@ -667,11 +726,8 @@ class Build
         $this->mergeTestMerges();
         $this->updateByond();
         $this->prepareBuildDir();
+
         $this->compile();
-
-        $this->prepareDeployDir();
-        $this->prepareCompiledAssetsForDeploy();
-
         $this->buildRustg();
         $this->buildCdn();
     }
@@ -685,9 +741,6 @@ class Build
         $this->mergeTestMerges();
         $this->prepareBuildDir();
         $this->compile();
-
-        $this->prepareDeployDir();
-        $this->prepareCompiledAssetsForDeploy();
     }
 
     public function start()
@@ -712,7 +765,10 @@ class Build
                 $this->buildFull();
             }
 
-            $this->deploy();
+            $this->createGameArtifacts();
+            $this->log('Starting deployments', group: 'Deployment');
+            $this->deployCdn();
+            $this->uploadArtifacts();
 
             if ($this->mapSwitch) {
                 $this->notifyGameOfMapSwitch();

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BansController;
 use App\Http\Controllers\Api\DectalkController;
 use App\Http\Controllers\Api\GameAdminRanksController;
 use App\Http\Controllers\Api\GameAdminsController;
+use App\Http\Controllers\Api\GameBuildArtifactsController;
 use App\Http\Controllers\Api\GameBuildsController;
 use App\Http\Controllers\Api\GameBuildSettingsController;
 use App\Http\Controllers\Api\GameBuildTestMergesController;
@@ -192,6 +193,12 @@ Route::middleware(['isadmin'])->group(function () {
         Route::post('/', 'store');
         Route::put('/{testMerge}', 'update');
         Route::delete('/{testMerge}', 'destroy');
+    });
+    Route::controller(GameBuildArtifactsController::class)->prefix('game-build-artifacts')->group(function () {
+        Route::get('/check', 'check');
+        Route::get('/game', 'game');
+        Route::get('/byond', 'byond');
+        Route::get('/rustg', 'rustg');
     });
     Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
         Route::get('/status', 'status');

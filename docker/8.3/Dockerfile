@@ -4,7 +4,7 @@ LABEL maintainer="Taylor Otwell"
 
 ARG WWWGROUP=1000
 ARG WWWUSER=1000
-ARG NODE_VERSION="23.4.0"
+ARG NODE_VERSION="current"
 ARG POSTGRES_VERSION=16
 
 WORKDIR /var/www/html
@@ -55,7 +55,7 @@ SHELL ["/bin/bash", "--login", "-c"]
 ENV NVM_DIR /home/sail/.nvm
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
     . $NVM_DIR/nvm.sh && \
-    nvm install --default $NODE_VERSION && \
+    nvm install node && \
     nvm use default && \
     npm install -g npm pnpm bun yarn
 USER root
