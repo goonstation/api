@@ -5,7 +5,11 @@ ARG COMPOSER_VERSION=latest
 
 ARG NODE_VERSION="current"
 
+ARG BUN_VERSION="latest"
+
 FROM node:${NODE_VERSION}-slim AS node
+
+FROM oven/bun:${BUN_VERSION} AS bun
 
 FROM composer:${COMPOSER_VERSION} AS vendor
 
@@ -107,17 +111,6 @@ RUN cp ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
 # Custom stuff
 ##########################################
 
-# Node via NVM
-USER ${USER}
-SHELL ["/bin/bash", "--login", "-c"]
-ENV NVM_DIR /home/${USER}/.nvm
-RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
-    . $NVM_DIR/nvm.sh && \
-    nvm install node && \
-    nvm use default && \
-    npm install -g npm bun
-USER root
-
 # Youtube DLP
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
     chmod a+rwx /usr/local/bin/yt-dlp
@@ -172,6 +165,9 @@ RUN mkdir -p \
     bootstrap/cache && chmod -R a+rw storage
 
 COPY --link --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/composer
+COPY --link --chown=${USER}:${USER} --from=bun /usr/local/bin/bun /usr/local/bin/bun
+COPY --link --chown=${USER}:${USER} --from=node /usr/local/bin /usr/local/bin
+COPY --link --chown=${USER}:${USER} --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --link --chown=${USER}:${USER} ./supervisord.conf /etc/supervisor/
 COPY --link --chown=${USER}:${USER} ./octane/Swoole/supervisord.swoole.conf /etc/supervisor/conf.d/
 COPY --link --chown=${USER}:${USER} ./supervisord.*.conf /etc/supervisor/conf.d/
@@ -179,6 +175,14 @@ COPY --link --chown=${USER}:${USER} ./php.ini ${PHP_INI_DIR}/conf.d/99-octane.in
 COPY --link --chown=${USER}:${USER} ./start-container /usr/local/bin/start-container
 COPY --link --chown=${USER}:${USER} ./healthcheck /usr/local/bin/healthcheck
 COPY --link --chown=${USER}:${USER} ./utilities.sh /tmp/utilities.sh
+
+# Node via NVM
+ENV NVM_DIR /home/${USER}/.nvm
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && \
+    nvm install node && \
+    nvm use default && \
+    npm install -g npm bun
 
 RUN chmod +x /usr/local/bin/start-container /usr/local/bin/healthcheck
 
