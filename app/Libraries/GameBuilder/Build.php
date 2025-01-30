@@ -834,8 +834,8 @@ class Build
 
         try {
             DiscordBot::export('wireci/build_finished', 'POST', $data);
-        } catch (\Throwable) {
-            // ignore
+        } catch (\Throwable $e) {
+            $this->log($e->getMessage(), group: 'error');
         }
     }
 
