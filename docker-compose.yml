@@ -22,8 +22,6 @@ services:
       IGNITION_LOCAL_SITES_PATH: '${PWD}'
     volumes:
       - '.:/var/www/html'
-      - '../remote-game:/remote-game' # For testing CI
-      - '../goonhub-cdn/public:/cdn' # For testing CI
     networks:
       - sail
     depends_on:

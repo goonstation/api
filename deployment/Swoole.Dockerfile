@@ -107,10 +107,6 @@ RUN cp ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
 # Custom stuff
 ##########################################
 
-# Create SS13 group for permissions sync on game deployments
-RUN groupadd --force -g 6969 ss13 \
-    && useradd -ms /bin/bash --no-log-init --no-user-group -g 6969 -u 6969 ss13
-
 # Node via NVM
 USER ${USER}
 SHELL ["/bin/bash", "--login", "-c"]
