@@ -11,6 +11,7 @@
     "dedoc/scramble": "^0.11.27",
     "geoip2/geoip2": "^3.1",
     "glhd/gretel": "^1.7",
+    "graham-campbell/github": "^12.6",
     "guzzlehttp/guzzle": "^7.2",
     "inertiajs/inertia-laravel": "2.x-dev",
     "intervention/image-laravel": "*",
@@ -20,6 +21,7 @@
     "laravel/jetstream": "^5.0",
     "laravel/octane": "^2.3",
     "laravel/pulse": "^1.0",
+    "laravel/reverb": "^1.0",
     "laravel/sanctum": "^4.0",
     "laravel/socialite": "^5.9",
     "laravel/telescope": "^5.0",
@@ -80,7 +82,8 @@
     "docs-models": [
       "@php artisan ide-helper:models -W -R",
       "./vendor/bin/pint ./app/Models"
-    ]
+    ],
+    "pint": "./vendor/bin/pint"
   },
   "extra": {
     "laravel": {

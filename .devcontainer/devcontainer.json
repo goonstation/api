@@ -24,14 +24,20 @@
         "open-southeners.laravel-pint",
         "eamodio.gitlens",
         "oven.bun-vscode",
-        "SanderRonde.phpstan-vscode"
+        "SanderRonde.phpstan-vscode",
+        "dunstontc.vscode-docker-syntax",
+        "abdelaziz18003.quasar-snippets",
+        "hossaini.quasar-intellisense",
+        "mrmlnc.vscode-scss",
+        "Zignd.html-css-class-completion",
+        "GitHub.vscode-github-actions"
       ],
       "settings": {}
     }
   },
   "remoteUser": "sail",
   "initializeCommand": "sh .devcontainer/init.sh",
-  "postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true && composer install && bun install"
+  "postCreateCommand": "chown -R sail:sail /var/www/html 2>/dev/null || true && composer install && bun install"
   // "forwardPorts": [],
   // "runServices": [],
   // "shutdownAction": "none",

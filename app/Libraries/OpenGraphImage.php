@@ -59,7 +59,7 @@ class OpenGraphImage
         }
 
         $body = $response->getBody();
-        if (! $response->successful() || ! $body) {
+        if ($response->failed() || ! $body->getSize()) {
             return false;
         }
 
@@ -80,7 +80,7 @@ class OpenGraphImage
 
     protected function getEtag(string $path): string
     {
-        return md5(File::lastModified($path));
+        return md5((string) File::lastModified($path));
     }
 
     protected function isFileExpired(string $path): bool

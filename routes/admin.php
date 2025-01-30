@@ -7,10 +7,14 @@ use App\Http\Controllers\Web\Admin\EventsController;
 use App\Http\Controllers\Web\Admin\GameAdminRanksController;
 use App\Http\Controllers\Web\Admin\GameAdminsController;
 use App\Http\Controllers\Web\Admin\GameAuthCallbackController;
+use App\Http\Controllers\Web\Admin\GameBuildsController;
+use App\Http\Controllers\Web\Admin\GameBuildSettingsController;
+use App\Http\Controllers\Web\Admin\GameBuildTestMergesController;
 use App\Http\Controllers\Web\Admin\JobBansController;
 use App\Http\Controllers\Web\Admin\LogsController;
 use App\Http\Controllers\Web\Admin\MapsController;
 use App\Http\Controllers\Web\Admin\MedalsController;
+use App\Http\Controllers\Web\Admin\OrchestrationController;
 use App\Http\Controllers\Web\Admin\PlayerNotesController;
 use App\Http\Controllers\Web\Admin\PlayersController;
 use App\Http\Controllers\Web\Admin\RedirectsController;
@@ -175,6 +179,43 @@ Route::middleware([
 
         Route::controller(GameAuthCallbackController::class)->prefix('game-auth-callback')->group(function () {
             Route::post('/', 'informGame')->name('admin.game-auth-callback');
+        });
+
+        Route::controller(GameBuildsController::class)->prefix('builds')->group(function () {
+            Route::get('/', 'index')->name('admin.builds.index')->breadcrumb('Builds');
+            Route::get('/status', 'status')->name('admin.builds.status');
+            Route::post('/start', 'store')->name('admin.builds.store');
+            Route::get('/{build}', 'show')->whereNumber('build')->name('admin.builds.show')->breadcrumb('', 'admin.builds.index');
+            Route::post('/cancel', 'cancel')->name('admin.builds.cancel');
+        });
+
+        Route::controller(GameBuildSettingsController::class)->prefix('builds/settings')->group(function () {
+            Route::get('/', 'index')->name('admin.builds.settings.index')->breadcrumb('', 'admin.builds.index');
+            Route::get('/create', 'create')->name('admin.builds.settings.create')->breadcrumb('', 'admin.builds.settings.index');
+            Route::post('/', 'store')->name('admin.builds.settings.store');
+            Route::get('/{setting}', 'edit')->whereNumber('setting')->name('admin.builds.settings.edit')->breadcrumb('', 'admin.builds.settings.index');
+            Route::put('/{setting}', 'update')->whereNumber('setting')->name('admin.builds.settings.update');
+            Route::delete('/{setting}', 'destroy')->whereNumber('setting')->name('admin.builds.settings.delete');
+        });
+
+        Route::controller(GameBuildTestMergesController::class)->prefix('builds/test-merges')->group(function () {
+            Route::get('/', 'index')->name('admin.builds.test-merges.index')->breadcrumb('', 'admin.builds.index');
+            Route::get('/create', 'create')->name('admin.builds.test-merges.create')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::post('/', 'store')->name('admin.builds.test-merges.store');
+            Route::get('/{testMerge}', 'edit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::put('/{testMerge}', 'update')->whereNumber('testMerge')->name('admin.builds.test-merges.update');
+            Route::delete('/{testMerge}', 'destroy')->whereNumber('testMerge')->name('admin.builds.test-merges.delete');
+            Route::delete('/', 'destroyMulti')->name('admin.builds.test-merges.delete-multi');
+            Route::get('/pr', 'pullRequests')->name('admin.builds.test-merges.pr');
+            Route::get('/pr/{prId}', 'pullRequestDetails')->whereNumber('prId')->name('admin.builds.test-merges.pr-details');
+            Route::get('/{testMerge}/commit', 'editCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit-commit')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::put('/{testMerge}/commit', 'updateCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.update-commit');
+            Route::put('/{prId}/commits', 'updateCommits')->whereNumber('prId')->name('admin.builds.test-merges.update-commits');
+        });
+
+        Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
+            Route::get('/status', 'status')->name('admin.orchestration.status');
+            Route::post('/restart', 'restart')->name('admin.orchestration.restart');
         });
     });
 });

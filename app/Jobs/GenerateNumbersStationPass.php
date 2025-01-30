@@ -31,7 +31,7 @@ class GenerateNumbersStationPass implements ShouldQueue
      */
     public function handle()
     {
-        //Read and parse source material
+        // Read and parse source material
         $source = Storage::disk('local')->get('numbers-station-cipher-source.txt');
         if (! $source) {
             return;
@@ -39,7 +39,7 @@ class GenerateNumbersStationPass implements ShouldQueue
         $source = explode("\n", $source);
         $source = array_values(array_filter($source));
 
-        //Generate a random password
+        // Generate a random password
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHILMNOPRSTUWY';
         $charactersLength = strlen($characters);
         $password = '';
@@ -52,11 +52,11 @@ class GenerateNumbersStationPass implements ShouldQueue
         $numbers = '';
         $count = 1;
 
-        //For each password char
+        // For each password char
         foreach ($passArray as $char) {
             $numBlock = '';
 
-            //Get paragraphs containing char
+            // Get paragraphs containing char
             $paragraphs = [];
             $icount = 0;
             foreach ($source as $key => $p) {
@@ -68,12 +68,12 @@ class GenerateNumbersStationPass implements ShouldQueue
                 }
                 $icount++;
             }
-            //Pick a random paragraph
+            // Pick a random paragraph
             $randKey = array_rand($paragraphs);
             $paragraph = $source[$randKey];
             $numBlock .= "$randKey ";
 
-            //Get words containing char
+            // Get words containing char
             $allWords = explode(' ', $paragraph);
             $ourWords = [];
             $icount = 0;
@@ -87,12 +87,12 @@ class GenerateNumbersStationPass implements ShouldQueue
                 $icount++;
             }
 
-            //Pick a random word
+            // Pick a random word
             $randKey = array_rand($ourWords);
             $word = $allWords[$randKey];
             $numBlock .= "$randKey ";
 
-            //Get all characters in word matching char
+            // Get all characters in word matching char
             $allChars = str_split($word);
             $ourChars = [];
             $icount = 0;
@@ -106,7 +106,7 @@ class GenerateNumbersStationPass implements ShouldQueue
                 $icount++;
             }
 
-            //Pick a random char
+            // Pick a random char
             $randKey = array_rand($ourChars);
             $numBlock .= "$randKey";
 

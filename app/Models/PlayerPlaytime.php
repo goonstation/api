@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $player_id
@@ -24,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class PlayerPlaytime extends Model
+class PlayerPlaytime extends BaseModel
 {
     use HasFactory;
 

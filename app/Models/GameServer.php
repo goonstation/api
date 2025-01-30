@@ -4,7 +4,7 @@ namespace App\Models;
 
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $invisible
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $orchestrator
+ * @property-read \App\Models\GameBuildSetting|null $gameBuildSetting
  * @property-read mixed $byond_link
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer filter(array $input = [], $filter = null)
@@ -34,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereInvisible($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereOrchestrator($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer wherePort($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereServerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameServer whereShortName($value)
@@ -41,7 +44,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class GameServer extends Model
+class GameServer extends BaseModel
 {
     use Filterable, HasFactory;
 
@@ -50,5 +53,10 @@ class GameServer extends Model
     public function getByondLinkAttribute()
     {
         return 'byond://'.$this->address.':'.$this->port;
+    }
+
+    public function gameBuildSetting(): HasOne
+    {
+        return $this->hasOne(GameBuildSetting::class, 'server_id', 'server_id');
     }
 }

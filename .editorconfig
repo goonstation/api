@@ -14,9 +14,9 @@ trim_trailing_whitespace = false
 [*.{yml,yaml,json}]
 indent_size = 2
 
-[docker-compose.yml]
-indent_size = 4
+[*.php]
+max_line_length = 100
 
-[*.{vue,js,scss,blade.php}]
+[*.{vue,js,ts,scss,blade.php}]
 indent_size = 2
-max_line_length=100
+max_line_length = 100

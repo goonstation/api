@@ -2,13 +2,13 @@
 
 namespace App\Models\Events;
 
+use App\Models\BaseModel;
 use App\Models\GameRound;
 use App\Models\Player;
 use App\Traits\HasOpenGraphData;
 use App\Traits\Voteable;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -53,7 +53,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class EventFine extends Model
+class EventFine extends BaseModel
 {
     use Filterable, HasFactory, HasOpenGraphData, Voteable;
 

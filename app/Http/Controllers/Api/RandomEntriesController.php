@@ -22,7 +22,7 @@ class RandomEntriesController extends Controller
      * Get a list of random entries by type
      *
      * @return array{
-     *  data: EventTicketResource[]|EventFineResource[]|EventAiLawResource[]|EventStationNameResource[]
+     *  data: array<EventTicketResource|EventFineResource|EventAiLawResource|EventStationNameResource>
      * }
      */
     public function index(Request $request)
@@ -41,7 +41,8 @@ class RandomEntriesController extends Controller
         $data = DB::table($table)
             ->inRandomOrder()
             ->limit($data['count'] ?? 10)
-            ->get();
+            ->get()
+            ->toArray();
 
         return [
             'data' => $data,

@@ -32,3 +32,32 @@
 .q-checkbox__svg {
   color: $dark;
 }
+
+.q-select--with-chips {
+  .q-field__native {
+    margin-top: 6px;
+  }
+
+  .q-chip {
+    &--dense {
+      height: 2em;
+      background-color: $grey-9;
+      border-radius: 3px;
+      font-size: 13px;
+
+      .q-chip__icon--remove {
+        margin-right: 0;
+      }
+    }
+
+    &__content {
+      padding: 0 2px 2px 2px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm-max) {
+  .q-dialog__inner--minimized {
+    padding: 12px;
+  }
+}

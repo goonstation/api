@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -61,7 +60,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @mixin \Eloquent
  */
-class Ban extends Model
+class Ban extends BaseModel
 {
     use Filterable, HasFactory, SoftDeletes;
 
@@ -95,7 +94,7 @@ class Ban extends Model
             return null;
         }
 
-        return $this->expires_at->longAbsoluteDiffForHumans(99);
+        return $this->expires_at->longAbsoluteDiffForHumans(parts: 99);
     }
 
     public function getActiveAttribute()
@@ -147,7 +146,7 @@ class Ban extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function originalBanDetail()
     {

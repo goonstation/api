@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -56,7 +55,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @mixin \Eloquent
  */
-class JobBan extends Model
+class JobBan extends BaseModel
 {
     use Filterable, HasFactory, SoftDeletes;
 
@@ -89,7 +88,7 @@ class JobBan extends Model
             return null;
         }
 
-        return $this->expires_at->longAbsoluteDiffForHumans(99);
+        return $this->expires_at->longAbsoluteDiffForHumans(parts: 99);
     }
 
     /**

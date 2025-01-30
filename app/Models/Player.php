@@ -7,7 +7,6 @@ use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -61,7 +60,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Player extends Model
+class Player extends BaseModel
 {
     use Filterable, HasFactory, HasOpenGraphData;
 
@@ -78,14 +77,20 @@ class Player extends Model
         return $this->hasMany(PlayerConnection::class, 'player_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function latestConnection()
     {
-        return $this->hasOne(PlayerConnection::class, 'player_id')->latest();
+        return $this->hasOne(PlayerConnection::class, 'player_id')->latestOfMany();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function firstConnection()
     {
-        return $this->hasOne(PlayerConnection::class, 'player_id')->oldest();
+        return $this->hasOne(PlayerConnection::class, 'player_id')->oldestOfMany();
     }
 
     /**

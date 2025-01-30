@@ -1,0 +1,76 @@
+name: CI
+
+on: [push]
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.3]
+    env:
+      extensions: pcntl, zip, pgsql, gd, imap, mysql, bcmath, soap, intl, ldap, msgpack, igbinary, redis, swoole, memcached, pcov, imagick
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP extensions cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.extensions }}
+          key: cache-v1 # can be any string, change to clear the extension cache
+
+      - name: Cache PHP extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.extensions }}
+          coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run Pint
+        run: ./vendor/bin/pint --test
+
+      - name: Restore PHPStan result cache
+        uses: actions/cache/restore@v4
+        with:
+          path: tmp # same as in phpstan.neon
+          key: 'phpstan-result-cache-${{ github.run_id }}'
+          restore-keys: |
+            phpstan-result-cache-
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan
+
+      - name: Save PHPStan result cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: tmp # same as in phpstan.neon
+          key: 'phpstan-result-cache-${{ github.run_id }}'

@@ -109,7 +109,7 @@
     </site-nav>
 
     <q-page-container>
-      <q-page class="row column no-wrap q-pa-md page-wrapper">
+      <q-page class="row column no-wrap q-pa-sm q-pa-md-md page-wrapper">
         <slot />
       </q-page>
     </q-page-container>
@@ -251,8 +251,13 @@ export default {
               route('admin.logs.index'),
               route('admin.errors.index'),
               route('admin.medals.index'),
+              route('admin.builds.index'),
             ],
             children: [
+              {
+                label: 'Builds',
+                href: route('admin.builds.index'),
+              },
               {
                 label: 'Errors',
                 href: route('admin.errors.index'),

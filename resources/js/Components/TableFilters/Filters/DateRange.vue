@@ -5,6 +5,7 @@
         :icon="fromModel ? ionCalendar : ionCalendarClearOutline"
         align="center"
         class="flex-grow"
+        style="min-height: 30px"
         color="grey-10"
       >
         <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">
@@ -32,6 +33,7 @@
         :icon="toModel ? ionCalendar : ionCalendarClearOutline"
         align="center"
         class="flex-grow"
+        style="min-height: 30px"
         color="grey-10"
       >
         <q-popup-proxy transition-show="scale" transition-hide="scale" class="row">

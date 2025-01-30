@@ -2,6 +2,7 @@
   <div>
     <q-table
       ref="tableRef"
+      v-show="!(lazyFetching && firstLoad)"
       v-bind="$attrs"
       v-model:pagination="_pagination"
       v-model:selected="selected"
@@ -16,13 +17,14 @@
       binary-state-sort
       @request="onRequest"
       @selection="handleSelection"
+      @vue:mounted="onTableMounted"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
         <slot :name="name" v-bind="slotData" />
       </template>
 
       <template v-slot:top v-if="!hideTop">
-        <div class="flex full-width bg-dark q-pa-md rounded-borders items-start no-wrap">
+        <div class="flex full-width gap-xs-sm bg-dark q-pa-md rounded-borders items-start no-wrap">
           <slot name="top-left" />
 
           <div v-if="showGridFilters" class="gh-grid-filters flex items-start gap-xs-sm">
@@ -40,12 +42,12 @@
                   </q-item>
                   <q-separator />
                   <q-item class="column">
-                    <template v-for="column in columns">
-                      <div v-if="column.sortable">
+                    <template v-for="col in columns">
+                      <div v-if="col.sortable" :key="`sort-filter-${col.name}`">
                         <q-radio
                           v-model="_pagination.sortBy"
-                          :val="column.name"
-                          :label="column.label"
+                          :val="col.name"
+                          :label="col.label"
                           @update:model-value="onSortChange({ column: $event })"
                           size="sm"
                         />
@@ -59,6 +61,7 @@
             <template v-for="(filter, name) in filters">
               <grid-header-filter
                 v-if="filter"
+                :key="`filter-${name}`"
                 :column="columns.find((col) => col.name === name)"
                 :filter="filter"
                 @update="onFilterInput(name, $event)"
@@ -73,7 +76,7 @@
                 <q-markup-table class="q-py-sm" separator="none" flat dense>
                   <tbody>
                     <template v-for="col in columns">
-                      <tr v-if="col.filterable !== false">
+                      <tr v-if="col.filterable !== false" :key="`add-filter-${col.name}`">
                         <td style="width: 1px">
                           <q-chip color="grey-9" square>{{ col.label }}</q-chip>
                         </td>
@@ -142,31 +145,35 @@
 
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-if="canSelect">
+          <q-th v-if="canSelect" class="q-table--col-auto-width">
             <q-checkbox v-model="props.selected" dense />
           </q-th>
           <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-no-wrap">
             {{ col.label }}
           </q-th>
         </q-tr>
-        <q-tr no-hover>
+        <q-tr v-if="canSelect || !gridFilters" no-hover>
           <q-th v-if="canSelect" />
-          <q-th v-for="col in props.cols" :key="col.name">
-            <table-filter
-              v-if="col.filterable !== false"
-              :model-value="filters[col.name]"
-              @update:modelValue="onFilterInput(col.name, $event)"
-              @clear="filters[col.name] = null"
-              :filter-type="col.filter?.type || 'text'"
-            />
-          </q-th>
+          <template v-if="!gridFilters">
+            <q-th v-for="col in props.cols" :key="col.name">
+              <table-filter
+                v-if="col.filterable !== false"
+                :model-value="filters[col.name]"
+                @update:modelValue="onFilterInput(col.name, $event)"
+                @clear="filters[col.name] = null"
+                :filter-type="col.filter?.type || 'text'"
+              />
+            </q-th>
+          </template>
         </q-tr>
       </template>
 
       <template v-slot:body="props">
         <slot name="body-prepend" :props="props" />
         <q-tr
+          @click="onRowClick(props)"
           :props="props"
+          :class="{ 'clickable-row': clickableRows }"
           :style="props.rowIndex % 2 === 0 ? '' : 'background-color: rgba(255, 255, 255, 0.02);'"
         >
           <q-td v-if="canSelect">
@@ -189,7 +196,7 @@
             />
             <template v-else>
               <template v-if="col.name === 'actions'">
-                <q-btn-dropdown menu-self="top middle" flat dense>
+                <q-btn-dropdown @click="$event.stopPropagation()" menu-self="top middle" flat dense>
                   <q-list class="action-dropdown" dense>
                     <q-item
                       v-if="routes.view"
@@ -227,11 +234,8 @@
                 </Link>
                 <template v-else>{{ col.value }}</template>
               </template>
-              <template v-else-if="booleanColumns.includes(col.name)">
-                <q-icon
-                  :name="col.value === 'true' || col.value === true ? ionCheckmark : ionClose"
-                  size="xs"
-                />
+              <template v-else-if="col.cell?.format">
+                <table-format :model-value="col.value" :format-type="col.cell.format || 'text'" />
               </template>
               <template v-else>
                 {{ col.value }}
@@ -267,6 +271,7 @@
             />
           </div>
           <q-pagination
+            v-if="!(props.pagesNumber === 1 && props.pagesNumber === _pagination.page)"
             v-model="_pagination.page"
             :max="props.pagesNumber"
             @update:model-value="onPageChange"
@@ -278,6 +283,17 @@
         </div>
       </template>
     </q-table>
+
+    <template v-if="lazyFetching && firstLoad">
+      <table-skeleton
+        v-if="!Object.keys($attrs).includes('grid')"
+        :columns="_columns.filter((c) => visibleColumns.includes(c.name))"
+        :rows="_pagination.rowsPerPage"
+        :dense="Object.keys($attrs).includes('dense')"
+        :options="skeletonOptions"
+        class="flex flex-grow"
+      />
+    </template>
 
     <q-dialog v-if="routes.delete" v-model="confirmDelete">
       <q-card flat bordered>
@@ -302,8 +318,10 @@
         <q-card-section class="row items-center no-wrap">
           <q-avatar :icon="ionInformationCircleOutline" color="negative" text-color="dark" />
           <span class="q-ml-sm">
-            Are you sure you want to delete {{ selected.length }}
-            item<template v-if="selected.length !== 1">s</template>
+            Are you sure you want to delete {{ selected.length }} item<template
+              v-if="selected.length !== 1"
+              >s</template
+            >
           </span>
         </q-card-section>
 
@@ -326,26 +344,38 @@
     min-width: 0;
   }
 }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 200ms;
+
+  &:hover,
+  &:focus {
+    background-color: rgba($primary, 0.25) !important;
+  }
+}
 </style>
 
 <script>
-import { toRaw } from 'vue'
+import TableSkeleton from '@/Components/Skeletons/Table.vue'
+import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
+import TableFormat from '@/Components/TableFormats/BaseFormat.vue'
 import { router } from '@inertiajs/vue3'
-import { merge, isEmpty, isEqual } from 'lodash'
-import axios from 'axios'
 import {
+  ionAdd,
   ionCalendar,
   ionCheckmark,
   ionClose,
-  ionSwapVertical,
-  ionAdd,
   ionEye,
-  ionPencil,
-  ionTrash,
-  ionSettings,
   ionInformationCircleOutline,
+  ionPencil,
+  ionSettings,
+  ionSwapVertical,
+  ionTrash,
 } from '@quasar/extras/ionicons-v6'
-import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
+import axios from 'axios'
+import { isEmpty, isEqual, merge } from 'lodash'
+import { toRaw } from 'vue'
 import GridHeaderFilter from './Partials/GridHeaderFilter.vue'
 
 export default {
@@ -366,11 +396,17 @@ export default {
   },
 
   components: {
+    TableSkeleton,
     TableFilter,
+    TableFormat,
     GridHeaderFilter,
   },
 
   props: {
+    propKey: {
+      type: String,
+      default: '',
+    },
     initial: {
       type: Object,
       default: () => ({}),
@@ -411,6 +447,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    gridFilters: {
+      type: Boolean,
+      default: false,
+    },
     createButtonText: {
       type: String,
       default: 'Create',
@@ -421,7 +461,7 @@ export default {
     },
     extraParams: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     hideTop: {
       type: Boolean,
@@ -435,6 +475,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    noRowActions: {
+      type: Boolean,
+      default: false,
+    },
+    clickableRows: {
+      type: Boolean,
+      default: false,
+    },
+    skeletonOptions: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   data() {
@@ -442,6 +494,7 @@ export default {
       rows: [],
       _columns: [],
       loading: false,
+      firstLoad: true,
       _pagination: {
         sortBy: 'id',
         descending: true,
@@ -488,16 +541,8 @@ export default {
       return visible
     },
 
-    booleanColumns() {
-      const booleanColumns = []
-      this.columns.forEach((column) => {
-        if (column?.filter?.type === 'boolean') booleanColumns.push(column.name)
-      })
-      return booleanColumns
-    },
-
     showGridFilters() {
-      return !this.noFilters && Object.keys(this.$attrs).includes('grid')
+      return !this.noFilters && (Object.keys(this.$attrs).includes('grid') || this.gridFilters)
     },
 
     currentSortColumn() {
@@ -511,6 +556,7 @@ export default {
     },
 
     hasActions() {
+      if (this.noRowActions) return false
       let ret = false
       const actionRoutes = ['view', 'edit', 'delete']
       for (const route in this.routes) {
@@ -529,21 +575,14 @@ export default {
     hasMultiDelete() {
       return !!this.routes.deleteMulti
     },
+
+    lazyFetching() {
+      return !!this.propKey
+    },
   },
 
   created() {
     const mergedPagination = merge(this._pagination, this.pagination)
-
-    // For an initial server-built packet of data
-    if (!isEmpty(this.initial)) {
-      this.rows = this.initial.data
-      // if (this.initial.current_page > 1) {
-      //   mergedPagination.page = this.initial.current_page
-      // }
-      // mergedPagination.rowsPerPage = this.initial.per_page || 15
-      mergedPagination.rowsNumber = this.initial.total
-    }
-
     this.defaultFilters = Object.assign({}, this.search)
     this.defaultPagination = Object.assign({}, mergedPagination)
     this._pagination = mergedPagination
@@ -551,14 +590,14 @@ export default {
 
   mounted() {
     if (!this.loadUrlParams()) {
-      if (this.fetchOnLoad) this.updateTable()
+      if (this.fetchOnLoad || this.lazyFetching) this.updateTable()
     }
     this.$emit('loaded', { filters: this.filters })
   },
 
   methods: {
     async fetchFromServer(page, fetchCount, sortBy, descending) {
-      return await axios.get(this.routes.fetch, {
+      const options = {
         params: {
           page,
           per_page: fetchCount,
@@ -567,7 +606,19 @@ export default {
           filters: this.filters,
           ...this.extraParams,
         },
-      })
+      }
+
+      if (this.propKey) {
+        options.headers = {
+          'X-Inertia': true,
+          'X-Inertia-Partial-Data': this.propKey,
+          'X-Inertia-Partial-Component': this.$page.component,
+          'X-Inertia-Version': this.$page.version,
+        }
+      }
+
+      const res = await axios.get(this.routes.fetch, options)
+      return this.propKey ? { data: res.data.props[this.propKey] } : res
     },
 
     async onRequest(tableProps) {
@@ -578,8 +629,9 @@ export default {
       let res
       try {
         res = await this.fetchFromServer(page, rowsPerPage, sortBy, descending)
-      } catch (e) {
+      } catch {
         this.loading = false
+        this.firstLoad = false
         return
       }
       this.rows.splice(0, this.rows.length, ...res.data.data)
@@ -597,6 +649,7 @@ export default {
       }
 
       this.loading = false
+      this.firstLoad = false
       this.$emit('fetch-end', res.data)
     },
 
@@ -653,7 +706,7 @@ export default {
       if (newParams) {
         newUrl += `?${newParams}`
       }
-      router.visit(newUrl, { preserveState: true, replace: true })
+      router.push({ url: newUrl, preserveState: true, preserveScroll: true })
     },
 
     onFiltersChange() {
@@ -723,9 +776,11 @@ export default {
     async deleteMultiItems() {
       const deleteRoute = this.getRoute(this.routes.deleteMulti)
       try {
-        const response = await axios.delete(deleteRoute, { data: {
-          ids: this.selected.map((item) => item.id)
-        }})
+        const response = await axios.delete(deleteRoute, {
+          data: {
+            ids: this.selected.map((item) => item.id),
+          },
+        })
         this.$q.notify({
           message: response.data.message || 'Items successfully deleted.',
           color: 'positive',
@@ -753,7 +808,7 @@ export default {
 
       const oldSelectedRow = this.storedSelectedRow
       const [newSelectedRow] = rows
-      const { ctrlKey, shiftKey } = evt
+      const { shiftKey } = evt
 
       if (shiftKey !== true) {
         this.storedSelectedRow = newSelectedRow
@@ -789,6 +844,24 @@ export default {
     updateTable() {
       this.$refs.tableRef.requestServerInteraction()
     },
+
+    onRowClick(props) {
+      this.$emit('row-click', props.row)
+    },
+
+    onTableMounted() {
+      const init = this.propKey ? this.$page.props[this.propKey] : this.initial
+
+      // For an initial server-built packet of data
+      if (!isEmpty(init)) {
+        this.rows = init.data
+        // if (this.initial.current_page > 1) {
+        //   mergedPagination.page = this.initial.current_page
+        // }
+        // mergedPagination.rowsPerPage = this.initial.per_page || 15
+        this._pagination.rowsNumber = init.total
+      }
+    },
   },
 
   watch: {
@@ -819,7 +892,7 @@ export default {
       handler() {
         // Skip a server fetch if we're setting filters from the URL
         // Because we can assume our initial data from the server is already filtered
-        if (this.settingFiltersFromUrl) {
+        if (this.settingFiltersFromUrl && Object.keys(this.initial).length) {
           this.settingFiltersFromUrl = false
           return
         }
@@ -836,7 +909,7 @@ export default {
 
     extraParams: {
       deep: true,
-      handler(val) {
+      handler() {
         this.updateTable()
       },
     },

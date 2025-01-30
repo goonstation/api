@@ -4,12 +4,16 @@ use App\Http\Controllers\Api\BansController;
 use App\Http\Controllers\Api\DectalkController;
 use App\Http\Controllers\Api\GameAdminRanksController;
 use App\Http\Controllers\Api\GameAdminsController;
+use App\Http\Controllers\Api\GameBuildArtifactsController;
+use App\Http\Controllers\Api\GameBuildsController;
+use App\Http\Controllers\Api\GameBuildSettingsController;
+use App\Http\Controllers\Api\GameBuildTestMergesController;
 use App\Http\Controllers\Api\GameRoundsController;
 use App\Http\Controllers\Api\GauntletController;
 use App\Http\Controllers\Api\JobBansController;
 use App\Http\Controllers\Api\MapsController;
-use App\Http\Controllers\Api\MapSwitchesController;
 use App\Http\Controllers\Api\NumbersStationController;
+use App\Http\Controllers\Api\OrchestrationController;
 use App\Http\Controllers\Api\PlayerAntagsController;
 use App\Http\Controllers\Api\PlayerMedalsController;
 use App\Http\Controllers\Api\PlayerMetadataController;
@@ -115,9 +119,6 @@ Route::middleware(['isadmin'])->group(function () {
     Route::controller(MapsController::class)->prefix('maps')->group(function () {
         Route::post('/generate', 'generate');
     });
-    Route::controller(MapSwitchesController::class)->prefix('map-switch')->group(function () {
-        Route::post('/', 'store');
-    });
     Route::controller(VpnChecksController::class)->prefix('vpncheck')->group(function () {
         Route::get('/{ip}', 'check');
     });
@@ -174,5 +175,33 @@ Route::middleware(['isadmin'])->group(function () {
     });
     Route::controller(ServerPerformanceController::class)->prefix('server-performance')->group(function () {
         Route::get('/', 'index');
+    });
+    Route::controller(GameBuildsController::class)->prefix('game-builds')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/status', 'status');
+        Route::post('/build', 'build');
+        Route::post('/cancel', 'cancel');
+    });
+    Route::controller(GameBuildSettingsController::class)->prefix('game-build-settings')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{setting}', 'update');
+        Route::delete('/{setting}', 'destroy');
+    });
+    Route::controller(GameBuildTestMergesController::class)->prefix('game-build-test-merges')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{testMerge}', 'update');
+        Route::delete('/{testMerge}', 'destroy');
+    });
+    Route::controller(GameBuildArtifactsController::class)->prefix('game-build-artifacts')->group(function () {
+        Route::get('/check', 'check');
+        Route::get('/game', 'game');
+        Route::get('/byond', 'byond');
+        Route::get('/rustg', 'rustg');
+    });
+    Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
+        Route::get('/status', 'status');
+        Route::post('/restart', 'restart');
     });
 });

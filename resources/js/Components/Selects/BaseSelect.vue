@@ -8,6 +8,7 @@
     :loading="loading"
     :option-value="optionValue"
     :option-label="optionLabel"
+    :option-disable="optionDisable"
     map-options
     emit-value
     @virtual-scroll="onScroll"
@@ -16,8 +17,16 @@
     <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
-    <template #selected-item="{ opt }">
-      {{ opt[fieldLabel || optionLabel] }}
+    <template #selected-item="{ index, opt, removeAtIndex }">
+      <q-chip
+        v-if="Object.keys($attrs).includes('use-chips')"
+        @remove="removeAtIndex(index)"
+        removable
+        dense
+      >
+        {{ opt[fieldLabel || optionLabel] }}
+      </q-chip>
+      <template v-else>{{ opt[fieldLabel || optionLabel] }}</template>
     </template>
   </q-select>
 </template>
@@ -34,6 +43,11 @@ export default {
     fieldLabel: String,
     defaultItems: Array,
     searchKey: String,
+    disabledItems: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 
   computed: {
@@ -138,7 +152,7 @@ export default {
       this.loadedDefaultItem = false
     },
 
-    onScroll({ to, ref }) {
+    onScroll({ to }) {
       if (this.loading || this.firstLoad) return
       const lastIndex = this.options.length - 1
       if (to === lastIndex) {
@@ -146,7 +160,7 @@ export default {
       }
     },
 
-    filterFn(val, update, abort) {
+    filterFn(val, update) {
       if (this.searchKey && val !== this.search) {
         // new search
         this.search = val
@@ -167,6 +181,10 @@ export default {
       update(() => {
         this.load()
       })
+    },
+
+    optionDisable(option) {
+      return option.disable || this.disabledItems.includes(option[this.optionValue])
     },
   },
 

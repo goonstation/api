@@ -104,7 +104,7 @@ class RemoteMusic implements ShouldQueue
             'file' => $publicPath,
             'title' => $audio->getTitle(),
             'duration' => $audio->getDuration(),
-            'duration_human' => gmdate('H:i:s', $audio->getDuration()),
+            'duration_human' => gmdate('H:i:s', (int) $audio->getDuration()),
             'filesize' => HumanReadable::bytesToHuman($fileSize),
             'admin_ckey' => $this->gameAdminCkey,
         ]);

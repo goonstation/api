@@ -20,3 +20,4 @@ horizon.log
 **/.DS_Store
 .config
 .data
+/tmp

@@ -17,8 +17,8 @@ class ApiSanctumGuard extends SanctumGuard
     public function __invoke(Request $request)
     {
         if ($token = $this->getTokenFromRequest($request)) {
+            /** @var \Laravel\Sanctum\PersonalAccessToken */
             $model = Sanctum::$personalAccessTokenModel;
-
             $accessToken = $model::findToken($token);
 
             if (! $this->isValidAccessToken($accessToken) ||
@@ -26,6 +26,7 @@ class ApiSanctumGuard extends SanctumGuard
                 return;
             }
 
+            /** @var \App\Models\User */
             $tokenable = $accessToken->tokenable->withAccessToken(
                 $accessToken
             );

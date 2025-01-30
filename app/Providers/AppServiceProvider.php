@@ -8,7 +8,9 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Auth\RequestGuard;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -65,6 +67,22 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('base64img', function (string $expression) {
             return "<?php echo 'data:image/jpeg;base64,'.base64_encode(file_get_contents($expression)); ?>";
+        });
+
+        Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
+            $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+            /** @var Collection $this */
+            return new LengthAwarePaginator(
+                $total ? $this : $this->forPage($page, $perPage)->values(),
+                $total ?: $this->count(),
+                $perPage,
+                $page,
+                [
+                    'path' => LengthAwarePaginator::resolveCurrentPath(),
+                    'pageName' => $pageName,
+                ]
+            );
         });
     }
 

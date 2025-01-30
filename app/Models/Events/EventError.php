@@ -2,11 +2,11 @@
 
 namespace App\Models\Events;
 
+use App\Models\BaseModel;
 use App\Models\GameRound;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class EventError extends Model
+class EventError extends BaseModel
 {
     use Filterable, HasFactory;
 

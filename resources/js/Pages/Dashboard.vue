@@ -1,12 +1,5 @@
-<script setup>
-import AdminLayout from '@/Layouts/AdminLayout.vue'
-import GameAuthCallback from '@/Components/GameAuthCallback.vue'
-
-const props = defineProps(['authFromGame', 'authFromGameServer'])
-</script>
-
 <template>
-  <AdminLayout title="Dashboard">
+  <div>
     <q-card class="gh-card q-mb-md" flat>
       <div class="gh-card__header q-pa-md bordered">
         <span>Hello</span>
@@ -19,12 +12,32 @@ const props = defineProps(['authFromGame', 'authFromGameServer'])
       </q-card-section>
     </q-card>
 
-    <iframe
-      src="/pulse"
-      class="full-width flex-grow no-border rounded-borders"
-      style="min-height: 500px"
-    ></iframe>
+    <div class="row">
+      <div class="col col-md-6 col-lg-4">
+        <server-orchestration />
+      </div>
+    </div>
 
-    <game-auth-callback :server-id="props.authFromGame" :server="props.authFromGameServer" />
-  </AdminLayout>
+    <game-auth-callback :server-id="authFromGame" :server="authFromGameServer" />
+  </div>
 </template>
+
+<script>
+import GameAuthCallback from '@/Components/GameAuthCallback.vue'
+import ServerOrchestration from '@/Components/Orchestration/Manager.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+
+export default {
+  layout: (h, page) => h(AdminLayout, { title: 'Dashboard' }, () => page),
+
+  components: {
+    GameAuthCallback,
+    ServerOrchestration,
+  },
+
+  props: {
+    authFromGame: [Boolean, String],
+    authFromGameServer: [Object, null],
+  },
+}
+</script>

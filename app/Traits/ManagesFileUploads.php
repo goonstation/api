@@ -45,7 +45,7 @@ trait ManagesFileUploads
         $filename = str_replace('.'.$extension, '', $file->getClientOriginalName()); // Filename without extension
 
         // Add timestamp hash to name of the file
-        $filename .= '_'.md5(time()).'.'.$extension;
+        $filename .= '_'.md5((string) time()).'.'.$extension;
 
         return $filename;
     }

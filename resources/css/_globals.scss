@@ -39,6 +39,12 @@ a {
 .opacity-80 { opacity: 0.8; }
 .opacity-100 { opacity: 1; }
 
+.text-opacity-20 { color: color-mix(in srgb, currentColor 20%, transparent); }
+.text-opacity-40 { color: color-mix(in srgb, currentColor 40%, transparent); }
+.text-opacity-60 { color: color-mix(in srgb, currentColor 60%, transparent); }
+.text-opacity-80 { color: color-mix(in srgb, currentColor 80%, transparent); }
+.text-opacity-100 { color: color-mix(in srgb, currentColor 100%, transparent); }
+
 .flex-grow { flex-grow: 1; }
 .flex-grow-none { flex-grow: 0; }
 

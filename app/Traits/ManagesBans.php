@@ -12,10 +12,11 @@ use App\Models\PlayerNote;
 use Carbon\CarbonInterval;
 use Exception;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 trait ManagesBans
 {
-    private function banHistory($ckey, $compIds, $ips)
+    private function banHistory(string $ckey, Collection $compIds, Collection $ips)
     {
         $bans = Ban::with([
             'gameAdmin',
@@ -30,16 +31,16 @@ trait ManagesBans
                 // Check any of the ban details match the provided player details
                 if ($ckey) {
                     $query->where('ckey', $ckey);
-                } elseif (! $ckey && $compIds) {
+                } elseif ($compIds->isNotEmpty()) {
                     $query->whereIn('comp_id', $compIds);
-                } elseif (! $ckey && ! $compIds && $ips) {
+                } elseif ($ips->isNotEmpty()) {
                     $query->whereIn('ip', $ips);
                 }
 
-                if ($ckey && $compIds) {
+                if ($ckey && $compIds->isNotEmpty()) {
                     $query->orWhereIn('comp_id', $compIds);
                 }
-                if ($ckey && $ips) {
+                if ($ckey && $ips->isNotEmpty()) {
                     $query->orWhereIn('ip', $ips);
                 }
             })
