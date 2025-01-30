@@ -135,8 +135,10 @@ class Repo
             $this->updateReference($subRepoUrl);
 
             if (File::isEmptyDirectory("{$this->repoDir}/$path")) {
+                $this->run(['git', 'submodule', 'init',  '--', $path]);
+                $this->run(['git', 'submodule', 'set-url', '--', $path, "{$subRepoUrl->full}.git"]);
                 $this->run([
-                    'git', 'submodule', 'update', '--init',
+                    'git', 'submodule', 'update',
                     '--reference', "{$this->repoShared}/{$subRepoUrl->slug}",
                     '--', $path,
                 ], timeout: 300);
