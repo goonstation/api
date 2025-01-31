@@ -65,6 +65,20 @@ class GameBuildFilter extends ModelFilter
         return $this->where('map_switch', $val);
     }
 
+    public function success($val)
+    {
+        if ($val) {
+            return $this->whereNotNull('ended_at')->where('cancelled', false)->where('failed', false);
+        } else {
+            return $this->where('cancelled', true)->orWhere('failed', true);
+        }
+    }
+
+    public function building($val)
+    {
+        return $this->where('ended_at', $val ? '!=' : '=', null);
+    }
+
     public function cancelledBy($val)
     {
         return $this->related('cancelledBy', function ($query) use ($val) {

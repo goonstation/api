@@ -3,7 +3,7 @@
     <q-btn class="text-sm" color="grey-9" padding="xs sm" dense no-caps unelevated>
       <component v-if="filterContentComponent" :is="filterContentComponent" :filter="filter" />
       <template v-else>
-        {{ column.label }} {{ comparator }} {{ prettyFilter }}
+        {{ fullLabel }}
       </template>
       <q-menu :offset="[0, 10]">
         <div class="q-pa-sm flex items-center">
@@ -33,9 +33,7 @@ const componentNames = import.meta.glob('./GridFilterContent/*.vue')
 const components = []
 for (const name in componentNames) {
   const cleanName = name.replace(/(^.\/)|(\.vue$)|(GridFilterContent\/)/g, '')
-  components[cleanName] = defineAsyncComponent(() =>
-    import(`./GridFilterContent/${cleanName}.vue`)
-  )
+  components[cleanName] = defineAsyncComponent(() => import(`./GridFilterContent/${cleanName}.vue`))
 }
 
 export default {
@@ -56,14 +54,24 @@ export default {
   },
 
   computed: {
+    filterType() {
+      return this.column.filter?.type.toLowerCase() ?? ''
+    },
+
+    prefix() {
+      if (this.filterType === 'boolean' && this.filter === 0) {
+        return 'Not'
+      }
+      return ''
+    },
+
     comparator() {
-      const type = this.column.filter?.type.toLowerCase() ?? ''
-      if (type === 'daterange' || type === 'griddaterange') {
+      if (this.filterType === 'daterange' || this.filterType === 'griddaterange') {
         if (this.filter.includes('-')) return 'is between'
         else return 'is on'
-      } else if (type === 'boolean') {
+      } else if (this.filterType === 'boolean') {
         return ''
-      } else if (type === 'range') {
+      } else if (this.filterType === 'range') {
         return ''
       } else {
         return 'contains'
@@ -71,19 +79,27 @@ export default {
     },
 
     prettyFilter() {
-      const type = this.column.filter?.type.toLowerCase() ?? ''
-      if (type === 'daterange' || type === 'griddaterange') {
+      if (this.filterType === 'daterange' || this.filterType === 'griddaterange') {
         return this.filter.replace('-', ' and ')
       }
-      if (type === 'boolean') {
+      if (this.filterType === 'boolean') {
         return ''
       }
       return this.filter
     },
 
+    fullLabel() {
+      let label = ''
+      if (this.prefix) label += `${this.prefix} `
+      label += this.column.label
+      if (this.comparator) label += ` ${this.comparator}`
+      if (this.prettyFilter) label += ` ${this.prettyFilter}`
+      return label
+    },
+
     filterContentComponent() {
-      if (!this.column?.filter?.type) return null
-      const componentName = upperFirst(this.column.filter.type.toLowerCase())
+      if (!this.filterType) return null
+      const componentName = upperFirst(this.filterType)
       if (components[componentName]) return componentName
       return null
     },

@@ -60,7 +60,7 @@
 
             <template v-for="(filter, name) in filters">
               <grid-header-filter
-                v-if="filter"
+                v-if="isFilterSet(filter)"
                 :key="`filter-${name}`"
                 :column="columns.find((col) => col.name === name)"
                 :filter="filter"
@@ -694,9 +694,10 @@ export default {
       for (const p in this.filters) {
         const filter = this.filters[p]
         const propKey = `filters[${p}]`
-        if (!filter && urlSearch.has(propKey)) {
+        const filterExists = this.isFilterSet(filter)
+        if (!filterExists && urlSearch.has(propKey)) {
           urlSearch.delete(propKey)
-        } else if (filter) {
+        } else if (filterExists) {
           urlSearch.append(propKey, filter)
         }
       }
@@ -707,6 +708,13 @@ export default {
         newUrl += `?${newParams}`
       }
       router.push({ url: newUrl, preserveState: true, preserveScroll: true })
+    },
+
+    isFilterSet(val) {
+      if (typeof val === 'boolean' || typeof val === 'number') {
+        return true
+      }
+      return !!val
     },
 
     onFiltersChange() {

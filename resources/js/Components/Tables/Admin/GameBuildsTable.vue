@@ -5,6 +5,7 @@
     :routes="routes"
     :columns="columns"
     :show-columns="['created_at']"
+    :hide-columns="['cancelled', 'failed', 'map_switch', 'success']"
     :pagination="{ sortBy: 'created_at' }"
     @row-click="onRowClick"
     flat
@@ -57,6 +58,16 @@
         outline
         square
         >Failed</q-chip
+      >
+      <q-chip
+        v-else
+        class="q-my-none"
+        style="padding: 0 6px"
+        color="positive"
+        size="0.8em"
+        outline
+        square
+        >Success</q-chip
       >
     </template>
   </base-table>
@@ -126,6 +137,26 @@ export default {
           label: 'Status',
           filterable: false,
           headerClasses: 'q-table--col-auto-width',
+        },
+        {
+          name: 'cancelled',
+          label: 'Cancelled',
+          filter: { type: 'Boolean' },
+        },
+        {
+          name: 'failed',
+          label: 'Failed',
+          filter: { type: 'Boolean' },
+        },
+        {
+          name: 'map_switch',
+          label: 'Map Switch',
+          filter: { type: 'Boolean' },
+        },
+        {
+          name: 'success',
+          label: 'Successful',
+          filter: { type: 'Boolean' },
         },
       ],
     }

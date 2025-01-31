@@ -11,10 +11,11 @@ export default {
   computed: {
     model: {
       get() {
-        return this.modelValue
+        if (this.modelValue === null) return null
+        return !!this.modelValue
       },
       set(val) {
-        this.$emit('update:modelValue', val)
+        this.$emit('update:modelValue', val === null ? null : val ? 1 : 0)
       },
     },
   },
