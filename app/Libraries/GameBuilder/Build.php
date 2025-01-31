@@ -635,7 +635,8 @@ class Build
                 preg_match('/^game-(\d+)\.tar\.gz$/i', $artifact->getFilename(), $matches);
 
                 return (int) $matches[1];
-            });
+            })
+            ->values();
 
         if ($artifacts->count() > $this->maxArtifacts) {
             for ($i = 0; $i < ($artifacts->count() - $this->maxArtifacts); $i++) {
