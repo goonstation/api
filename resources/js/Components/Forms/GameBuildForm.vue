@@ -1,6 +1,11 @@
 <template>
   <q-form @submit="submit">
-    <game-servers-select v-model="form.server_id" :error="form.errors.server_id" class="q-mb-md" />
+    <game-servers-select
+      v-model="form.server_id"
+      :error="form.errors.server_id"
+      class="q-mb-md"
+      with-invisible
+    />
     <base-select
       v-model="form.map"
       label="Map"

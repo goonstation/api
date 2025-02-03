@@ -97,6 +97,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withInvisible: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup() {
@@ -137,9 +141,10 @@ export default {
       this.fetchError = false
       this.loading = true
       try {
-        const filters = {}
-        if (!this.withInactive) filters.active = true
-        const { data } = await axios.get(route('game-servers.index', { filters }))
+        const params = { filters: {} }
+        if (!this.withInactive) params.filters.active = true
+        if (this.withInvisible) params.with_invisible = true
+        const { data } = await axios.get(route('game-servers.index', params))
         this.servers = data.data
       } catch {
         this.fetchError = true

@@ -74,7 +74,7 @@ class Build
 
     private $testMergeConflicts = [];
 
-    private $error;
+    private $error = '';
 
     private $cancelled = false;
 
@@ -177,6 +177,9 @@ class Build
         Cache::set($this->procCacheKey, $process->getPid());
         $process->wait();
         Cache::forget($this->procCacheKey);
+        if (! $process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput() ?: $process->getOutput(), 69);
+        }
     }
 
     public function checkCancelled()
@@ -448,7 +451,7 @@ class Build
                 'PATH' => "{$this->byondDir}/bin:".getenv('PATH'),
                 'LD_LIBRARY_PATH' => "{$this->byondDir}/bin",
             ],
-            timeout: 300 // 5 minutes
+            timeout: 150 // 2.5 minutes
         );
         $this->runProcess($process);
 
@@ -664,6 +667,9 @@ class Build
     private function uploadArtifacts()
     {
         $this->checkCancelled();
+        if (! App::isProduction()) {
+            return;
+        }
         $this->log('Checking what artifacts the remote server wants');
         $buildStamp = $this->getBuildStamp();
         $byondVersion = "{$this->settings->byond_major}.{$this->settings->byond_minor}";
@@ -797,7 +803,8 @@ class Build
 
         } catch (\Throwable $e) {
             $message = $e->getMessage();
-            $this->log($message, group: 'error');
+            $logMessage = $e->getCode() === 69 ? 'Failed!' : $message;
+            $this->log($logMessage, group: 'error');
             $this->error = $message ? $message : true;
         }
 
