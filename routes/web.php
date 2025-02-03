@@ -58,19 +58,23 @@ Route::controller(AuthController::class)->prefix('/auth')->group(function () {
 });
 
 Route::controller(ChangelogController::class)->prefix('/changelog')->group(function () {
-    Route::get('/', 'index')->name('changelog')->breadcrumb('Changelog');
+    Route::get('/', 'index')->name('changelog')->breadcrumb('', 'home');
 });
 
 Route::controller(PlayersController::class)->prefix('/players')->group(function () {
     Route::get('/', 'index')->name('players.index')->breadcrumb('Players');
-    Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
-    Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')->breadcrumb('', 'players.search');
-    Route::get('/{ckey}', 'showByCkey')->name('players.show-by-ckey');
+    Route::middleware('noindex')->group(function () {
+        Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
+        Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')->breadcrumb('', 'players.search');
+        Route::get('/{ckey}', 'showByCkey')->name('players.show-by-ckey');
+    });
 });
 
 Route::controller(RoundsController::class)->prefix('/rounds')->group(function () {
     Route::get('/', 'index')->name('rounds.index')->breadcrumb('Rounds');
-    Route::get('/{round}', 'show')->whereNumber('round')->name('rounds.show')->breadcrumb('', 'rounds.index');
+    Route::middleware('noindex')->group(function () {
+        Route::get('/{round}', 'show')->whereNumber('round')->name('rounds.show')->breadcrumb('', 'rounds.index');
+    });
 });
 
 Route::prefix('/events')->group(function () {
@@ -81,22 +85,22 @@ Route::prefix('/events')->group(function () {
 
     Route::controller(DeathsController::class)->prefix('/deaths')->group(function () {
         Route::get('/', 'index')->name('deaths.index')->breadcrumb('Deaths');
-        Route::get('/{death}', 'show')->whereNumber('death')->name('deaths.show')->breadcrumb('', 'deaths.index');
+        Route::get('/{death}', 'show')->whereNumber('death')->name('deaths.show')->middleware('noindex')->breadcrumb('', 'deaths.index');
     });
 
     Route::controller(TicketsController::class)->prefix('/tickets')->group(function () {
         Route::get('/', 'index')->name('tickets.index')->breadcrumb('Tickets');
-        Route::get('/{ticket}', 'show')->whereNumber('ticket')->name('tickets.show')->breadcrumb('', 'tickets.index');
+        Route::get('/{ticket}', 'show')->whereNumber('ticket')->name('tickets.show')->middleware('noindex')->breadcrumb('', 'tickets.index');
     });
 
     Route::controller(FinesController::class)->prefix('/fines')->group(function () {
         Route::get('/', 'index')->name('fines.index')->breadcrumb('Fines');
-        Route::get('/{fine}', 'show')->whereNumber('fine')->name('fines.show')->breadcrumb('', 'fines.index');
+        Route::get('/{fine}', 'show')->whereNumber('fine')->name('fines.show')->middleware('noindex')->breadcrumb('', 'fines.index');
     });
 
     Route::controller(AntagsController::class)->prefix('/antags')->group(function () {
         Route::get('/', 'index')->name('antags.index')->breadcrumb('Antagonists');
-        Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->breadcrumb('', 'antags.index');
+        Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->middleware('noindex')->breadcrumb('', 'antags.index');
     });
 
     Route::controller(ErrorsController::class)->prefix('/errors')->group(function () {
@@ -107,14 +111,16 @@ Route::prefix('/events')->group(function () {
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/', 'index')->name('maps.index')->breadcrumb('Maps');
     Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
-    Route::get('/private/{file}', 'getPrivateTile')->where('file', '.*')->name('maps.private');
+    Route::middleware('noindex')->group(function () {
+        Route::get('/private/{file}', 'getPrivateTile')->where('file', '.*')->name('maps.private');
+    });
 });
 
 Route::controller(RedirectController::class)->prefix('/r')->group(function () {
     Route::get('/{path}', 'redirect')->where('path', '.*')->name('redirect');
 });
 
-Route::controller(TerminalController::class)->prefix('/secret')->group(function () {
+Route::controller(TerminalController::class)->prefix('/secret')->middleware('noindex')->group(function () {
     Route::get('/', 'index')->name('terminal.index');
     Route::post('/login', 'login')->name('terminal.login');
     Route::post('/sudo', 'sudo')->name('terminal.sudo');
@@ -123,6 +129,7 @@ Route::controller(TerminalController::class)->prefix('/secret')->group(function 
 
 Route::controller(GameServersController::class)->prefix('/game-servers')->group(function () {
     Route::get('/', 'index')->name('game-servers.index');
+    Route::get('/status', 'status')->name('game-servers.status');
 });
 
 Route::controller(VotesController::class)->prefix('/votes')->group(function () {
@@ -132,8 +139,10 @@ Route::controller(VotesController::class)->prefix('/votes')->group(function () {
 
 Route::controller(MedalsController::class)->prefix('/medals')->group(function () {
     Route::get('/', 'index')->name('medals.index')->breadcrumb('Medals');
-    Route::get('/{uuid}', 'show')->name('medals.show')->breadcrumb('', 'medals.index');
-    Route::get('/players/{uuid}', 'players')->name('medals.players');
+    Route::middleware('noindex')->group(function () {
+        Route::get('/{uuid}', 'show')->name('medals.show')->breadcrumb('', 'medals.index');
+        Route::get('/players/{uuid}', 'players')->name('medals.players');
+    });
 });
 
 require __DIR__.'/fortify.php';

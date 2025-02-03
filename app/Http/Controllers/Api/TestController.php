@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Github\ResultPager;
-use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Http\Request;
+use Spatie\SchemaOrg\GamePlayMode;
+use Spatie\SchemaOrg\Schema;
 
 class TestController extends Controller
 {
@@ -14,22 +14,35 @@ class TestController extends Controller
      */
     public function index(Request $request)
     {
-        // 21997
-        // S-Testmerged
+        $author = Schema::organization()
+            ->name('Goonstation')
+            ->url('https://github.com/goonstation/goonstation');
 
-        // GitHub::issue()->labels()->all('goonstation', 'goonstation', 21997)
-        // GitHub::issue()->labels()->add('goonstation', 'goonstation', 21997, 'S-Testmerged')
-        // GitHub::issue()->labels()->remove('goonstation', 'goonstation', 21997, 'S-Testmerged'),
+        $playMode = Schema::gamePlayMode()
+            ->name(GamePlayMode::MultiPlayer);
 
-        /** @var \Github\Client */
-        $conn = GitHub::connection();
-        $test = $conn->issue()->labels()->all(config('goonhub.github_organization'), config('goonhub.github_repo'), 21997);
+        $numberOfPlayers = Schema::quantitativeValue()
+            ->value('Number')
+            ->minValue(0)
+            ->maxValue(200);
 
-        // $pagination = new ResultPager($conn);
-        // $test = $pagination->fetchAll($conn->pullRequests(), 'all', ['goonstation', 'goonstation', ['state' => 'open']]);
+        $language = Schema::language()
+            ->name('English')
+            ->alternateName('en');
+
+        $game = Schema::videoGame()
+            ->name('Goonstation')
+            ->description('')
+            ->author($author)
+            ->genre([''])
+            ->gamePlatform(['PC game'])
+            ->playMode($playMode)
+            ->numberOfPlayers($numberOfPlayers)
+            ->downloadUrl('https://www.byond.com/download/')
+            ->inLanguage($language);
 
         return response()->json([
-            'message' => $test,
+            'message' => $game,
         ]);
     }
 }

@@ -25,7 +25,10 @@ class RoundsController extends Controller
             perPage: 30
         );
 
-        $this->setMeta(title: 'Rounds');
+        $this->setMeta(
+            title: 'Rounds',
+            description: 'Search through all the game rounds that have ever happened'
+        );
 
         if ($this->wantsInertia()) {
             return Inertia::render('Rounds/Index', [
@@ -59,6 +62,7 @@ class RoundsController extends Controller
 
         $this->setMeta(
             title: 'Round #'.number_format($gameRound->id),
+            description: 'See everything that happened on round #'.number_format($gameRound->id),
             image: ['type' => 'round', 'key' => $gameRound->id]
         );
 

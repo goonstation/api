@@ -28,7 +28,7 @@ class FinesController extends Controller
             perPage: 20
         );
 
-        $this->setMeta(title: 'Fines');
+        $this->setMeta(title: 'Fines', description: 'All fines');
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Fines/Index', [
@@ -64,6 +64,7 @@ class FinesController extends Controller
 
         $this->setMeta(
             title: 'Fine #'.number_format($fine->id),
+            description: 'View detailed information of this fine',
             image: ['type' => 'fine', 'key' => $fine->id]
         );
 

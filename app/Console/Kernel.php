@@ -27,8 +27,8 @@ class Kernel extends ConsoleKernel
         $schedule->job(new BuildChangelog)->everyFiveMinutes();
         $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
         $schedule->job(new GenerateNumbersStationPass)->hourly();
-        $schedule->job(new ClearOldDectalks)->dailyAt('03:03');
-        $schedule->job(new ClearOldAudio)->dailyAt('03:07');
+        $schedule->job(new ClearOldDectalks)->dailyAt('07:10');
+        $schedule->job(new ClearOldAudio)->dailyAt('07:20');
         $schedule->job(new GenerateGlobalPlayerStats)->daily();
         $schedule->job(new GameBuildOnRepoUpdate)->everyFiveMinutes();
 

@@ -93,8 +93,9 @@ class ErrorsController extends Controller
 
         $errors = $errors->simplePaginateFilter(987654321);
 
-        $this->setMeta(title: 'Errors');
         if ($this->wantsInertia($request)) {
+            $this->setMeta(title: 'Errors', description: 'Review recent errors that occurred ingame');
+
             return Inertia::render('Events/Errors/Index', [
                 'errors' => $errors,
             ]);

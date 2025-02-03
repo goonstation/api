@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\View;
 class OgImageController extends Controller
 {
     private $validTypes = [
+        'home' => HomeController::class,
         'round' => GameRound::class,
         'ticket' => EventTicket::class,
         'fine' => EventFine::class,
@@ -25,6 +26,10 @@ class OgImageController extends Controller
         'antag' => EventAntag::class,
         'player' => Player::class,
         'map' => Map::class,
+    ];
+
+    private $cacheOverrides = [
+        'home' => 60, // 60 seconds
     ];
 
     private function defaultImage()
@@ -41,12 +46,17 @@ class OgImageController extends Controller
             return $this->defaultImage();
         }
 
+        $cacheLength = OpenGraphImage::getCacheLength();
+        if (array_key_exists($type, $this->cacheOverrides)) {
+            $cacheLength = $this->cacheOverrides[$type];
+        }
+
         $imageKey = null;
         $imageData = null;
         $image = null;
         if (array_key_exists($type, $this->validTypes)) {
             $imageKey = $id;
-            $image = OpenGraphImage::getFile($type, $id);
+            $image = OpenGraphImage::getFile($type, $id, cacheLength: $cacheLength);
             if (! $image) {
                 $imageData = $this->validTypes[$type]::getOpenGraphData($id);
             }
@@ -54,7 +64,7 @@ class OgImageController extends Controller
             return $this->defaultImage();
         }
 
-        $image = $image ? $image : OpenGraphImage::getImage($type, $imageKey, $imageData);
+        $image = $image ? $image : OpenGraphImage::getImage($type, $imageKey, $imageData, cacheLength: $cacheLength);
 
         if (! $image) {
             return $this->defaultImage();
@@ -64,7 +74,7 @@ class OgImageController extends Controller
             ->withHeaders([
                 'Content-Type' => 'image/png',
                 'Cache-Control' => 'public'.
-                    ', max-age='.OpenGraphImage::getCacheLength().
+                    ', max-age='.$cacheLength.
                     ', must-revalidate',
                 'Age' => $image['age'],
                 'ETag' => $image['etag'],

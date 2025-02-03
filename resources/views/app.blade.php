@@ -23,6 +23,10 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+        @if ($page['props']['schema'])
+        {!! $page['props']['schema'] !!}
+        @endif
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])

@@ -80,7 +80,7 @@ class PlayersController extends Controller
         /** @phpstan-ignore-next-line */
         $totalAveragePlayersOnline = $totalAveragePlayersOnline->average_online;
 
-        $this->setMeta(title: 'Players');
+        $this->setMeta(title: 'Players', description: 'Check out player counts and statistics');
 
         return Inertia::render('Players/Index', [
             'averagePlayersOnline' => $averagePlayersOnline,
@@ -117,7 +117,7 @@ class PlayersController extends Controller
             )
             ->paginateFilter($request->input('per_page', 20));
 
-        $this->setMeta(title: 'Player Search');
+        $this->setMeta(title: 'Player Search', description: 'Search for a specific player');
         if ($this->wantsInertia($request)) {
             return Inertia::render('Players/Search', [
                 'players' => $players,
@@ -201,6 +201,7 @@ class PlayersController extends Controller
 
         $this->setMeta(
             title: 'Player '.($player->key ?? $player->ckey),
+            description: 'All the details of '.($player->key ?? $player->ckey),
             image: ['type' => 'player', 'key' => $player->id]
         );
 

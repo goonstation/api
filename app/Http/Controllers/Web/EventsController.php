@@ -23,7 +23,7 @@ class EventsController extends Controller
         // Total of all event types:
         // SELECT sum(reltuples) as estimate FROM pg_class where relname like 'events_%' and relkind = 'r';
 
-        $this->setMeta(title: 'Events');
+        $this->setMeta(title: 'Events', description: 'See a summary overview of all game events');
 
         return Inertia::render('Events/Index', [
             'counts' => [

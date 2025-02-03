@@ -32,7 +32,7 @@ class AntagsController extends Controller
             perPage: 20
         );
 
-        $this->setMeta(title: 'Antagonists');
+        $this->setMeta(title: 'Antagonists', description: 'All antagonists');
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Antags/Index', [
@@ -65,6 +65,7 @@ class AntagsController extends Controller
 
         $this->setMeta(
             title: 'Antagonist #'.number_format($antag->id),
+            description: 'View detailed information of this antagonist',
             image: ['type' => 'antag', 'key' => $antag->id]
         );
 

@@ -13,7 +13,6 @@
   <meta property="og:title" content="Play Goonstation">
   <meta property="og:type" content="website">
   <meta property="og:description" content="Join {{ $server->name }}">
-  <meta property="og:image" content="{{ asset('/storage/img/logo-goonstation.png') }}">
   <title>Play Goonstation</title>
 
   <style>

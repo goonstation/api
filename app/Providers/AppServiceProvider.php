@@ -66,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Blade::directive('base64img', function (string $expression) {
-            return "<?php echo 'data:image/jpeg;base64,'.base64_encode(file_get_contents($expression)); ?>";
+            return "<?php echo file_exists($expression) ? 'data:image/jpeg;base64,'.base64_encode(file_get_contents($expression)) : ''; ?>";
         });
 
         Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {

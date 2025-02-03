@@ -34,6 +34,7 @@
     "socialiteproviders/discord": "^4.2",
     "spatie/image-optimizer": "^1.7",
     "spatie/laravel-sitemap": "^7.3",
+    "spatie/schema-org": "^3.23",
     "symfony/css-selector": "^7.1",
     "symfony/panther": "^2.1",
     "tightenco/ziggy": "^2.4",

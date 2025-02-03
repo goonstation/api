@@ -54,7 +54,7 @@ class OpenGraphImage
                         'fullPage' => true,
                     ],
                 ]);
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException) {
             return false;
         }
 
@@ -83,18 +83,18 @@ class OpenGraphImage
         return md5((string) File::lastModified($path));
     }
 
-    protected function isFileExpired(string $path): bool
+    protected function isFileExpired(string $path, ?int $cacheLength = null): bool
     {
-        return $this->getFileAge($path) > $this->getCacheLength();
+        return $this->getFileAge($path) > ($cacheLength ?: $this->getCacheLength());
     }
 
-    public function getFile(string $type, string|int $key): array|bool
+    public function getFile(string $type, string|int $key, ?int $cacheLength = null): array|bool
     {
         $fullPath = $this->getFullPath($type, $key);
         if (! File::exists($fullPath)) {
             return false;
         }
-        if ($this->isFileExpired($fullPath)) {
+        if ($this->isFileExpired($fullPath, $cacheLength)) {
             return false;
         }
 
@@ -105,13 +105,13 @@ class OpenGraphImage
         ];
     }
 
-    public function getImage(string $type, string|int $key, $data): array|bool
+    public function getImage(string $type, string|int $key, $data, ?int $cacheLength = null): array|bool
     {
         $path = $this->storagePath.'/'.$type;
         $fullPath = $this->getFullPath($type, $key);
 
         $madeImage = false;
-        if (! File::exists($fullPath) || $this->isFileExpired($fullPath)) {
+        if (! File::exists($fullPath) || $this->isFileExpired($fullPath, $cacheLength)) {
             if (! File::exists($path)) {
                 File::makeDirectory($path, 0755, true);
             }

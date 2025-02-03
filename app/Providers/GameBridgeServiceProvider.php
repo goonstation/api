@@ -13,7 +13,7 @@ class GameBridgeServiceProvider extends ServiceProvider implements DeferrablePro
      */
     public function register(): void
     {
-        $this->app->singleton('game-bridge', GameBridge::class);
+        $this->app->singleton(GameBridge::class);
     }
 
     /**

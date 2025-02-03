@@ -32,7 +32,7 @@ class MapsController extends Controller
         }
 
         if ($this->wantsInertia($request)) {
-            $this->setMeta(title: 'Maps');
+            $this->setMeta(title: 'Maps', description: 'All the maps that players might encounter on their space travels');
 
             return Inertia::render('Maps/Index', [
                 'maps' => $query->get(),
@@ -71,6 +71,7 @@ class MapsController extends Controller
         $map = $map->firstOrFail();
         $this->setMeta(
             title: $map->name,
+            description: "Explore {$map->name}",
             image: ['type' => 'map', 'key' => $map->id]
         );
 

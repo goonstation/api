@@ -12,10 +12,11 @@
 
   <div class="row q-col-gutter-md q-mb-md">
     <div class="col-12 col-md-6 flex column no-wrap">
-      <player-trend :data="_playersOnline" class="q-mb-md" />
+      <player-trend :data="playersOnlineTrend" class="q-mb-md" />
       <div class="server-statuses gap-xs-sm">
         <server-status
           v-for="server in servers"
+          :key="server.id"
           :ref="`serverStatus${server.server_id}`"
           :server="server"
           @refreshed="onServerStatusRefreshed"
@@ -141,15 +142,15 @@
 </style>
 
 <script>
-import dayjs from 'dayjs'
-import { router } from '@inertiajs/vue3'
-import { ionNotifications, ionDocument } from '@quasar/extras/ionicons-v6'
-import AppLayout from '@/Layouts/AppLayout.vue'
 import Changelog from '@/Components/Changelog/Changelog.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import { router } from '@inertiajs/vue3'
+import { ionDocument, ionNotifications } from '@quasar/extras/ionicons-v6'
+import dayjs from 'dayjs'
 import PlayerTrend from './Partials/PlayerTrend.vue'
+import RecentRound from './Partials/RecentRound.vue'
 import ServerStatus from './Partials/ServerStatus.vue'
 import UsefulLinks from './Partials/UsefulLinks.vue'
-import RecentRound from './Partials/RecentRound.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Home' }, () => page),
@@ -172,7 +173,8 @@ export default {
 
   data() {
     return {
-      _playersOnline: null,
+      playersOnlineTrend: null,
+      latestPlayersOnline: {},
     }
   },
 
@@ -184,31 +186,28 @@ export default {
   },
 
   created() {
-    this._playersOnline = this.playersOnline
+    this.playersOnlineTrend = this.playersOnline
+    for (const server of this.servers) {
+      this.latestPlayersOnline[server.server_id] = 0
+    }
   },
 
   methods: {
     onServerStatusRefreshed({ serverId, status, error }) {
-      let totalPlayers = error ? 0 : parseInt(status.players)
-      // Check all the other servers for their reported player counts
-      for (const server of this.servers) {
-        if (serverId === server.server_id) continue
-        const serverStatusRef = this.$refs[`serverStatus${server.server_id}`][0]
-        if (serverStatusRef.status?.players) {
-          totalPlayers += parseInt(serverStatusRef.status.players)
-        }
-      }
+      const players = error ? 0 : parseInt(status.players)
+      this.latestPlayersOnline[serverId] = players
+      const totalPlayers = Object.values(this.latestPlayersOnline).reduce((a, b) => a + b, 0)
 
       // Insert or update the "online right now" entry for the players online chart
-      if (this._playersOnline.length) {
-        this._playersOnline[this._playersOnline.length - 1].online = totalPlayers
+      if (this.playersOnlineTrend.length) {
+        this.playersOnlineTrend[this.playersOnlineTrend.length - 1].online = totalPlayers
       } else {
-        this._playersOnline.push({
+        this.playersOnlineTrend.push({
           date: dayjs().format('YYYY-MM-DD'),
-          online: totalPlayers
+          online: totalPlayers,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>

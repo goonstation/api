@@ -6,8 +6,6 @@ return [
     'ci_url' => env('GOONHUB_CI_URL', null),
     'ci_api_key' => env('GOONHUB_CI_API_KEY', null),
 
-    'game_bridge_url' => env('GAME_BRIDGE_URL', null),
-
     'github_organization' => env('GITHUB_ORGANIZATION', null),
     'github_repo' => env('GITHUB_REPO', null),
 

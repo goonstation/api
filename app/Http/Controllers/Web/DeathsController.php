@@ -39,7 +39,7 @@ class DeathsController extends Controller
             perPage: 20
         );
 
-        $this->setMeta(title: 'Deaths');
+        $this->setMeta(title: 'Deaths', description: 'All deaths');
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Deaths/Index', [
@@ -77,6 +77,7 @@ class DeathsController extends Controller
 
         $this->setMeta(
             title: 'Death #'.number_format($death->id),
+            description: 'View detailed information of this death',
             image: ['type' => 'death', 'key' => $death->id]
         );
 

@@ -49,7 +49,7 @@ class MedalsController extends Controller
             ->limit(10)
             ->get();
 
-        $this->setMeta(title: 'Medals');
+        $this->setMeta(title: 'Medals', description: 'Check out all the medals that players can earn');
 
         return Inertia::render('Medals/Index', [
             'medals' => $medals,
@@ -73,7 +73,7 @@ class MedalsController extends Controller
             )
             ->firstOrFail();
 
-        $this->setMeta(title: $medal->title);
+        $this->setMeta(title: $medal->title, description: 'View details for this medal and who has earned it');
 
         return Inertia::render('Medals/Show', [
             'medal' => $medal,

@@ -2,10 +2,11 @@
 
 namespace App\Facades;
 
+use App\Libraries\GameBridge\GameBridge as GameBridgeLibrary;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \App\Libraries\GameBridge\GameBridge
+ * @see GameBridgeLibrary
  */
 class GameBridge extends Facade
 {
@@ -16,6 +17,6 @@ class GameBridge extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'game-bridge';
+        return GameBridgeLibrary::class;
     }
 }

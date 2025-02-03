@@ -1,7 +1,7 @@
 <template>
   <q-card
     tag="a"
-    :href="`https://play.goonhub.com/${server.server_id}`"
+    :href="$route('play', server.server_id)"
     :class="mapId && `server-status--map-${mapId}`"
     target="_blank"
     class="server-status"
@@ -22,7 +22,7 @@
         <div class="text-caption row">
           <div v-if="error">&nbsp;</div>
           <q-skeleton type="text" v-else-if="loading" width="100%" />
-          <template v-else="!loading">
+          <template v-else>
             <span>{{ $formats.capitalize(status.mode) }} Mode</span>
             <q-separator vertical color="grey" class="q-mx-sm q-my-xs" />
             <span>{{ status.players }} players</span>
@@ -167,12 +167,12 @@ export default {
 
     roundTime() {
       if (!this.status.elapsed || this.isPreRound) return 0
-      return dayjs.duration(this.status.elapsed, 'seconds').format('H[h] m[m]')
+      return dayjs.duration(parseInt(this.status.elapsed), 'seconds').format('H[h] m[m]')
     },
 
     mapId() {
       if (!this.status.map_id) return ''
-      return this.status.map_id.toLowerCase().replace('/\s/g', '')
+      return this.status.map_id.toLowerCase().replace(/\s/g, '')
     },
   },
 
@@ -192,30 +192,29 @@ export default {
   methods: {
     async refresh() {
       this.error = false
-      let expireTime = 60 // seconds
+
       try {
-        const res = await axios.get(`${this.$page.props.env.GAME_BRIDGE_URL}/status`, {
+        const { data } = await axios.get(route('game-servers.status'), {
           params: {
             server: this.server.server_id,
           },
         })
-        this.status = res.data.response
-        expireTime = res.data.meta.cacheExpires + 1
+        this.status = data.data
       } catch (e) {
         this.error = e.message
         this.status = {}
       }
 
-      // Refresh again when the cache has expired
       this.refreshTimer = setTimeout(() => {
         this.refresh()
-      }, expireTime * 1000)
+      }, 60 * 1000)
 
       this.$emit('refreshed', {
         serverId: this.server.server_id,
         status: this.status,
         error: this.error,
       })
+
       this.loading = false
     },
   },

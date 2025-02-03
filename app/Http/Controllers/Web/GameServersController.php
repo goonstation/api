@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Facades\GameBridge;
 use App\Http\Controllers\Controller;
 use App\Models\GameServer;
 use App\Traits\IndexableQuery;
@@ -30,5 +31,29 @@ class GameServersController extends Controller
         );
 
         return $gameServers;
+    }
+
+    public function status(Request $request)
+    {
+        $request->validate([
+            'server' => 'required|string',
+        ]);
+
+        $gameServer = GameServer::select(['server_id', 'address', 'port'])
+            ->where('server_id', $request['server'])
+            ->firstOrFail();
+
+        $res = GameBridge::create()
+            ->target($gameServer)
+            ->message('status')
+            ->send();
+
+        if ($res->error) {
+            return abort(500, $res->message);
+        }
+
+        parse_str($res->message, $status);
+
+        return ['data' => $status];
     }
 }

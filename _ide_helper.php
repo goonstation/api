@@ -22358,10 +22358,10 @@ namespace App\Facades {
          *
          * @static 
          */
-        public static function getFile($type, $key)
+        public static function getFile($type, $key, $cacheLength = null)
         {
             /** @var \App\Libraries\OpenGraphImage $instance */
-            return $instance->getFile($type, $key);
+            return $instance->getFile($type, $key, $cacheLength);
         }
 
         /**
@@ -22369,17 +22369,17 @@ namespace App\Facades {
          *
          * @static 
          */
-        public static function getImage($type, $key, $data)
+        public static function getImage($type, $key, $data, $cacheLength = null)
         {
             /** @var \App\Libraries\OpenGraphImage $instance */
-            return $instance->getImage($type, $key, $data);
+            return $instance->getImage($type, $key, $data, $cacheLength);
         }
 
             }
     /**
      * 
      *
-     * @see \App\Libraries\GameBridge\GameBridge
+     * @see GameBridgeLibrary
      */
     class GameBridge {
         /**

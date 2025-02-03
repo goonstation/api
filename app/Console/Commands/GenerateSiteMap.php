@@ -35,7 +35,6 @@ class GenerateSiteMap extends Command
                 '/players',
                 '/rounds',
                 '/events',
-                '/events/stats',
                 '/events/deaths',
                 '/events/tickets',
                 '/events/fines',

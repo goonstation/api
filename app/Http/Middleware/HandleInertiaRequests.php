@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use Glhd\Gretel\Routing\RequestBreadcrumbs;
+use Glhd\Gretel\View\Breadcrumb;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Spatie\SchemaOrg\Schema;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -43,23 +46,50 @@ class HandleInertiaRequests extends Middleware
                 return $title;
             },
             'description' => function () use ($request) {
-                $description = $request->session()->get('meta_description');
-                if (! $description) {
-                    $description = 'Dive into the world of Space Station 13\'s Goonstation branch with Goonhub. Get access to comprehensive statistics and stay up-to-date with the latest developments.';
-                }
-
-                return $description;
+                return $request->session()->get('meta_description');
             },
             'image' => function () use ($request) {
                 $image = $request->session()->get('meta_image');
-                if (! $image) {
-                    $image = asset('/storage/img/og.png');
-                }
+                // if (! $image) {
+                //     $image = asset('/storage/img/og.png');
+                // }
 
                 return $image;
             },
             'url' => url()->current(),
         ];
+    }
+
+    private function getBreadcrumbSchema(RequestBreadcrumbs $breadcrumbs): string
+    {
+        if ($breadcrumbs->count() <= 1) {
+            return '';
+        }
+
+        $schema = Schema::breadcrumbList();
+        $items = [];
+        /** @var Breadcrumb $breadcrumb */
+        foreach ($breadcrumbs->all() as $key => $breadcrumb) {
+            if ($breadcrumb->is_current_page) {
+                continue;
+            }
+            $items[] = Schema::listItem()
+                ->name($breadcrumb->title)
+                ->item(Schema::thing()->url($breadcrumb->url))
+                ->position($key + 1);
+        }
+
+        $schema->itemListElement($items);
+
+        return $schema->toScript();
+    }
+
+    private function getSchema(Request $request, RequestBreadcrumbs $breadcrumbs): string
+    {
+        $ldJson = $request->session()->get('schema', '');
+        $ldJson .= $this->getBreadcrumbSchema($breadcrumbs);
+
+        return $ldJson;
     }
 
     /**
@@ -69,18 +99,19 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $breadcrumbs = $request->route()->breadcrumbs();
+
         return array_merge(parent::share($request), [
             'csrf_token' => csrf_token(),
-            'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
-            'env' => [
-                'GAME_BRIDGE_URL' => config('goonhub.game_bridge_url'),
-            ],
+            'breadcrumbs' => fn () => $breadcrumbs->jsonSerialize(),
+            'env' => [],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
                 'message' => fn () => $request->session()->get('message'),
             ],
-            'meta' => $this->getMetaData($request),
+            'meta' => fn () => $this->getMetaData($request),
+            'schema' => fn () => $this->getSchema($request, $breadcrumbs),
         ]);
     }
 }

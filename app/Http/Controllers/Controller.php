@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Session;
+use Spatie\SchemaOrg\Type;
 
 class Controller extends BaseController
 {
@@ -46,5 +47,10 @@ class Controller extends BaseController
         if (isset($image['type']) && isset($image['key'])) {
             Session::now('meta_image', route('og-image', [$image['type'], $image['key']]));
         }
+    }
+
+    public function setSchema(Type $schema)
+    {
+        Session::now('schema', $schema->toScript());
     }
 }

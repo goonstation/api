@@ -90,6 +90,10 @@
     .dimmed {
       opacity: 0.8;
     }
+
+    .text-primary {
+      color: #ffd125;
+    }
   </style>
 </head>
 

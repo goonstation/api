@@ -14,6 +14,8 @@ class TerminalController extends Controller
 {
     public function index(Request $request)
     {
+        $this->setMeta(title: 'Terminal', description: 'A mysterious NanoTrasen terminal');
+
         return Inertia::render('Terminal/Index');
     }
 

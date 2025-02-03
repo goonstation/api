@@ -28,7 +28,7 @@ class TicketsController extends Controller
             perPage: 20
         );
 
-        $this->setMeta(title: 'Tickets');
+        $this->setMeta(title: 'Tickets', description: 'All tickets');
 
         if ($this->wantsInertia()) {
             return Inertia::render('Events/Tickets/Index', [
@@ -63,6 +63,7 @@ class TicketsController extends Controller
 
         $this->setMeta(
             title: 'Ticket #'.number_format($ticket->id),
+            description: 'View detailed information of this ticket',
             image: ['type' => 'ticket', 'key' => $ticket->id]
         );
 
