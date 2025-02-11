@@ -599,12 +599,21 @@ class Build
         }
 
         // Stamp runtime tool versions so the game startup script can pick the right stuff
+        $this->log('Generating .env.build');
         $buildEnv = [
             "BUILDSTAMP=$buildStamp",
             "BYOND_MAJOR_VERSION={$this->settings->byond_major}",
             "BYOND_MINOR_VERSION={$this->settings->byond_minor}",
             "RUSTG_VERSION={$this->settings->rustg_version}",
         ];
+        $discordBotUrl = GameBuildSecret::where('key', 'DISCORD_BOT_URL')->first();
+        $discordBotCrashKey = GameBuildSecret::where('key', 'DISCORD_BOT_CRASH_KEY')->first();
+        if ($discordBotUrl) {
+            $buildEnv['DISCORD_BOT_URL'] = $discordBotUrl->value;
+        }
+        if ($discordBotCrashKey) {
+            $buildEnv['DISCORD_BOT_CRASH_KEY'] = $discordBotCrashKey->value;
+        }
         File::put("{$this->buildDir}/.env.build", implode("\n", $buildEnv));
 
         $this->log('Creating rsc.zip');
