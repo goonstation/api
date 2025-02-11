@@ -609,10 +609,10 @@ class Build
         $discordBotUrl = GameBuildSecret::where('key', 'DISCORD_BOT_URL')->first();
         $discordBotCrashKey = GameBuildSecret::where('key', 'DISCORD_BOT_CRASH_KEY')->first();
         if ($discordBotUrl) {
-            $buildEnv['DISCORD_BOT_URL'] = $discordBotUrl->value;
+            $buildEnv[] = "DISCORD_BOT_URL={$discordBotUrl->value}";
         }
         if ($discordBotCrashKey) {
-            $buildEnv['DISCORD_BOT_CRASH_KEY'] = $discordBotCrashKey->value;
+            $buildEnv[] = "DISCORD_BOT_CRASH_KEY={$discordBotCrashKey->value}";
         }
         File::put("{$this->buildDir}/.env.build", implode("\n", $buildEnv));
 
