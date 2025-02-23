@@ -8,7 +8,7 @@
     "awobaz/compoships": "^2.2",
     "aws/aws-sdk-php": "^3.283",
     "binarytorch/larecipe": "^2.6",
-    "dedoc/scramble": "^0.11.27",
+    "dedoc/scramble": "^0.12.9",
     "geoip2/geoip2": "^3.1",
     "glhd/gretel": "^1.7",
     "graham-campbell/github": "^12.6",

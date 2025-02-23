@@ -35,6 +35,7 @@ RUN apt-get update \
     php8.3-ldap \
     php8.3-msgpack php8.3-igbinary php8.3-redis php8.3-swoole \
     php8.3-memcached php8.3-pcov php8.3-imagick php8.3-xdebug \
+    php8.3-excimer \
     && curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \

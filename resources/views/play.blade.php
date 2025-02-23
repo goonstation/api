@@ -13,6 +13,10 @@
   <meta property="og:title" content="Play Goonstation">
   <meta property="og:type" content="website">
   <meta property="og:description" content="Join {{ $server->name }}">
+
+  <?= sprintf('<meta name="baggage" content="%s"/>', \Sentry\getBaggage()); ?>
+  <?= sprintf('<meta name="sentry-trace" content="%s"/>', \Sentry\getTraceparent()); ?>
+
   <title>Play Goonstation</title>
 
   <style>

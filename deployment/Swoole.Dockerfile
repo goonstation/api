@@ -82,7 +82,8 @@ RUN apt-get update; \
     igbinary \
     ldap \
     swoole \
-    uv
+    uv \
+    excimer
 
 RUN arch="$(uname -m)" \
     && case "$arch" in \

@@ -18,6 +18,9 @@
         <meta inertia property="twitter:description" content="{{ $page['props']['meta']['description'] }}" />
         <meta inertia property="twitter:image" content="{{ $page['props']['meta']['image'] }}" />
 
+        <?= sprintf('<meta name="baggage" content="%s"/>', \Sentry\getBaggage()); ?>
+        <?= sprintf('<meta name="sentry-trace" content="%s"/>', \Sentry\getTraceparent()); ?>
+
         <title inertia>{{ $page['props']['meta']['title'] }}</title>
 
         <!-- Fonts -->
