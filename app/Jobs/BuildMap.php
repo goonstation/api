@@ -57,10 +57,14 @@ class BuildMap implements ShouldQueue
 
     public function getExpectedImageCount()
     {
-        $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
-        $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
+        $imagesPerRow = $this->map->tile_width / ($this->map->tile_width / 10);
+        $imagesPerColumn = $this->map->tile_height / ($this->map->tile_height / 10);
 
-        return $imagesPerRow * $imagesPerColumn;
+        return (object) [
+            'total' => $imagesPerRow * $imagesPerColumn,
+            'rows' => $imagesPerRow,
+            'columns' => $imagesPerColumn,
+        ];
     }
 
     public function cleanup()
@@ -102,30 +106,33 @@ class BuildMap implements ShouldQueue
 
         // See if we have enough images to build a map
         $inputImages = FileFacade::allFiles(storage_path($workDirInput));
-        if (count($inputImages) < $this->getExpectedImageCount()) {
-            throw new \Exception('Too few images! Expected '.$this->getExpectedImageCount().' but got '.count($inputImages));
+        $imageCounts = $this->getExpectedImageCount();
+        if (count($inputImages) < $imageCounts->total) {
+            throw new \Exception('Too few images! Expected '.$imageCounts->total.' but got '.count($inputImages));
         }
 
         $optimizerChain = OptimizerChainFactory::create();
 
         // Build a canvas and generate tiles for our map
         // The canvas is for making a thumbnail of the whole thing afterwards
-        $imagesPerRow = $this->map->tile_width / $this->map->screenshot_tiles;
-        $imagesPerColumn = $this->map->tile_height / $this->map->screenshot_tiles;
         $canvas = Image::create(
             $this->map->tile_width * self::TILE_SIZE,
             $this->map->tile_height * self::TILE_SIZE
         );
         $imageIndex = 0;
-        for ($y = 0; $y < $imagesPerColumn; $y++) {
-            for ($x = 0; $x < $imagesPerRow; $x++) {
+        for ($y = 0; $y < $imageCounts->columns; $y++) {
+            for ($x = 0; $x < $imageCounts->rows; $x++) {
                 $imagePath = $inputImages[$imageIndex]->getRealPath();
                 $image = Image::read($imagePath);
                 $gdImage = $image->core()->native();
 
+                if (imageistruecolor($gdImage)) {
+                    imagetruecolortopalette($gdImage, false, 255);
+                }
+
                 // Remove pink background color, to reduce image size
-                $colorToRemove = imagecolorallocate($gdImage, 255, 0, 228); // pink, #ff00e4
-                imagecolortransparent($gdImage, $colorToRemove);
+                $colorToRemove = imagecolorclosest($gdImage, 255, 0, 228); // pink, #ff00e4
+                imagecolorset($gdImage, $colorToRemove, 255, 255, 255, 127);
 
                 // Generate tile image
                 $workPathImage = storage_path($workDirOutput."/$x,$y.png");
@@ -138,8 +145,8 @@ class BuildMap implements ShouldQueue
                 $canvas->place(
                     $gdImage,
                     'top-left',
-                    $x * ($this->map->screenshot_tiles * self::TILE_SIZE),
-                    $y * ($this->map->screenshot_tiles * self::TILE_SIZE)
+                    $x * (($this->map->tile_width / 10) * self::TILE_SIZE),
+                    $y * (($this->map->tile_height / 10) * self::TILE_SIZE)
                 );
                 $imageIndex++;
             }
@@ -147,7 +154,7 @@ class BuildMap implements ShouldQueue
 
         // Make a dinky little thumbnail of the map
         $canvas
-            ->resize(200, 200)
+            ->pad(200, 200, 'transparent')
             ->save(storage_path($workDirOutput.'/thumb.png'), 100);
 
         // Optimize thumbnail

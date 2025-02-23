@@ -53,12 +53,12 @@ class MapsController extends Controller
 
         $zip = new ZipArchive;
         $zip->open($mapZipPath);
-        $expectedImageCount = $job->getExpectedImageCount();
+        $expectedImageCounts = $job->getExpectedImageCount();
         $imageCount = $zip->count();
-        if ($imageCount !== $expectedImageCount) {
+        if ($imageCount !== $expectedImageCounts->total) {
             $job->cleanup();
 
-            return response()->json(['message' => "Expected an archive containing $expectedImageCount files, saw $imageCount."], 400);
+            return response()->json(['message' => "Expected an archive containing {$expectedImageCounts->total} files, saw $imageCount."], 400);
         }
         $zip->close();
 

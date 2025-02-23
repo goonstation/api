@@ -8,8 +8,10 @@
     Return to Goonhub
   </Link>
 
-  <select v-model="layer" @change="onLayerChange" class="layer-select">
-    <option v-for="layer in layers" :value="layer.value">{{ layer.name }}</option>
+  <select v-model="selectedMap" class="layer-select">
+    <option v-for="(layer, id) in layers" :key="id" :value="id">
+      {{ layer.name }}
+    </option>
   </select>
 </template>
 
@@ -69,25 +71,20 @@
 </style>
 
 <script>
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import AppHead from '@/Components/AppHead.vue'
 import { router } from '@inertiajs/vue3'
 import { ionArrowBack } from '@quasar/extras/ionicons-v6'
-import { Link } from '@inertiajs/vue3'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import { copyToClipboard } from 'quasar'
-import AppHead from '@/Components/AppHead.vue'
 
-let map
-let bounds
-let mapDimensions
-let layerOptions
+let leafletMap
 let tileLayers = []
 let coordMarker = null
 
 export default {
   components: {
     AppHead,
-    Link,
   },
 
   props: {
@@ -107,7 +104,8 @@ export default {
   data() {
     return {
       loading: true,
-      layer: this.map.map_id,
+      selectedMap: null,
+      layers: {},
       selecting: null,
       removingCoordMarker: false,
     }
@@ -118,118 +116,101 @@ export default {
       return this.map.map_id === 'OSHAN' || this.map.map_id === 'NADIR'
     },
 
-    layers() {
-      const items = [{ name: this.map.name, value: this.map.map_id }]
-      for (const layer of this.map.layers) {
-        items.push({ name: layer.name, value: layer.map_id })
-      }
-      return items
+    currentLayer() {
+      return this.layers[this.selectedMap]
     },
   },
 
   mounted() {
     this.buildMap()
-
     this.buildLayer(this.map)
     for (const layer of this.map.layers) {
       this.buildLayer(layer)
     }
-
-    map.addLayer(tileLayers[this.map.map_id]).setView(bounds.getCenter(), -2)
-
     this.loadUrlParams()
+    if (!this.selectedMap) {
+      this.selectedMap = this.map.map_id
+    }
   },
 
   methods: {
     buildMap() {
-      const tileSize = this.map.screenshot_tiles * 32
-      const tilesPerRow = this.map.tile_width / this.map.screenshot_tiles
-      const tilesPerColumn = this.map.tile_height / this.map.screenshot_tiles
-      const mapSizeWidth = tilesPerRow * tileSize
-      const mapSizeHeight = tilesPerColumn * tileSize
-
-      mapDimensions = {
-        tileSize,
-        tilesPerRow,
-        tilesPerColumn,
-        mapSizeWidth,
-        mapSizeHeight,
-      }
-
       L.CRS.myCRS = L.extend({}, L.CRS.Simple, {})
-      map = L.map('map', { crs: L.CRS.myCRS, attributionControl: false })
+      leafletMap = L.map('map', { crs: L.CRS.myCRS, attributionControl: false })
 
-      const southWest = map.unproject([0, mapSizeHeight], 0)
-      const northEast = map.unproject([mapSizeWidth, 0], 0)
-      bounds = L.latLngBounds(southWest, northEast)
-
-      layerOptions = {
-        tileSize,
-        bounds,
-        minZoom: -3,
-        maxZoom: 2,
-        minNativeZoom: 0,
-        maxNativeZoom: 0,
-        noWrap: true,
-      }
-
-      map.setMaxBounds(bounds)
-
-      map.on('click', (e) => {
-        this.markTile(map.mouseEventToLatLng(e.originalEvent))
+      leafletMap.on('click', (e) => {
+        this.markTile(leafletMap.mouseEventToLatLng(e.originalEvent))
       })
 
-      map.on('moveend', () => {
+      leafletMap.on('moveend', () => {
         this.setUrlParams()
       })
     },
 
-    buildLayer(map) {
-      const mapUri = map.map_id.toLowerCase()
-      const version = map.updated_at ? encodeURI(map.updated_at) : ''
+    buildLayer(layer) {
+      const tileSizeWidth = (layer.tile_width / 10) * 32
+      const tileSizeHeight = (layer.tile_height / 10) * 32
+      const tilesPerRow = layer.tile_width / (layer.tile_width / 10)
+      const tilesPerColumn = layer.tile_height / (layer.tile_height / 10)
+      const mapSizeWidth = tilesPerRow * tileSizeWidth
+      const mapSizeHeight = tilesPerColumn * tileSizeHeight
+
+      const southWest = leafletMap.unproject([0, mapSizeHeight], 0)
+      const northEast = leafletMap.unproject([mapSizeWidth, 0], 0)
+      const bounds = L.latLngBounds(southWest, northEast)
+
+      const mapUri = layer.map_id.toLowerCase()
+      const version = layer.updated_at ? encodeURI(layer.updated_at) : ''
       const layerBuilder = L.TileLayer.extend({
-        options: layerOptions,
+        options: {
+          tileSize: L.point(tileSizeWidth, tileSizeHeight),
+          bounds,
+          minZoom: -3,
+          maxZoom: 2,
+          minNativeZoom: 0,
+          maxNativeZoom: 0,
+          noWrap: true,
+        },
         getTileUrl: (coords) => {
           const tileUri = `${mapUri}/${coords.x},${coords.y}.png?v=${version}`
-          if (map.admin_only) {
+          if (layer.admin_only) {
             return `/maps/private/${tileUri}`
           }
           return `/storage/maps/${tileUri}`
         },
       })
-      L.tileLayer[map.map_id] = (opts) => {
+      L.tileLayer[layer.map_id] = (opts) => {
         return new layerBuilder(opts)
       }
-      tileLayers[map.map_id] = L.tileLayer[map.map_id]()
+      tileLayers[layer.map_id] = L.tileLayer[layer.map_id]()
+      this.layers[layer.map_id] = { name: layer.name, bounds, mapSizeWidth, mapSizeHeight }
     },
 
     changeLayer(mapId) {
-      map.eachLayer((layer) => map.removeLayer(layer))
-      map.addLayer(tileLayers[mapId])
-    },
-
-    onLayerChange() {
-      this.changeLayer(this.layer)
-      map.setView(bounds.getCenter(), -2)
+      this.unmarkTile()
+      leafletMap.eachLayer((tileLayer) => leafletMap.removeLayer(tileLayer))
+      const tileLayer = tileLayers[mapId]
+      leafletMap.setMaxBounds(this.currentLayer.bounds)
+      leafletMap.addLayer(tileLayer)
+      leafletMap.setView(this.currentLayer.bounds.getCenter(), -2)
     },
 
     setUrlParams() {
       if (this.loading) return
 
-      const zoomLevel = map.getZoom()
-      const center = map.getCenter()
-      const centerCoords = map.project(center, 0)
+      const zoomLevel = leafletMap.getZoom()
+      const center = leafletMap.getCenter()
+      const centerCoords = leafletMap.project(center, 0)
       const x = Math.floor(centerCoords.x / 32) + 1
-      const y = Math.floor((mapDimensions.mapSizeHeight - centerCoords.y) / 32) + 1
-      const layerIndex = this.layers.findIndex((layer) => layer.value === this.layer)
+      const y = Math.floor((this.currentLayer.mapSizeHeight - centerCoords.y) / 32) + 1
 
       const url = new URL(window.location.origin + window.location.pathname)
       const urlSearch = new URLSearchParams(url.search)
       urlSearch.append('x', x)
       urlSearch.append('y', y)
       urlSearch.append('zoom', zoomLevel)
-      if (layerIndex === 0) urlSearch.delete('layer')
-      else urlSearch.append('layer', this.layer.toLowerCase())
+      if (!this.currentLayer) urlSearch.delete('layer')
+      else urlSearch.append('layer', this.selectedMap.toLowerCase())
       if (this.selecting) {
         urlSearch.append('sx', this.selecting.x)
         urlSearch.append('sy', this.selecting.y)
@@ -238,25 +219,31 @@ export default {
       const newParams = decodeURI(urlSearch.toString())
       let newUrl = window.location.pathname
       if (newParams) newUrl += `?${newParams}`
-      router.visit(newUrl, { preserveState: true, replace: true })
+      router.replace({ url: newUrl, preserveState: true })
     },
 
-    loadUrlParams() {
+    async loadUrlParams() {
       const url = new URL(window.location.href)
       const urlSearch = new URLSearchParams(url.search)
+
+      let layerMapId = urlSearch.get('layer')
+      if (layerMapId) {
+        layerMapId = layerMapId.toUpperCase()
+        if (!this.layers[layerMapId]) {
+          this.loading = false
+          return
+        }
+        this.selectedMap = layerMapId
+        await this.$nextTick()
+      }
 
       const coords = { x: 0, y: 0 }
       const selectCoords = { x: 0, y: 0 }
       urlSearch.forEach((param, key) => {
         if (key === 'x') coords.x = parseInt(param)
         else if (key === 'y') coords.y = parseInt(param)
-        else if (key === 'zoom') map.setZoom(parseInt(param), { animate: false })
-        else if (key === 'layer') {
-          const layerMapId = param.toUpperCase()
-          if (!this.layers.find((layer) => layer.value === layerMapId)) return
-          this.layer = layerMapId
-          this.changeLayer(layerMapId)
-        } else if (key === 'sx') selectCoords.x = parseInt(param)
+        else if (key === 'zoom') leafletMap.setZoom(parseInt(param), { animate: false })
+        else if (key === 'sx') selectCoords.x = parseInt(param)
         else if (key === 'sy') selectCoords.y = parseInt(param)
       })
 
@@ -269,15 +256,15 @@ export default {
 
     moveToCoords(coords) {
       const x = (coords.x - 1) * 32 + 16
-      const y = mapDimensions.mapSizeHeight - coords.y * 32 + 16
-      const latlng = map.unproject([x, y], 0)
-      map.panTo(latlng, { animate: false })
+      const y = this.currentLayer.mapSizeHeight - coords.y * 32 + 16
+      const latlng = leafletMap.unproject([x, y], 0)
+      leafletMap.panTo(latlng, { animate: false })
     },
 
     markCoords(coords) {
       const x = (coords.x - 1) * 32 + 16
-      const y = mapDimensions.mapSizeHeight - coords.y * 32 + 16
-      const latlng = map.unproject([x, y], 0)
+      const y = this.currentLayer.mapSizeHeight - coords.y * 32 + 16
+      const latlng = leafletMap.unproject([x, y], 0)
       this.markTile(latlng)
     },
 
@@ -286,26 +273,26 @@ export default {
         this.removingCoordMarker = false
         return
       }
-      if (!layerOptions.bounds.contains(latlng)) return
-      if (coordMarker) map.removeLayer(coordMarker)
+      if (!this.currentLayer.bounds.contains(latlng)) return
+      if (coordMarker) leafletMap.removeLayer(coordMarker)
 
-      const coords = map.project(latlng, 0)
+      const coords = leafletMap.project(latlng, 0)
       const x = Math.floor(coords.x / 32)
       const y = Math.floor(coords.y / 32)
 
       const leftEdge = x * 32
       const topEdge = y * 32
-      const topLeft = map.unproject([leftEdge - 1, topEdge - 1], 0)
-      const bottomRight = map.unproject([leftEdge + 32, topEdge + 32], 0)
+      const topLeft = leafletMap.unproject([leftEdge - 1, topEdge - 1], 0)
+      const bottomRight = leafletMap.unproject([leftEdge + 32, topEdge + 32], 0)
       const bounds = [
         [topLeft.lat, topLeft.lng],
         [bottomRight.lat, bottomRight.lng],
       ]
       const rect = L.rectangle(bounds, { color: '#ff7800', weight: 1 })
 
-      const topMiddle = map.unproject([leftEdge + 16, topEdge], 0)
+      const topMiddle = leafletMap.unproject([leftEdge + 16, topEdge], 0)
       const displayX = x + 1
-      const displayY = Math.floor((mapDimensions.mapSizeHeight - coords.y) / 32) + 1
+      const displayY = Math.floor((this.currentLayer.mapSizeHeight - coords.y) / 32) + 1
       const coordText = `(x: ${displayX}, y: ${displayY})`
       const marker = L.marker(topMiddle, {
         icon: L.divIcon({
@@ -317,7 +304,7 @@ export default {
 
       this.selecting = { x: displayX, y: displayY }
       coordMarker = L.layerGroup([rect, marker])
-      coordMarker.addTo(map)
+      coordMarker.addTo(leafletMap)
       this.setUrlParams()
 
       marker.on('click', () => {
@@ -330,11 +317,22 @@ export default {
       })
 
       rect.on('click', () => {
-        this.selecting = null
         this.removingCoordMarker = true
-        map.removeLayer(coordMarker)
-        this.setUrlParams()
+        this.unmarkTile()
       })
+    },
+
+    unmarkTile() {
+      if (!this.selecting) return
+      this.selecting = null
+      if (coordMarker) leafletMap.removeLayer(coordMarker)
+      this.setUrlParams()
+    },
+  },
+
+  watch: {
+    selectedMap(val) {
+      this.changeLayer(val)
     },
   },
 }

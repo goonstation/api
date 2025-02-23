@@ -10,11 +10,13 @@ use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File as FacadesFile;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Handler\AbstractHandler;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use Str;
 use ZipArchive;
 
 class MapsController extends Controller
@@ -97,12 +99,12 @@ class MapsController extends Controller
         // image count check
         $zip = new ZipArchive;
         $zip->open($mapZipPath);
-        $expectedImageCount = $job->getExpectedImageCount();
+        $expectedImageCounts = $job->getExpectedImageCount();
         $imageCount = $zip->count();
-        if ($imageCount !== $expectedImageCount) {
+        if ($imageCount !== $expectedImageCounts->total) {
             $job->cleanup();
 
-            return Redirect::back()->withErrors(['error' => "Expected an archive containing $expectedImageCount files, saw $imageCount."]);
+            return Redirect::back()->withErrors(['error' => "Expected an archive containing {$expectedImageCounts->total} files, saw $imageCount."]);
         }
         $zip->close();
 
@@ -177,7 +179,6 @@ class MapsController extends Controller
         $map->is_layer = $data['is_layer'];
         $map->tile_width = $data['tile_width'];
         $map->tile_height = $data['tile_height'];
-        $map->screenshot_tiles = $data['tile_width'] / 10;
         $map->save();
 
         $this->associateMapLayers($map, $data['layers']);
@@ -225,7 +226,6 @@ class MapsController extends Controller
         $map->is_layer = $data['is_layer'];
         $map->tile_width = $data['tile_width'];
         $map->tile_height = $data['tile_height'];
-        $map->screenshot_tiles = $data['tile_width'] / 10;
         $map->save();
 
         $this->associateMapLayers($map, $data['layers']);
@@ -236,6 +236,15 @@ class MapsController extends Controller
 
     public function destroy(Map $map)
     {
+        $mapId = Str::lower($map->map_id);
+        $dir = null;
+        if ($map->admin_only) {
+            $dir = storage_path("app/private-maps/$mapId");
+        } else {
+            $dir = storage_path("app/public/maps/$mapId");
+        }
+        FacadesFile::deleteDirectory($dir);
+
         $map->delete();
 
         return ['message' => 'Map removed'];
