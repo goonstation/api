@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property bool $is_layer
  * @property int $tile_width
  * @property int $tile_height
- * @property int $screenshot_tiles
  * @property string|null $last_built_at
  * @property int|null $last_built_by
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -46,7 +45,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereLike($column, $value, $boolean = 'and')
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereMapId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereScreenshotTiles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereTileHeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereTileWidth($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map whereUpdatedAt($value)
