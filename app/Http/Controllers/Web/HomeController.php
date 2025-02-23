@@ -61,28 +61,24 @@ class HomeController extends Controller
             $playersOnline[] = $playersOnlineRightNow->toArray();
         }
 
-        $lastRounds = [];
-        foreach ($serversToShow as $server) {
-            $lastRound = GameRound::with([
-                'server:server_id,name',
-                'latestStationName:round_id,name',
+        $lastRounds = GameRound::with([
+            'latestStationName:round_id,name',
+        ])
+            ->select([
+                DB::raw('distinct on (server_id) server_id'),
+                'id',
+                'created_at',
+                'ended_at',
             ])
-                ->select('id', 'server_id', 'created_at', 'ended_at')
-                ->where('server_id', $server)
-                ->whereNotNull('ended_at')
-                ->orderByRaw('created_at DESC NULLS LAST')
-                ->first();
-
-            if ($lastRound) {
-                $lastRounds[] = $lastRound;
-            }
-        }
+            ->whereIn('server_id', $serversToShow)
+            ->whereNotNull('ended_at')
+            ->orderBy('server_id')
+            ->get();
 
         $changelog = ChangelogHelper::get(7);
 
         $this->setMeta(
             description: 'Dive into the world of Space Station 13\'s Goonstation branch with Goonhub. Get access to comprehensive statistics and stay up-to-date with the latest developments.',
-            image: ['type' => 'home', 'key' => 1]
         );
         $this->setHomeSchema();
 
