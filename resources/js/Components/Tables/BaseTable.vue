@@ -505,6 +505,7 @@ export default {
       defaultPagination: {},
       defaultFilters: {},
       filters: {},
+      errors: {},
       settingFiltersFromUrl: false,
       showTimestamps: false,
       timestampColumns: ['created_at', 'updated_at'],
@@ -626,21 +627,22 @@ export default {
       this.loading = true
       this.$emit('fetch-start')
 
-      let res
+      let data
       try {
-        res = await this.fetchFromServer(page, rowsPerPage, sortBy, descending)
+        const res = await this.fetchFromServer(page, rowsPerPage, sortBy, descending)
+        data = res.data
       } catch {
         this.loading = false
         this.firstLoad = false
         return
       }
-      this.rows.splice(0, this.rows.length, ...res.data.data)
+      this.rows.splice(0, this.rows.length, ...data.data)
 
-      this._pagination.page = res.data.current_page
-      this._pagination.rowsPerPage = res.data.per_page
+      this._pagination.page = data.current_page
+      this._pagination.rowsPerPage = data.per_page
       this._pagination.sortBy = sortBy
       this._pagination.descending = descending
-      this._pagination.rowsNumber = res.data.total
+      this._pagination.rowsNumber = data.total
       this.setUrlParams()
 
       if (this.scrollToTop) {
@@ -650,7 +652,7 @@ export default {
 
       this.loading = false
       this.firstLoad = false
-      this.$emit('fetch-end', res.data)
+      this.$emit('fetch-end', data)
     },
 
     loadUrlParams() {
@@ -919,6 +921,20 @@ export default {
       deep: true,
       handler() {
         this.updateTable()
+      },
+    },
+
+    '$page.props.errors.table': {
+      immediate: true,
+      handler(val) {
+        this.errors = val
+        if (!val || !Object.keys(val).length) return
+        for (const error of Object.values(val)) {
+          this.$q.notify({
+            message: error,
+            color: 'negative',
+          })
+        }
       },
     },
   },

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Events\DeathsIndexRequest;
 use App\Models\Events\EventDeath;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class DeathsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(DeathsIndexRequest $request)
     {
         $deaths = $this->indexQuery(
             EventDeath::select(

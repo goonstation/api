@@ -44,13 +44,11 @@
 </style>
 
 <script>
-import { Link } from '@inertiajs/vue3'
-import BaseTable from './BaseTable.vue'
-import RoundsTableItem from './Partials/RoundsTableItem.vue'
 import VoteControl from '@/Components/VoteControl.vue'
+import BaseTable from './BaseTable.vue'
 
 export default {
-  components: { Link, BaseTable, RoundsTableItem, VoteControl },
+  components: { BaseTable, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/fines' },

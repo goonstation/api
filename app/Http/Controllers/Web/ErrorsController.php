@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Events\ErrorsIndexRequest;
 use App\Models\Events\EventError;
 use App\Traits\IndexableQuery;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -14,7 +14,7 @@ class ErrorsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(ErrorsIndexRequest $request)
     {
         $filters = $request->input('filters', []);
 

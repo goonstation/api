@@ -3,7 +3,8 @@
     <div class="col-12 col-md-7 order-last order-md-first">
       <Link
         v-for="medal in medals"
-        :href="route('medals.show', medal.uuid)"
+        :key="medal.uuid"
+        :href="$route('medals.show', medal.uuid)"
         class="gh-link-card"
         style="padding: 0"
       >
@@ -20,7 +21,7 @@
           <div v-if="recentMedalsEarned.length">
             <q-markup-table flat wrap-cells>
               <tbody>
-                <tr v-for="award in recentMedalsEarned">
+                <tr v-for="award in recentMedalsEarned" :key="award.id">
                   <td style="width: 0; padding-right: 0">
                     <medal-thumbnail :medal="award.medal" size="32" />
                   </td>
@@ -46,8 +47,8 @@
 </template>
 
 <script>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import MedalThumbnail from '@/Components/MedalThumbnail.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 import Medal from './Partials/Medal.vue'
 
 export default {

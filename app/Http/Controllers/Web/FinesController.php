@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Events\FinesIndexRequest;
 use App\Models\Events\EventFine;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class FinesController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(FinesIndexRequest $request)
     {
         $fines = $this->indexQuery(
             EventFine::select('id', 'round_id', 'amount', 'issuer', 'issuer_job', 'target', 'reason')

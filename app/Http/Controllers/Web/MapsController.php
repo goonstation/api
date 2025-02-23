@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Maps\IndexRequest;
 use App\Models\Map;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class MapsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         $query = Map::select('id', 'map_id', 'name', 'last_built_at')
             ->with([

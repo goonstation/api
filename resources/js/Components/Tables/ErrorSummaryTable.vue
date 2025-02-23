@@ -15,7 +15,7 @@
       @reset="onTableReset"
       @fetch-end="onTableFetch"
       class="error-summary-table"
-      style="max-height: 1000px;"
+      style="max-height: 1000px"
       flat
       dense
       wrap-cells
@@ -142,16 +142,16 @@
 </style>
 
 <script>
+import ErrorsByRound from '@/Components/Charts/ErrorsByRound.vue'
+import BaseSelect from '@/Components/Selects/BaseSelect.vue'
 import { ionCloseOutline } from '@quasar/extras/ionicons-v6'
 import BaseTable from './BaseTable.vue'
-import BaseSelect from '@/Components/Selects/BaseSelect.vue'
-import ErrorsByRound from '@/Components/Charts/ErrorsByRound.vue'
 
 export default {
   components: { BaseTable, BaseSelect, ErrorsByRound },
   setup() {
     return {
-      ionCloseOutline
+      ionCloseOutline,
     }
   },
   data() {
@@ -200,6 +200,8 @@ export default {
           label: 'Line',
           field: 'line',
           sortable: true,
+          filter: { type: 'Number' },
+          format: this.$formats.number,
         },
       ],
       search: {
@@ -221,7 +223,7 @@ export default {
   computed: {
     isGameAdmin() {
       return this.$page.props.auth?.user?.game_admin_id
-    }
+    },
   },
 
   created() {
@@ -252,7 +254,7 @@ export default {
 
     onChartRoundSelect(roundId) {
       this.search.overview_round_id = roundId
-    }
-  }
+    },
+  },
 }
 </script>

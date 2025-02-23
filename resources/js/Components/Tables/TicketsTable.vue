@@ -17,9 +17,7 @@
             <span class="opacity-60 text-sm">ticketed by</span>
             {{ props.row.issuer }}
           </div>
-          <div>
-            "{{ props.row.reason }}"
-          </div>
+          <div>"{{ props.row.reason }}"</div>
           <vote-control
             class="q-mt-xs"
             v-model:votes="props.row.votes"
@@ -44,13 +42,11 @@
 </style>
 
 <script>
-import { Link } from '@inertiajs/vue3'
-import BaseTable from './BaseTable.vue'
-import RoundsTableItem from './Partials/RoundsTableItem.vue'
 import VoteControl from '@/Components/VoteControl.vue'
+import BaseTable from './BaseTable.vue'
 
 export default {
-  components: { Link, BaseTable, RoundsTableItem, VoteControl },
+  components: { BaseTable, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/tickets' },

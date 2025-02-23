@@ -47,7 +47,9 @@
                 >
                   Gibbed
                 </q-chip>
-                <div class="gh-details-list gh-details-list--non-collapsible gh-details-list--small">
+                <div
+                  class="gh-details-list gh-details-list--non-collapsible gh-details-list--small"
+                >
                   <div>
                     <div class="bruteloss">{{ $formats.number(props.row.bruteloss) }}</div>
                     <div>Brute</div>
@@ -89,12 +91,11 @@
 </style>
 
 <script>
-import { Link } from '@inertiajs/vue3'
-import BaseTable from './BaseTable.vue'
 import VoteControl from '@/Components/VoteControl.vue'
+import BaseTable from './BaseTable.vue'
 
 export default {
-  components: { Link, BaseTable, VoteControl },
+  components: { BaseTable, VoteControl },
   data() {
     return {
       routes: { fetch: '/events/deaths' },

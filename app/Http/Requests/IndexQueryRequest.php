@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Str;
 
 class IndexQueryRequest extends FormRequest
 {
@@ -41,19 +44,48 @@ class IndexQueryRequest extends FormRequest
              *
              * @example true
              */
-            'descending' => 'string',
+            'descending' => 'in:true,false,1,0',
             /**
              * How many items to show per page
              *
              * @example 30
              */
-            'per_page' => 'int',
+            'per_page' => [
+                'numeric',
+                'min:1',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $user = Auth::user();
+                    if (! $user || ! $user->isAdmin()) {
+                        if ($value > 100) {
+                            $fail('The per page must be between 1 and 100.');
+                        }
+                    }
+                },
+            ],
             /**
              * What page of results to display
              *
              * @example 1
              */
-            'page' => 'int',
+            'page' => 'numeric|min:1',
         ];
+    }
+
+    public function attributes()
+    {
+        $attributes = [
+            'sort_by' => 'sort by',
+            'per_page' => 'per page',
+        ];
+
+        foreach ($this->rules() as $key => $rule) {
+            if (Str::startsWith($key, 'filters.')) {
+                $field = Str::remove('filters.', $key);
+                $field = Str::replace('_', ' ', $field);
+                $attributes[$key] = "$field filter";
+            }
+        }
+
+        return $attributes;
     }
 }

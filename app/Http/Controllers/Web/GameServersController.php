@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Facades\GameBridge;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GameServers\IndexRequest;
 use App\Models\GameServer;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class GameServersController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         $data = $request->validate([
             'with_invisible' => 'nullable|boolean',

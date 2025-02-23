@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Events\AntagsIndexRequest;
 use App\Models\Events\EventAntag;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class AntagsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(AntagsIndexRequest $request)
     {
         $antags = $this->indexQuery(
             EventAntag::with([

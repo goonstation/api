@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Events\TicketsIndexRequest;
 use App\Models\Events\EventTicket;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class TicketsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(Request $request)
+    public function index(TicketsIndexRequest $request)
     {
         $tickets = $this->indexQuery(
             EventTicket::select('id', 'round_id', 'issuer', 'issuer_job', 'reason', 'target')

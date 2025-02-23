@@ -14,7 +14,7 @@ export default {
       get() {
         let ret = this.dateRanges
         if (ret && typeof ret === 'object') ret = ret[0]
-        return ret
+        return ret || ''
       },
       set(val) {
         let ret = ''
@@ -28,7 +28,7 @@ export default {
       get() {
         let ret = this.dateRanges
         if (ret && typeof ret === 'object') ret = ret[1]
-        return ret
+        return ret || ''
       },
       set(val) {
         let ret = ''

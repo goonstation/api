@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Medals\PlayersIndexRequest;
 use App\Models\Medal;
 use App\Models\Player;
 use App\Models\PlayerMedal;
@@ -80,7 +81,7 @@ class MedalsController extends Controller
         ]);
     }
 
-    public function players(Request $request, string $uuid)
+    public function players(PlayersIndexRequest $request, string $uuid)
     {
         $medal = Medal::where('uuid', $uuid)
             ->where('hidden', false)

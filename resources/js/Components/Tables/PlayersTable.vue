@@ -44,14 +44,12 @@
 </style>
 
 <script>
-import { Link } from '@inertiajs/vue3'
+import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 import dayjs from 'dayjs'
 import BaseTable from './BaseTable.vue'
-import PlayerAvatar from '@/Components/PlayerAvatar.vue'
 
 export default {
   components: {
-    Link,
     BaseTable,
     PlayerAvatar,
   },

@@ -10,7 +10,7 @@ export default {
 
   data() {
     return {
-      serverName: null
+      serverName: null,
     }
   },
 
@@ -19,8 +19,8 @@ export default {
       immediate: true,
       handler(val) {
         this.getServer(val)
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -28,15 +28,15 @@ export default {
       const { data } = await axios.get('/game-servers', {
         params: {
           filters: {
-            server_id: serverId
-          }
-        }
+            server: serverId,
+          },
+        },
       })
       const server = data?.data[0]
       if (server?.name) {
         this.serverName = server.name
       }
-    }
-  }
+    },
+  },
 }
 </script>

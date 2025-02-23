@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Players\SearchRequest;
 use App\Models\GameRound;
 use App\Models\GameServer;
 use App\Models\GlobalStat;
@@ -93,7 +94,7 @@ class PlayersController extends Controller
         ]);
     }
 
-    public function search(Request $request)
+    public function search(SearchRequest $request)
     {
         $players = Player::with([
             'latestConnection' => function (HasOne $q) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Maps\IndexRequest;
 use App\Jobs\BuildMap;
 use App\Models\Map;
 use App\Models\MapLayer;
@@ -55,7 +56,7 @@ class MapsController extends Controller
         }
     }
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         $maps = $this->indexQuery(
             Map::with(['gameAdmin']),

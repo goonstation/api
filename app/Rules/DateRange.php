@@ -6,11 +6,19 @@ use Illuminate\Contracts\Validation\InvokableRule;
 
 class DateRange implements InvokableRule
 {
-    private function validateDate($date, $format = 'Y/m/d H:i:s')
+    private function validateDate($date)
     {
-        $d = \DateTime::createFromFormat($format, $date);
+        $validFormats = ['Y/m/d H:i:s', 'Y/m/d H:i'];
 
-        return $d && $d->format($format) === $date;
+        foreach ($validFormats as $format) {
+            $d = \DateTime::createFromFormat($format, $date);
+
+            if ($d && $d->format($format) === $date) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -29,7 +37,7 @@ class DateRange implements InvokableRule
 
         $validDate = $this->validateDate($value);
         if (! str_contains($value, '-') && ! $validDate) {
-            return $fail('The :attribute must be formatted as YYYY/MM/DD HH:mm:ss, or contain a - to denote a range');
+            return $fail('The :attribute must be formatted as YYYY/MM/DD HH:mm:ss or YYYY/MM/DD HH:mm, or contain a - to denote a range');
         }
 
         if ($validDate) {
@@ -46,7 +54,7 @@ class DateRange implements InvokableRule
         $to = date(trim($val[1]));
 
         if (! $this->validateDate($from) || ! $this->validateDate($to)) {
-            return $fail('The :attribute must have dates formatted as YYYY/MM/DD HH:mm:ss');
+            return $fail('The :attribute must have dates formatted as YYYY/MM/DD HH:mm:ss or YYYY/MM/DD HH:mm');
         }
     }
 }
