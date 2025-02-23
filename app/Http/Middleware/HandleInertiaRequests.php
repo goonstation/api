@@ -35,6 +35,9 @@ class HandleInertiaRequests extends Middleware
     private function getMetaData(Request $request): array
     {
         return [
+            'disable' => function () use ($request) {
+                return $request->session()->get('no_meta', false);
+            },
             'title' => function () use ($request) {
                 $title = $request->session()->get('meta_title');
                 if ($title) {

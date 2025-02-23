@@ -1,7 +1,7 @@
 <template>
   <q-item class="q-px-none q-pt-md">
     <q-item-section>
-      <q-item-label caption>{{ round.server.name }}</q-item-label>
+      <q-item-label caption>{{ server.name }}</q-item-label>
       <q-item-label class="station-name">
         <template v-if="round.latest_station_name">
           {{ round.latest_station_name.name }}
@@ -35,13 +35,14 @@
 </style>
 
 <script>
-import dayjs from 'dayjs'
 import { router } from '@inertiajs/vue3'
 import { ionEye } from '@quasar/extras/ionicons-v6'
+import dayjs from 'dayjs'
 
 export default {
   props: {
     round: Object,
+    server: Object,
   },
 
   setup() {

@@ -38,6 +38,7 @@
               class="q-mb-sm"
               :key="round.id"
               :round="round"
+              :server="servers.find((server) => server.server_id === round.server_id)"
             />
           </q-list>
         </q-card-section>
@@ -49,22 +50,20 @@
     <div class="gh-card__header">
       <q-icon :name="ionDocument" size="22px" />
       <span>Changelog</span>
+      <q-space />
+      <q-btn
+        unelevated
+        color="grey-9"
+        size="sm"
+        type="link"
+        :href="$route('changelog')"
+        @click.prevent="$rtr.visit($route('changelog'))"
+        label="View the full changelog"
+      />
     </div>
     <q-card-section class="q-py-sm">
       <q-scroll-area class="q-pr-md" style="height: 500px" visible>
         <changelog :changelog="changelog" />
-
-        <div class="text-center q-mb-md">
-          <q-btn
-            unelevated
-            color="grey-9"
-            size="md"
-            type="link"
-            href="/changelog"
-            @click.prevent="router.visit('/changelog')"
-            label="View the full changelog"
-          />
-        </div>
       </q-scroll-area>
     </q-card-section>
   </q-card>

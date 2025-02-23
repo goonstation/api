@@ -1,30 +1,40 @@
 <template>
-  <Head :title="niceTitle">
-    <meta head-key="title" name="title" :content="niceTitle" />
-    <meta head-key="description" name="description" :content="meta.description" />
+  <PageHead :title="niceTitle">
+    <template v-if="!meta.disable">
+      <meta head-key="title" name="title" :content="niceTitle" />
+      <meta head-key="og:title" property="og:title" :content="niceTitle" />
+      <meta head-key="twitter:title" property="twitter:title" :content="niceTitle" />
 
-    <meta head-key="og:title" property="og:title" :content="niceTitle" />
-    <meta head-key="og:description" property="og:description" :content="meta.description" />
-    <meta head-key="og:image" property="og:image" :content="meta.image" />
-    <meta head-key="og:url" property="og:url" :content="meta.url" />
+      <template v-if="meta.description">
+        <meta head-key="description" name="description" :content="meta.description" />
+        <meta head-key="og:description" property="og:description" :content="meta.description" />
+        <meta
+          head-key="twitter:description"
+          property="twitter:description"
+          :content="meta.description"
+        />
+      </template>
 
-    <meta head-key="twitter:url" property="twitter:url" :content="meta.url" />
-    <meta head-key="twitter:title" property="twitter:title" :content="niceTitle" />
-    <meta
-      head-key="twitter:description"
-      property="twitter:description"
-      :content="meta.description"
-    />
-    <meta head-key="twitter:image" property="twitter:image" :content="meta.image" />
-  </Head>
+      <template v-if="meta.url">
+        <meta head-key="og:url" property="og:url" :content="meta.url" />
+        <meta head-key="twitter:url" property="twitter:url" :content="meta.url" />
+      </template>
+
+      <template v-if="meta.image">
+        <meta head-key="og:image" property="og:image" :content="meta.image" />
+        <meta head-key="twitter:card" property="twitter:card" content="summary_large_image" />
+        <meta head-key="twitter:image" property="twitter:image" :content="meta.image" />
+      </template>
+    </template>
+  </PageHead>
 </template>
 
 <script>
-import { Head } from '@inertiajs/vue3'
+import { Head as PageHead } from '@inertiajs/vue3'
 
 export default {
   components: {
-    Head,
+    PageHead,
   },
 
   props: {

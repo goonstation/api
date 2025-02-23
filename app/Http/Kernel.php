@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'isadmin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         'noindex' => \App\Http\Middleware\NoIndex::class,
+        'nometa' => \App\Http\Middleware\NoMeta::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
