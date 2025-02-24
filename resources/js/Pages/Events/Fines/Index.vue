@@ -1,13 +1,13 @@
 <template>
   <div>
-    <fines-table :initial="fines" />
+    <fines-table prop-key="fines" />
   </div>
 </template>
 
 <script>
+import FinesTable from '@/Components/Tables/FinesTable.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventsLayout from '@/Layouts/EventsLayout.vue'
-import FinesTable from '@/Components/Tables/FinesTable.vue'
 
 export default {
   components: {
@@ -16,10 +16,6 @@ export default {
 
   layout: (h, page) => {
     return h(AppLayout, { title: 'Fines' }, () => h(EventsLayout, () => page))
-  },
-
-  props: {
-    fines: Object,
   },
 }
 </script>

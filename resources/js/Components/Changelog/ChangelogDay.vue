@@ -19,7 +19,7 @@
     </template>
 
     <q-expansion-item v-model="expanded" header-style="display: none;" hide-expand-icon>
-      <changelog-entry v-for="entry in entries" :entry="entry" />
+      <changelog-entry v-for="(entry, idx) in entries" :key="idx" :entry="entry" />
     </q-expansion-item>
   </q-timeline-entry>
 </template>

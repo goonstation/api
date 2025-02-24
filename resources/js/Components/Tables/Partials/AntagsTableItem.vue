@@ -46,14 +46,9 @@
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3'
 import { startCase } from 'lodash'
 
 export default {
-  components: {
-    Link,
-  },
-
   props: {
     item: Object,
   },

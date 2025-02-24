@@ -9,7 +9,7 @@
       <template #bottom>
         <q-separator />
         <div class="site-nav__item">
-          <Link :href="route('dashboard')" class="dashboard-login site-nav__item q-pa-sm">
+          <Link :href="$route('dashboard')" class="dashboard-login site-nav__item q-pa-sm">
             <div class="site-nav__label">
               <q-icon :name="ionLogInOutline" size="2em" />
               Admin Login
@@ -58,10 +58,10 @@
 </style>
 
 <script>
-import { ionLogInOutline } from '@quasar/extras/ionicons-v6'
 import AppHead from '@/Components/AppHead.vue'
 import PageHeader from '@/Components/PageHeader.vue'
 import SiteNav from '@/Components/SiteNav/SiteNav.vue'
+import { ionLogInOutline } from '@quasar/extras/ionicons-v6'
 
 export default {
   components: {

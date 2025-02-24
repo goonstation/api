@@ -17,23 +17,16 @@ use Spatie\SchemaOrg\Schema;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    private function getPlayersOnline(array $serverIds)
     {
-        $servers = GameServer::select('id', 'server_id', 'name')
-            ->where('active', true)
-            ->where('invisible', false)
-            ->orderBy('server_id', 'asc')
-            ->get();
-        $serversToShow = $servers->pluck('server_id');
-
         // Get the sum of players online for each server, grouped by when we fetched them (usually 5 minute intervals)
         // Then, get the average of that total grouped by day
-        $playersOnlineHistory = DB::table(function ($query) use ($serversToShow) {
+        $playersOnlineHistory = DB::table(function ($query) use ($serverIds) {
             $query
                 ->select('created_at')
                 ->selectRaw('Date(created_at) as date')
                 ->selectRaw('sum(online) as online')
-                ->whereIn('server_id', $serversToShow)
+                ->whereIn('server_id', $serverIds)
                 ->where('created_at', '>=', Carbon::today()->subDays(7))
                 ->where('created_at', '<', Carbon::today())
                 ->where('online', '!=', null)
@@ -49,7 +42,7 @@ class HomeController extends Controller
         // Just get the sum of players online right now
         $playersOnlineRightNow = PlayersOnline::selectRaw('Date(created_at) as date')
             ->selectRaw('sum(online) as online')
-            ->whereIn('server_id', $serversToShow)
+            ->whereIn('server_id', $serverIds)
             ->where('created_at', '>', Carbon::today())
             ->groupBy('created_at')
             ->orderBy('created_at', 'desc')
@@ -61,7 +54,12 @@ class HomeController extends Controller
             $playersOnline[] = $playersOnlineRightNow->toArray();
         }
 
-        $lastRounds = GameRound::with([
+        return $playersOnline;
+    }
+
+    private function getLastRounds(array $serverIds)
+    {
+        return GameRound::with([
             'latestStationName:round_id,name',
         ])
             ->select([
@@ -70,12 +68,40 @@ class HomeController extends Controller
                 'created_at',
                 'ended_at',
             ])
-            ->whereIn('server_id', $serversToShow)
+            ->whereIn('server_id', $serverIds)
             ->whereNotNull('ended_at')
-            ->orderBy('server_id')
+            ->orderByRaw('server_id, created_at DESC NULLS LAST')
             ->get();
+    }
 
-        $changelog = ChangelogHelper::get(7);
+    private function getServerStatus(Request $request)
+    {
+        $server = $request->input('server');
+        $res = GameBridge::create()
+            ->target($server)
+            ->message('status')
+            ->send();
+
+        if ($res->error) {
+            Inertia::share('errors', ['status' => $res->message]);
+
+            return [];
+        }
+
+        parse_str($res->message, $status);
+
+        return $status;
+    }
+
+    public function index(Request $request)
+    {
+        $servers = GameServer::select('id', 'server_id', 'name')
+            ->where('active', true)
+            ->where('invisible', false)
+            ->orderBy('server_id', 'asc')
+            ->get()
+            ->makeHidden('byond_link');
+        $serverIds = $servers->pluck('server_id')->toArray();
 
         $this->setMeta(
             description: 'Dive into the world of Space Station 13\'s Goonstation branch with Goonhub. Get access to comprehensive statistics and stay up-to-date with the latest developments.',
@@ -84,9 +110,10 @@ class HomeController extends Controller
 
         return Inertia::render('Home/Index', [
             'servers' => $servers,
-            'playersOnline' => $playersOnline,
-            'lastRounds' => $lastRounds,
-            'changelog' => $changelog,
+            'playersOnline' => Inertia::defer(fn () => $this->getPlayersOnline($serverIds), 'playersOnline'),
+            'lastRounds' => Inertia::defer(fn () => $this->getLastRounds($serverIds), 'lastRounds'),
+            'changelog' => fn () => ChangelogHelper::get(7),
+            'status' => Inertia::lazy(fn () => $this->getServerStatus($request)),
         ]);
     }
 

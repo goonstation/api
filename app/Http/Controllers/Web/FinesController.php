@@ -14,9 +14,9 @@ class FinesController extends Controller
 {
     use IndexableQuery;
 
-    public function index(FinesIndexRequest $request)
+    private function getFines()
     {
-        $fines = $this->indexQuery(
+        return $this->indexQuery(
             EventFine::select('id', 'round_id', 'amount', 'issuer', 'issuer_job', 'target', 'reason')
                 ->withSum([
                     'votes as votes' => function ($query) {
@@ -28,16 +28,19 @@ class FinesController extends Controller
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
+    }
 
-        $this->setMeta(title: 'Fines', description: 'All fines');
-
+    public function index(FinesIndexRequest $request)
+    {
         if ($this->wantsInertia()) {
+            $this->setMeta(title: 'Fines', description: 'All fines');
+
             return Inertia::render('Events/Fines/Index', [
-                'fines' => $fines,
+                'fines' => Inertia::lazy(fn () => $this->getFines()),
             ]);
         }
 
-        return $fines;
+        return $this->getFines();
     }
 
     public function show(Request $request, int $fine)

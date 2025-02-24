@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import Changelog from '@/Components/Changelog/Changelog.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 export default {
   layout: (h, page) => h(AppLayout, { title: 'Changelog' }, () => page),

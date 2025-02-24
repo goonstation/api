@@ -14,9 +14,9 @@ class TicketsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(TicketsIndexRequest $request)
+    private function getTickets()
     {
-        $tickets = $this->indexQuery(
+        return $this->indexQuery(
             EventTicket::select('id', 'round_id', 'issuer', 'issuer_job', 'reason', 'target')
                 ->withSum([
                     'votes as votes' => function ($query) {
@@ -28,16 +28,19 @@ class TicketsController extends Controller
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
+    }
 
-        $this->setMeta(title: 'Tickets', description: 'All tickets');
-
+    public function index(TicketsIndexRequest $request)
+    {
         if ($this->wantsInertia()) {
+            $this->setMeta(title: 'Tickets', description: 'All tickets');
+
             return Inertia::render('Events/Tickets/Index', [
-                'tickets' => $tickets,
+                'tickets' => Inertia::lazy(fn () => $this->getTickets()),
             ]);
         }
 
-        return $tickets;
+        return $this->getTickets();
     }
 
     public function show(Request $request, int $ticket)

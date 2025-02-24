@@ -1,6 +1,11 @@
 <template>
   <q-timeline color="primary">
-    <changelog-day v-for="(dayEntries, date) in changelog" :date="date" :entries="dayEntries" />
+    <changelog-day
+      v-for="(dayEntries, date, idx) in changelog"
+      :key="`${date}-${idx}`"
+      :date="date"
+      :entries="dayEntries"
+    />
   </q-timeline>
 </template>
 

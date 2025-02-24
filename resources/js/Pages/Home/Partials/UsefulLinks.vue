@@ -11,7 +11,11 @@
       <q-space />
       <div class="col-12 col-sm-auto q-px-sm links-grid">
         <q-btn
-          v-for="link in links"
+          v-for="(link, idx) in links"
+          :key="idx"
+          :href="link.href"
+          :icon="link.icon"
+          :label="link.label"
           unelevated
           stack
           color="grey-9"
@@ -19,9 +23,6 @@
           padding="sm sm xs sm"
           type="a"
           target="_blank"
-          :href="link.href"
-          :icon="link.icon"
-          :label="link.label"
         />
       </div>
     </div>
@@ -54,12 +55,12 @@
 
 <script>
 import {
-  ionLogoDiscord,
+  ionCash,
   ionChatbubbles,
-  ionSchool,
-  ionLogoGithub,
   ionLink,
-  ionCash
+  ionLogoDiscord,
+  ionLogoGithub,
+  ionSchool,
 } from '@quasar/extras/ionicons-v6'
 
 export default {
@@ -69,7 +70,7 @@ export default {
       ionChatbubbles,
       ionSchool,
       ionLogoGithub,
-      ionLink
+      ionLink,
     }
   },
 

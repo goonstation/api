@@ -1,13 +1,13 @@
 <template>
   <div>
-    <deaths-table :initial="deaths" />
+    <deaths-table prop-key="deaths" />
   </div>
 </template>
 
 <script>
+import DeathsTable from '@/Components/Tables/DeathsTable.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventsLayout from '@/Layouts/EventsLayout.vue'
-import DeathsTable from '@/Components/Tables/DeathsTable.vue'
 
 export default {
   components: {
@@ -16,10 +16,6 @@ export default {
 
   layout: (h, page) => {
     return h(AppLayout, { title: 'Deaths' }, () => h(EventsLayout, () => page))
-  },
-
-  props: {
-    deaths: Object,
   },
 }
 </script>

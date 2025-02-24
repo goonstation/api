@@ -14,11 +14,11 @@
       </a>
     </div>
   </div>
-  <div v-for="change in entry.major">
+  <div v-for="(change, idx) in entry.major" :key="`major-${idx}`">
     <q-chip square color="grey-9" class="q-mr-sm" size="sm"> Major </q-chip>
     {{ change }}
   </div>
-  <div v-for="change in entry.minor">
+  <div v-for="(change, idx) in entry.minor" :key="`minor-${idx}`">
     <q-chip square color="grey-9" class="q-mr-sm" size="sm"> Minor </q-chip>
     {{ change }}
   </div>

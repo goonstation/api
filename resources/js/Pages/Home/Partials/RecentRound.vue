@@ -17,7 +17,7 @@
         color="primary"
         text-color="primary"
         :icon-right="ionEye"
-        @click="router.visit(route('rounds.show', round.id))"
+        @click="$rtr.visit($route('rounds.show', round.id))"
         label="View"
         size="0.75rem"
         padding="xs sm"
@@ -35,7 +35,6 @@
 </style>
 
 <script>
-import { router } from '@inertiajs/vue3'
 import { ionEye } from '@quasar/extras/ionicons-v6'
 import dayjs from 'dayjs'
 
@@ -47,7 +46,6 @@ export default {
 
   setup() {
     return {
-      router,
       ionEye,
     }
   },

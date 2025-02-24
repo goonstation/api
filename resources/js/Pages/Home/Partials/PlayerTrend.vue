@@ -7,7 +7,15 @@
           <q-icon :name="ionPeople" class="q-mr-xs" />
           {{ date }}
         </div>
-        <div class="players-amount">{{ players }}</div>
+        <div class="players-amount">
+          <Deferred data="playersOnline">
+            <template #fallback>
+              <q-skeleton type="rect" width="100px" />
+            </template>
+
+            {{ players }}
+          </Deferred>
+        </div>
       </q-card-section>
       <q-space />
       <div class="row justify-end col-6 q-py-sm">
@@ -47,12 +55,14 @@
 </style>
 
 <script>
-import dayjs from 'dayjs'
-import { ionPeople } from '@quasar/extras/ionicons-v6'
 import PlayerTrendOverTime from '@/Components/Charts/PlayerTrendOverTime.vue'
+import { Deferred } from '@inertiajs/vue3'
+import { ionPeople } from '@quasar/extras/ionicons-v6'
+import dayjs from 'dayjs'
 
 export default {
   components: {
+    Deferred,
     PlayerTrendOverTime,
   },
 
@@ -107,8 +117,8 @@ export default {
         const latest = val[val.length - 1]
         if (!latest) return
         this.updateAmount({ date: latest.x, players: latest.y })
-      }
-    }
-  }
+      },
+    },
+  },
 }
 </script>

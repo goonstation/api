@@ -59,13 +59,10 @@
 </style>
 
 <script>
-import { Link } from '@inertiajs/vue3'
-import dayjs, { duration } from 'dayjs'
 import { ionInformationCircle } from '@quasar/extras/ionicons-v6'
+import dayjs from 'dayjs'
 
 export default {
-  components: { Link },
-
   setup() {
     return {
       dayjs,

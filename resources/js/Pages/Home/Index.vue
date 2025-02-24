@@ -19,6 +19,7 @@
           :key="server.id"
           :ref="`serverStatus${server.server_id}`"
           :server="server"
+          :waiting="!playersOnline"
           @refreshed="onServerStatusRefreshed"
         />
       </div>
@@ -33,13 +34,19 @@
         </div>
         <q-card-section class="q-py-sm">
           <q-list separator>
-            <recent-round
-              v-for="round in lastRounds"
-              class="q-mb-sm"
-              :key="round.id"
-              :round="round"
-              :server="servers.find((server) => server.server_id === round.server_id)"
-            />
+            <Deferred data="lastRounds">
+              <template #fallback>
+                <recent-round-skeleton v-for="server in servers" :key="server.id" />
+              </template>
+
+              <recent-round
+                v-for="round in lastRounds"
+                class="q-mb-sm"
+                :key="round.id"
+                :round="round"
+                :server="servers.find((server) => server.server_id === round.server_id)"
+              />
+            </Deferred>
           </q-list>
         </q-card-section>
       </q-card>
@@ -142,8 +149,9 @@
 
 <script>
 import Changelog from '@/Components/Changelog/Changelog.vue'
+import RecentRoundSkeleton from '@/Components/Skeletons/RecentRound.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { router } from '@inertiajs/vue3'
+import { Deferred } from '@inertiajs/vue3'
 import { ionDocument, ionNotifications } from '@quasar/extras/ionicons-v6'
 import dayjs from 'dayjs'
 import PlayerTrend from './Partials/PlayerTrend.vue'
@@ -156,7 +164,6 @@ export default {
 
   setup() {
     return {
-      router,
       ionNotifications,
       ionDocument,
     }
@@ -168,24 +175,25 @@ export default {
     UsefulLinks,
     RecentRound,
     Changelog,
+    Deferred,
+    RecentRoundSkeleton,
   },
 
   data() {
     return {
-      playersOnlineTrend: null,
+      playersOnlineTrend: [],
       latestPlayersOnline: {},
     }
   },
 
   props: {
     servers: Array,
-    playersOnline: Object,
+    playersOnline: Array,
     lastRounds: Object,
     changelog: Object,
   },
 
   created() {
-    this.playersOnlineTrend = this.playersOnline
     for (const server of this.servers) {
       this.latestPlayersOnline[server.server_id] = 0
     }
@@ -206,6 +214,14 @@ export default {
           online: totalPlayers,
         })
       }
+    },
+  },
+
+  watch: {
+    playersOnline: {
+      handler(val) {
+        this.playersOnlineTrend = val
+      },
     },
   },
 }

@@ -20,7 +20,7 @@
           <q-input
             class="q-mb-sm"
             v-model.number="amount"
-            @keyup.native.enter="onEnter"
+            @keyup.enter="emitUpdate"
             type="number"
             square
             filled
@@ -31,7 +31,7 @@
             <q-input
               class="q-mb-sm"
               v-model.number="amount2"
-              @keyup.native.enter="onEnter"
+              @keyup.enter="emitUpdate"
               type="number"
               square
               filled
@@ -53,7 +53,7 @@
 
 <script>
 import { ionSwapHorizontal } from '@quasar/extras/ionicons-v6'
-import { debounce } from 'lodash'
+import { debounce } from 'quasar'
 
 export default {
   props: ['modelValue'],
@@ -108,10 +108,14 @@ export default {
     },
 
     watchThis: {
-      handler: debounce(function (val) {
-        this.$emit('update:modelValue', this.getLabel(val[0], val[1], val[2]))
-      }, 1000),
+      handler() {
+        this.onUpdate()
+      },
     },
+  },
+
+  created() {
+    this.onUpdate = debounce(this.onUpdate, 1000)
   },
 
   methods: {
@@ -135,7 +139,11 @@ export default {
       return label
     },
 
-    onEnter() {
+    onUpdate() {
+      this.emitUpdate()
+    },
+
+    emitUpdate() {
       this.$emit('update:modelValue', this.getLabel(this.operator, this.amount, this.amount2))
     },
   },

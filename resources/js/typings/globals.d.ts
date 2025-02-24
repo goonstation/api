@@ -17,6 +17,7 @@ declare global {
   var axios: typeof axiosFn
   var Pusher: typeof pusherFn
   var Echo: typeof echoFn.prototype
+  var Ziggy: Object
 }
 
 declare module '@vue/runtime-core' {

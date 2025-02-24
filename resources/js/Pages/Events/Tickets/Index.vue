@@ -1,13 +1,13 @@
 <template>
   <div>
-    <tickets-table :initial="tickets" />
+    <tickets-table prop-key="tickets" />
   </div>
 </template>
 
 <script>
+import TicketsTable from '@/Components/Tables/TicketsTable.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventsLayout from '@/Layouts/EventsLayout.vue'
-import TicketsTable from '@/Components/Tables/TicketsTable.vue'
 
 export default {
   components: {
@@ -16,10 +16,6 @@ export default {
 
   layout: (h, page) => {
     return h(AppLayout, { title: 'Tickets' }, () => h(EventsLayout, () => page))
-  },
-
-  props: {
-    tickets: Object,
   },
 }
 </script>

@@ -43,7 +43,12 @@
       </div>
       <q-btn class="q-ml-auto text-weight-bolder" color="primary" text-color="dark" label="Join" />
     </q-card-section>
-    <img v-if="mapId" :src="`/storage/maps/${mapId}/thumb.png`" alt="" class="server-status__map" />
+    <img
+      v-if="mapId"
+      :src="$helpers.publicUrl(`/maps/${mapId}/thumb.png`)"
+      alt=""
+      class="server-status__map"
+    />
   </q-card>
 </template>
 
@@ -139,12 +144,14 @@
 </style>
 
 <script>
-import axios from 'axios'
 import dayjs from 'dayjs'
 
 export default {
+  emits: ['refreshed'],
+
   props: {
     server: Object,
+    waiting: Boolean,
   },
 
   data: () => {
@@ -153,6 +160,8 @@ export default {
       error: false,
       status: {},
       refreshTimer: null,
+      cancelToken: null,
+      cleaned: false,
     }
   },
 
@@ -176,15 +185,21 @@ export default {
     },
   },
 
+  created() {
+    this.$rtr.on('before', (e) => {
+      if (!e.detail.visit.async) this.cleanup()
+    })
+  },
+
   beforeUnmount() {
-    clearTimeout(this.refreshTimer)
+    this.cleanup()
   },
 
   watch: {
-    server: {
+    waiting: {
       immediate: true,
-      handler() {
-        this.refresh()
+      handler(val) {
+        if (!val) this.refresh()
       },
     },
   },
@@ -192,30 +207,41 @@ export default {
   methods: {
     async refresh() {
       this.error = false
+      this.$rtr.reload({
+        only: ['status'],
+        data: { server: this.server.server_id },
+        preserveUrl: true,
+        preserveState: false,
+        onCancelToken: (cancelToken) => (this.cancelToken = cancelToken),
+        onSuccess: (page) => {
+          this.status = page.props.status
+        },
+        onError: () => {
+          this.error = true
+          this.status = {}
+        },
+        onFinish: (visit) => {
+          if (visit.cancelled) return
+          this.refreshTimer = setTimeout(() => {
+            this.refresh()
+          }, 60 * 1000)
 
-      try {
-        const { data } = await axios.get(route('game-servers.status'), {
-          params: {
-            server: this.server.server_id,
-          },
-        })
-        this.status = data.data
-      } catch (e) {
-        this.error = e.message
-        this.status = {}
-      }
+          this.$emit('refreshed', {
+            serverId: this.server.server_id,
+            status: this.status,
+            error: this.error,
+          })
 
-      this.refreshTimer = setTimeout(() => {
-        this.refresh()
-      }, 60 * 1000)
-
-      this.$emit('refreshed', {
-        serverId: this.server.server_id,
-        status: this.status,
-        error: this.error,
+          this.loading = false
+        },
       })
+    },
 
-      this.loading = false
+    cleanup() {
+      if (this.cleaned) return
+      this.cleaned = true
+      this.cancelToken && this.cancelToken.cancel()
+      this.refreshTimer && clearTimeout(this.refreshTimer)
     },
   },
 }

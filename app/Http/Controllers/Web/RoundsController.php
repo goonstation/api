@@ -13,9 +13,9 @@ class RoundsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(IndexRequest $request)
+    private function getRounds()
     {
-        $rounds = $this->indexQuery(
+        return $this->indexQuery(
             GameRound::with([
                 'server:server_id,name',
                 'mapRecord:id,map_id,name',
@@ -25,19 +25,22 @@ class RoundsController extends Controller
                 ->whereRelation('server', 'invisible', '!=', true),
             perPage: 30
         );
+    }
 
-        $this->setMeta(
-            title: 'Rounds',
-            description: 'Search through all the game rounds that have ever happened'
-        );
-
+    public function index(IndexRequest $request)
+    {
         if ($this->wantsInertia()) {
+            $this->setMeta(
+                title: 'Rounds',
+                description: 'Search through all the game rounds that have ever happened'
+            );
+
             return Inertia::render('Rounds/Index', [
-                'rounds' => $rounds,
+                'rounds' => Inertia::lazy(fn () => $this->getRounds()),
             ]);
         }
 
-        return $rounds;
+        return $this->getRounds();
     }
 
     public function show(Request $request, int $round)

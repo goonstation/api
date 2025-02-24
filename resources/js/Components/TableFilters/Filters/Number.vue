@@ -1,10 +1,10 @@
 <template>
   <q-input
-    :model-value="model"
-    @update:modelValue="onFilterInput"
-    @keyup.native.enter="onEnter"
+    v-model="model"
+    @keyup.enter="onEnter"
     class="gh-input--denser"
     type="number"
+    debounce="1000"
     filled
     square
     dense
@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
-
 export default {
   props: ['modelValue'],
 
@@ -30,10 +28,6 @@ export default {
   },
 
   methods: {
-    onFilterInput: debounce(function (val) {
-      this.model = val
-    }, 1000),
-
     onEnter(e) {
       // Skip debounce on enter
       this.model = e.target.value

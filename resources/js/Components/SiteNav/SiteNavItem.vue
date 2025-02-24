@@ -14,6 +14,7 @@
       @blur="$emit('onNavItemLeave', $event)"
       class="q-px-lg q-py-sm"
       v-ripple
+      prefetch
     >
       <q-item-section class="site-nav__label">
         {{ item.label }}
@@ -24,6 +25,8 @@
 
 <script>
 export default {
+  emits: ['onNavItemEnter', 'onNavItemLeave'],
+
   props: {
     item: Object,
   },

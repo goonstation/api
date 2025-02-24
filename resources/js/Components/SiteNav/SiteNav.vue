@@ -19,8 +19,8 @@
               :expand-icon="ionChevronDown"
               dense-toggle
               v-model="menuItem.active"
-              @focusin.native="onNavItemEnter"
-              @focusout.native="onNavItemLeave"
+              @focusin="onNavItemEnter"
+              @focusout="onNavItemLeave"
               @after-hide="onNavItemLeave"
             >
               <template #header>
@@ -181,6 +181,8 @@ import { ionChevronDown } from '@quasar/extras/ionicons-v6'
 import SiteNavItem from './SiteNavItem.vue'
 
 export default {
+  emits: ['update:open'],
+
   components: {
     SiteNavItem,
   },
@@ -208,8 +210,8 @@ export default {
       animateNavBar: false,
       scrollContentStyles: {
         display: 'flex',
-        'flex-direction': 'column'
-      }
+        'flex-direction': 'column',
+      },
     }
   },
 
@@ -311,18 +313,18 @@ export default {
     },
 
     canShowItem(menuItem) {
-      if (!menuItem.hasOwnProperty('canShow')) return true
       if (this.$page.props.auth.user?.is_admin) return true // admins can access everything
       if (typeof menuItem.canShow === 'function') {
         return menuItem.canShow()
       }
+      return true
     },
   },
 
   watch: {
     '$page.url': {
       immediate: true,
-      handler(val) {
+      handler() {
         const activeItem = this.checkItems(this.items)
         if (activeItem) activeItem.active = true
 

@@ -5,9 +5,9 @@
 </template>
 
 <script>
+import ErrorSummaryTable from '@/Components/Tables/ErrorSummaryTable.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventsLayout from '@/Layouts/EventsLayout.vue'
-import ErrorSummaryTable from '@/Components/Tables/ErrorSummaryTable.vue'
 
 export default {
   components: {

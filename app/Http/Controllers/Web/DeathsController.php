@@ -14,9 +14,9 @@ class DeathsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(DeathsIndexRequest $request)
+    private function getDeaths()
     {
-        $deaths = $this->indexQuery(
+        return $this->indexQuery(
             EventDeath::select(
                 'id',
                 'round_id',
@@ -39,16 +39,19 @@ class DeathsController extends Controller
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
+    }
 
-        $this->setMeta(title: 'Deaths', description: 'All deaths');
-
+    public function index(DeathsIndexRequest $request)
+    {
         if ($this->wantsInertia()) {
+            $this->setMeta(title: 'Deaths', description: 'All deaths');
+
             return Inertia::render('Events/Deaths/Index', [
-                'deaths' => $deaths,
+                'deaths' => Inertia::lazy(fn () => $this->getDeaths()),
             ]);
         }
 
-        return $deaths;
+        return $this->getDeaths();
     }
 
     public function show(Request $request, int $death)

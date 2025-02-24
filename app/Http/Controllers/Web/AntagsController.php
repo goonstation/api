@@ -13,9 +13,9 @@ class AntagsController extends Controller
 {
     use IndexableQuery;
 
-    public function index(AntagsIndexRequest $request)
+    private function getAntags()
     {
-        $antags = $this->indexQuery(
+        return $this->indexQuery(
             EventAntag::with([
                 'objectives:id,round_id,player_id,success',
             ])
@@ -32,16 +32,19 @@ class AntagsController extends Controller
                 ->whereRelation('gameRound.server', 'invisible', false),
             perPage: 20
         );
+    }
 
-        $this->setMeta(title: 'Antagonists', description: 'All antagonists');
-
+    public function index(AntagsIndexRequest $request)
+    {
         if ($this->wantsInertia()) {
+            $this->setMeta(title: 'Antagonists', description: 'All antagonists');
+
             return Inertia::render('Events/Antags/Index', [
-                'antags' => $antags,
+                'antags' => Inertia::lazy(fn () => $this->getAntags()),
             ]);
         }
 
-        return $antags;
+        return $this->getAntags();
     }
 
     public function show(Request $request, int $antag)

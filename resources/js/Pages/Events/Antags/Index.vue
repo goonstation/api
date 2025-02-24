@@ -1,13 +1,13 @@
 <template>
   <div>
-    <antags-table :initial="antags" />
+    <antags-table prop-key="antags" />
   </div>
 </template>
 
 <script>
+import AntagsTable from '@/Components/Tables/AntagsTable.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EventsLayout from '@/Layouts/EventsLayout.vue'
-import AntagsTable from '@/Components/Tables/AntagsTable.vue'
 
 export default {
   components: {
@@ -16,10 +16,6 @@ export default {
 
   layout: (h, page) => {
     return h(AppLayout, { title: 'Antagonists' }, () => h(EventsLayout, () => page))
-  },
-
-  props: {
-    antags: Object,
   },
 }
 </script>

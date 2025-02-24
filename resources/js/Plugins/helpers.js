@@ -42,6 +42,12 @@ export default {
           return '#ffd125'
         }
       },
+
+      publicUrl(path) {
+        if (!path || typeof path !== 'string') return ''
+        if (path[0] !== '/') path = `/${path}`
+        return `/storage${path}`
+      },
     }
 
     app.config.globalProperties.$helpers = helpers

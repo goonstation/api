@@ -15,6 +15,7 @@ export default [
         axios: true,
         Pusher: true,
         Echo: true,
+        Ziggy: true,
       },
     },
   },
