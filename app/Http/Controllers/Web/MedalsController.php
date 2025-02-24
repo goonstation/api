@@ -10,6 +10,7 @@ use App\Models\PlayerMedal;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 use Inertia\Inertia;
 
 class MedalsController extends Controller
@@ -87,8 +88,8 @@ class MedalsController extends Controller
             ->where('hidden', false)
             ->firstOrFail();
 
-        if ($request->input('sort_by') === 'name') {
-            $request->merge(['sort_by' => 'ckey']);
+        if (FacadesRequest::input('sort_by') === 'name') {
+            FacadesRequest::merge(['sort_by' => 'ckey']);
         }
 
         $players = $this->indexQuery(

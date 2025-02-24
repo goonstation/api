@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Request;
 
 trait IndexableQuery
 {
@@ -14,29 +15,28 @@ trait IndexableQuery
      */
     private function indexQuery($model, $filter = null, $sortBy = 'id', $desc = 'true', $perPage = 15, $paginate = true)
     {
-        $request = request();
         if (! is_a($model, Builder::class)) {
             $model = $model::query();
         }
 
         $filtering = null;
         if ($filter) {
-            $filtering = $model->filter($request->input('filters', []), $filter);
+            $filtering = $model->filter(Request::input('filters', []), $filter);
         } else {
-            $filtering = $model->filter($request->input('filters', []));
+            $filtering = $model->filter(Request::input('filters', []));
         }
 
-        $desc = $request->input('descending', $desc);
+        $desc = Request::input('descending', $desc);
         $query = $filtering
             ->orderBy(
-                $request->input('sort_by', $sortBy),
+                Request::input('sort_by', $sortBy),
                 $desc === 'true' || $desc === '1' ? 'desc' : 'asc'
             );
 
         if ($paginate) {
             $maxPerPage = 100;
-            $perPage = (int) $request->input('per_page', $perPage);
-            if ($perPage > $maxPerPage && ! $request->user()?->isAdmin()) {
+            $perPage = (int) Request::input('per_page', $perPage);
+            if ($perPage > $maxPerPage && ! Request::user()?->isAdmin()) {
                 $perPage = $maxPerPage;
             }
 
