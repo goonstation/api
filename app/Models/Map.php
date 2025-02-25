@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\MapObserver;
 use App\Traits\HasOpenGraphData;
 use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @property int $id
@@ -51,9 +54,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([MapObserver::class])]
 class Map extends BaseModel
 {
-    use Filterable, HasFactory, HasOpenGraphData;
+    use Filterable, HasFactory, HasOpenGraphData, Notifiable;
+
+    const PUBLIC_ROOT = 'app/public/maps';
+
+    const PRIVATE_ROOT = 'app/private-maps';
 
     protected $casts = [
         'last_updated_at' => 'datetime',

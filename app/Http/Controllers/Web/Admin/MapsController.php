@@ -11,13 +11,11 @@ use App\Traits\IndexableQuery;
 use App\Traits\ManagesFileUploads;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File as FacadesFile;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Handler\AbstractHandler;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
-use Str;
 use ZipArchive;
 
 class MapsController extends Controller
@@ -237,15 +235,6 @@ class MapsController extends Controller
 
     public function destroy(Map $map)
     {
-        $mapId = Str::lower($map->map_id);
-        $dir = null;
-        if ($map->admin_only) {
-            $dir = storage_path("app/private-maps/$mapId");
-        } else {
-            $dir = storage_path("app/public/maps/$mapId");
-        }
-        FacadesFile::deleteDirectory($dir);
-
         $map->delete();
 
         return ['message' => 'Map removed'];

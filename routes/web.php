@@ -110,7 +110,7 @@ Route::prefix('/events')->group(function () {
 
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
     Route::get('/', 'index')->name('maps.index')->breadcrumb('Maps');
-    Route::get('/{map}', 'show')->name('maps.show')->breadcrumb('', 'maps.index');
+    Route::get('/{map}', 'show')->whereAlphaNumeric('map')->name('maps.show')->breadcrumb('', 'maps.index');
     Route::middleware('noindex')->group(function () {
         Route::get('/private/{file}', 'getPrivateTile')->where('file', '.*')->name('maps.private');
     });
@@ -140,8 +140,8 @@ Route::controller(VotesController::class)->prefix('/votes')->group(function () {
 Route::controller(MedalsController::class)->prefix('/medals')->group(function () {
     Route::get('/', 'index')->name('medals.index')->breadcrumb('Medals');
     Route::middleware('noindex')->group(function () {
-        Route::get('/{uuid}', 'show')->name('medals.show')->breadcrumb('', 'medals.index');
-        Route::get('/players/{uuid}', 'players')->name('medals.players');
+        Route::get('/{uuid}', 'show')->whereUuid('uuid')->name('medals.show')->breadcrumb('', 'medals.index');
+        Route::get('/players/{uuid}', 'players')->whereUuid('uuid')->name('medals.players');
     });
 });
 

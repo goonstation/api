@@ -47,7 +47,7 @@ class BuildMap implements ShouldQueue
         $this->zipPath = $zipPath;
         $this->gameAdminId = $gameAdminId;
         $this->workDir = self::$workPath.'/'.Str::random(10);
-        $this->publicMapsPath = $this->map->admin_only ? 'app/private-maps' : 'app/public/maps';
+        $this->publicMapsPath = $this->map->admin_only ? Map::PRIVATE_ROOT : Map::PUBLIC_ROOT;
     }
 
     public static function moveUploadedFile(UploadedFile|File $file)

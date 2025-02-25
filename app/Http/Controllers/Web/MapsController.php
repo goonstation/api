@@ -7,6 +7,7 @@ use App\Http\Requests\Maps\IndexRequest;
 use App\Models\Map;
 use App\Traits\IndexableQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -88,7 +89,11 @@ class MapsController extends Controller
             return abort(404);
         }
 
-        $file = storage_path('app/private-maps/'.$path);
+        $file = storage_path(Map::PRIVATE_ROOT."/$path");
+
+        if (File::missing($file)) {
+            return abort(404);
+        }
 
         return response()->file($file);
     }
