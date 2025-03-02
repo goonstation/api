@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 11.43.2.
+ * Generated for Laravel 11.44.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -24873,6 +24873,7 @@ namespace Illuminate\Http {
          *
          * @see \Laravel\Jetstream\JetstreamServiceProvider::boot()
          * @param mixed $message
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function banner($message)
@@ -24885,6 +24886,7 @@ namespace Illuminate\Http {
          *
          * @see \Laravel\Jetstream\JetstreamServiceProvider::boot()
          * @param mixed $message
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function warningBanner($message)
@@ -24897,6 +24899,7 @@ namespace Illuminate\Http {
          *
          * @see \Laravel\Jetstream\JetstreamServiceProvider::boot()
          * @param mixed $message
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function dangerBanner($message)
@@ -24987,27 +24990,6 @@ namespace Illuminate\Routing {
         public static function breadcrumbs($breadcrumbs)
         {
             return \Illuminate\Routing\PendingResourceRegistration::breadcrumbs($breadcrumbs);
-        }
-
-            }
-    /**
-     * 
-     *
-     */
-    class ResponseFactory {
-        /**
-         * 
-         *
-         * @see \Intervention\Image\Laravel\ServiceProvider::boot()
-         * @param \Intervention\Image\Image $image
-         * @param \Intervention\Image\Format|\Intervention\Image\MediaType|\Intervention\Image\FileExtension|string|null $format
-         * @param mixed|null $options
-         * @return \Illuminate\Http\Response 
-         * @static 
-         */
-        public static function image($image, $format = null, ...$options)
-        {
-            return \Illuminate\Routing\ResponseFactory::image($image, $format, ...$options);
         }
 
             }

@@ -32,7 +32,9 @@
         "Zignd.html-css-class-completion",
         "GitHub.vscode-github-actions"
       ],
-      "settings": {}
+      "settings": {
+        "extensions.verifySignature": false
+      }
     }
   },
   "remoteUser": "sail",

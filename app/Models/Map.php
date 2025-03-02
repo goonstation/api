@@ -29,6 +29,8 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \App\Models\GameRound|null $latestGameRound
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Map> $layers
  * @property-read int|null $layers_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map filter(array $input = [], $filter = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Map newModelQuery()

@@ -1,5 +1,4 @@
-# Accepted values: 8.3 - 8.2
-ARG PHP_VERSION=8.3
+ARG PHP_VERSION=8.4
 
 ARG COMPOSER_VERSION=latest
 
@@ -178,7 +177,7 @@ COPY --link --chown=${USER}:${USER} ./healthcheck /usr/local/bin/healthcheck
 COPY --link --chown=${USER}:${USER} ./utilities.sh /tmp/utilities.sh
 
 # Node via NVM
-ENV NVM_DIR /home/${USER}/.nvm
+ENV NVM_DIR=/home/${USER}/.nvm
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
     . $NVM_DIR/nvm.sh && \
     nvm install node && \

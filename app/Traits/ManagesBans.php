@@ -27,6 +27,7 @@ trait ManagesBans
         ])
             ->withTrashed()
             ->whereHas('details', function ($query) use ($ckey, $compIds, $ips) {
+                // @phpstan-ignore method.notFound
                 $query->withTrashed();
                 // Check any of the ban details match the provided player details
                 if ($ckey) {
