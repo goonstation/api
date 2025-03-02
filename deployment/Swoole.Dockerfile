@@ -168,13 +168,13 @@ COPY --link --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/com
 COPY --link --chown=${USER}:${USER} --from=bun /usr/local/bin/bun /usr/local/bin/bun
 COPY --link --chown=${USER}:${USER} --from=node /usr/local/bin /usr/local/bin
 COPY --link --chown=${USER}:${USER} --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --link --chown=${USER}:${USER} ./supervisord.conf /etc/supervisor/
-COPY --link --chown=${USER}:${USER} ./octane/Swoole/supervisord.swoole.conf /etc/supervisor/conf.d/
-COPY --link --chown=${USER}:${USER} ./supervisord.*.conf /etc/supervisor/conf.d/
-COPY --link --chown=${USER}:${USER} ./php.ini ${PHP_INI_DIR}/conf.d/99-octane.ini
-COPY --link --chown=${USER}:${USER} ./start-container /usr/local/bin/start-container
-COPY --link --chown=${USER}:${USER} ./healthcheck /usr/local/bin/healthcheck
-COPY --link --chown=${USER}:${USER} ./utilities.sh /tmp/utilities.sh
+COPY --link --chown=${USER}:${USER} deployment/supervisord.conf /etc/supervisor/
+COPY --link --chown=${USER}:${USER} deployment/octane/Swoole/supervisord.swoole.conf /etc/supervisor/conf.d/
+COPY --link --chown=${USER}:${USER} deployment/supervisord.*.conf /etc/supervisor/conf.d/
+COPY --link --chown=${USER}:${USER} deployment/php.ini ${PHP_INI_DIR}/conf.d/99-octane.ini
+COPY --link --chown=${USER}:${USER} deployment/start-container /usr/local/bin/start-container
+COPY --link --chown=${USER}:${USER} deployment/healthcheck /usr/local/bin/healthcheck
+COPY --link --chown=${USER}:${USER} deployment/utilities.sh /tmp/utilities.sh
 
 # Node via NVM
 ENV NVM_DIR=/home/${USER}/.nvm
