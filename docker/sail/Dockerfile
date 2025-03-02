@@ -78,19 +78,6 @@ RUN cd /usr/local/src && \
     chmod -R +x dectalk && \
     ln -s /usr/local/src/dectalk/say /usr/local/bin/dectalk
 
-# Chrome
-RUN curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && \
-    apt-get install -y ./chrome.deb && \
-    rm chrome.deb
-
-# Chromedriver
-RUN CHROMEDRIVER_VERSION=$(curl https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE) && \
-    curl -fsSL https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip -o chromedriver-linux64.zip && \
-    unzip chromedriver-linux64.zip && \
-    rm chromedriver-linux64.zip && \
-    chmod +x chromedriver-linux64/chromedriver && \
-    mv chromedriver-linux64/chromedriver /usr/local/bin
-
 # Packages for compiling the game with Byond
 RUN dpkg --add-architecture i386 && \
     apt-get update && \

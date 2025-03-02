@@ -47,18 +47,19 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+          labels: |
+            org.opencontainers.image.title=Goonhub
+            org.opencontainers.image.description=
 
       - name: Build and push
         id: push
         uses: docker/build-push-action@v6
         with:
-          file: deployment/Swoole.Dockerfile
+          file: deploy/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            WITH_HORIZON=true
-            WITH_SCHEDULER=true
             WWWUSER=42080
             WWWGROUP=42080
 

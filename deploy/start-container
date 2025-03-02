@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+set -e
+
+if [ "$1" != "" ]; then
+    exec "$@"
+else
+    php artisan storage:link; \
+    php artisan optimize:clear; \
+    php artisan event:cache; \
+    php artisan config:cache; \
+    php artisan route:clear; \
+    php artisan breadcrumbs:cache; \
+    php artisan route:cache; \
+    php artisan migrate --force; \
+    php artisan gh:generate-sitemap;
+
+    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.app.conf
+fi
