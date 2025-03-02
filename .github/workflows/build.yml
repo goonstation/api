@@ -18,6 +18,9 @@ jobs:
   docker:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: true
+
     permissions:
       contents: read
       packages: write
@@ -52,7 +55,8 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: '{{defaultContext}}:deployment'
+          context: ./deployment
+          file: Swoole.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
