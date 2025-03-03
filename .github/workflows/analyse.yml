@@ -1,6 +1,12 @@
 name: Analyse
 
-on: [push, workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - v*
 
 jobs:
   analyse:
