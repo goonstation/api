@@ -46,6 +46,17 @@
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+        <script type="module">
+          window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: '{{ config('broadcasting.connections.reverb.key') }}',
+            wsHost: '{{ config('broadcasting.connections.reverb.options.host') }}',
+            wsPort: {{ config('broadcasting.connections.reverb.options.port', 80) }},
+            wssPort: {{ config('broadcasting.connections.reverb.options.port', 443) }},
+            forceTLS: {{ config('broadcasting.connections.reverb.options.useTLS') ? 'true' : 'false' }},
+            enabledTransports: ['ws', 'wss'],
+          })
+        </script>
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
