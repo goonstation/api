@@ -65,7 +65,7 @@
     <div class="content">
       <div class="details">
         <div>
-          {!! Storage::get('icons/person-outline.svg') !!}
+          {!! File::get(resource_path('img/icons/person-outline.svg')) !!}
           {{ $data->mob_name }}
         </div>
         @if ($data->gibbed)
@@ -94,13 +94,13 @@
       </div>
       <div class="footer">
         <div>
-          {!! Storage::get('icons/calendar-outline.svg') !!}
+          {!! File::get(resource_path('img/icons/calendar-outline.svg')) !!}
           {{ $data->created_at->format('D, M j, Y g:i A e') }}
         </div>
       </div>
     </div>
     <div class="logo">
-      <img src="@base64img(storage_path('app/public/img/logo.png'))" width="200" height="200" />
+      <img src="@base64img(resource_path('img/logo.png'))" width="200" height="200" />
     </div>
   </div>
 </x-open-graph-layout>

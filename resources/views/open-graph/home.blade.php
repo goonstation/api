@@ -106,7 +106,7 @@
       @endforeach
     </div>
     <div class="logo">
-      <img src="@base64img(storage_path('app/public/img/logo.png'))" width="200" height="200" />
+      <img src="@base64img(resource_path('img/logo.png'))" width="200" height="200" />
     </div>
   </div>
 </x-open-graph-layout>

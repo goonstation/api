@@ -12,7 +12,7 @@ use App\Models\GameRound;
 use App\Models\Map;
 use App\Models\Player;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 
 class OgImageController extends Controller
@@ -34,7 +34,7 @@ class OgImageController extends Controller
 
     private function defaultImage()
     {
-        return response(Storage::get('/public/img/og.png'))
+        return response(File::get(resource_path('img/og.png')))
             ->withHeaders([
                 'Content-Type' => 'image/png',
             ]);

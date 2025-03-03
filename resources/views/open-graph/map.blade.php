@@ -17,14 +17,14 @@
       @isset($data->last_built_at)
       <div class="footer">
         <div>
-          {!! Storage::get('icons/calendar-outline.svg') !!}
+          {!! File::get(resource_path('img/icons/calendar-outline.svg')) !!}
           Last updated {{ \Carbon\Carbon::create($data->last_built_at)->ago() }}
         </div>
       </div>
       @endisset
     </div>
     <div class="logo">
-      <img src="@base64img(storage_path('app/public/img/logo.png'))" width="200" height="200" />
+      <img src="@base64img(resource_path('img/logo.png'))" width="200" height="200" />
     </div>
   </div>
 </x-open-graph-layout>

@@ -32,13 +32,13 @@
       </div>
       <div class="footer">
         <div>
-          {!! Storage::get('icons/calendar-outline.svg') !!}
+          {!! File::get(resource_path('img/icons/calendar-outline.svg')) !!}
           Started playing {{ $data->firstConnection->created_at->ago() }}
         </div>
       </div>
     </div>
     <div class="logo">
-      <img src="@base64img(storage_path('app/public/img/logo.png'))" width="200" height="200" />
+      <img src="@base64img(resource_path('img/logo.png'))" width="200" height="200" />
     </div>
   </div>
 </x-open-graph-layout>
