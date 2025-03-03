@@ -6,18 +6,14 @@ on:
   workflow_dispatch:
   release:
     types: [published]
-  # push:
-  #   branches:
-  #     - 'master'
-  #   tags:
-  #     - 'v*'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/goonhub
 
 jobs:
-  docker:
+  build:
+    name: Build docker image
     runs-on: ubuntu-latest
 
     strategy:

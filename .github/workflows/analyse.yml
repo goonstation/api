@@ -4,6 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   analyse:
+    name: Analyse code
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
