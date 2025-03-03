@@ -1,5 +1,7 @@
 # Goonhub
 
+[![Analyse](https://github.com/goonstation/api/actions/workflows/analyse.yml/badge.svg)](https://github.com/goonstation/api/actions/workflows/analyse.yml)
+
 ## Development
 
 Uses Docker via Laravel Sail. https://laravel.com/docs/11.x/installation#laravel-and-docker
