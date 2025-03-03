@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ade205e217e6f7ffe38827298eb80e4d",
+    "content-hash": "c068f894e3917ec47b744c0ce4652f38",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -2884,6 +2884,66 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.1.0"
             },
             "time": "2024-11-18T16:19:46+00:00"
+        },
+        {
+            "name": "kdabrow/seeder-once",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/karoldabro/seeder-once.git",
+                "reference": "95015289b72f5c656ee55c3271efc8480c3edbeb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/karoldabro/seeder-once/zipball/95015289b72f5c656ee55c3271efc8480c3edbeb",
+                "reference": "95015289b72f5c656ee55c3271efc8480c3edbeb",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.0|^11.0",
+                "illuminate/database": "^10.0|^11.0",
+                "illuminate/support": "^10.0|^11.0",
+                "php": ">=8.2.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^9.0"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Kdabrow\\SeederOnce\\Providers\\SeederOnceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kdabrow\\SeederOnce\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Dąbrowski",
+                    "email": "20278897+karoldabro@users.noreply.github.com",
+                    "homepage": "https://kdabrow.com"
+                }
+            ],
+            "description": "Run your laravel seeders only once",
+            "keywords": [
+                "database",
+                "laravel",
+                "php",
+                "seeder"
+            ],
+            "support": {
+                "issues": "https://github.com/karoldabro/seeder-once/issues",
+                "source": "https://github.com/karoldabro/seeder-once/tree/5.0.0"
+            },
+            "time": "2024-04-02T15:23:50+00:00"
         },
         {
             "name": "knplabs/github-api",

@@ -194,6 +194,8 @@ RUN bun run build
 
 FROM common AS runner
 
+WORKDIR ${ROOT}
+
 USER ${USER}
 
 COPY --link --chown=${WWWUSER}:${WWWGROUP} . .
@@ -213,6 +215,8 @@ RUN composer install \
 
 EXPOSE 8000
 EXPOSE 8080
+
+VOLUME ["storage", "public"]
 
 ENTRYPOINT ["start-container"]
 

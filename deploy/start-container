@@ -12,6 +12,7 @@ else
     php artisan breadcrumbs:cache; \
     php artisan route:cache; \
     php artisan migrate --force; \
+    php artisan db:seed --force; \
     php artisan gh:generate-sitemap;
 
     exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.app.conf

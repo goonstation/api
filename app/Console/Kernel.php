@@ -24,20 +24,25 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new BuildChangelog)->everyFiveMinutes();
-        $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
-        $schedule->job(new GenerateNumbersStationPass)->hourly();
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
         $schedule->job(new ClearOldDectalks)->dailyAt('07:10');
         $schedule->job(new ClearOldAudio)->dailyAt('07:20');
-        $schedule->job(new GenerateGlobalPlayerStats)->daily();
-        $schedule->job(new GameBuildOnRepoUpdate)->everyFiveMinutes();
 
         $schedule->job(new UpdateGeoLite)->weekly();
         $schedule->job(new UpdateYoutubeDLP)->weekly();
 
-        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        if (App::isProduction()) {
+            $schedule->job(new BuildChangelog)->everyFiveMinutes();
+            $schedule->job(new GetPlayerCounts)->everyFiveMinutes();
+            $schedule->job(new GameBuildOnRepoUpdate)->everyFiveMinutes();
 
-        if (App::environment('local')) {
+            $schedule->job(new GenerateNumbersStationPass)->hourly();
+
+            $schedule->job(new GenerateGlobalPlayerStats)->daily();
+        }
+
+        if (App::isLocal()) {
             $schedule->command('telescope:prune')->daily();
         }
     }

@@ -16,6 +16,7 @@
     "inertiajs/inertia-laravel": "2.x-dev",
     "intervention/image-laravel": "*",
     "jaybizzle/laravel-crawler-detect": "1.*",
+    "kdabrow/seeder-once": " ^5.0",
     "laravel/framework": "^11.0",
     "laravel/horizon": "^5.17",
     "laravel/jetstream": "^5.0",
