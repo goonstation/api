@@ -1,3 +1,9 @@
 {
-  "preset": "laravel"
+  "preset": "laravel",
+  "exclude": [
+    "tmp"
+  ],
+  "notPath": [
+    "_ide_helper.php"
+  ]
 }

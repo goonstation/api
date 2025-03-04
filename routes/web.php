@@ -21,6 +21,7 @@ use App\Http\Controllers\Web\TicketsController;
 use App\Http\Controllers\Web\VotesController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
+use Tabuna\Breadcrumbs\Trail;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,8 @@ Route::controller(OgImageController::class)->prefix('/og-image')->group(function
 });
 
 Route::controller(HomeController::class)->prefix('/')->group(function () {
-    Route::get('/', 'index')->name('home')->breadcrumb('Home');
+    Route::get('/', 'index')->name('home')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Home', route('home')));
 });
 
 Route::controller(AuthController::class)->prefix('/auth')->group(function () {
@@ -58,59 +60,77 @@ Route::controller(AuthController::class)->prefix('/auth')->group(function () {
 });
 
 Route::controller(ChangelogController::class)->prefix('/changelog')->group(function () {
-    Route::get('/', 'index')->name('changelog')->breadcrumb('', 'home');
+    Route::get('/', 'index')->name('changelog')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Changelog', 'changelog'));
 });
 
 Route::controller(PlayersController::class)->prefix('/players')->group(function () {
-    Route::get('/', 'index')->name('players.index')->breadcrumb('Players');
+    Route::get('/', 'index')->name('players.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Players', 'players.index'));
     Route::middleware('noindex')->group(function () {
-        Route::get('/search', 'search')->name('players.search')->breadcrumb('Search');
-        Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')->breadcrumb('', 'players.search');
+        Route::get('/search', 'search')->name('players.search')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('players.index')->push('Search', 'players.search'));
+        Route::get('/{player}', 'show')->whereNumber('player')->name('players.show')
+            ->breadcrumbs(fn (Trail $trail, $player) => $trail->parent('players.search')->push('Show', route('players.show', $player)));
         Route::get('/{ckey}', 'showByCkey')->name('players.show-by-ckey');
     });
 });
 
 Route::controller(RoundsController::class)->prefix('/rounds')->group(function () {
-    Route::get('/', 'index')->name('rounds.index')->breadcrumb('Rounds');
+    Route::get('/', 'index')->name('rounds.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Rounds', 'rounds.index'));
     Route::middleware('noindex')->group(function () {
-        Route::get('/{round}', 'show')->whereNumber('round')->name('rounds.show')->breadcrumb('', 'rounds.index');
+        Route::get('/{round}', 'show')->whereNumber('round')->name('rounds.show')
+            ->breadcrumbs(fn (Trail $trail, $round) => $trail->parent('rounds.index')->push('Show', route('rounds.show', $round)));
     });
 });
 
 Route::prefix('/events')->group(function () {
     Route::controller(EventsController::class)->prefix('/')->group(function () {
-        Route::get('/', 'index')->name('events.index')->breadcrumb('Events');
+        Route::get('/', 'index')->name('events.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->push('Events', 'events.index'));
         Route::get('/stats', 'stats')->name('events.stats');
     });
 
     Route::controller(DeathsController::class)->prefix('/deaths')->group(function () {
-        Route::get('/', 'index')->name('deaths.index')->breadcrumb('Deaths');
-        Route::get('/{death}', 'show')->whereNumber('death')->name('deaths.show')->middleware('noindex')->breadcrumb('', 'deaths.index');
+        Route::get('/', 'index')->name('deaths.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('events.index')->push('Deaths', 'deaths.index'));
+        Route::get('/{death}', 'show')->whereNumber('death')->name('deaths.show')->middleware('noindex')
+            ->breadcrumbs(fn (Trail $trail, $death) => $trail->parent('deaths.index')->push('Show', route('deaths.show', $death)));
     });
 
     Route::controller(TicketsController::class)->prefix('/tickets')->group(function () {
-        Route::get('/', 'index')->name('tickets.index')->breadcrumb('Tickets');
-        Route::get('/{ticket}', 'show')->whereNumber('ticket')->name('tickets.show')->middleware('noindex')->breadcrumb('', 'tickets.index');
+        Route::get('/', 'index')->name('tickets.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('events.index')->push('Tickets', 'tickets.index'));
+        Route::get('/{ticket}', 'show')->whereNumber('ticket')->name('tickets.show')->middleware('noindex')
+            ->breadcrumbs(fn (Trail $trail, $ticket) => $trail->parent('tickets.index')->push('Show', route('tickets.show', $ticket)));
     });
 
     Route::controller(FinesController::class)->prefix('/fines')->group(function () {
-        Route::get('/', 'index')->name('fines.index')->breadcrumb('Fines');
-        Route::get('/{fine}', 'show')->whereNumber('fine')->name('fines.show')->middleware('noindex')->breadcrumb('', 'fines.index');
+        Route::get('/', 'index')->name('fines.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('events.index')->push('Fines', 'fines.index'));
+        Route::get('/{fine}', 'show')->whereNumber('fine')->name('fines.show')->middleware('noindex')
+            ->breadcrumbs(fn (Trail $trail, $fine) => $trail->parent('fines.index')->push('Show', route('fines.show', $fine)));
     });
 
     Route::controller(AntagsController::class)->prefix('/antags')->group(function () {
-        Route::get('/', 'index')->name('antags.index')->breadcrumb('Antagonists');
-        Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->middleware('noindex')->breadcrumb('', 'antags.index');
+        Route::get('/', 'index')->name('antags.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('events.index')->push('Antagonists', 'antags.index'));
+        Route::get('/{antag}', 'show')->whereNumber('antag')->name('antags.show')->middleware('noindex')
+            ->breadcrumbs(fn (Trail $trail, $antag) => $trail->parent('antags.index')->push('Show', route('antags.show', $antag)));
     });
 
     Route::controller(ErrorsController::class)->prefix('/errors')->group(function () {
-        Route::get('/', 'index')->name('errors.index')->breadcrumb('Errors');
+        Route::get('/', 'index')->name('errors.index')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('events.index')->push('Errors', 'errors.index'));
     });
 });
 
 Route::controller(MapsController::class)->prefix('/maps')->group(function () {
-    Route::get('/', 'index')->name('maps.index')->breadcrumb('Maps');
-    Route::get('/{map}', 'show')->whereAlphaNumeric('map')->name('maps.show')->breadcrumb('', 'maps.index');
+    Route::get('/', 'index')->name('maps.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Maps', 'maps.index'));
+    Route::get('/{map}', 'show')->name('maps.show')
+        ->breadcrumbs(fn (Trail $trail, $map) => $trail->parent('maps.index')->push('Show', route('maps.show', $map)));
     Route::middleware('noindex')->group(function () {
         Route::get('/private/{file}', 'getPrivateTile')->where('file', '.*')->name('maps.private');
     });
@@ -138,9 +158,11 @@ Route::controller(VotesController::class)->prefix('/votes')->group(function () {
 });
 
 Route::controller(MedalsController::class)->prefix('/medals')->group(function () {
-    Route::get('/', 'index')->name('medals.index')->breadcrumb('Medals');
+    Route::get('/', 'index')->name('medals.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->push('Medals', 'medals.index'));
     Route::middleware('noindex')->group(function () {
-        Route::get('/{uuid}', 'show')->whereUuid('uuid')->name('medals.show')->breadcrumb('', 'medals.index');
+        Route::get('/{uuid}', 'show')->whereUuid('uuid')->name('medals.show')
+            ->breadcrumbs(fn (Trail $trail, $uuid) => $trail->parent('medals.index')->push('Show', route('medals.show', $uuid)));
         Route::get('/players/{uuid}', 'players')->whereUuid('uuid')->name('medals.players');
     });
 });

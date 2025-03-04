@@ -12,7 +12,7 @@ class GameAdminRankSeeder extends SeederOnce
      */
     public function run(): void
     {
-        GameAdminRank::insert([
+        GameAdminRank::insertOrIgnore([
             ['rank' => 'Host'],
             ['rank' => 'Coder'],
             ['rank' => 'Administrator'],

@@ -23,6 +23,7 @@ use App\Http\Controllers\Web\Admin\UsersController;
 use App\Http\Middleware\CanAccessAdminRoutes;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
+use Tabuna\Breadcrumbs\Trail;
 
 Route::middleware([
     'auth:sanctum',
@@ -36,104 +37,133 @@ Route::middleware([
 
     Route::prefix('/admin')->middleware([CanAccessAdminRoutes::class])->group(function () {
         Route::controller(UsersController::class)->prefix('users')->middleware([EnsureUserIsAdmin::class])->group(function () {
-            Route::get('/', 'index')->name('admin.users.index')->breadcrumb('Users');
-            Route::get('/create', 'create')->name('admin.users.create')->breadcrumb('', 'admin.users.index');
+            Route::get('/', 'index')->name('admin.users.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Users', 'admin.users.index'));
+            Route::get('/create', 'create')->name('admin.users.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.users.index')->push('Create', 'admin.users.create'));
             Route::post('/', 'store')->name('admin.users.store');
-            Route::get('/edit/{user}', 'edit')->name('admin.users.edit')->breadcrumb('', 'admin.users.index');
+            Route::get('/edit/{user}', 'edit')->name('admin.users.edit')
+                ->breadcrumbs(fn (Trail $trail, $user) => $trail->parent('admin.users.index')->push('Edit', route('admin.users.edit', $user)));
             Route::put('/{user}', 'update')->whereNumber('user')->name('admin.users.update');
         });
 
         Route::controller(GameAdminRanksController::class)->prefix('game-admin-ranks')->group(function () {
-            Route::get('/', 'index')->name('admin.game-admin-ranks.index')->breadcrumb('Admin Ranks');
-            Route::get('/create', 'create')->name('admin.game-admin-ranks.create')->breadcrumb('', 'admin.game-admin-ranks.index');
+            Route::get('/', 'index')->name('admin.game-admin-ranks.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Admin Ranks', 'admin.game-admin-ranks.index'));
+            Route::get('/create', 'create')->name('admin.game-admin-ranks.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.game-admin-ranks.index')->push('Create', 'admin.game-admin-ranks.create'));
             Route::post('/', 'store')->name('admin.game-admin-ranks.store');
         });
 
         Route::controller(GameAdminsController::class)->prefix('game-admins')->group(function () {
-            Route::get('/', 'index')->name('admin.game-admins.index')->breadcrumb('Admins');
+            Route::get('/', 'index')->name('admin.game-admins.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Admins', 'admin.game-admins.index'));
             Route::get('/{gameAdmin}', 'show')
                 ->whereNumber('gameAdmin')
                 ->name('admin.game-admins.show')
-                ->breadcrumb('', 'admin.game-admins.index');
+                ->breadcrumbs(fn (Trail $trail, $gameAdmin) => $trail->parent('admin.game-admins.index')->push('Show', route('admin.game-admins.show', $gameAdmin)));
         });
 
         Route::controller(RoundsController::class)->prefix('rounds')->group(function () {
-            Route::get('/', 'index')->name('admin.rounds.index')->breadcrumb('Rounds');
+            Route::get('/', 'index')->name('admin.rounds.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Rounds', 'admin.rounds.index'));
             Route::get('/{round}', 'show')
                 ->whereNumber('round')
                 ->name('admin.rounds.show')
-                ->breadcrumb('', 'admin.rounds.index');
+                ->breadcrumbs(fn (Trail $trail, $round) => $trail->parent('admin.rounds.index')->push('Show', route('admin.rounds.show', $round)));
         });
 
         Route::controller(PlayersController::class)->prefix('players')->group(function () {
-            Route::get('/', 'index')->name('admin.players.index')->breadcrumb('Players');
+            Route::get('/', 'index')->name('admin.players.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Players', 'admin.players.index'));
             Route::get('/{player}', 'show')
                 ->whereNumber('player')
                 ->name('admin.players.show')
-                ->breadcrumb('', 'admin.players.index');
+                ->breadcrumbs(fn (Trail $trail, $player) => $trail->parent('admin.players.index')->push('Show', route('admin.players.show', $player)));
             Route::get('/{ckey}', 'showByCkey')
                 ->name('admin.player.show-by-ckey');
         });
 
         Route::controller(BansController::class)->prefix('bans')->group(function () {
-            Route::get('/', 'index')->name('admin.bans.index')->breadcrumb('Bans');
-            Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')->breadcrumb('Bans');
+            Route::get('/', 'index')->name('admin.bans.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Bans', 'admin.bans.index'));
+            Route::get('/removed', 'indexRemoved')->name('admin.bans.index-removed')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Removed Bans', 'admin.bans.index-removed'));
             Route::get('/details', 'getDetails')->name('admin.bans.get-details');
             Route::post('/details/{ban}', 'storeDetail')->whereNumber('ban')->name('admin.bans.store-detail');
             Route::put('/details/{banDetail}', 'updateDetail')->whereNumber('banDetail')->name('admin.bans.update-detail');
             Route::delete('/details/{banDetail}', 'destroyDetail')->whereNumber('banDetail')->name('admin.bans.destroy-detail');
-            Route::get('/create', 'create')->name('admin.bans.create')->breadcrumb('', 'admin.bans.index');
-            Route::get('/{ban}', 'show')->whereNumber('ban')->name('admin.bans.show')->breadcrumb('', 'admin.bans.index');
+            Route::get('/create', 'create')->name('admin.bans.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.bans.index')->push('Create', 'admin.bans.create'));
+            Route::get('/{ban}', 'show')->whereNumber('ban')->name('admin.bans.show')
+                ->breadcrumbs(fn (Trail $trail, $ban) => $trail->parent('admin.bans.index')->push('Show', route('admin.bans.show', $ban)));
             Route::post('/', 'store')->name('admin.bans.store');
-            Route::get('/edit/{ban}', 'edit')->whereNumber('ban')->name('admin.bans.edit')->breadcrumb('', 'admin.bans.index');
+            Route::get('/edit/{ban}', 'edit')->whereNumber('ban')->name('admin.bans.edit')
+                ->breadcrumbs(fn (Trail $trail, $ban) => $trail->parent('admin.bans.index')->push('Edit', route('admin.bans.edit', $ban)));
             Route::put('/{ban}', 'update')->whereNumber('ban')->name('admin.bans.update');
             Route::delete('/{ban}', 'destroy')->whereNumber('ban')->name('admin.bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.bans.delete-multi');
 
-            Route::get('/remove', 'showRemoveDetails')->name('admin.bans.show-remove-details')->breadcrumb('', 'admin.bans.index');
+            Route::get('/remove', 'showRemoveDetails')->name('admin.bans.show-remove-details')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.bans.index')->push('Remove', 'admin.bans.show-remove-details'));
             Route::post('/remove/lookup', 'lookupDetails')->name('admin.bans.lookup-details');
             Route::post('/remove', 'removeLookupDetails')->name('admin.bans.remove-lookup-details');
         });
 
         Route::controller(JobBansController::class)->prefix('job-bans')->group(function () {
-            Route::get('/', 'index')->name('admin.job-bans.index')->breadcrumb('Job Bans');
-            Route::get('/create', 'create')->name('admin.job-bans.create')->breadcrumb('', 'admin.job-bans.index');
-            Route::get('/{jobBan}', 'show')->whereNumber('jobBan')->name('admin.job-bans.show')->breadcrumb('', 'admin.job-bans.index');
+            Route::get('/', 'index')->name('admin.job-bans.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Job Bans', 'admin.job-bans.index'));
+            Route::get('/create', 'create')->name('admin.job-bans.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.job-bans.index')->push('Create', 'admin.job-bans.create'));
+            Route::get('/{jobBan}', 'show')->whereNumber('jobBan')->name('admin.job-bans.show')
+                ->breadcrumbs(fn (Trail $trail, $jobBan) => $trail->parent('admin.job-bans.index')->push('Show', route('admin.job-bans.show', $jobBan)));
             Route::post('/', 'store')->name('admin.job-bans.store');
-            Route::get('/edit/{jobBan}', 'edit')->whereNumber('jobBan')->name('admin.job-bans.edit')->breadcrumb('', 'admin.job-bans.index');
+            Route::get('/edit/{jobBan}', 'edit')->whereNumber('jobBan')->name('admin.job-bans.edit')
+                ->breadcrumbs(fn (Trail $trail, $jobBan) => $trail->parent('admin.job-bans.index')->push('Edit', route('admin.job-bans.edit', $jobBan)));
             Route::put('/{jobBan}', 'update')->whereNumber('jobBan')->name('admin.job-bans.update');
             Route::delete('/{jobBan}', 'destroy')->whereNumber('jobBan')->name('admin.job-bans.delete');
             Route::delete('/', 'destroyMulti')->name('admin.job-bans.delete-multi');
         });
 
         Route::controller(PlayerNotesController::class)->prefix('notes')->group(function () {
-            Route::get('/', 'index')->name('admin.notes.index')->breadcrumb('Notes');
-            Route::get('/create', 'create')->name('admin.notes.create')->breadcrumb('', 'admin.notes.index');
-            Route::get('/{note}', 'show')->whereNumber('note')->name('admin.notes.show')->breadcrumb('', 'admin.notes.index');
+            Route::get('/', 'index')->name('admin.notes.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Notes', 'admin.notes.index'));
+            Route::get('/create', 'create')->name('admin.notes.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.notes.index')->push('Create', 'admin.notes.create'));
+            Route::get('/{note}', 'show')->whereNumber('note')->name('admin.notes.show')
+                ->breadcrumbs(fn (Trail $trail, $note) => $trail->parent('admin.notes.index')->push('Show', route('admin.notes.show', $note)));
             Route::post('/', 'store')->name('admin.notes.store');
-            Route::get('/edit/{note}', 'edit')->whereNumber('note')->name('admin.notes.edit')->breadcrumb('', 'admin.notes.index');
+            Route::get('/edit/{note}', 'edit')->whereNumber('note')->name('admin.notes.edit')
+                ->breadcrumbs(fn (Trail $trail, $note) => $trail->parent('admin.notes.index')->push('Edit', route('admin.notes.edit', $note)));
             Route::put('/{note}', 'update')->whereNumber('note')->name('admin.notes.update');
             Route::delete('/{note}', 'destroy')->whereNumber('note')->name('admin.notes.delete');
             Route::delete('/', 'destroyMulti')->name('admin.notes.delete-multi');
         });
 
         Route::controller(MapsController::class)->prefix('maps')->group(function () {
-            Route::get('/', 'index')->name('admin.maps.index')->breadcrumb('Maps');
-            Route::get('/upload', 'showUpload')->name('admin.maps.upload')->breadcrumb('', 'admin.maps.index');
+            Route::get('/', 'index')->name('admin.maps.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Maps', 'admin.maps.index'));
+            Route::get('/upload', 'showUpload')->name('admin.maps.upload')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.maps.index')->push('Upload', 'admin.maps.upload'));
             Route::post('/upload', 'upload')->name('admin.maps.upload-update');
             Route::post('/upload-file', 'uploadFile')->name('admin.maps.upload-file');
-            Route::get('/create', 'create')->name('admin.maps.create')->breadcrumb('', 'admin.maps.index');
+            Route::get('/create', 'create')->name('admin.maps.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.maps.index')->push('Create', 'admin.maps.create'));
             Route::post('/', 'store')->name('admin.maps.store');
-            Route::get('/edit/{map}', 'edit')->whereNumber('map')->name('admin.maps.edit')->breadcrumb('', 'admin.maps.index');
+            Route::get('/edit/{map}', 'edit')->whereNumber('map')->name('admin.maps.edit')
+                ->breadcrumbs(fn (Trail $trail, $map) => $trail->parent('admin.map.index')->push('Edit', route('admin.maps.edit', $map)));
             Route::put('/{map}', 'update')->whereNumber('map')->name('admin.maps.update');
             Route::delete('/{map}', 'destroy')->whereNumber('map')->name('admin.maps.delete');
         });
 
         Route::controller(MedalsController::class)->prefix('medals')->group(function () {
-            Route::get('/', 'index')->name('admin.medals.index')->breadcrumb('Medals');
-            Route::get('/create', 'create')->name('admin.medals.create')->breadcrumb('', 'admin.medals.index');
+            Route::get('/', 'index')->name('admin.medals.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Medals', 'admin.medals.index'));
+            Route::get('/create', 'create')->name('admin.medals.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.medals.index')->push('Create', 'admin.medals.create'));
             Route::post('/', 'store')->name('admin.medals.store');
-            Route::get('/edit/{medal}', 'edit')->whereNumber('medal')->name('admin.medals.edit')->breadcrumb('', 'admin.medals.index');
+            Route::get('/edit/{medal}', 'edit')->whereNumber('medal')->name('admin.medals.edit')
+                ->breadcrumbs(fn (Trail $trail, $medal) => $trail->parent('admin.medals.index')->push('Edit', route('admin.medals.edit', $medal)));
             Route::put('/{medal}', 'update')->whereNumber('medal')->name('admin.medals.update');
             Route::delete('/{medal}', 'destroy')->whereNumber('medal')->name('admin.medals.delete');
 
@@ -143,37 +173,44 @@ Route::middleware([
         });
 
         Route::controller(EventsController::class)->prefix('events')->group(function () {
-            Route::get('/', 'index')->name('admin.events.index')->breadcrumb('Events');
+            Route::get('/', 'index')->name('admin.events.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Events', 'admin.events.index'));
         });
 
         Route::controller(LogsController::class)->prefix('logs')->group(function () {
-            Route::get('/', 'index')->name('admin.logs.index')->breadcrumb('Logs');
+            Route::get('/', 'index')->name('admin.logs.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Logs', 'admin.logs.index'));
             Route::get('/{gameRound}', 'show')
                 ->whereNumber('gameRound')
                 ->name('admin.logs.show')
-                ->breadcrumb('', 'admin.logs.index');
+                ->breadcrumbs(fn (Trail $trail, $gameRound) => $trail->parent('admin.logs.index')->push('Show', route('admin.logs.show', $gameRound)));
             Route::get('/get-logs/{gameRound}', 'getLogs')
                 ->whereNumber('gameRound')
                 ->name('admin.logs.get-logs');
         });
 
         Route::controller(ErrorsController::class)->prefix('errors')->group(function () {
-            Route::get('/', 'index')->name('admin.errors.index')->breadcrumb('Errors');
-            Route::get('/summary', 'summary')->name('admin.errors.summary')->breadcrumb('Errors');
+            Route::get('/', 'index')->name('admin.errors.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Errors', 'admin.errors.index'));
+            Route::get('/summary', 'summary')->name('admin.errors.summary')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Error Summary', 'admin.errors.summary'));
             Route::get('/{gameRound}', 'show')
                 ->whereNumber('gameRound')
                 ->name('admin.errors.show')
-                ->breadcrumb('', 'admin.errors.index');
+                ->breadcrumbs(fn (Trail $trail, $gameRound) => $trail->parent('admin.errors.index')->push('Show', route('admin.errors.show', $gameRound)));
             Route::get('/get-errors/{gameRound}', 'getErrors')
                 ->whereNumber('gameRound')
                 ->name('admin.errors.get-errors');
         });
 
         Route::controller(RedirectsController::class)->prefix('redirects')->group(function () {
-            Route::get('/', 'index')->name('admin.redirects.index')->breadcrumb('Redirects');
-            Route::get('/create', 'create')->name('admin.redirects.create')->breadcrumb('', 'admin.redirects.index');
+            Route::get('/', 'index')->name('admin.redirects.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Redirects', 'admin.redirects.index'));
+            Route::get('/create', 'create')->name('admin.redirects.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.redirects.index')->push('Create', 'admin.redirects.create'));
             Route::post('/', 'store')->name('admin.redirects.store');
-            Route::get('/edit/{redirect}', 'edit')->whereNumber('redirect')->name('admin.redirects.edit')->breadcrumb('', 'admin.redirects.index');
+            Route::get('/edit/{redirect}', 'edit')->whereNumber('redirect')->name('admin.redirects.edit')
+                ->breadcrumbs(fn (Trail $trail, $redirect) => $trail->parent('admin.redirects.index')->push('Edit', route('admin.redirects.edit', $redirect)));
             Route::put('/{redirect}', 'update')->whereNumber('redirect')->name('admin.redirects.update');
             Route::delete('/{redirect}', 'destroy')->whereNumber('redirect')->name('admin.redirects.delete');
         });
@@ -183,33 +220,42 @@ Route::middleware([
         });
 
         Route::controller(GameBuildsController::class)->prefix('builds')->group(function () {
-            Route::get('/', 'index')->name('admin.builds.index')->breadcrumb('Builds');
+            Route::get('/', 'index')->name('admin.builds.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Builds', 'admin.builds.index'));
             Route::get('/status', 'status')->name('admin.builds.status');
             Route::post('/start', 'store')->name('admin.builds.store');
-            Route::get('/{build}', 'show')->whereNumber('build')->name('admin.builds.show')->breadcrumb('', 'admin.builds.index');
+            Route::get('/{build}', 'show')->whereNumber('build')->name('admin.builds.show')
+                ->breadcrumbs(fn (Trail $trail, $build) => $trail->parent('admin.builds.index')->push('Show', route('admin.builds.show', $build)));
             Route::post('/cancel', 'cancel')->name('admin.builds.cancel');
         });
 
         Route::controller(GameBuildSettingsController::class)->prefix('builds/settings')->group(function () {
-            Route::get('/', 'index')->name('admin.builds.settings.index')->breadcrumb('', 'admin.builds.index');
-            Route::get('/create', 'create')->name('admin.builds.settings.create')->breadcrumb('', 'admin.builds.settings.index');
+            Route::get('/', 'index')->name('admin.builds.settings.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.builds.index')->push('Build Settings', 'admin.builds.settings.index'));
+            Route::get('/create', 'create')->name('admin.builds.settings.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.builds.settings.index')->push('Create', 'admin.builds.settings.create'));
             Route::post('/', 'store')->name('admin.builds.settings.store');
-            Route::get('/{setting}', 'edit')->whereNumber('setting')->name('admin.builds.settings.edit')->breadcrumb('', 'admin.builds.settings.index');
+            Route::get('/{setting}', 'edit')->whereNumber('setting')->name('admin.builds.settings.edit')
+                ->breadcrumbs(fn (Trail $trail, $setting) => $trail->parent('admin.builds.settings.index')->push('Edit', route('admin.builds.settings.edit', $setting)));
             Route::put('/{setting}', 'update')->whereNumber('setting')->name('admin.builds.settings.update');
             Route::delete('/{setting}', 'destroy')->whereNumber('setting')->name('admin.builds.settings.delete');
         });
 
         Route::controller(GameBuildTestMergesController::class)->prefix('builds/test-merges')->group(function () {
-            Route::get('/', 'index')->name('admin.builds.test-merges.index')->breadcrumb('', 'admin.builds.index');
-            Route::get('/create', 'create')->name('admin.builds.test-merges.create')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::get('/', 'index')->name('admin.builds.test-merges.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.builds.index')->push('Build Test Merges', 'admin.builds.test-merges.index'));
+            Route::get('/create', 'create')->name('admin.builds.test-merges.create')
+                ->breadcrumbs(fn (Trail $trail) => $trail->parent('admin.builds.test-merges.index')->push('Create', 'admin.builds.test-merges.create'));
             Route::post('/', 'store')->name('admin.builds.test-merges.store');
-            Route::get('/{testMerge}', 'edit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::get('/{testMerge}', 'edit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit')
+                ->breadcrumbs(fn (Trail $trail, $testMerge) => $trail->parent('admin.builds.test-merges.index')->push('Edit', route('admin.builds.test-merges.edit', $testMerge)));
             Route::put('/{testMerge}', 'update')->whereNumber('testMerge')->name('admin.builds.test-merges.update');
             Route::delete('/{testMerge}', 'destroy')->whereNumber('testMerge')->name('admin.builds.test-merges.delete');
             Route::delete('/', 'destroyMulti')->name('admin.builds.test-merges.delete-multi');
             Route::get('/pr', 'pullRequests')->name('admin.builds.test-merges.pr');
             Route::get('/pr/{prId}', 'pullRequestDetails')->whereNumber('prId')->name('admin.builds.test-merges.pr-details');
-            Route::get('/{testMerge}/commit', 'editCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit-commit')->breadcrumb('', 'admin.builds.test-merges.index');
+            Route::get('/{testMerge}/commit', 'editCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.edit-commit')
+                ->breadcrumbs(fn (Trail $trail, $testMerge) => $trail->parent('admin.builds.test-merges.index')->push('Edit', route('admin.builds.test-merges.edit-commit', $testMerge)));
             Route::put('/{testMerge}/commit', 'updateCommit')->whereNumber('testMerge')->name('admin.builds.test-merges.update-commit');
             Route::put('/{prId}/commits', 'updateCommits')->whereNumber('prId')->name('admin.builds.test-merges.update-commits');
         });

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c068f894e3917ec47b744c0ce4652f38",
+    "content-hash": "30906f717e3520662019bfd4ea157ef5",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -1644,68 +1644,6 @@
                 "source": "https://github.com/maxmind/GeoIP2-php/tree/v3.1.0"
             },
             "time": "2024-11-15T16:33:31+00:00"
-        },
-        {
-            "name": "glhd/gretel",
-            "version": "1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/glhd/gretel.git",
-                "reference": "272cb98566e322ef65cdad4b18b9996553413900"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/glhd/gretel/zipball/272cb98566e322ef65cdad4b18b9996553413900",
-                "reference": "272cb98566e322ef65cdad4b18b9996553413900",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/routing": "^8|^9|^10|^11|12.x-dev|dev-master",
-                "illuminate/support": "^8|^9|^10|^11|12.x-dev|dev-master",
-                "illuminate/view": "^8|^9|^10|^11|12.x-dev|dev-master",
-                "laravel/serializable-closure": "^1.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.0",
-                "mockery/mockery": "^1.3",
-                "orchestra/testbench": "^6.24|^7.10|^8|^9|9.x-dev|10.x-dev|dev-master",
-                "phpunit/phpunit": "^9.5|^10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Gretel": "Glhd\\Gretel\\Support\\Facades\\Gretel"
-                    },
-                    "providers": [
-                        "Glhd\\Gretel\\Support\\GretelServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Glhd\\Gretel\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Morrell",
-                    "homepage": "http://www.cmorrell.com"
-                }
-            ],
-            "keywords": [
-                "breadcrumbs",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/glhd/gretel/issues",
-                "source": "https://github.com/glhd/gretel/tree/1.8.0"
-            },
-            "time": "2024-03-12T20:05:07+00:00"
         },
         {
             "name": "graham-campbell/bounded-cache",
@@ -12644,6 +12582,74 @@
                 }
             ],
             "time": "2025-02-13T10:27:23+00:00"
+        },
+        {
+            "name": "tabuna/breadcrumbs",
+            "version": "4.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tabuna/breadcrumbs.git",
+                "reference": "d3b21ea43c7c157fd279d684b1f591df9d25a78b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tabuna/breadcrumbs/zipball/d3b21ea43c7c157fd279d684b1f591df9d25a78b",
+                "reference": "d3b21ea43c7c157fd279d684b1f591df9d25a78b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "laravel/framework": "^10.0|^11.0|^12.0",
+                "laravel/serializable-closure": "^1.0|^2.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "phpunit/php-code-coverage": "^10.|^11.0|^12.0",
+                "phpunit/phpunit": "^10.5|^11.0|^12.0",
+                "vimeo/psalm": "^5.0|^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Breadcrumbs": "Tabuna\\Breadcrumbs\\Breadcrumbs"
+                    },
+                    "providers": [
+                        "Tabuna\\Breadcrumbs\\BreadcrumbsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tabuna\\Breadcrumbs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandr Chernyaev",
+                    "email": "bliz48rus@gmail.com"
+                },
+                {
+                    "name": "Dwight Watson",
+                    "email": "dwight@studentservices.com.au"
+                },
+                {
+                    "name": "Dave James Miller",
+                    "email": "dave@davejamesmiller.com"
+                }
+            ],
+            "description": "An easy way to add breadcrumbs to your Laravel app.",
+            "support": {
+                "issues": "https://github.com/tabuna/breadcrumbs/issues",
+                "source": "https://github.com/tabuna/breadcrumbs/tree/4.3.0"
+            },
+            "time": "2025-02-25T08:18:04+00:00"
         },
         {
             "name": "tightenco/ziggy",

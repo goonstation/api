@@ -23,14 +23,26 @@
             />
           </div>
         </q-btn-dropdown>
-        <div class="flex items-center q-ml-md">Showing {{ $formats.number(logs.length) }} logs</div>
+        <div class="flex items-center q-ml-sm text-sm">
+          Showing {{ $formats.number(logs.length) }} logs
+        </div>
         <q-space />
+        <q-input
+          v-model="searchText"
+          :debounce="500"
+          class="search-text text-sm q-mr-md"
+          placeholder="Search"
+          filled
+          hide-bottom-space
+          dense
+          clearable
+        />
         <q-btn square dense size="sm" class="q-mr-sm" @click="toggleSidebar">
           <template v-if="sidebarEnabled">Hide</template>
           <template v-else>Show</template>
           Sidebar
         </q-btn>
-        <q-btn square dense @click="fullscreen = !fullscreen" :icon="ionExpand">
+        <q-btn size="sm" square dense @click="fullscreen = !fullscreen" :icon="ionExpand">
           <q-tooltip>Toggle Fullscreen</q-tooltip>
         </q-btn>
       </div>
@@ -104,6 +116,17 @@
   padding: 5px;
 }
 
+:deep(.search-text) {
+  .q-field__control {
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  .q-field__marginal {
+    height: 30px;
+  }
+}
+
 .log-filters-sidebar-wrap {
   position: absolute;
   z-index: 2;
@@ -134,31 +157,31 @@
 .log-type-filter,
 .log-type-row {
   &.log-type-ahelp {
-    background: #10107F;
+    background: #10107f;
   }
   .log-type-label-ahelp {
-    background: #36365F;
+    background: #36365f;
   }
   &.log-type-mhelp {
-    background: #4B135E;
+    background: #4b135e;
   }
   .log-type-label-mhelp {
-    background: #52365F;
+    background: #52365f;
   }
   &.log-type-admin {
     background: #003652;
   }
   .log-type-label-admin {
-    background: #134B5E;
+    background: #134b5e;
   }
   &.log-type-bombing {
-    background: #484E51;
+    background: #484e51;
   }
   .log-type-label-bombing {
     background: #6d777c;
   }
   &.log-type-chemistry {
-    background: #8C4D0F;
+    background: #8c4d0f;
   }
   .log-type-label-chemistry {
     background: #c26100;
@@ -179,16 +202,16 @@
     background: #303074;
   }
   .log-type-label-ooc {
-    background: #3F3F96;
+    background: #3f3f96;
   }
   &.log-type-pdamsg {
-    background: #323D0F;
+    background: #323d0f;
   }
   .log-type-label-pdamsg {
     background: #536026;
   }
   &.log-type-say {
-    background: #262A2B;
+    background: #262a2b;
   }
   .log-type-label-say {
     background: #303436;
@@ -200,7 +223,7 @@
     background: #720000;
   }
   &.log-type-whisper {
-    background: #1C1D1F;
+    background: #1c1d1f;
   }
   .log-type-label-whisper {
     background: #313638;
@@ -209,16 +232,16 @@
     background: #003539;
   }
   .log-type-label-tgui {
-    background: #274B4C;
+    background: #274b4c;
   }
 }
 </style>
 
 <script>
-import axios from 'axios'
-import { ionExpand } from '@quasar/extras/ionicons-v6'
-import AdminLayout from '@/Layouts/AdminLayout.vue'
 import RoundSummary from '@/Components/RoundSummary.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { ionExpand } from '@quasar/extras/ionicons-v6'
+import axios from 'axios'
 import LogFilters from './Partials/Filters.vue'
 import LogEntry from './Partials/LogEntry.vue'
 
@@ -248,6 +271,7 @@ export default {
       allLogs: [],
       loading: true,
       logs: [],
+      searchText: '',
       searchFilters: {
         and: [],
         or: [],
@@ -274,9 +298,11 @@ export default {
     },
 
     logEntrySearchTerms() {
-      if (!this.hasSearchFilters) return []
-      return this.searchFilters.and.concat(this.searchFilters.or)
-    }
+      if (!this.hasSearchFilters && !this.searchText) return []
+      const terms = this.searchFilters.and.concat(this.searchFilters.or)
+      if (this.searchText) terms.push(this.searchText)
+      return terms
+    },
   },
 
   created() {
@@ -288,9 +314,9 @@ export default {
     async getLogs() {
       try {
         const response = await axios.get(route('admin.logs.get-logs', { gameRound: this.round.id }))
-        this.allLogs = response.data
+        const allLogs = response.data
 
-        const logTypes = [...new Set(this.allLogs.map((log) => log.type))].sort()
+        const logTypes = [...new Set(allLogs.map((log) => log.type))].sort()
         this.logTypes = logTypes.map((logType) => {
           return {
             label: logType,
@@ -302,15 +328,16 @@ export default {
         // Append ckey to player element inner texts
         const poptsRegex =
           /(<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=(.*?)' title='Player Options'>)(.*?)(<\/a>)/g
-        for (const logIdx in this.allLogs) {
-          const logEntry = this.allLogs[logIdx]
+        for (const logIdx in allLogs) {
+          const logEntry = allLogs[logIdx]
           if (logEntry.source)
             logEntry.source = logEntry.source.replaceAll(poptsRegex, '$1$3 ($2)$4')
           if (logEntry.message)
             logEntry.message = logEntry.message.replaceAll(poptsRegex, '$1$3 ($2)$4')
-          this.allLogs[logIdx] = logEntry
+          allLogs[logIdx] = logEntry
         }
 
+        this.allLogs = Object.freeze(allLogs)
         this.filterLogs()
       } catch (e) {
         console.log(e)

@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use Glhd\Gretel\Routing\RequestBreadcrumbs;
-use Glhd\Gretel\View\Breadcrumb;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Spatie\SchemaOrg\Schema;
+use Tabuna\Breadcrumbs\Breadcrumbs;
+use Tabuna\Breadcrumbs\Crumb;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -63,22 +63,21 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
-    private function getBreadcrumbSchema(RequestBreadcrumbs $breadcrumbs): string
+    private function getBreadcrumbSchema(): string
     {
-        if ($breadcrumbs->count() <= 1) {
+        $breadcrumbs = Breadcrumbs::current();
+        $breadcrumbs->pop();
+        if ($breadcrumbs->isEmpty()) {
             return '';
         }
 
         $schema = Schema::breadcrumbList();
         $items = [];
-        /** @var Breadcrumb $breadcrumb */
+        /** @var Crumb $breadcrumb */
         foreach ($breadcrumbs->all() as $key => $breadcrumb) {
-            if ($breadcrumb->is_current_page) {
-                continue;
-            }
             $items[] = Schema::listItem()
-                ->name($breadcrumb->title)
-                ->item(Schema::thing()->url($breadcrumb->url))
+                ->name($breadcrumb->title())
+                ->item(Schema::thing()->url($breadcrumb->url()))
                 ->position($key + 1);
         }
 
@@ -87,10 +86,10 @@ class HandleInertiaRequests extends Middleware
         return $schema->toScript();
     }
 
-    private function getSchema(Request $request, RequestBreadcrumbs $breadcrumbs): string
+    private function getSchema(Request $request): string
     {
         $ldJson = $request->session()->get('schema', '');
-        $ldJson .= $this->getBreadcrumbSchema($breadcrumbs);
+        $ldJson .= $this->getBreadcrumbSchema();
 
         return $ldJson;
     }
@@ -102,11 +101,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $breadcrumbs = $request->route()->breadcrumbs();
-
         return array_merge(parent::share($request), [
             'csrf_token' => csrf_token(),
-            'breadcrumbs' => fn () => $breadcrumbs->jsonSerialize(),
+            'breadcrumbs' => fn () => Breadcrumbs::current(),
             'env' => [],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
@@ -114,7 +111,7 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn () => $request->session()->get('message'),
             ],
             'meta' => fn () => $this->getMetaData($request),
-            'schema' => fn () => $this->getSchema($request, $breadcrumbs),
+            'schema' => fn () => $this->getSchema($request),
         ]);
     }
 }

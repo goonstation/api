@@ -22655,125 +22655,6 @@ namespace GrahamCampbell\GitHub\Facades {
             }
     }
 
-namespace Glhd\Gretel\Support\Facades {
-    /**
-     * 
-     *
-     */
-    class Gretel {
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function withExceptionHandling($callback)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->withExceptionHandling($callback);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function handleMissingBreadcrumbs($callback)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->handleMissingBreadcrumbs($callback);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function throwOnMissingBreadcrumbs($throw = true)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->throwOnMissingBreadcrumbs($throw);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function handleMisconfiguredBreadcrumbs($callback)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->handleMisconfiguredBreadcrumbs($callback);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function throwOnMisconfiguredBreadcrumbs($throw = true)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->throwOnMisconfiguredBreadcrumbs($throw);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function clear()
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->clear();
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function breadcrumb($name, $title = null, $parent = null, $relation = null)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->breadcrumb($name, $title, $parent, $relation);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function register(...$breadcrumbs)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->register(...$breadcrumbs);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function get($route)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->get($route);
-        }
-
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function getOrFail($route)
-        {
-            /** @var \Glhd\Gretel\Registry $instance */
-            return $instance->getOrFail($route);
-        }
-
-            }
-    }
-
 namespace Intervention\Image\Laravel\Facades {
     /**
      * 
@@ -24742,6 +24623,123 @@ namespace Spatie\LaravelIgnition\Facades {
             }
     }
 
+namespace Tabuna\Breadcrumbs {
+    /**
+     * Class Breadcrumbs.
+     *
+     */
+    class Breadcrumbs {
+        /**
+         * Register a breadcrumb definition by passing it off to the registrar.
+         *
+         * @param string $route
+         * @param \Closure $definition
+         * @throws \Throwable
+         * @return void 
+         * @static 
+         */
+        public static function for($route, $definition)
+        {
+            /** @var \Tabuna\Breadcrumbs\Manager $instance */
+            $instance->for($route, $definition);
+        }
+
+        /**
+         * 
+         *
+         * @param null $parameters
+         * @throws \Throwable
+         * @return \Illuminate\Support\Collection 
+         * @static 
+         */
+        public static function current($parameters = null)
+        {
+            /** @var \Tabuna\Breadcrumbs\Manager $instance */
+            return $instance->current($parameters);
+        }
+
+        /**
+         * 
+         *
+         * @param string $route
+         * @param mixed|null $parameters
+         * @throws \Throwable
+         * @return \Illuminate\Support\Collection 
+         * @static 
+         */
+        public static function generate($route, $parameters = null)
+        {
+            /** @var \Tabuna\Breadcrumbs\Manager $instance */
+            return $instance->generate($route, $parameters);
+        }
+
+        /**
+         * 
+         *
+         * @param string|null $name
+         * @return bool 
+         * @static 
+         */
+        public static function has($name = null)
+        {
+            /** @var \Tabuna\Breadcrumbs\Manager $instance */
+            return $instance->has($name);
+        }
+
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @param-closure-this static  $macro
+         * @return void 
+         * @static 
+         */
+        public static function macro($name, $macro)
+        {
+            \Tabuna\Breadcrumbs\Manager::macro($name, $macro);
+        }
+
+        /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void 
+         * @throws \ReflectionException
+         * @static 
+         */
+        public static function mixin($mixin, $replace = true)
+        {
+            \Tabuna\Breadcrumbs\Manager::mixin($mixin, $replace);
+        }
+
+        /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */
+        public static function hasMacro($name)
+        {
+            return \Tabuna\Breadcrumbs\Manager::hasMacro($name);
+        }
+
+        /**
+         * Flush the existing macros.
+         *
+         * @return void 
+         * @static 
+         */
+        public static function flushMacros()
+        {
+            \Tabuna\Breadcrumbs\Manager::flushMacros();
+        }
+
+            }
+    }
+
 namespace Illuminate\Support {
     /**
      * 
@@ -24940,26 +24938,13 @@ namespace Illuminate\Routing {
         /**
          * 
          *
-         * @see \Glhd\Gretel\Macros::register()
-         * @param mixed $title
-         * @param mixed $parent
-         * @param mixed $relation
+         * @see \Tabuna\Breadcrumbs\BreadcrumbsServiceProvider::register()
+         * @param \Closure $closure
          * @static 
          */
-        public static function breadcrumb($title = null, $parent = null, $relation = null)
+        public static function breadcrumbs($closure)
         {
-            return \Illuminate\Routing\Route::breadcrumb($title, $parent, $relation);
-        }
-
-        /**
-         * 
-         *
-         * @see \Glhd\Gretel\Macros::register()
-         * @static 
-         */
-        public static function breadcrumbs()
-        {
-            return \Illuminate\Routing\Route::breadcrumbs();
+            return \Illuminate\Routing\Route::breadcrumbs($closure);
         }
 
         /**
@@ -24972,24 +24957,6 @@ namespace Illuminate\Routing {
         public static function lazy($enabled = true)
         {
             return \Illuminate\Routing\Route::lazy($enabled);
-        }
-
-            }
-    /**
-     * 
-     *
-     */
-    class PendingResourceRegistration {
-        /**
-         * 
-         *
-         * @see \Glhd\Gretel\Macros::register()
-         * @param mixed $breadcrumbs
-         * @static 
-         */
-        public static function breadcrumbs($breadcrumbs)
-        {
-            return \Illuminate\Routing\PendingResourceRegistration::breadcrumbs($breadcrumbs);
         }
 
             }
@@ -29854,7 +29821,6 @@ namespace  {
     class GameBridge extends \App\Facades\GameBridge {}
     class GitHub extends \GrahamCampbell\GitHub\Facades\GitHub {}
     class LaRecipe extends \BinaryTorch\LaRecipe\LaRecipe {}
-    class Gretel extends \Glhd\Gretel\Support\Facades\Gretel {}
     class Image extends \Intervention\Image\Laravel\Facades\Image {}
     class Horizon extends \Laravel\Horizon\Horizon {}
     class Octane extends \Laravel\Octane\Facades\Octane {}
@@ -29863,6 +29829,7 @@ namespace  {
     class Livewire extends \Livewire\Livewire {}
     class Sentry extends \Sentry\Laravel\Facade {}
     class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
+    class Breadcrumbs extends \Tabuna\Breadcrumbs\Breadcrumbs {}
 }
 
 

@@ -12,7 +12,7 @@ class MapSeeder extends SeederOnce
      */
     public function run(): void
     {
-        Map::insert([
+        Map::insertOrIgnore([
             ['map_id' => 'ATLAS', 'name' => 'Atlas', 'active' => true, 'is_layer' => false, 'tile_width' => 300, 'tile_height' => 300],
             ['map_id' => 'COGMAP', 'name' => 'Cogmap', 'active' => true, 'is_layer' => false, 'tile_width' => 300, 'tile_height' => 300],
             ['map_id' => 'COGMAP2', 'name' => 'Cogmap 2', 'active' => true, 'is_layer' => false, 'tile_width' => 300, 'tile_height' => 300],

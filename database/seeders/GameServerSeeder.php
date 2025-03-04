@@ -12,7 +12,7 @@ class GameServerSeeder extends SeederOnce
      */
     public function run(): void
     {
-        GameServer::insert([
+        GameServer::insertOrIgnore([
             [
                 'server_id' => 'main1',
                 'name' => 'Goonstation 1 Classic: Heisenbee',

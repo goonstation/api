@@ -10,7 +10,6 @@
     "binarytorch/larecipe": "^2.6",
     "dedoc/scramble": "^0.12.9",
     "geoip2/geoip2": "^3.1",
-    "glhd/gretel": "^1.7",
     "graham-campbell/github": "^12.6",
     "guzzlehttp/guzzle": "^7.2",
     "inertiajs/inertia-laravel": "2.x-dev",
@@ -38,6 +37,7 @@
     "spatie/schema-org": "^3.23",
     "symfony/css-selector": "^7.1",
     "symfony/panther": "^2.1",
+    "tabuna/breadcrumbs": "^4.3",
     "tightenco/ziggy": "^2.4",
     "tucker-eric/eloquentfilter": "^3.1"
   },
