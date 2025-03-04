@@ -216,7 +216,7 @@ RUN composer install \
 EXPOSE 8000
 EXPOSE 8080
 
-VOLUME ["storage", "public"]
+VOLUME ["public"]
 
 ENTRYPOINT ["start-container"]
 
