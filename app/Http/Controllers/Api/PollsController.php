@@ -24,7 +24,7 @@ class PollsController extends Controller
     private function populatePollResults($poll)
     {
         // The ordering of options is important ok
-        $poll->options = $poll->options->sortBy('position');
+        $poll->offsetSet('options', $poll->options->sortBy('position'));
 
         $totalAnswers = 0;
         $winningOption = null;
@@ -41,11 +41,11 @@ class PollsController extends Controller
             foreach ($option->answers as $answer) {
                 $answers[] = $answer->player_id;
             }
-            $option->answers = $answers;
+            $option->offsetSet('answers', $answers);
         }
 
-        $poll->total_answers = $totalAnswers;
-        $poll->winning_option_id = $winningOption ? $winningOption->id : $winningOption;
+        $poll->offsetSet('total_answers', $totalAnswers);
+        $poll->offsetSet('winning_option_id', $winningOption ? $winningOption->id : $winningOption);
 
         return $poll;
     }
@@ -292,6 +292,7 @@ class PollsController extends Controller
 
         // Clear their previous pick if not multiple
         if (! $pollOption->poll->multiple_choice) {
+            /** @var PollAnswer|null */
             $existingAnswer = $existingAnswers->first();
             if ($existingAnswer) {
                 $existingAnswer->delete();
