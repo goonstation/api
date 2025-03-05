@@ -25247,11 +25247,12 @@ namespace Spatie\Health\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Check::isProduction();
+            return \Spatie\Health\Checks\Check::isEnv($envs);
         }
 
             }
@@ -25267,11 +25268,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\UsedDiskSpaceCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\UsedDiskSpaceCheck::isEnv($envs);
         }
 
             }
@@ -25284,11 +25286,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\DatabaseCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\DatabaseCheck::isEnv($envs);
         }
 
             }
@@ -25301,11 +25304,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\CacheCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\CacheCheck::isEnv($envs);
         }
 
             }
@@ -25318,11 +25322,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\OptimizedAppCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\OptimizedAppCheck::isEnv($envs);
         }
 
             }
@@ -25335,11 +25340,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck::isEnv($envs);
         }
 
             }
@@ -25352,11 +25358,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\DatabaseSizeCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\DatabaseSizeCheck::isEnv($envs);
         }
 
             }
@@ -25369,11 +25376,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\HorizonCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\HorizonCheck::isEnv($envs);
         }
 
             }
@@ -25386,11 +25394,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\QueueCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\QueueCheck::isEnv($envs);
         }
 
             }
@@ -25403,11 +25412,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\RedisCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\RedisCheck::isEnv($envs);
         }
 
             }
@@ -25420,11 +25430,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\RedisMemoryUsageCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\RedisMemoryUsageCheck::isEnv($envs);
         }
 
             }
@@ -25437,11 +25448,12 @@ namespace Spatie\Health\Checks\Checks {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Spatie\Health\Checks\Checks\ScheduleCheck::isProduction();
+            return \Spatie\Health\Checks\Checks\ScheduleCheck::isEnv($envs);
         }
 
             }
@@ -25457,11 +25469,12 @@ namespace Ahtinurme {
          * 
          *
          * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
          * @static 
          */
-        public static function isProduction()
+        public static function isEnv($envs)
         {
-            return \Ahtinurme\OctaneCheck::isProduction();
+            return \Ahtinurme\OctaneCheck::isEnv($envs);
         }
 
             }

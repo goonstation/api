@@ -33,27 +33,27 @@ class HealthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Check::macro('isProduction', function () {
+        Check::macro('isEnv', function (string|array $envs) {
             /** @var \Spatie\Health\Checks\Check $this */
-            return $this->if(fn () => app()->isProduction());
+            return $this->if(fn () => app()->environment($envs));
         });
 
         Health::checks([
-            UsedDiskSpaceCheck::new()->isProduction(),
+            UsedDiskSpaceCheck::new()->isEnv(['production', 'staging']),
             DatabaseCheck::new(),
             CacheCheck::new(),
             OptimizedAppCheck::new(),
             DatabaseConnectionCountCheck::new(),
             DatabaseSizeCheck::new()
                 ->failWhenSizeAboveGb(errorThresholdGb: 400.0),
-            HorizonCheck::new()->isProduction(),
-            QueueCheck::new()->isProduction(),
-            RedisCheck::new()->isProduction(),
+            HorizonCheck::new()->isEnv(['production', 'staging']),
+            QueueCheck::new()->isEnv(['production', 'staging']),
+            RedisCheck::new()->isEnv(['production', 'staging']),
             RedisMemoryUsageCheck::new()
                 ->warnWhenAboveMb(900)
                 ->failWhenAboveMb(1000),
-            ScheduleCheck::new()->isProduction(),
-            OctaneCheck::new()->isProduction(),
+            ScheduleCheck::new()->isEnv(['production', 'staging']),
+            OctaneCheck::new()->isEnv(['production', 'staging']),
         ]);
     }
 }

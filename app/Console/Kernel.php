@@ -26,7 +26,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->job(new ClearOldDectalks)->dailyAt('07:10');
@@ -45,11 +44,14 @@ class Kernel extends ConsoleKernel
             $schedule->job(new GenerateGlobalPlayerStats)->daily();
         }
 
+        if (App::environment(['production', 'staging'])) {
+            $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
+            $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+        }
+
         if (App::isLocal()) {
             $schedule->command('telescope:prune')->daily();
         }
-
-        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     }
 
     /**

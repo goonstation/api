@@ -39,9 +39,14 @@ class Healthcheck extends Command
         $stores = Health::resultStores();
         /** @var \Spatie\Health\ResultStores\EloquentHealthResultStore */
         $store = $stores->first();
-        $checkResults = $store->latestResults();
+        $checkResults = $store->latestResults()?->storedCheckResults;
 
-        $failed = $checkResults ? $checkResults->storedCheckResults->contains(
+        $skipChecks = ['UsedDiskSpace', 'DatabaseSize'];
+        $checkResults = $checkResults ? $checkResults->filter(
+            fn (StoredCheckResult $line) => ! in_array($line->name, $skipChecks)
+        ) : null;
+
+        $failed = $checkResults ? $checkResults->contains(
             fn (StoredCheckResult $line) => $line->status === Status::failed()->value
         ) : true;
 
