@@ -229,4 +229,6 @@ return [
             'enable_static_handler' => true,
         ],
     ],
+
+    'state_file' => '/tmp/octane-server-state.json',
 ];
