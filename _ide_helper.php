@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 11.44.0.
+ * Generated for Laravel 11.44.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -24155,6 +24155,85 @@ namespace Sentry\Laravel {
             }
     }
 
+namespace Spatie\Health\Facades {
+    /**
+     * 
+     *
+     * @mixin \Spatie\Health\Health
+     */
+    class Health {
+        /**
+         * 
+         *
+         * @param array<int, Check> $checks
+         * @static 
+         */
+        public static function checks($checks)
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->checks($checks);
+        }
+
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function clearChecks()
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->clearChecks();
+        }
+
+        /**
+         * 
+         *
+         * @return Collection<int, Check> 
+         * @static 
+         */
+        public static function registeredChecks()
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->registeredChecks();
+        }
+
+        /**
+         * 
+         *
+         * @return Collection<int, ResultStore> 
+         * @static 
+         */
+        public static function resultStores()
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->resultStores();
+        }
+
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function inlineStylesheet($stylesheet)
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->inlineStylesheet($stylesheet);
+        }
+
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function assets()
+        {
+            /** @var \Spatie\Health\Health $instance */
+            return $instance->assets();
+        }
+
+            }
+    }
+
 namespace Spatie\LaravelIgnition\Facades {
     /**
      * 
@@ -25153,6 +25232,236 @@ namespace Illuminate\View {
         public static function response($callback)
         {
             return \Illuminate\View\View::response($callback);
+        }
+
+            }
+    }
+
+namespace Spatie\Health\Checks {
+    /**
+     * 
+     *
+     */
+    class Check {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Check::isProduction();
+        }
+
+            }
+    }
+
+namespace Spatie\Health\Checks\Checks {
+    /**
+     * 
+     *
+     */
+    class UsedDiskSpaceCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\UsedDiskSpaceCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class DatabaseCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\DatabaseCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class CacheCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\CacheCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class OptimizedAppCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\OptimizedAppCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class DatabaseConnectionCountCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class DatabaseSizeCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\DatabaseSizeCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class HorizonCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\HorizonCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class QueueCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\QueueCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class RedisCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\RedisCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class RedisMemoryUsageCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\RedisMemoryUsageCheck::isProduction();
+        }
+
+            }
+    /**
+     * 
+     *
+     */
+    class ScheduleCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Spatie\Health\Checks\Checks\ScheduleCheck::isProduction();
+        }
+
+            }
+    }
+
+namespace Ahtinurme {
+    /**
+     * 
+     *
+     */
+    class OctaneCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @static 
+         */
+        public static function isProduction()
+        {
+            return \Ahtinurme\OctaneCheck::isProduction();
         }
 
             }
@@ -29828,6 +30137,7 @@ namespace  {
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
     class Livewire extends \Livewire\Livewire {}
     class Sentry extends \Sentry\Laravel\Facade {}
+    class Health extends \Spatie\Health\Facades\Health {}
     class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
     class Breadcrumbs extends \Tabuna\Breadcrumbs\Breadcrumbs {}
 }

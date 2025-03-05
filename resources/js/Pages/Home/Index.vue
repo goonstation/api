@@ -201,7 +201,11 @@ export default {
 
   methods: {
     onServerStatusRefreshed({ serverId, status, error }) {
-      const players = error ? 0 : parseInt(status.players)
+      const players = error
+        ? 0
+        : typeof status.players === 'undefined'
+        ? 0
+        : parseInt(status.players)
       this.latestPlayersOnline[serverId] = players
       const totalPlayers = Object.values(this.latestPlayersOnline).reduce((a, b) => a + b, 0)
 

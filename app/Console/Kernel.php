@@ -14,6 +14,8 @@ use App\Jobs\UpdateYoutubeDLP;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\App;
+use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,6 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->job(new ClearOldDectalks)->dailyAt('07:10');
@@ -45,6 +48,8 @@ class Kernel extends ConsoleKernel
         if (App::isLocal()) {
             $schedule->command('telescope:prune')->daily();
         }
+
+        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     }
 
     /**
