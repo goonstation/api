@@ -12,7 +12,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.2",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-vue": "^9.33.0",
     "globals": "^16.0.0",
     "laravel-echo": "^2.0.2",
     "laravel-vite-plugin": "^1.2.0",
@@ -23,12 +23,12 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "@inertiajs/vue3": "^2.0.3",
+    "@inertiajs/vue3": "^2.0.4",
     "@quasar/extras": "^1.16.17",
     "apexcharts": "^4.5.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.8.1",
-    "caniuse-lite": "^1.0.30001701",
+    "caniuse-lite": "^1.0.30001702",
     "dayjs": "^1.11.13",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
