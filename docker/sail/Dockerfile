@@ -73,7 +73,8 @@ RUN (type -p wget >/dev/null || (apt update && apt-get install wget -y)) \
 	&& chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
 	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
 	&& apt update \
-	&& apt install gh -y
+	&& apt install gh -y \
+    && gh alias set -s run-watch 'gh workflow run $1 && sleep 3 && gh run list --json databaseId --workflow $1 -L 1 -q ".[0].databaseId" | xargs -I {} gh run watch {}'
 
 # Youtube DLP
 RUN curl -fsSL https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
