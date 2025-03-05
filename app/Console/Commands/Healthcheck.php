@@ -41,9 +41,9 @@ class Healthcheck extends Command
         $store = $stores->first();
         $checkResults = $store->latestResults()?->storedCheckResults;
 
-        $skipChecks = ['UsedDiskSpace', 'DatabaseSize', 'DatabaseConnectionCount'];
+        $onlyChecks = ['DatabaseCheck', 'CacheCheck', 'OctaneCheck'];
         $checkResults = $checkResults ? $checkResults->filter(
-            fn (StoredCheckResult $line) => ! in_array($line->name, $skipChecks)
+            fn (StoredCheckResult $line) => in_array($line->name, $onlyChecks)
         ) : null;
 
         $failed = $checkResults ? $checkResults->contains(
