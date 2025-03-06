@@ -1,3 +1,4 @@
 import ParentPage from './parent-page'
+import Ticker from './ticker'
 
-export default { ParentPage }
+export default { ParentPage, Ticker }

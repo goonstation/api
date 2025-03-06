@@ -2,7 +2,7 @@
   <div class="health">
     <div class="health__header">
       <div>Goonhub Health</div>
-      <div>Checked {{ $formats.fromNow(health.finishedAt) }}</div>
+      <div>Checked {{ lastChecked }}</div>
     </div>
     <div class="checks">
       <template v-if="checks.length">
@@ -64,6 +64,7 @@ export default {
 
   data: () => {
     return {
+      lastChecked: null,
       refreshTimer: null,
       cancelToken: null,
       cleaned: false,
@@ -112,6 +113,15 @@ export default {
       this.cleaned = true
       this.cancelToken && this.cancelToken.cancel()
       this.refreshTimer && clearTimeout(this.refreshTimer)
+    },
+  },
+
+  watch: {
+    '$store.Ticker.tick': {
+      immediate: true,
+      handler() {
+        this.lastChecked = this.$formats.fromNow(this.health.finishedAt)
+      },
     },
   },
 }

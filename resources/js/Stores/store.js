@@ -14,4 +14,12 @@ export default class Store {
   get(key) {
     return this.obj[key]
   }
+
+  increment(key) {
+    this.obj[key]++
+  }
+
+  decrement(key) {
+    this.obj[key]--
+  }
 }
