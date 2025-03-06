@@ -29,7 +29,13 @@
       </q-card-section>
 
       <q-card-actions align="center" class="text-primary">
-        <q-btn :label="buttonLabel" flat color="primary" @click="open = false" :disabled="loading" />
+        <q-btn
+          :label="buttonLabel"
+          flat
+          color="primary"
+          @click="open = false"
+          :disabled="loading"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -40,11 +46,6 @@ import axios from 'axios'
 
 export default {
   props: {
-    serverId: {
-      type: [Boolean, String],
-      required: true,
-      default: false,
-    },
     server: {
       type: [Object, null],
       required: true,
@@ -70,13 +71,13 @@ export default {
       } else {
         return 'Ruh roh'
       }
-    }
+    },
   },
 
   mounted() {
-    if (this.serverId) {
+    if (this.server) {
       this.open = true
-      this.informGame(this.serverId)
+      this.informGame(this.server.server_id)
     }
   },
 

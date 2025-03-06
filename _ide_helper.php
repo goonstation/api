@@ -25480,6 +25480,27 @@ namespace Ahtinurme {
             }
     }
 
+namespace App\Checks {
+    /**
+     * 
+     *
+     */
+    class ReverbCheck {
+        /**
+         * 
+         *
+         * @see \App\Providers\HealthServiceProvider::boot()
+         * @param array|string $envs
+         * @static 
+         */
+        public static function isEnv($envs)
+        {
+            return \App\Checks\ReverbCheck::isEnv($envs);
+        }
+
+            }
+    }
+
 
 namespace  {
     class App extends \Illuminate\Support\Facades\App {}

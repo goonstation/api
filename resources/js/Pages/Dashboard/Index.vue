@@ -1,5 +1,7 @@
 <template>
   <div>
+    <health-list :health="health" class="q-my-md" />
+
     <q-card class="gh-card q-mb-md" flat>
       <div class="gh-card__header q-pa-md bordered">
         <span>Hello</span>
@@ -12,13 +14,13 @@
       </q-card-section>
     </q-card>
 
-    <div class="row">
+    <div class="row q-col-gutter-md">
       <div class="col col-md-6 col-lg-4">
         <server-orchestration />
       </div>
     </div>
 
-    <game-auth-callback :server-id="authFromGame" :server="authFromGameServer" />
+    <game-auth-callback :server="authFromGame" />
   </div>
 </template>
 
@@ -26,6 +28,7 @@
 import GameAuthCallback from '@/Components/GameAuthCallback.vue'
 import ServerOrchestration from '@/Components/Orchestration/Manager.vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import HealthList from './Partials/HealthList.vue'
 
 export default {
   layout: (h, page) => h(AdminLayout, { title: 'Dashboard' }, () => page),
@@ -33,11 +36,12 @@ export default {
   components: {
     GameAuthCallback,
     ServerOrchestration,
+    HealthList,
   },
 
   props: {
-    authFromGame: [Boolean, String],
-    authFromGameServer: [Object, null],
+    authFromGame: [Object, null],
+    health: [Object, null],
   },
 }
 </script>

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Ahtinurme\OctaneCheck;
+use App\Checks\ReverbCheck;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Checks\CacheCheck;
@@ -54,6 +55,7 @@ class HealthServiceProvider extends ServiceProvider
                 ->failWhenAboveMb(1000),
             ScheduleCheck::new()->isEnv(['production', 'staging']),
             OctaneCheck::new()->isEnv(['production', 'staging']),
+            ReverbCheck::new(),
         ]);
     }
 }
