@@ -23,26 +23,14 @@
             />
           </div>
         </q-btn-dropdown>
-        <div class="flex items-center q-ml-sm text-sm">
-          Showing {{ $formats.number(logs.length) }} logs
-        </div>
+        <div class="flex items-center q-ml-md">Showing {{ $formats.number(logs.length) }} logs</div>
         <q-space />
-        <q-input
-          v-model="searchText"
-          :debounce="500"
-          class="search-text text-sm q-mr-md"
-          placeholder="Search"
-          filled
-          hide-bottom-space
-          dense
-          clearable
-        />
         <q-btn square dense size="sm" class="q-mr-sm" @click="toggleSidebar">
           <template v-if="sidebarEnabled">Hide</template>
           <template v-else>Show</template>
           Sidebar
         </q-btn>
-        <q-btn size="sm" square dense @click="fullscreen = !fullscreen" :icon="ionExpand">
+        <q-btn square dense @click="fullscreen = !fullscreen" :icon="ionExpand">
           <q-tooltip>Toggle Fullscreen</q-tooltip>
         </q-btn>
       </div>
@@ -114,17 +102,6 @@
 .table-top {
   background: black;
   padding: 5px;
-}
-
-:deep(.search-text) {
-  .q-field__control {
-    height: 30px;
-    padding: 0 8px;
-  }
-
-  .q-field__marginal {
-    height: 30px;
-  }
 }
 
 .log-filters-sidebar-wrap {
@@ -271,7 +248,6 @@ export default {
       allLogs: [],
       loading: true,
       logs: [],
-      searchText: '',
       searchFilters: {
         and: [],
         or: [],
@@ -298,10 +274,8 @@ export default {
     },
 
     logEntrySearchTerms() {
-      if (!this.hasSearchFilters && !this.searchText) return []
-      const terms = this.searchFilters.and.concat(this.searchFilters.or)
-      if (this.searchText) terms.push(this.searchText)
-      return terms
+      if (!this.hasSearchFilters) return []
+      return this.searchFilters.and.concat(this.searchFilters.or)
     },
   },
 
@@ -314,9 +288,9 @@ export default {
     async getLogs() {
       try {
         const response = await axios.get(route('admin.logs.get-logs', { gameRound: this.round.id }))
-        const allLogs = response.data
+        this.allLogs = response.data
 
-        const logTypes = [...new Set(allLogs.map((log) => log.type))].sort()
+        const logTypes = [...new Set(this.allLogs.map((log) => log.type))].sort()
         this.logTypes = logTypes.map((logType) => {
           return {
             label: logType,
@@ -328,16 +302,15 @@ export default {
         // Append ckey to player element inner texts
         const poptsRegex =
           /(<a href='\?src=%admin_ref%;action=adminplayeropts;targetckey=(.*?)' title='Player Options'>)(.*?)(<\/a>)/g
-        for (const logIdx in allLogs) {
-          const logEntry = allLogs[logIdx]
+        for (const logIdx in this.allLogs) {
+          const logEntry = this.allLogs[logIdx]
           if (logEntry.source)
             logEntry.source = logEntry.source.replaceAll(poptsRegex, '$1$3 ($2)$4')
           if (logEntry.message)
             logEntry.message = logEntry.message.replaceAll(poptsRegex, '$1$3 ($2)$4')
-          allLogs[logIdx] = logEntry
+          this.allLogs[logIdx] = logEntry
         }
 
-        this.allLogs = Object.freeze(allLogs)
         this.filterLogs()
       } catch (e) {
         console.log(e)
