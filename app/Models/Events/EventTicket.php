@@ -2,7 +2,6 @@
 
 namespace App\Models\Events;
 
-use App\Models\BaseModel;
 use App\Models\GameRound;
 use App\Models\Player;
 use App\Traits\HasOpenGraphData;
@@ -21,6 +20,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $issuer_ckey
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read GameRound $gameRound
  * @property-read mixed $total_votes
  * @property-read Player|null $player
@@ -51,7 +52,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @mixin \Eloquent
  */
-class EventTicket extends BaseModel
+class EventTicket extends BaseEventModel
 {
     use Filterable, HasFactory, HasOpenGraphData, Voteable;
 

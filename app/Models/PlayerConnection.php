@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $country
  * @property string|null $country_iso
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameRound|null $gameRound
  * @property-read \App\Models\Player $player
  *

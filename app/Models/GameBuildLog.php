@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $log
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameBuild $gameBuild
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameBuildLog newModelQuery()
@@ -38,6 +40,8 @@ class GameBuildLog extends BaseModel
         'type',
         'group',
     ];
+
+    public static $auditingDisabled = true;
 
     public function gameBuild(): BelongsTo
     {

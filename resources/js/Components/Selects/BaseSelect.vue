@@ -35,6 +35,8 @@
 import axios from 'axios'
 
 export default {
+  emits: ['update:modelValue', 'update:option'],
+
   props: {
     modelValue: null,
     loadRoute: String,
@@ -59,6 +61,10 @@ export default {
       },
       set(val) {
         this.$emit('update:modelValue', val)
+        this.$emit(
+          'update:option',
+          this.options.find((option) => option[this.optionValue] === val)
+        )
       },
     },
 

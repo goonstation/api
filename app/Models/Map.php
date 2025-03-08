@@ -25,6 +25,8 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property bool $admin_only
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameAdmin|null $gameAdmin
  * @property-read \App\Models\GameRound|null $latestGameRound
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Map> $layers

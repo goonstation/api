@@ -9,9 +9,7 @@ const componentNames = import.meta.glob('./Filters/*.vue')
 const components = []
 for (const name in componentNames) {
   const cleanName = name.replace(/(^.\/)|(\.vue$)|(Filters\/)/g, '')
-  components[cleanName] = defineAsyncComponent(() =>
-    import(`./Filters/${cleanName}.vue`)
-  )
+  components[cleanName] = defineAsyncComponent(() => import(`./Filters/${cleanName}.vue`))
 }
 
 export default {

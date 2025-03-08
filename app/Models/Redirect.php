@@ -13,6 +13,8 @@ use EloquentFilter\Filterable;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $created_by
  * @property int|null $updated_by
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdByUser
  * @property-read \App\Models\User|null $updatedByUser
  *

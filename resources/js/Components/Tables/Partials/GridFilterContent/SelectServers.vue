@@ -6,7 +6,10 @@
 import axios from 'axios'
 
 export default {
-  props: ['filter'],
+  props: {
+    filter: null,
+    filterOption: null,
+  },
 
   data() {
     return {
@@ -18,7 +21,11 @@ export default {
     filter: {
       immediate: true,
       handler(val) {
-        this.getServer(val)
+        if (this.filterOption) {
+          this.serverName = this.filterOption.name
+        } else {
+          this.getServer(val)
+        }
       },
     },
   },
@@ -32,10 +39,7 @@ export default {
           },
         },
       })
-      const server = data?.data[0]
-      if (server?.name) {
-        this.serverName = server.name
-      }
+      this.serverName = data?.data?.[0]?.name
     },
   },
 }

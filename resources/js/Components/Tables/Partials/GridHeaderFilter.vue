@@ -1,7 +1,12 @@
 <template>
   <q-btn-group v-if="column">
     <q-btn class="text-sm" color="grey-9" padding="xs sm" dense no-caps unelevated>
-      <component v-if="filterContentComponent" :is="filterContentComponent" :filter="filter" />
+      <component
+        v-if="filterContentComponent"
+        :is="filterContentComponent"
+        :filter="filter"
+        :filter-option="filterOption"
+      />
       <template v-else>
         {{ fullLabel }}
       </template>
@@ -11,6 +16,7 @@
           <table-filter
             :model-value="filter"
             @update:modelValue="$emit('update', $event)"
+            @update:option="$emit('update:option', $event)"
             @clear="$emit('clear')"
             :filter-type="column.filter?.type || 'text'"
           />
@@ -24,19 +30,20 @@
 </template>
 
 <script>
-import { upperFirst } from 'lodash'
-import { defineAsyncComponent } from 'vue'
-import { ionClose } from '@quasar/extras/ionicons-v6'
 import TableFilter from '@/Components/TableFilters/BaseFilter.vue'
+import { ionClose } from '@quasar/extras/ionicons-v6'
+import { defineAsyncComponent } from 'vue'
 
 const componentNames = import.meta.glob('./GridFilterContent/*.vue')
-const components = []
+const components = {}
 for (const name in componentNames) {
   const cleanName = name.replace(/(^.\/)|(\.vue$)|(GridFilterContent\/)/g, '')
   components[cleanName] = defineAsyncComponent(() => import(`./GridFilterContent/${cleanName}.vue`))
 }
 
 export default {
+  emits: ['update', 'update:option', 'clear'],
+
   setup() {
     return {
       ionClose,
@@ -51,6 +58,7 @@ export default {
   props: {
     column: Object,
     filter: null,
+    filterOption: null,
   },
 
   computed: {
@@ -99,8 +107,13 @@ export default {
 
     filterContentComponent() {
       if (!this.filterType) return null
-      const componentName = upperFirst(this.filterType)
-      if (components[componentName]) return componentName
+      const name = Object.keys(components).find(
+        (name) => name.toLowerCase() === this.filterType.toLowerCase()
+      )
+      if (name) {
+        return name
+      }
+
       return null
     },
   },

@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $value
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read Model|\Eloquent $voteable
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Vote newModelQuery()
@@ -37,6 +39,8 @@ class Vote extends BaseModel
         'ip',
         'value',
     ];
+
+    public static $auditingDisabled = true;
 
     public function voteable(): MorphTo
     {

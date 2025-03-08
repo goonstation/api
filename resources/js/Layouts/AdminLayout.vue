@@ -131,17 +131,17 @@
 </style>
 
 <script>
+import AppHead from '@/Components/AppHead.vue'
+import PageBack from '@/Components/PageBack.vue'
+import SiteNav from '@/Components/SiteNav/SiteNav.vue'
+import UserAvatar from '@/Components/UserAvatar.vue'
 import { router } from '@inertiajs/vue3'
 import {
-  ionMenu,
-  ionChevronDown,
-  ionCheckmarkCircleOutline,
   ionArrowBackCircleOutline,
+  ionCheckmarkCircleOutline,
+  ionChevronDown,
+  ionMenu,
 } from '@quasar/extras/ionicons-v6'
-import AppHead from '@/Components/AppHead.vue'
-import SiteNav from '@/Components/SiteNav/SiteNav.vue'
-import PageBack from '@/Components/PageBack.vue'
-import UserAvatar from '@/Components/UserAvatar.vue'
 
 export default {
   components: {
@@ -282,8 +282,12 @@ export default {
           },
           {
             label: 'Site',
-            match: [route('admin.redirects.index')],
+            match: [route('admin.audit.index'), route('admin.redirects.index')],
             children: [
+              {
+                label: 'Audit Logs',
+                href: route('admin.audit.index'),
+              },
               {
                 label: 'Redirects',
                 href: route('admin.redirects.index'),

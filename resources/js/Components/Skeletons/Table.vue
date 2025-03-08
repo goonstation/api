@@ -1,6 +1,19 @@
 <template>
   <q-markup-table :dense="dense" separator="none" flat>
-    <thead>
+    <thead v-if="gridFilters">
+      <tr>
+        <th colspan="100%">
+          <q-skeleton
+            animation="blink"
+            type="rect"
+            width="200px"
+            height="30px"
+            class="q-mx-xs q-mt-md q-mb-md"
+          />
+        </th>
+      </tr>
+    </thead>
+    <thead v-else>
       <tr>
         <th
           v-for="column in columns"
@@ -88,6 +101,11 @@ export default {
       type: Object,
       required: false,
       default: () => ({}),
+    },
+    gridFilters: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 

@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int|null $rank_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Ban> $bans
  * @property-read int|null $bans_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JobBan> $jobBans

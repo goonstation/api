@@ -2,7 +2,6 @@
 
 namespace App\Models\Events;
 
-use App\Models\BaseModel;
 use App\Models\GameRound;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int|null $highest_wave
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read GameRound $gameRound
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventGauntletHighScore filter(array $input = [], $filter = null)
@@ -36,7 +37,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @mixin \Eloquent
  */
-class EventGauntletHighScore extends BaseModel
+class EventGauntletHighScore extends BaseEventModel
 {
     use Filterable, HasFactory;
 

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $ckey
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameAdmin $gameAdmin
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VpnWhitelist filter(array $input = [], $filter = null)

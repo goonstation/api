@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\AuditController;
 use App\Http\Controllers\Web\Admin\BansController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\ErrorsController;
@@ -263,6 +264,14 @@ Route::middleware([
         Route::controller(OrchestrationController::class)->prefix('orchestration')->group(function () {
             Route::get('/status', 'status')->name('admin.orchestration.status');
             Route::post('/restart', 'restart')->name('admin.orchestration.restart');
+        });
+
+        Route::controller(AuditController::class)->prefix('audit')->group(function () {
+            Route::get('/', 'index')->name('admin.audit.index')
+                ->breadcrumbs(fn (Trail $trail) => $trail->push('Audit', 'admin.audit.index'));
+            Route::get('/types', 'getTypes')->name('admin.audit.types');
+            Route::get('/{audit}', 'show')->whereNumber('audit')->name('admin.audit.show')
+                ->breadcrumbs(fn (Trail $trail, $audit) => $trail->parent('admin.audit.index')->push('Show', route('admin.audit.show', $audit)));
         });
     });
 });

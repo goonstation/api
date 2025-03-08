@@ -24,6 +24,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $ended_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameAdmin|null $cancelledBy
  * @property-read mixed $duration
  * @property-read \App\Models\GameServer $gameServer
@@ -70,6 +72,8 @@ class GameBuild extends BaseModel
     protected $appends = [
         'duration',
     ];
+
+    public static $auditingDisabled = true;
 
     protected function duration(): Attribute
     {

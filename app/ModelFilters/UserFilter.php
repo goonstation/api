@@ -17,6 +17,11 @@ class UserFilter extends ModelFilter
      */
     public $relations = [];
 
+    public function id($val)
+    {
+        return $this->where('id', $val);
+    }
+
     public function name($val)
     {
         return $this->where('name', 'ILIKE', '%'.$val.'%');

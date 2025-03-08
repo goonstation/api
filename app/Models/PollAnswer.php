@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $player_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\PollOption $option
  * @property-read \App\Models\Player $player
  * @property-read \App\Models\Poll|null $poll

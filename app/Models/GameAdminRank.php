@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GameAdmin> $admins
  * @property-read int|null $admins_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdminRank filter(array $input = [], $filter = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GameAdminRank newModelQuery()

@@ -2,7 +2,6 @@
 
 namespace App\Models\Events;
 
-use App\Models\BaseModel;
 use App\Models\GameRound;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read GameRound $gameRound
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventBeeSpawn filter(array $input = [], $filter = null)
@@ -32,7 +33,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @mixin \Eloquent
  */
-class EventBeeSpawn extends BaseModel
+class EventBeeSpawn extends BaseEventModel
 {
     use Filterable, HasFactory;
 

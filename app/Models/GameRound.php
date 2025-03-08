@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read int|null $antag_objectives_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, EventAntag> $antags
  * @property-read int|null $antags_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, EventBeeSpawn> $beeSpawns
  * @property-read int|null $bee_spawns_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlayerConnection> $connections

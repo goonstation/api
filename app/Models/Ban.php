@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property bool $requires_appeal
  * @property int|null $deleted_by
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameAdmin|null $deletedByGameAdmin
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BanDetail> $details
  * @property-read int|null $details_count

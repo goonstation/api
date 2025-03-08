@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $stats
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GlobalStat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GlobalStat newQuery()
@@ -30,4 +32,6 @@ class GlobalStat extends BaseModel
         'key',
         'stats',
     ];
+
+    public static $auditingDisabled = true;
 }

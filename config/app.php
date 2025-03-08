@@ -191,6 +191,7 @@ return [
         SocialiteProviders\Manager\ServiceProvider::class,
         Jaybizzle\LaravelCrawlerDetect\LaravelCrawlerDetectServiceProvider::class,
         GrahamCampbell\GitHub\GitHubServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
 
         /*
          * Application Service Providers...

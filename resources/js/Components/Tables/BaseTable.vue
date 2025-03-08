@@ -64,7 +64,9 @@
                 :key="`filter-${name}`"
                 :column="columns.find((col) => col.name === name)"
                 :filter="filter"
+                :filter-option="filterOptions[name]?.option"
                 @update="onFilterInput(name, $event)"
+                @update:option="onFilterOptionSelect(name, $event)"
                 @clear="filters[name] = null"
               >
               </grid-header-filter>
@@ -84,6 +86,7 @@
                           <table-filter
                             :model-value="filters[col.name]"
                             @update:modelValue="onFilterInput(col.name, $event)"
+                            @update:option="onFilterOptionSelect(col.name, $event)"
                             @clear="filters[col.name] = null"
                             :filter-type="col.filter?.type || 'text'"
                           />
@@ -291,6 +294,7 @@
         :rows="_pagination.rowsPerPage"
         :dense="Object.keys($attrs).includes('dense')"
         :options="skeletonOptions"
+        :grid-filters="showGridFilters"
         class="flex flex-grow"
       />
     </template>
@@ -505,6 +509,7 @@ export default {
       defaultPagination: {},
       defaultFilters: {},
       filters: {},
+      filterOptions: {},
       errors: {},
       settingFiltersFromUrl: false,
       showTimestamps: false,
@@ -720,11 +725,26 @@ export default {
     },
 
     onFiltersChange() {
+      const options = {}
+      for (const column in this.filterOptions) {
+        const filterOption = this.filterOptions[column]
+        if (this.filters[column] === filterOption.filterValue) {
+          options[column] = filterOption
+        }
+      }
+      this.filterOptions = options
       this.updateTable()
     },
 
     onFilterInput(col, val) {
       this.filters[col] = val
+    },
+
+    onFilterOptionSelect(col, val) {
+      this.filterOptions[col] = {
+        filterValue: this.filters[col],
+        option: val,
+      }
     },
 
     onSortChange({ column, descending }) {

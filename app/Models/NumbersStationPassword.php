@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $numbers
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NumbersStationPassword newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NumbersStationPassword newQuery()
@@ -27,4 +29,6 @@ class NumbersStationPassword extends BaseModel
     use HasFactory;
 
     protected $table = 'numbers_station_password';
+
+    public static $auditingDisabled = true;
 }

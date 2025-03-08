@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $servers
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PollAnswer> $answers
  * @property-read int|null $answers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\GameAdmin|null $gameAdmin
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PollOption> $options
  * @property-read int|null $options_count

@@ -2,7 +2,6 @@
 
 namespace App\Models\Events;
 
-use App\Models\BaseModel;
 use App\Models\GameRound;
 use App\Models\Player;
 use Awobaz\Compoships\Compoships;
@@ -17,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool|null $success
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read GameRound $gameRound
  * @property-read Player|null $player
  *
@@ -39,7 +40,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @mixin \Eloquent
  */
-class EventAntagObjective extends BaseModel
+class EventAntagObjective extends BaseEventModel
 {
     use Compoships, Filterable, HasFactory;
 

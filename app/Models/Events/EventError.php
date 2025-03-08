@@ -2,7 +2,6 @@
 
 namespace App\Models\Events;
 
-use App\Models\BaseModel;
 use App\Models\GameRound;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,6 +19,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $invalid
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read GameRound $gameRound
  * @property-read mixed $signature
  *
@@ -46,7 +47,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @mixin \Eloquent
  */
-class EventError extends BaseModel
+class EventError extends BaseEventModel
 {
     use Filterable, HasFactory;
 

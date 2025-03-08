@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PollAnswer> $answers
  * @property-read int|null $answers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\Poll $poll
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PollOption newModelQuery()
