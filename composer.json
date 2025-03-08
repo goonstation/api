@@ -1,7 +1,7 @@
 {
-  "name": "goonstation/api",
+  "name": "goonstation/goonhub",
   "type": "project",
-  "description": "The Goonstation API",
+  "description": "Goonhub",
   "license": "MIT",
   "require": {
     "php": "^8.0.2",
