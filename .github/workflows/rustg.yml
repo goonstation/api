@@ -1,0 +1,44 @@
+name: Rust-G
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Rust-G Ref
+        required: true
+        type: string
+  repository_dispatch:
+    types: [rustg_release]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      GIT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.client_payload.ref }}
+      PKG_CONFIG_ALLOW_CROSS: 1
+      RUSTFLAGS: -C target-cpu=native
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.GIT_REF }}
+
+      - run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install libgcc-s1:i386 g++-multilib zlib1g-dev:i386
+
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: i686-unknown-linux-gnu
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --target i686-unknown-linux-gnu --release --features all
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustg-${{ env.GIT_REF }}
+          path: |
+            target/i686-unknown-linux-gnu/release/librust_g.so
