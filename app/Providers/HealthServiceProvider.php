@@ -44,9 +44,11 @@ class HealthServiceProvider extends ServiceProvider
             DatabaseCheck::new(),
             CacheCheck::new(),
             OptimizedAppCheck::new(),
-            DatabaseConnectionCountCheck::new(),
+            DatabaseConnectionCountCheck::new()
+                ->warnWhenMoreConnectionsThan(100)
+                ->failWhenMoreConnectionsThan(200),
             DatabaseSizeCheck::new()
-                ->failWhenSizeAboveGb(errorThresholdGb: 400.0),
+                ->failWhenSizeAboveGb(200.0),
             HorizonCheck::new()->isEnv(['production', 'staging']),
             QueueCheck::new()->isEnv(['production', 'staging']),
             RedisCheck::new()->isEnv(['production', 'staging']),
