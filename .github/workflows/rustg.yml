@@ -14,14 +14,15 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     env:
-      GIT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.client_payload.ref }}
+      RUSTG_GIT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.client_payload.ref }}
       PKG_CONFIG_ALLOW_CROSS: 1
       RUSTFLAGS: -C target-cpu=native
 
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.GIT_REF }}
+          repository: goonstation/rust-g
+          ref: ${{ env.RUSTG_GIT_REF }}
 
       - run: |
           sudo dpkg --add-architecture i386
@@ -39,6 +40,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: rustg-${{ env.GIT_REF }}
+          name: rustg-${{ env.RUSTG_GIT_REF }}
           path: |
             target/i686-unknown-linux-gnu/release/librust_g.so
