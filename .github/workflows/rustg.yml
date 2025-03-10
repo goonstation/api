@@ -16,7 +16,6 @@ jobs:
     env:
       RUSTG_GIT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.client_payload.ref }}
       PKG_CONFIG_ALLOW_CROSS: 1
-      RUSTFLAGS: -C target-cpu=native
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +26,7 @@ jobs:
       - run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install libgcc-s1:i386 g++-multilib zlib1g-dev:i386
+          sudo apt-get install zip libgcc-s1:i386 g++-multilib zlib1g-dev:i386
 
       - uses: dtolnay/rust-toolchain@nightly
         with:
@@ -38,9 +37,19 @@ jobs:
       - name: Build
         run: cargo build --target i686-unknown-linux-gnu --release --features all
 
-      - uses: actions/upload-artifact@v4
+      - run: |
+          cd target/i686-unknown-linux-gnu/release
+          zip rustg-${{ env.RUSTG_GIT_REF }}.zip librust_g.so
+
+      - uses: hkusu/s3-upload-action@v2
         with:
-          name: rustg-${{ env.RUSTG_GIT_REF }}
-          overwrite: true
-          path: |
-            target/i686-unknown-linux-gnu/release/librust_g.so
+          aws-access-key-id: ${{ secrets.RUSTG_RELEASES_AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.RUSTG_RELEASES_AWS_SECRET }}
+          aws-region: 'us-east-2'
+          aws-bucket: ${{ secrets.RUSTG_RELEASES_AWS_BUCKET }}
+          bucket-root: /
+          destination-dir: /
+          public: true
+          expire: 0
+          file-path: './target/i686-unknown-linux-gnu/release/rustg-${{ env.RUSTG_GIT_REF }}.zip'
+          output-file-url: true
