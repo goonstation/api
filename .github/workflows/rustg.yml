@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       RUSTG_GIT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.client_payload.ref }}
       PKG_CONFIG_ALLOW_CROSS: 1
@@ -41,5 +41,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: rustg-${{ env.RUSTG_GIT_REF }}
+          overwrite: true
           path: |
             target/i686-unknown-linux-gnu/release/librust_g.so
